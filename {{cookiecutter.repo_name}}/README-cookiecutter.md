@@ -1,6 +1,8 @@
-# cookiecutter-basic
+# {{cookiecutter.repo_name}}
 
-A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository.
+[![All Contributors][all-contributors-badge]](#contributors)
+
+{{cookiecutter.short_description}}
 
 ## Included Features
 
@@ -16,11 +18,12 @@ A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository.
 
 - [SemVer][semver] version number calculation via [GitVersion][gitversion]
 - Changelog creation and upkeep in [Keep a Changelog][keep-a-changelog] format
-- Simple/example release workflow via GitHub Actions
+- Release workflow via GitHub Actions
 
 ### Support Files
 
-- `.gitignore`, set to ignore macOS `.DS_Store` files
+- `.gitattributes`, set to force LF line endings on all platforms
+- `.gitignore`, set to general defaults
 - `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant][contributor-covenant]
 - `CONTRIBUTING.md`, designed help novices to make their first contribution
 - `LICENSE`, a copy of the [MIT License][mit-license]
@@ -56,12 +59,17 @@ A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository.
 
 ## Using this Cookiecutter
 
-1. Open a terminal to the parent directory where the repo was cloned
-1. Run the following to overlay the template onto the cloned directory via cruft:
+### Repo Creation and Template Initialization
+
+1. Create a new repo in GitHub, choosing to create a README to initialize it.
+1. Clone that repo to your local machine, but don't cd into it yet.
+1. Run the following to install the template via cruft:
 
     ``` bash
     cruft create https://github.com/natescherer/cookiecutter-basic -f
     ```
+
+### Configuration Tasks
 
 1. In order to configure GitHub repository settings, a script that leverages the GitHub CLI is included and should be run after the template is initialized. Syntax is slightly different based on your platform:
     - macOS/Linux
@@ -84,6 +92,7 @@ This repository is based on the template of itself via [cruft][cruft]. Neat, huh
 
 [all-contributors]: https://allcontributors.org/
 [all-contributors-app]: https://github.com/apps/allcontributors/installations/new
+[all-contributors-badge]: https://img.shields.io/github/all-contributors/{{cookiecutter.github_username}}/{{cookiecutter.repo_name}}?color=ee8449&style=flat-square
 [cookiecutter]: https://www.cookiecutter.io/
 [contributor-covenant]: https://www.contributor-covenant.org/
 [cruft]: https://cruft.github.io/cruft/

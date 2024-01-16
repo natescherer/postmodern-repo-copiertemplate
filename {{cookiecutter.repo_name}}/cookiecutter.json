@@ -1,0 +1,39 @@
+{
+    "full_name": "",
+    "company": "{{cookiecutter.full_name}}",
+    "github_username": "",
+    "repo_name": "",
+    "short_description": "",
+    "project_website": "https://github.com/{{cookiecutter.github_username}}/{{cookiecutter.repo_name}}",
+    "initial_version": "1.0.0",
+    "project_type": ["Basic", "Cookiecutter"],
+    "include_python_install_doc": ["No", "Yes"],
+    "include_pipx_install_doc": ["No", "Yes"],
+    "_template_version": "0.0.0",
+    "_copy_without_render": [],
+    "_extensions": ["jinja2_time.TimeExtension"],
+    "_new_lines": "\n",
+    "__prompts__": {
+        "full_name": "Author's full name",
+        "company": "Author's company (or full_name again if no company)",
+        "github_username": "GitHub username or organization",
+        "repo_name": "Name of the repository that's been created and cloned from GitHub",
+        "short_description": "A one-sentence description of the project",
+        "initial_version": "The initial version of the project that will be released when the first production release is made",
+        "project_type": {
+            "__prompt__": "What type of project are you making?",
+            "Basic": "A general sort of project",
+            "Cookiecutter": "A Cookiecutter (make sure to say yes to all doc questions if you choose this!)"
+        },
+        "include_python_install_doc": {
+            "__prompt__": "Do you want to include doc on how to install Python?",
+            "No": "No",
+            "Yes": "Yes"
+        },
+        "include_pipx_install_doc": {
+            "__prompt__": "Do you want to include doc on how to install pipx?",
+            "No": "No",
+            "Yes": "Yes"
+        }
+    }
+}
