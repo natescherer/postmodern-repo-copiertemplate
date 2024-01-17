@@ -16,7 +16,7 @@
         "full_name": "Author's full name",
         "company": "Author's company (or full_name again if no company)",
         "github_username": "GitHub username or organization",
-        "repo_name": "Name of the repository that's been created and cloned from GitHub",
+        "repo_name": "Name of the repository to create in GitHub",
         "short_description": "A one-sentence description of the project",
         "initial_version": "The initial version of the project that will be released when the first production release is made",
         "project_type": {
