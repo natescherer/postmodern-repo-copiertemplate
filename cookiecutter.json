@@ -7,6 +7,7 @@
     "project_website": "https://github.com/{{cookiecutter.github_username}}/{{cookiecutter.repo_name}}",
     "initial_version": "1.0.0",
     "project_type": ["Basic", "Cookiecutter"],
+    "new_project": ["Yes", "No"],
     "include_python_install_doc": ["No", "Yes"],
     "include_pipx_install_doc": ["No", "Yes"],
     "_template_version": "0.0.0",
@@ -23,6 +24,11 @@
             "__prompt__": "What type of project are you making?",
             "Basic": "A general sort of project",
             "Cookiecutter": "A Cookiecutter (make sure to say yes to all doc questions if you choose this!)"
+        },
+        "new_project": {
+            "__prompt__": "Is this a new project? (Select no if you are applying this template on top of an existing repo)",
+            "Yes": "Yes",
+            "No": "No"
         },
         "include_python_install_doc": {
             "__prompt__": "Do you want to include doc on how to install Python?",

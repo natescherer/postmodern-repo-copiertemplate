@@ -29,13 +29,14 @@ try:
 except subprocess.CalledProcessError as exc:
     raise Exception("You are not logged into gh cli, run gh auth login") from exc
 
-print(color.CYAN + "Creating & Cloning GitHub repo..." + color.END)
-gh_repo_create = subprocess.run(
-    ["gh", "repo", "create", "{{cookiecutter.repo_name}}", "--public", "--clone"],
-    capture_output=True,
-    check=True,
-    cwd="..",
-)
+if "{{cookiecutter.new_project}}" == "Yes":
+    print(color.CYAN + "Creating & Cloning GitHub repo..." + color.END)
+    gh_repo_create = subprocess.run(
+        ["gh", "repo", "create", "{{cookiecutter.repo_name}}", "--public", "--clone"],
+        capture_output=True,
+        check=True,
+        cwd="..",
+    )
 
 print(color.CYAN + "Setting GitHub repo settings..." + color.END)
 repo_settings = {
