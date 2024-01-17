@@ -32,7 +32,7 @@ except subprocess.CalledProcessError as exc:
 if "{{cookiecutter.new_project}}" == "Yes":
     print(color.CYAN + "Creating & Cloning GitHub repo..." + color.END)
     gh_repo_create = subprocess.run(
-        ["gh", "repo", "create", "{{cookiecutter.repo_name}}", "--public", "--clone"],
+        ["gh", "repo", "create", "{{cookiecutter.repo_name}}", "--public", "--clone", "--add-readme"],
         capture_output=True,
         check=True,
         cwd="..",
