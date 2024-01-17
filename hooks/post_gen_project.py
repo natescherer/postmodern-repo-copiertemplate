@@ -28,7 +28,7 @@ if PROJECT == "Cookiecutter":
     os.rename("cookiecutter", "{{'{{cookiecutter.repo_name}}'}}")
 elif PROJECT == "Basic":
     os.rename("README-basic.md", "README.md")
-    os.rename(".github/workflows/Release-basic.yml", "Release.yml")
+    os.rename(".github/workflows/Release-basic.yml", ".github/workflows/Release.yml")
 unneeded_readmes = glob.glob("README-*")
 for readme in unneeded_readmes:
     os.unlink(readme)
