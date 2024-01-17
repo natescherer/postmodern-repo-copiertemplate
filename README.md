@@ -1,16 +1,23 @@
-# cookiecutter-base
+# cookiecutter-postmodern-repo
 
-A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository. (And other cookiecutters!)
+A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository. (And for creating other cookiecutters!)
+
+<!-- Add additional data after this line -->
+
+This template is heavily inspired by the [Hypermodern Python Cookiecutter](https://github.com/cjolowicz/cookiecutter-hypermodern-python).
+
+Why Postmodern? Besides being a cheeky homage to this template's inspiration, I think that Postmodern philosophy's idea of the relativity of truth applies very well to software. There's no objectively best way to do CI/CD, this is just one way that works, and it might work for you too!
 
 ## Included Features
 
 ### Repository Management
 
-- Setting of default repo settings & main branch protection ruleset via [GitHub CLI][github-cli] script
+- Creation of GitHub repo and `feature/initial` branch via git and [GitHub CLI][github-cli]
+- Setting of default repo settings & main branch protection ruleset via [GitHub CLI][github-cli]
 - Creation of useful non-default issue/pr labels via [GitHub CLI][github-cli] script: `awaiting pr` and `blocked`
 - Contributor management and crediting via [All Contributors][all-contributors]
 - GitHub Actions dependency updating via [Dependabot][dependabot]
-- Synchronization with template updates to this template via [cruft][cruft]
+- Synchronization with updates to this template via [cruft][cruft]
 
 ### CI/CD
 

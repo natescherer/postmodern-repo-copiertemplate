@@ -2,7 +2,7 @@
 
 Thanks for considering contributing to this project!
 
-Any contribution is welcome, especially ones that add functionality or fix bugs.
+Any contribution is encouraged and welcome.
 
 ## Ground Rules
 
@@ -26,7 +26,7 @@ If you find a security vulnerability, please do NOT open an Issue. Instead, use 
 
 For non-security bugs, please open a GitHub issue with the "bug" label containing the following information:
 
-> 1. What OS and PowerShell version are you using?
+> 1. What platform are you running on (and what are relevant tool versions, if applicable)?
 > 1. What did you do?
 > 1. What did you expect to see?
 > 1. What did you see instead?
