@@ -11,7 +11,6 @@
     "include_pipx_install_doc": ["No", "Yes"],
     "_template_version": "0.0.0",
     "_copy_without_render": ["cookiecutter/*"],
-    "_extensions": ["jinja2_time.TimeExtension"],
     "_new_lines": "\n",
     "__prompts__": {
         "full_name": "Author's full name",
