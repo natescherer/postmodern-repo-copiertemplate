@@ -53,7 +53,7 @@ for path in REMOVE_PATHS:
         else:
             shutil.rmtree(CLEAN_PATH)
 
-print(color.CYAN + "Removing unneeded files..." + color.END)
-subprocess.run(["git", "branch", "feature/initial"], capture_output=True, check=True)
+print(color.CYAN + "Creating initial branch..." + color.END)
+subprocess.run(["git", "branch", "feature/initial"])
 
 print(color.GREEN + "*** POST-GEN PROJECT HOOK END ***" + color.END)
