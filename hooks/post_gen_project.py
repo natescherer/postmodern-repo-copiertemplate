@@ -43,6 +43,7 @@ REMOVE_PATHS = [
     '{% if cookiecutter.project_type != "Cookiecutter" %}docs/cookiecutter_defaults.md{% endif %}',
     '{% if cookiecutter.project_type != "Cookiecutter" %}cookiecutter.json{% endif %}',
 ]
+print(color.CYAN + "Removing unneeded files..." + color.END)
 for path in REMOVE_PATHS:
     CLEAN_PATH = path.strip()
     if CLEAN_PATH and os.path.exists(CLEAN_PATH):
