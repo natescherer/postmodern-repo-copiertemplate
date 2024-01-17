@@ -18,6 +18,7 @@ Why Postmodern? Besides being a cheeky homage to this template's inspiration, I 
 - Contributor management and crediting via [All Contributors][all-contributors]
 - GitHub Actions dependency updating via [Dependabot][dependabot]
 - Synchronization with updates to this template via [cruft][cruft]
+- (Optional) Secret management via [Doppler][doppler]
 
 ### CI/CD
 
@@ -51,7 +52,6 @@ Why Postmodern? Besides being a cheeky homage to this template's inspiration, I 
     ```
 
     - If you plan on using Cookiecutters often, consider setting up a user config file to specify default values so you don't have to type them in for every template. If you want to do this, see [Cookiecutter Defaults](docs/cookiecutter_defaults.md).
-
 1. Ensure you have the [GitHub CLI][github-cli] (aka gh) installed
     - You can check by running `gh --version` in your shell. If you get an error, it is not installed.
     - Need to install gh? See [their instructions][github-cli-instructions] for help.
@@ -62,6 +62,9 @@ Why Postmodern? Besides being a cheeky homage to this template's inspiration, I 
     - You can either give it access to all your repositories, which means you only need to do this step once, or you can select repositories individually, in which case you will need to do this for each new repo you create.
 1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [here](https://github.com/settings/security_analysis).
     - This only needs done once for all repositories
+1. (If using Doppler for secret management) Ensure you have a [Doppler][doppler] account created, then set up the GitHub Actions integration via [these instructions][doppler-actions-instructions].
+    - This only needs done once for all repositories
+
 
 ## Using this Cookiecutter
 
@@ -82,6 +85,8 @@ This repository is based on the template of itself via [cruft][cruft]. Neat, huh
 [contributor-covenant]: https://www.contributor-covenant.org/
 [cruft]: https://cruft.github.io/cruft/
 [dependabot]: https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide
+[doppler]: https://www.doppler.com
+[doppler-actions-instructions]: https://docs.doppler.com/docs/github-actions
 [eol-python]: https://endoflife.date/python
 [github-cli]: https://cli.github.com/
 [github-cli-instructions]: https://github.com/cli/cli#installation

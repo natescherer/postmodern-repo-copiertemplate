@@ -54,8 +54,16 @@ for path in REMOVE_PATHS:
             shutil.rmtree(CLEAN_PATH)
 
 print(color.CYAN + "Creating initial branch..." + color.END)
-subprocess.run(["git", "checkout", "-b", "feature/initial"], capture_output=True, check=True)
+subprocess.run(
+    ["git", "checkout", "-b", "feature/initial"], capture_output=True, check=True
+)
 
 print(color.GREEN + "*** POST-GEN PROJECT HOOK END ***" + color.END)
 
-print(color.PURPLE + "Template complete! If you want to open in VSCode: code {{cookiecutter.repo_name}}" + color.END)
+print(color.YELLOW + "If you are using Doppler, set up your sync for this repo now!" + color.END)
+
+print(
+    color.PURPLE
+    + "Template complete! If you want to open in VSCode: code {{cookiecutter.repo_name}}"
+    + color.END
+)
