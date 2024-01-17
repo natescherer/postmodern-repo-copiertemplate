@@ -1,6 +1,7 @@
 import glob
 import os
 import shutil
+import subprocess
 
 
 class color:
@@ -51,5 +52,8 @@ for path in REMOVE_PATHS:
             os.unlink(CLEAN_PATH)
         else:
             shutil.rmtree(CLEAN_PATH)
+
+print(color.CYAN + "Removing unneeded files..." + color.END)
+subprocess.run(["git", "branch", "feature/initial"], capture_output=True, check=True)
 
 print(color.GREEN + "*** POST-GEN PROJECT HOOK END ***" + color.END)
