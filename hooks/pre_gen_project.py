@@ -32,7 +32,15 @@ except subprocess.CalledProcessError as exc:
 if "{{cookiecutter.new_project}}" == "Yes":
     print(color.CYAN + "Creating & Cloning GitHub repo..." + color.END)
     gh_repo_create = subprocess.run(
-        ["gh", "repo", "create", "{{cookiecutter.repo_name}}", "--public", "--clone", "--add-readme"],
+        [
+            "gh",
+            "repo",
+            "create",
+            "{{cookiecutter.repo_name}}",
+            "--public",
+            "--clone",
+            "--add-readme",
+        ],
         capture_output=True,
         check=True,
         cwd="..",
@@ -139,13 +147,15 @@ gh_api_repos_rulesets = subprocess.run(
 PROJECT = "{{cookiecutter.project_type}}"
 if PROJECT == "Cookiecutter":
     print(color.CYAN + "Duplicating files for cookiecutter project type..." + color.END)
-    os.mkdir("cookiecutter")
-    os.mkdir("cookiecutter/.github")
-    os.mkdir("cookiecutter/.github/workflows")
-    os.mkdir("cookiecutter/docs")
+    target_folder = "{{ "{{cookiecutter.repo_name}}" }}"
+    os.mkdir(target_folder)
+    os.mkdir(f"{target_folder}/.github")
+    os.mkdir(f"{target_folder}/.github/workflows")
+    os.mkdir(f"{target_folder}/docs")
     CC_FILES = [
         ".github/workflows/AllContributorsAutomation.yml",
         ".github/workflows/BotAutoMerge.yml",
+        ".github/workflows/Release-basic.yml",
         ".github/workflows/Release-cookiecutter.yml",
         ".github/dependabot.yml",
         "docs/cookiecutter_defaults.md",
@@ -160,8 +170,10 @@ if PROJECT == "Cookiecutter":
         "cookiecutter.json",
         "GitVersion.yml",
         "LICENSE",
+        "README-basic.md",
+        "README-cookiecutter.md"
     ]
     for path in CC_FILES:
-        shutil.copy2(path, "cookiecutter")
+        shutil.copy2(path, target_folder)
 
 print(color.GREEN + "*** PRE-GEN PROJECT HOOK END ***" + color.END)
