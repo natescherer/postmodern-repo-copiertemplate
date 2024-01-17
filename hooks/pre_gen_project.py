@@ -19,6 +19,16 @@ class color:
 
 print(color.GREEN + "*** PRE-GEN PROJECT HOOK START ***" + color.END)
 
+print(color.CYAN + "Verifying GitHub CLI is installed..." + color.END)
+if not shutil.which("gh"):
+    raise FileNotFoundError("GitHub CLI is required and is not installed!")
+
+print(color.CYAN + "Verifying you are logged in to GitHub CLI..." + color.END)
+try:
+    subprocess.run(["gh", "auth", "status"], capture_output=True, check=True)
+except subprocess.CalledProcessError as exc:
+    raise Exception("You are not logged into gh cli, run gh auth login") from exc
+
 print(color.CYAN + "Creating & Cloning GitHub repo..." + color.END)
 gh_repo_create = subprocess.run(
     ["gh", "repo", "create", "{{cookiecutter.repo_name}}", "--public", "--clone"],
@@ -32,7 +42,7 @@ repo_settings = {
     "description": "{{cookiecutter.short_description}}",
     "homepage": "{{cookiecutter.project_website}}",
     "allow_auto_merge": True,
-    "delete_branch_on_merge": True
+    "delete_branch_on_merge": True,
 }
 gh_api_repos = subprocess.run(
     [
@@ -50,7 +60,7 @@ gh_api_repos = subprocess.run(
     ],
     capture_output=True,
     check=True,
-    input=json.dumps(repo_settings).encode()
+    input=json.dumps(repo_settings).encode(),
 )
 
 print(color.CYAN + "Adding GitHub Labels..." + color.END)
@@ -67,7 +77,7 @@ gh_label_create_awaiting_pr = subprocess.run(
         "-f",
     ],
     capture_output=True,
-    check=True
+    check=True,
 )
 gh_label_create_awaiting_pr = subprocess.run(
     [
@@ -82,7 +92,7 @@ gh_label_create_awaiting_pr = subprocess.run(
         "-f",
     ],
     capture_output=True,
-    check=True
+    check=True,
 )
 
 print(color.CYAN + "Setting GitHub branch protection ruleset..." + color.END)
@@ -103,7 +113,7 @@ repo_ruleset = {
             "required_approving_review_count": 0,
             "required_review_thread_resolution": False,
         },
-    ]
+    ],
 }
 gh_api_repos_rulesets = subprocess.run(
     [
@@ -121,7 +131,7 @@ gh_api_repos_rulesets = subprocess.run(
     ],
     capture_output=True,
     check=True,
-    input=json.dumps(repo_ruleset).encode()
+    input=json.dumps(repo_ruleset).encode(),
 )
 
 # Choose correct files based on project type
