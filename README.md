@@ -53,6 +53,8 @@ A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository. 
 
 1. Install the [AllContributors GitHub App][all-contributors-app] for your user or organization.
     - You can either give it access to all your repositories, which means you only need to do this step once, or you can select repositories individually, in which case you will need to do this for each new repo you create.
+1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [here](https://github.com/settings/security_analysis).
+    - This only needs done once for all repositories
 
 ## Using this Cookiecutter
 
