@@ -1,6 +1,6 @@
-# cookiecutter-basic
+# cookiecutter-base
 
-A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository.
+A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository. (And other cookiecutters!)
 
 ## Included Features
 
@@ -10,7 +10,7 @@ A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository.
 - Creation of useful non-default issue/pr labels via [GitHub CLI][github-cli] script: `awaiting pr` and `blocked`
 - Contributor management and crediting via [All Contributors][all-contributors]
 - GitHub Actions dependency updating via [Dependabot][dependabot]
-- Synchronization with template updates via [cruft][cruft]
+- Synchronization with template updates to this template via [cruft][cruft]
 
 ### CI/CD
 
@@ -56,27 +56,12 @@ A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository.
 
 ## Using this Cookiecutter
 
-1. Open a terminal to the parent directory where the repo was cloned
-1. Run the following to overlay the template onto the cloned directory via cruft:
+1. Open a terminal to the parent directory where you want the repo subdirectory to be created
+1. Run the following to initialize the template (and the linked GitHub repo):
 
     ``` bash
-    cruft create https://github.com/natescherer/cookiecutter-basic -f
+    cruft create https://github.com/natescherer/cookiecutter-base
     ```
-
-1. In order to configure GitHub repository settings, a script that leverages the GitHub CLI is included and should be run after the template is initialized. Syntax is slightly different based on your platform:
-    - macOS/Linux
-
-        ``` bash
-        cd .github
-        chmod +x set-repo-settings.sh
-        ./set-repo-settings.sh
-        ```
-
-    - Windows (in PowerShell)
-
-        ``` PowerShell
-        & {Invoke-Expression (Get-Content -Raw .github\set-repo-settings.sh)}
-        ```
 
 ## Repository Template
 
