@@ -8,7 +8,7 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' || github.actor == 'allcontributors[bot]' }}
+    if: {{ "${{ github.actor == 'dependabot[bot]' || github.actor == 'allcontributors[bot]' }}" }}
     steps:
       - name: Enable auto-merge for bot PRs
         run: |
@@ -24,5 +24,5 @@ jobs:
             sleep 5
           done
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          PR_URL: {{ "${{github.event.pull_request.html_url}}" }}
+          GITHUB_TOKEN: {{ "${{secrets." }}{{cookiecutter.dependabot_automerge_token}}{{ "}}" }}

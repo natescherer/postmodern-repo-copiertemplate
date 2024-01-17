@@ -8,10 +8,16 @@
     "initial_version": "1.0.0",
     "project_type": ["Basic", "Cookiecutter"],
     "new_project": ["Yes", "No"],
+    "dependabot_automerge_token": "GITHUB_TOKEN",
     "include_python_install_doc": ["No", "Yes"],
     "include_pipx_install_doc": ["No", "Yes"],
     "_template_version": "0.0.0",
-    "_copy_without_render": ["cookiecutter/*", ".github/*"],
+    "_copy_without_render": [
+        "cookiecutter/*",
+        ".github/workflows/AllContributorsAutomation.yml",
+        ".github/workflows/CruftUpdate.yml",
+        ".github/workflows/Release*"
+    ],
     "_new_lines": "\n",
     "__prompts__": {
         "full_name": "Author's full name",
@@ -20,6 +26,7 @@
         "repo_name": "Name of the repository to create in GitHub",
         "short_description": "A one-sentence description of the project",
         "initial_version": "The initial version of the project that will be released when the first production release is made",
+        "dependabot_automerge_token": "By default, PRs to update Actions workflows can't be automerged due to GITHUB_TOKEN lacking rights. Provide the name of a repo secret containing a PAT that has workflow permission to work around this.",
         "project_type": {
             "__prompt__": "What type of project are you making?",
             "Basic": "A general sort of project",
