@@ -151,7 +151,7 @@ gh_api_actions_rules = subprocess.run(
         "api",
         "/repos/{owner}/{repo}/actions/permissions/workflow",
         "--method",
-        "POST",
+        "PUT",
         "-H",
         "Accept: application/vnd.github+json",
         "-H",
