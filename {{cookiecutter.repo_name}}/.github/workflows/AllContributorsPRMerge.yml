@@ -16,7 +16,7 @@ jobs:
           # Retry to work around "Base branch was modified." error.
           # Ref: https://github.com/cli/cli/issues/8092
           for i in {1..3}; do
-            if gh pr merge --auto --merge "$PR_URL"; then
+            if gh pr merge --merge "$PR_URL"; then
               break
             fi
             if [[ $i -eq 3 ]]; then
