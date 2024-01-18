@@ -14,4 +14,4 @@ jobs:
       - name: Enable auto-merge for Dependabot PRs
         uses: fastify/github-action-merge-dependabot@v3
         with:
-          use-github-automerge: true
+          use-github-auto-merge: true
