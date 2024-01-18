@@ -17,7 +17,7 @@ class color:
     END = "\033[1;37;0m"
 
 
-print(color.GREEN + "*** PRE-GEN PROJECT HOOK START ***" + color.END)
+print(color.GREEN + "*** PRE-GEN PROJECT HOOK START (start harder) ***" + color.END)
 
 ci_env = os.environ.get("CI")
 print(f"CI env is {ci_env}")
