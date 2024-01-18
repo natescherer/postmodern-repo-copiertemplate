@@ -20,10 +20,7 @@ class color:
 print(color.GREEN + "*** PRE-GEN PROJECT HOOK START (start harder) ***" + color.END)
 
 ci_env = os.environ.get("CI")
-print(f"CI env is {ci_env}")
-if ci_env == "true":
-    print(color.YELLOW + "Skipping GitHub CLI steps as script appears to be running in GitHub Actions" + color.END)
-else:
+if ci_env != "true":
     print(color.CYAN + "Verifying GitHub CLI is installed..." + color.END)
     if not shutil.which("gh"):
         raise FileNotFoundError("GitHub CLI is required and is not installed!")
@@ -171,6 +168,8 @@ else:
         check=True,
         input=json.dumps(actions_rules).encode()
     )
+else:
+    print(color.YELLOW + "Skipping GitHub CLI steps as script appears to be running in GitHub Actions." + color.END)
 
 # Choose correct files based on project type
 PROJECT = "{{cookiecutter.project_type}}"
