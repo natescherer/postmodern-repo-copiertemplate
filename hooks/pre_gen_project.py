@@ -19,7 +19,9 @@ class color:
 
 print(color.GREEN + "*** PRE-GEN PROJECT HOOK START ***" + color.END)
 
-if os.environ.get("CI") == "true":
+ci_env = os.environ.get("CI")
+print(f"CI env is {ci_env}")
+if ci_env == "true":
     print(color.YELLOW + "Skipping GitHub CLI steps as script appears to be running in GitHub Actions" + color.END)
 else:
     print(color.CYAN + "Verifying GitHub CLI is installed..." + color.END)
