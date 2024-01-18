@@ -7,8 +7,7 @@
     "project_website": "https://github.com/{{cookiecutter.github_username}}/{{cookiecutter.repo_name}}",
     "project_type": ["Basic", "Cookiecutter"],
     "new_project": ["Yes", "No"],
-    "include_python_install_doc": ["No", "Yes"],
-    "_template_version": "0.0.0",
+    "include_python_install_doc": ["Yes", "No"],
     "_copy_without_render": [
         "cookiecutter/*",
         ".github/workflows/*"
@@ -32,8 +31,8 @@
         },
         "include_python_install_doc": {
             "__prompt__": "Do you want to include doc on how to install Python?",
-            "No": "No",
-            "Yes": "Yes"
+            "Yes": "Yes",
+            "No": "No"
         }
     }
 }
