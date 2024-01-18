@@ -143,6 +143,27 @@ gh_api_repos_rulesets = subprocess.run(
     input=json.dumps(repo_ruleset).encode(),
 )
 
+print(color.CYAN + "Setting GitHub Actions settings..." + color.END)
+actions_rules = {"can_approve_pull_request_reviews": True}
+gh_api_actions_rules = subprocess.run(
+    [
+        "gh",
+        "api",
+        "/repos/{owner}/{repo}/actions/permissions/workflow",
+        "--method",
+        "POST",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--input",
+        "-",
+    ],
+    capture_output=True,
+    check=True,
+    input=json.dumps(actions_rules).encode(),
+)
+
 # Choose correct files based on project type
 PROJECT = "{{cookiecutter.project_type}}"
 if PROJECT == "Cookiecutter":
