@@ -1,5 +1,6 @@
-name: Bot Auto-Merge
-on:  pull_request
+name: All Contributors PR Merge
+
+on: pull_request
 
 permissions:
   contents: write
@@ -8,9 +9,9 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: {{ "${{ github.actor == 'dependabot[bot]' || github.actor == 'allcontributors[bot]' }}" }}
+    if: ${{ github.actor == 'allcontributors[bot]' }}
     steps:
-      - name: Enable auto-merge for bot PRs
+      - name: Enable auto-merge for AllContributors PRs
         run: |
           # Retry to work around "Base branch was modified." error.
           # Ref: https://github.com/cli/cli/issues/8092
@@ -24,5 +25,5 @@ jobs:
             sleep 5
           done
         env:
-          PR_URL: {{ "${{github.event.pull_request.html_url}}" }}
-          GH_TOKEN: {{ "${{secrets." }}{{cookiecutter.dependabot_automerge_token}}{{ "}}" }}
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}

@@ -1,10 +1,12 @@
 name: Release
+
 on: 
   workflow_dispatch:
     inputs:
       ReleaseHeader:
         description: The header to be added to the release.
         required: false
+
 jobs:
   Release:
     runs-on: ubuntu-latest

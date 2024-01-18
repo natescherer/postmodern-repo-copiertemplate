@@ -23,16 +23,21 @@ print(color.GREEN + "*** POST-GEN PROJECT HOOK START ***" + color.END)
 PROJECT = "{{cookiecutter.project_type}}"
 if PROJECT == "Cookiecutter":
     os.rename("README-cookiecutter.md", "README.md")
+    os.rename(".github/dependabot-cookiecutter.yml", ".github/dependabot.yml")
     os.rename(
         ".github/workflows/Release-cookiecutter.yml", ".github/workflows/Release.yml"
     )
     os.rename("cookiecutter", "{{'{{cookiecutter.repo_name}}'}}")
 elif PROJECT == "Basic":
     os.rename("README-basic.md", "README.md")
+    os.rename(".github/dependabot-basic.yml", ".github/dependabot.yml")
     os.rename(".github/workflows/Release-basic.yml", ".github/workflows/Release.yml")
 unneeded_readmes = glob.glob("README-*")
 for readme in unneeded_readmes:
     os.unlink(readme)
+unneeded_dependabot_yamls = glob.glob(".github/dependabot-*")
+for workflow in unneeded_dependabot_yamls:
+    os.unlink(workflow)
 unneeded_release_workflows = glob.glob(".github/workflows/Release-*")
 for workflow in unneeded_release_workflows:
     os.unlink(workflow)
@@ -60,7 +65,11 @@ subprocess.run(
 
 print(color.GREEN + "*** POST-GEN PROJECT HOOK END ***" + color.END)
 
-print(color.YELLOW + "If you are using Doppler, set up your sync for this repo now!" + color.END)
+print(
+    color.YELLOW
+    + "If you are using Doppler, set up your sync for this repo now!"
+    + color.END
+)
 
 print(
     color.PURPLE

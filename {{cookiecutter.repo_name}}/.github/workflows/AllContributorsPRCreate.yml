@@ -1,9 +1,9 @@
+name: All Contributors PR Create
+
 on:
   push:
     branches:
       - main
-
-name: All Contributors Automation
 
 permissions:
     issues: write

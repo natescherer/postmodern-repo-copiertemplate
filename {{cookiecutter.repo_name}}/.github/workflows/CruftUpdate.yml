@@ -1,11 +1,14 @@
 name: Update repository with Cruft
-permissions:
-  contents: write
-  pull-requests: write
+
 on:
   schedule:
     - cron: "0 2 * * 1" # Every Monday at 2am
   workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -25,14 +28,11 @@ jobs:
             title: Reject new updates detected with Cruft
     steps:
       - uses: actions/checkout@v3
-
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-
       - name: Install Cruft
         run: pip3 install cruft
-
       - name: Check if update is available
         continue-on-error: false
         id: check
@@ -47,7 +47,6 @@ jobs:
           fi
 
           echo "has_changes=$CHANGES" >> "$GITHUB_OUTPUT"
-
       - name: Run update if available
         if: steps.check.outputs.has_changes == '1'
         run: |
@@ -56,7 +55,6 @@ jobs:
 
           cruft update --skip-apply-ask --refresh-private-variables
           git restore --staged .
-
       - name: Create pull request
         if: steps.check.outputs.has_changes == '1'
         uses: peter-evans/create-pull-request@v4
