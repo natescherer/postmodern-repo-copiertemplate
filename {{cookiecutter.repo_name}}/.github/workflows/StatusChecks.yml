@@ -1,0 +1,24 @@
+name: StatusChecks
+
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+    branches-ignore:
+      - main
+  pull_request:
+
+jobs:
+  StatusChecks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Example Check
+        run: |
+          FILE=README.md
+          if [ -f "$FILE" ]; then
+            echo "$FILE exists."
+            echo "Also you should probably put one or more real checks relevant to your project here."
+          else
+            echo "$FILE missing!"
+            exit 1

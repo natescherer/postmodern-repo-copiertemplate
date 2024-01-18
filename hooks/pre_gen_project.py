@@ -123,6 +123,17 @@ if ci_env != "true":
                 "require_last_push_approval": False,
                 "required_approving_review_count": 0,
                 "required_review_thread_resolution": False
+            },
+            {
+            "type": "required_status_checks",
+                "parameters": {
+                    "strict_required_status_checks_policy": False,
+                    "required_status_checks": [
+                        {
+                            "context": "StatusChecks"
+                        }
+                    ]
+                }
             }
         ]
     }
