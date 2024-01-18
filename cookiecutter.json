@@ -11,9 +11,7 @@
     "_template_version": "0.0.0",
     "_copy_without_render": [
         "cookiecutter/*",
-        ".github/workflows/AllContributorsAutomation.yml",
-        ".github/workflows/CruftUpdate.yml",
-        ".github/workflows/Release*"
+        ".github/workflows/*"
     ],
     "_new_lines": "\n",
     "__prompts__": {
