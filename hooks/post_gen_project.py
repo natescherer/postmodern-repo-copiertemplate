@@ -45,7 +45,7 @@ for workflow in unneeded_release_workflows:
 # Remove unneeded files based on options
 REMOVE_PATHS = [
     '{% if cookiecutter.include_python_install_doc == "No" %}docs/installing_python.md{% endif %}',
-    '{% if cookiecutter.include_pipx_install_doc == "No" %}docs/installing_pipx.md{% endif %}',
+    '{% if cookiecutter.include_python_install_doc == "No" %}docs/installing_pipx.md{% endif %}',
     '{% if cookiecutter.project_type != "Cookiecutter" %}docs/cookiecutter_defaults.md{% endif %}',
     '{% if cookiecutter.project_type != "Cookiecutter" %}cookiecutter.json{% endif %}',
 ]
