@@ -1,4 +1,4 @@
-name: Update repository with Cruft
+name: Cruft Source Template Update
 
 on:
   schedule:
