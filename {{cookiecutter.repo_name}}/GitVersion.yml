@@ -1,5 +1,5 @@
 mode: ContinuousDeployment
-next-version: {{cookiecutter.initial_version}}
+next-version: 1.0.0
 continuous-delivery-fallback-tag: ''
 branches:
   main:
