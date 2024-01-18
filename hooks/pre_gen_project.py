@@ -144,7 +144,10 @@ gh_api_repos_rulesets = subprocess.run(
 )
 
 print(color.CYAN + "Setting GitHub Actions settings..." + color.END)
-actions_rules = {"can_approve_pull_request_reviews": True}
+actions_rules = {
+    "can_approve_pull_request_reviews": True,
+    "default_workflow_permissions": "write"
+}
 gh_api_actions_rules = subprocess.run(
     [
         "gh",
