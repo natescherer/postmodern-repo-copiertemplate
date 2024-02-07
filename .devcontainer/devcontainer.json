@@ -1,0 +1,20 @@
+{
+  "name": "postmodern-tools",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".",
+    "args": {
+      "NONROOT_USER": "vscode"
+    }
+  },
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/natescherer/devcontainers-custom-features/hypermodern-python:1": {
+      "versions": "3.12"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/azure-cli:1": {
+      "extensions": "azure-devops"
+    }
+  }
+}
