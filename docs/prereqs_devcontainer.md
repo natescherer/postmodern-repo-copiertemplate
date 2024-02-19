@@ -1,0 +1,11 @@
+# Prerequisites via Devcontainer
+
+There are many different tools that use Devcontainers, but, if you are starting out, I recommend you use Visual Studio Code's integration with them.
+
+First off, follow [their tutorial][vscode-devcontainer-tutorial] to get set up. Running the sample container they recommend is optional.
+
+Once that is done, clone this repository into VSCode, then go to `View > Command Palette` and type in `rebuild and reopen`. The item `Dev Containers: Rebuild and Reopen in Container` should be selected. Hit Enter, and the devcontainer will be built, and VSCode will reopen with a terminal running inside the container with all needed tools.
+
+Note that home folder of the computer where you are running Docker will be mounted at `/host-home-folder`.
+
+[vscode-devcontainer-tutorial]: https://code.visualstudio.com/docs/devcontainers/tutorial
