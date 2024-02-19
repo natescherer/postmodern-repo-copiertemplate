@@ -25,20 +25,20 @@ if PROJECT == "Cookiecutter":
     os.rename("README-cookiecutter.md", "README.md")
     os.rename(".github/dependabot-cookiecutter.yml", ".github/dependabot.yml")
     os.rename(
-        ".github/workflows/Release-cookiecutter.yml", ".github/workflows/Release.yml"
+        ".github/workflows/release-cookiecutter.yml", ".github/workflows/release.yml"
     )
     os.rename("cookiecutter", "{{'{{cookiecutter.repo_name}}'}}")
 elif PROJECT == "Basic":
     os.rename("README-basic.md", "README.md")
     os.rename(".github/dependabot-basic.yml", ".github/dependabot.yml")
-    os.rename(".github/workflows/Release-basic.yml", ".github/workflows/Release.yml")
+    os.rename(".github/workflows/release-basic.yml", ".github/workflows/release.yml")
 unneeded_readmes = glob.glob("README-*")
 for readme in unneeded_readmes:
     os.unlink(readme)
 unneeded_dependabot_yamls = glob.glob(".github/dependabot-*")
 for workflow in unneeded_dependabot_yamls:
     os.unlink(workflow)
-unneeded_release_workflows = glob.glob(".github/workflows/Release-*")
+unneeded_release_workflows = glob.glob(".github/workflows/release-*")
 for workflow in unneeded_release_workflows:
     os.unlink(workflow)
 
@@ -66,7 +66,7 @@ if os.environ.get("CI") != "true":
 else:
     print(
         color.YELLOW
-        + "Skipping creating intial branch as script appears to be running in GitHub Actions."
+        + "Skipping creating initial branch as script appears to be running in GitHub Actions."
         + color.END
     )
 
