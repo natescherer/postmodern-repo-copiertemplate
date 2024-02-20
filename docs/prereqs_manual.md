@@ -6,14 +6,12 @@
 1. Ensure you have the [pipx][pipx] Python package manger installed.
    - You can check by running `pipx --version` in your shell. If you get an error, it is not installed.
    - Need to install pipx? See [Installing pipx](docs/installing_pipx.md) for help.
-1. Install `Cookiecutter` & `cruft`
+1. Install `copier` and the requirements for this template
 
    ```bash
-   pipx install cookiecutter
-   pipx install cruft
+   pipx install copier
+   pipx inject copier -r PATH-TO-REPO-HERE/.devcontainer/requirements.txt
    ```
-
-   - If you plan on using Cookiecutters often, consider setting up a user config file to specify default values so you don't have to type them in for every template. If you want to do this, see [Cookiecutter Defaults](docs/cookiecutter_defaults.md).
 
 1. Ensure you have the [GitHub CLI][github-cli] (aka gh) installed
    - You can check by running `gh --version` in your shell. If you get an error, it is not installed.
