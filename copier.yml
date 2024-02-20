@@ -1,7 +1,15 @@
+git_platform:
+  type: str
+  help: The platform where you are going to host your Git repo and CI/CD.
+  default: GitHub
+  choices:
+    - GitHub
+    - Azure DevOps
+
 author_name:
   type: str
   help: The name to whom this project will be credited. Autodetect attempted from Git 'user.name'.
-  default: {{ gitconfig-username }}
+  default: "{{ gitconfig_username }}"
 
 _jinja_extensions:
   - copier_templates_extensions.TemplateExtensionLoader
