@@ -52,7 +52,7 @@ jobs:
           branch: release/v${{ steps.gitversion.outputs.SemVer }}
           title: Release v${{ steps.gitversion.outputs.SemVer }}
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: v${{ steps.gitversion.outputs.SemVer }}
           files: 'out'
