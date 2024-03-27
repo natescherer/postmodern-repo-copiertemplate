@@ -1,2 +1,0 @@
-- Run  az devops configure --defaults organization=https://dev.azure.com/contoso project=ContosoWebApp to set defaults
-- PAT needs 'Full' for 'Code'

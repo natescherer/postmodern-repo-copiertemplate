@@ -1,4 +1,0 @@
-{
-  "projectName": "{{cookiecutter.repo_name}}",
-  "projectOwner": "{{cookiecutter.github_username}}"
-}

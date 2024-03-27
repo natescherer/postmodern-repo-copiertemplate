@@ -1,6 +1,6 @@
-# cookiecutter-postmodern-repo
+# postmodern-repo-template
 
-A [Cookiecutter][cookiecutter] template for creating a basic GitHub repository. (And for creating other cookiecutters!)
+A [Copier][copier] template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
 
 <!-- Add additional data after this line -->
 
@@ -10,17 +10,43 @@ Why Postmodern? Besides being a cheeky homage to this template's inspiration, I 
 
 ## Included Features
 
+### Core
+
+#### Support for Multiple CI/CD Platforms
+
+- GitHub **Recommended**
+   - Creating repos under both users and orgs is supported
+   - See [GitHub Org Limitations](docs/github_org_limitations.md) for details about template features excluded for Orgs
+- Azure DevOps
+   - See [Azure DevOps Limitations](docs/azure_devops_limitations.md) for details about features missing for AzDO
+
+#### Support for Public (Open-Source) and Private (Closed-Source) Repositories
+
+This template fully supports both public/open-source and private/closed-source repositories. See [Public vs Private Repos](docs/public_vs_private_repos.md) for the difference.
+
+#### Support for Existing Projects
+
+Postmodern templates are designed to allow either the creation of new templates from scratch or adoption for existing projects with existing code repos.
+
+#### Support for Template Updates
+
+Keeping projects in sync with their parent template is a core feature of [Copier][copier], and this template will deploy a GitHub Actions Workflow/Azure DevOps Pipeline that will automate the update process.
+
+#### Support for Child/Recursive Templates
+
+It is highly encouraged for you to take this template and make your own child template that meets your needs. Your child template can (optionally) receive updates from this template.
+
 ### Repository Management
 
-- Creation of GitHub repo and `feature/initial` branch via git and [GitHub CLI][github-cli]
-- Setting of default repo settings & main branch protection ruleset via [GitHub CLI][github-cli]
-- Creation of useful non-default issue/pr labels via [GitHub CLI][github-cli] script: `awaiting pr` and `blocked`
+- Creation of new repos and `initial` branch containing template code
+- Setting of repo settings & branch protection rules
+- Creation of useful non-default issue labels via [GitHub CLI][github-cli] script: `awaiting pr` and `blocked`
 - Contributor management and crediting via [All Contributors][all-contributors]
 - GitHub Actions dependency updating via [Dependabot][dependabot]
 - Synchronization with updates to this template via [cruft][cruft]
 - (Optional) Secret management via [Doppler][doppler]
 
-## Code Management and Formatting
+### Code Management and Formatting
 
 - Code formatting (YAML and Markdown) via [Prettier][prettier]
 
@@ -44,7 +70,7 @@ Why Postmodern? Besides being a cheeky homage to this template's inspiration, I 
 
 There are two ways to install the prerequisites needed on your machine: running them inside of a [devcontainer][devcontainer], or installing them manually. Please see linked documentation for details:
 
-[Prerequisites via Devcontainer](docs/prereqs_devcontainer.md)
+[Prerequisites via Devcontainer](docs/prereqs_devcontainer.md) **Recommended**
 
 [Prerequisites via Manual Installation](docs/prereqs_manual.md)
 
@@ -63,22 +89,22 @@ There are two ways to install the prerequisites needed on your machine: running 
 1. (If using Doppler for secret management) Ensure you have a [Doppler][doppler] account created, then set up the GitHub Actions integration via [these instructions][doppler-actions-instructions].
    - This only needs done once for all repositories
 
-## Using this Cookiecutter
+## Using this template
 
 1. Open a terminal to the parent directory where you want the repo subdirectory to be created
 1. Run the following to initialize the template (and the linked GitHub repo):
 
    ```bash
-   cruft create https://github.com/natescherer/cookiecutter-base
+   copier copy --trust gh:natescherer/postmodern-repo-template .
    ```
 
 ## Repository Template
 
-This repository is based on the template of itself via [cruft][cruft]. Neat, huh?
+This repository is based on the template of itself. Neat, huh?
 
 [all-contributors]: https://allcontributors.org/
 [all-contributors-app]: https://github.com/apps/allcontributors/installations/new
-[cookiecutter]: https://www.cookiecutter.io/
+[copier]: https://github.com/copier-org/copier
 [contributor-covenant]: https://www.contributor-covenant.org/
 [cruft]: https://cruft.github.io/cruft/
 [dependabot]: https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide

@@ -1,8 +1,10 @@
-# {{cookiecutter.repo_name}}
+# {{ project_name }}
 
-[![All Contributors][all-contributors-badge]](#contributors)
+{% if is_public -%}
+[![All Contributors](https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square)](#contributors)
+{%- endif %}
 
-{{cookiecutter.short_description}}
+{{ project_short_description }}
 
 ## Features
 
@@ -30,6 +32,11 @@ EXAMPLES HERE
 
 For detailed documentation, [click here](docs).
 
+## Building
+
+BUILD INFO HERE
+
+{% if is_public -%}
 ## Questions/Comments
 
 If you have questions, comments, etc, please enter a GitHub Issue with the "question" tag.
@@ -38,9 +45,6 @@ If you have questions, comments, etc, please enter a GitHub Issue with the "ques
 
 Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-## Building
-
-BUILD INFO HERE
 
 ## Contributors
 
@@ -59,5 +63,4 @@ Contributions of any kind are welcome!
 ## License
 
 This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
-
-[all-contributors-badge]: https://img.shields.io/github/all-contributors/{{cookiecutter.github_username}}/{{cookiecutter.repo_name}}?color=ee8449&style=flat-square
+{%- endif %}

@@ -1,6 +1,6 @@
 # Why Copier?
 
-This template started out as a [Cookiecutter][cookiecutter] template, and was inspired by the [Hypermodern Python Cookiecutter][hypermodern-cc]. Cookiecutter is a great platform, but I quickly ran into features I wanted that seemed to be unavailable, including:
+This template started out as a [Cookiecutter][cookiecutter] template, and was inspired by the [Hypermodern Python Cookiecutter][hypermodern-cc]. Cookiecutter is a great platform, but lacks several features, including:
 
 * Conditional Questions
 * Template Updating
@@ -8,7 +8,7 @@ This template started out as a [Cookiecutter][cookiecutter] template, and was in
 * Proper `.jinja` Extension for Templates
   * Because Cookiecutter didn't use a proper template extension, it caused larger problems for linters and formatters
 
-Copier provides these out of the box, and uses a friendly YAML syntax to boot.
+Copier provides these out of the box, and uses a friendly YAML syntax to boot. The Copier project also explicitly indicates that they want to be a language-agnostic templating engine, which is nice as the Postmodern template family is designed to be useful for any/all purposes.
 
 [cruft]: https://cruft.github.io/cruft/
 [cookiecutter]: https://www.cookiecutter.io/

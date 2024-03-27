@@ -31,6 +31,11 @@ jobs:
         with:
           mode: release
           releaseVersion: ${{ steps.gitversion.outputs.SemVer }}
+      - name: Create Template Zip
+        uses: thedoctor0/zip-release@0.7.5
+        with:
+          filename: template/template_copy.zip
+          path: template
       - name: Push SemVer Tag
         uses: rickstaa/action-create-tag@v1
         with:

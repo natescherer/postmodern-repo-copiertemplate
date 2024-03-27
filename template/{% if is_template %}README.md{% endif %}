@@ -1,8 +1,8 @@
-# {{cookiecutter.repo_name}}
+# {{ repo_name }}
 
 [![All Contributors][all-contributors-badge]](#contributors)
 
-{{cookiecutter.short_description}}
+{{ short_description }}
 
 ## Included Features
 
@@ -92,7 +92,7 @@ This repository is based on the template of itself via [cruft][cruft]. Neat, huh
 
 [all-contributors]: https://allcontributors.org/
 [all-contributors-app]: https://github.com/apps/allcontributors/installations/new
-[all-contributors-badge]: https://img.shields.io/github/all-contributors/{{cookiecutter.github_username}}/{{cookiecutter.repo_name}}?color=ee8449&style=flat-square
+[all-contributors-badge]: https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square
 [cookiecutter]: https://www.cookiecutter.io/
 [contributor-covenant]: https://www.contributor-covenant.org/
 [cruft]: https://cruft.github.io/cruft/

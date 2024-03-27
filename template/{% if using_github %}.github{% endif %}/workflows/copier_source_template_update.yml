@@ -1,4 +1,4 @@
-name: Cruft Source Template Update
+name: Copier Source Template Update
 
 on:
   schedule:

@@ -1,6 +1,6 @@
 # Installing pipx
 
-`pipx` is a package manager for Python that is designed to install command-line applications (which `Cookiecutter` and `cruft` both are).
+`pipx` is a package manager for Python that is designed to install command-line applications like `copier`.
 
 ## Linux
 

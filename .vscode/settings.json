@@ -1,0 +1,15 @@
+{
+    "cSpell.words": [
+        "Unauth"
+    ],
+    "files.associations": {
+        "**.all-contributorsrc*.jinja": "jinja-json",
+        "**LICENSE*.jinja": "jinja",
+        "**.md*.jinja*": "jinja-md",
+        "**.y*ml*.jinja": "jinja-yaml",
+        "copier.yml": "jinja-yaml",
+        "**.md[{]% endif %[}]": "markdown",
+        "**.y*ml[{]% endif %[}]": "yaml"
+  }
+
+}

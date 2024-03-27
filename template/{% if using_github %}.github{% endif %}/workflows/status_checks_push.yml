@@ -1,15 +1,12 @@
-name: Status Checks
+name: Status Checks Push
 
 on:
   push:
-    paths-ignore:
-      - "**.md"
     branches-ignore:
       - main
-  pull_request:
 
 jobs:
-  status_checks:
+  status_checks_push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,3 +19,4 @@ jobs:
           else
             echo "$FILE missing!"
             exit 1
+          fi
