@@ -1,0 +1,8 @@
+azure-devops==6.0.0b4
+copier-templates-extensions
+githubkit
+invoke
+jinja2-shell-extension
+jinja2-time
+requests
+rich

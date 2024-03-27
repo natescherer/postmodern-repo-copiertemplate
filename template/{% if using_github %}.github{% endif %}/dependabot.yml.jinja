@@ -1,0 +1,22 @@
+version: 2
+updates:
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      github-actions:
+        patterns:
+           - "*"
+
+{% if project_type == 'Template' -%}
+  - package-ecosystem: "github-actions"
+    directory: "/{{ repo_name }}/.github/workflows"
+    schedule:
+      interval: "monthly"
+    groups:
+      github-actions-in-template:
+        patterns:
+           - "*"
+{%- endif %}
