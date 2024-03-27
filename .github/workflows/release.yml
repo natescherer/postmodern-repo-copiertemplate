@@ -32,7 +32,7 @@ jobs:
           mode: release
           releaseVersion: ${{ steps.gitversion.outputs.SemVer }}
       - name: Create Template Zip
-        uses: thedoctor0/zip-release@0.7.5
+        uses: thedoctor0/zip-release@0.7.6
         with:
           filename: template/template_copy.zip
           path: template
