@@ -7,6 +7,9 @@ on:
         description: The header to be added to the release.
         required: false
 
+permissions:
+  contents: write
+
 jobs:
   Release:
     runs-on: ubuntu-latest
