@@ -1,7 +1,11 @@
-name: Start Release Process
+name: Release Template
 
 on:
   workflow_dispatch:
+    inputs:
+      ReleaseHeader:
+        description: The header to be added to the release.
+        required: false
 
 permissions:
   contents: write
@@ -51,3 +55,15 @@ jobs:
           git checkout release/v${{ steps.gitversion.outputs.SemVer }}
           git tag -a v${{ steps.gitversion.outputs.SemVer }} -m v${{ steps.gitversion.outputs.SemVer }}
           git push origin --tags
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: v${{ steps.gitversion.outputs.SemVer }}
+          files: 'out'
+          tag_name: v${{ steps.gitversion.outputs.SemVer }}
+          body: |
+            # Release v${{ steps.gitversion.outputs.SemVer }}
+            ${{ github.event.inputs.ReleaseHeader}}
+
+            ## Changes
+            ${{ steps.changelog.outputs.releasenotes }}
