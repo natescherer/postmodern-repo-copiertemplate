@@ -1,7 +1,7 @@
 # {{ project_name }}
 
 {% if is_public -%}
-[![All Contributors](https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square)](#contributors)
+[![All Contributors][all-contributors-badge]](#contributors)
 {%- endif %}
 
 {{ project_short_description }}
@@ -64,3 +64,5 @@ Contributions of any kind are welcome!
 
 This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
 {%- endif %}
+
+[all-contributors-badge]: https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square
