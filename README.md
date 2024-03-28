@@ -1,10 +1,8 @@
-# postmodern-repo-template
+# postmodern-repo-copiertemplate
 
 [![All Contributors][all-contributors-badge]](#contributors)
 
 A [Copier][copier] template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
-
-<!-- Add additional data after this line -->
 
 This template is heavily inspired by the [Hypermodern Python Cookiecutter](hypermodern-cc).
 
@@ -100,12 +98,40 @@ There are two ways to install the prerequisites needed on your machine: running 
    copier copy --trust gh:natescherer/postmodern-repo-template .
    ```
 
+## Questions/Comments
+
+If you have questions, comments, etc, please enter a GitHub Issue with the "question" tag.
+
+## Contributing/Bug Reporting
+
+Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
+
+## License
+
+This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
+
 ## Repository Template
 
 This repository is based on the template of itself. Neat, huh?
 
 [all-contributors]: https://allcontributors.org/
 [all-contributors-app]: https://github.com/apps/allcontributors/installations/new
+[all-contributors-badge]: https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449&style=flat-square
 [copier]: https://github.com/copier-org/copier
 [contributor-covenant]: https://www.contributor-covenant.org/
 [cruft]: https://cruft.github.io/cruft/
@@ -119,5 +145,6 @@ This repository is based on the template of itself. Neat, huh?
 [keep-a-changelog]: https://keepachangelog.com/en/1.1.0/
 [mit-license]: https://choosealicense.com/licenses/mit/
 [prettier]: https://prettier.io/
+[pm-repo-template]: https://github.com/natescherer/postmodern-repo-copiertemplate
 [semver]: https://semver.org/
 [trunk-github-setup]: https://docs.trunk.io/check/check-cloud-ci-integration/get-started
