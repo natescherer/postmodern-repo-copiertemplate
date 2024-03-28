@@ -85,7 +85,7 @@ def repo_settings_github(c, answers_json):
     current_label_content = github.rest.issues.list_labels_for_repo(owner=owner, repo=answers["repo_name"])
     current_labels = [x.name for x in current_label_content.parsed_data]
 
-    if "awaiting_pr" not in current_labels: 
+    if "awaiting pr" not in current_labels: 
         awaiting_pr_label_data = {
             "name": "awaiting pr",
             "color": "668F04",
