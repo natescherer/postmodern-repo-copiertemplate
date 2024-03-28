@@ -82,20 +82,25 @@ def repo_settings_github(c, answers_json):
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
 
     # Labels
-    awaiting_pr_label_data = {
-        "name": "awaiting pr",
-        "color": "668F04",
-        "description": "Awaiting completion of a PR from a contributor"
-    }
-    print("[cyan]Creating 'awaiting pr' label...[/cyan]")
-    github.rest.issues.create_label(owner=owner, repo=answers["repo_name"], data=awaiting_pr_label_data)
-    blocked_label_data = {
-        "name": "blocked",
-        "color": "B60205",
-        "description": "Blocked by an external dependency"
-    }
-    print("[cyan]Creating 'blocked' label...[/cyan]")
-    github.rest.issues.create_label(owner=owner, repo=answers["repo_name"], data=blocked_label_data)
+    current_label_content = github.rest.issues.list_labels_for_repo(owner=owner, repo=answers["repo_name"])
+    current_labels = [x.name for x in current_label_content.parsed_data]
+
+    if "awaiting_pr" not in current_labels: 
+        awaiting_pr_label_data = {
+            "name": "awaiting pr",
+            "color": "668F04",
+            "description": "Awaiting completion of a PR from a contributor"
+        }
+        print("[cyan]Creating 'awaiting pr' label...[/cyan]")
+        github.rest.issues.create_label(owner=owner, repo=answers["repo_name"], data=awaiting_pr_label_data)
+    if "blocked" not in current_labels:
+        blocked_label_data = {
+            "name": "blocked",
+            "color": "B60205",
+            "description": "Blocked by an external dependency"
+        }
+        print("[cyan]Creating 'blocked' label...[/cyan]")
+        github.rest.issues.create_label(owner=owner, repo=answers["repo_name"], data=blocked_label_data)
 
     # Workflow Permissions
     workflow_perm_data = {
