@@ -93,6 +93,8 @@ def repo_settings_github(c, answers_json):
         }
         print("[cyan]Creating 'awaiting pr' label...[/cyan]")
         github.rest.issues.create_label(owner=owner, repo=answers["repo_name"], data=awaiting_pr_label_data)
+    else:
+        print("[yellow]Label 'awaiting pr' already exists, skipping creation.[/yellow]")
     if "blocked" not in current_labels:
         blocked_label_data = {
             "name": "blocked",
@@ -101,6 +103,8 @@ def repo_settings_github(c, answers_json):
         }
         print("[cyan]Creating 'blocked' label...[/cyan]")
         github.rest.issues.create_label(owner=owner, repo=answers["repo_name"], data=blocked_label_data)
+    else:
+        print("[yellow]Label 'blocked' already exists, skipping creation.[/yellow]")
 
     # Workflow Permissions
     workflow_perm_data = {
@@ -121,38 +125,43 @@ def branch_protection_ruleset_github(c, answers_json):
 
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
-    ruleset_data = {
-        "name": "default-branch-protection",
-        "enforcement": "active",
-        "target": "branch",
-        "bypass_actors": [],
-        "conditions": {"ref_name": {"exclude": [], "include": ["~DEFAULT_BRANCH"]}},
-        "rules": [
-            {"type": "deletion"},
-            {"type": "non_fast_forward"},
-            {
-                "type": "pull_request",
-                "dismiss_stale_reviews_on_push": False,
-                "require_code_owner_review": False,
-                "require_last_push_approval": False,
-                "required_approving_review_count": 0,
-                "required_review_thread_resolution": False
-            },
-            {
-            "type": "required_status_checks",
-                "parameters": {
-                    "strict_required_status_checks_policy": False,
-                    "required_status_checks": [
-                        {
-                            "context": "status_checks_pr"
-                        }
-                    ]
+    rulesets_content = github.rest.repos.get_repo_rulesets(owner=owner, repo=answers["repo_name"])
+    rulesets = [x.name for x in rulesets_content.parsed_data]
+    if "default-branch-protection" not in rulesets: 
+        ruleset_data = {
+            "name": "default-branch-protection",
+            "enforcement": "active",
+            "target": "branch",
+            "bypass_actors": [],
+            "conditions": {"ref_name": {"exclude": [], "include": ["~DEFAULT_BRANCH"]}},
+            "rules": [
+                {"type": "deletion"},
+                {"type": "non_fast_forward"},
+                {
+                    "type": "pull_request",
+                    "dismiss_stale_reviews_on_push": False,
+                    "require_code_owner_review": False,
+                    "require_last_push_approval": False,
+                    "required_approving_review_count": 0,
+                    "required_review_thread_resolution": False
+                },
+                {
+                "type": "required_status_checks",
+                    "parameters": {
+                        "strict_required_status_checks_policy": False,
+                        "required_status_checks": [
+                            {
+                                "context": "status_checks_pr"
+                            }
+                        ]
+                    }
                 }
-            }
-        ]
-    }
-    print("[cyan]Creating branch protection ruleset...[/cyan]")
-    github.rest.repos.create_repo_ruleset(owner=owner, repo=answers["repo_name"], data=ruleset_data)
+            ]
+        }
+        print("[cyan]Creating branch protection ruleset...[/cyan]")
+        github.rest.repos.create_repo_ruleset(owner=owner, repo=answers["repo_name"], data=ruleset_data)
+    else:
+        print("[yellow]Repo ruleset 'default-branch-protection' already exists, skipping creation. Please verify this ruleset was made by this template or GitHub Actions workflows might not work correctly![/yellow]")
     print("[bold green]*** 'branch_protection_ruleset_github' task end ***[/bold green]")
 
 @task

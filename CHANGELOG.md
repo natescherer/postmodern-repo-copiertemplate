@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - License file generation
+- Better handling of tags and repo rulesets already existing
 
 ## [0.1.3] - 2024-03-28
 ### Fixed
