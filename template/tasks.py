@@ -17,7 +17,7 @@ from rich import print
 def unpack_and_delete_template_zip(c):
     """For project_type == 'Template', unpack and delete template/clean_template.zip"""
     print("[bold green]*** 'unpack_and_delete_template_zip' task start ***[/bold green]")
-    shutil.unpack_archive("template_copy.zip", "template")
+    shutil.unpack_archive("template_copy.zip", ".")
     print("[bold green]*** 'unpack_and_delete_template_zip' task end ***[/bold green]")
 
 @task
