@@ -2,10 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-    inputs:
-      ReleaseHeader:
-        description: The header to be added to the release.
-        required: false
 
 permissions:
   contents: write
@@ -40,30 +36,13 @@ jobs:
         with:
           filename: template/template_copy.zip
           path: template
-      - name: Push SemVer Tag
-        uses: rickstaa/action-create-tag@v1
-        with:
-          tag: v${{ steps.gitversion.outputs.SemVer }}
-      - name: Push 'latest' Tag
-        uses: rickstaa/action-create-tag@v1
-        with:
-          tag: latest
+      - name: Create Tags
+        run: |
+          git tag -a v${{ steps.gitversion.outputs.SemVer }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           base: main
-          commit-message: Release v${{ steps.gitversion.outputs.SemVer }}
+          commit-message: "chore: release v${{ steps.gitversion.outputs.SemVer }}"
           branch: release/v${{ steps.gitversion.outputs.SemVer }}
-          title: Release v${{ steps.gitversion.outputs.SemVer }}
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: v${{ steps.gitversion.outputs.SemVer }}
-          files: 'out'
-          tag_name: v${{ steps.gitversion.outputs.SemVer }}
-          body: |
-            # Release v${{ steps.gitversion.outputs.SemVer }}
-            ${{ github.event.inputs.ReleaseHeader}}
-
-            ## Changes
-            ${{ steps.changelog.outputs.releasenotes }}
+          title: "chore: release v${{ steps.gitversion.outputs.SemVer }}"
