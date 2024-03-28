@@ -48,6 +48,6 @@ jobs:
         run: |
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
-          git checkout release/${{ steps.gitversion.outputs.SemVer }}
+          git checkout release/v${{ steps.gitversion.outputs.SemVer }}
           git tag -a v${{ steps.gitversion.outputs.SemVer }} -m v${{ steps.gitversion.outputs.SemVer }}
           git push origin --tags
