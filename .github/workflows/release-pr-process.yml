@@ -1,12 +1,13 @@
 name: Create Release on PR Merge
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  pull_request_target:
+    types:
+      - closed
 
 jobs:
   create_release:
+    if: github.event.pull_request.merged == true && startsWith(github.base_ref, "release/")
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
