@@ -1,4 +1,4 @@
-name: Release
+name: Start Release Process
 
 on:
   workflow_dispatch:
@@ -36,11 +36,6 @@ jobs:
         with:
           filename: template/template_copy.zip
           path: template
-      - name: Create Tags
-        run: |
-          git config user.name ${{ github.actor }}
-          git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
-          git tag -a v${{ steps.gitversion.outputs.SemVer }} -m v${{ steps.gitversion.outputs.SemVer }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
@@ -48,3 +43,11 @@ jobs:
           commit-message: "chore: release v${{ steps.gitversion.outputs.SemVer }}"
           branch: release/v${{ steps.gitversion.outputs.SemVer }}
           title: "chore: release v${{ steps.gitversion.outputs.SemVer }}"
+          body: Metadata update for release v${{ steps.gitversion.outputs.SemVer }}
+      - name: Create Tags in PR
+        run: |
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+          git checkout release/${{ steps.gitversion.outputs.SemVer }}
+          git tag -a v${{ steps.gitversion.outputs.SemVer }} -m v${{ steps.gitversion.outputs.SemVer }}
+          git push origin --tags
