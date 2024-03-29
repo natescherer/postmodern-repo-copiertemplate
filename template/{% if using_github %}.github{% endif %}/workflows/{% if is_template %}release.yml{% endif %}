@@ -42,6 +42,7 @@ jobs:
           path: template
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
+        id: cpr
         with:
           base: main
           commit-message: "chore: release v${{ steps.gitversion.outputs.SemVer }}"
@@ -55,6 +56,10 @@ jobs:
           git checkout release/v${{ steps.gitversion.outputs.SemVer }}
           git tag -a v${{ steps.gitversion.outputs.SemVer }} -m v${{ steps.gitversion.outputs.SemVer }}
           git push origin --tags
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
