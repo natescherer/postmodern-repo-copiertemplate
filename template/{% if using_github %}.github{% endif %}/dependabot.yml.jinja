@@ -5,18 +5,10 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-    groups:
-      github-actions:
-        patterns:
-           - "*"
 
 {% if project_type == 'Template' -%}
   - package-ecosystem: "github-actions"
-    directory: "/{{ repo_name }}/.github/workflows"
+    directory: /template/.github/workflows
     schedule:
       interval: "monthly"
-    groups:
-      github-actions-in-template:
-        patterns:
-           - "*"
 {%- endif %}

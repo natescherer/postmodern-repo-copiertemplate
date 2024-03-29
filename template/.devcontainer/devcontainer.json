@@ -1,0 +1,32 @@
+{
+  "name": "postmodern-tools",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".",
+    "args": {
+      "NONROOT_USER": "vscode"
+    }
+  },
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/natescherer/devcontainers-custom-features/hypermodern-python:1": {
+      "versions": "3.11", // 'azure-devops' python packages pins us at 3.11, see https://github.com/microsoft/azure-devops-python-api/issues/461
+      "requirementsFile": "/opt/devcontainer/requirements.txt"
+    }
+  },
+  "onCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
+  "mounts": [
+      "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/host-home,type=bind,consistency=cached"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "samuelcolvin.jinjahtml",
+        "streetsidesoftware.code-spell-checker",
+        "KnisterPeter.vscode-commitizen",
+        "trunk.io"
+      ]
+    }
+  }
+}
