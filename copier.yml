@@ -151,14 +151,6 @@ author_name:
   help: The name to whom this project will be credited. Autodetect attempted from Git 'user.name'.
   default: "{{ 'git config --global user.name' | shell() | trim }}"
 
-documentation:
-  type: str
-  help: Which doc files to include in the generated project.
-  choices:
-    PythonDoc: Python Install Documentation
-  multiselect: true
-  when: "{{ project_type != 'Template' }}"
-
 ## Computed Values
 
 using_github:

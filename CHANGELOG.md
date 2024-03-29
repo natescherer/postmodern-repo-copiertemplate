@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Validators won't block upgrades anymore
+- Documentation is automatically chosen
 
 ## [0.1.4] - 2024-03-28
 ### Fixed
