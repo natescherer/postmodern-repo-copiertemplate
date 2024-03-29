@@ -81,6 +81,14 @@ def repo_settings_github(c, answers_json):
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
 
+    # Auto-merge and delete branch on merge
+    if not answers["github_org"]:
+        repo_data = {
+            "allow_auto_merge": True,
+            "delete_branch_on_merge": True
+        }
+        github.rest.repos.update(owner=owner, repo=answers["repo_name"], data=repo_data)
+
     # Labels
     current_label_content = github.rest.issues.list_labels_for_repo(owner=owner, repo=answers["repo_name"])
     current_labels = [x.name for x in current_label_content.parsed_data]
