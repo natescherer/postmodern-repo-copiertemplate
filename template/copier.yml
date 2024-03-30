@@ -46,7 +46,7 @@ github_token:
   help: |
     A GitHub Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
   when: "{{ developer_platform == 'GitHub' and repo_actions != 'None' }}"
-  validator: "{% if github_token is not valid_gh_token and (developer_platform == 'GitHub' and repo_actions != 'None') %}GitHub Token Invalid{% endif %}"
+  # validator: "{% if github_token is not valid_gh_token and (developer_platform == 'GitHub' and repo_actions != 'None') %}GitHub Token Invalid{% endif %}"
 
 github_username:
   type: str
@@ -63,7 +63,7 @@ azdo_org:
   type: str
   help: The Azure DevOps organization to use for the new project.
   when: "{{ developer_platform == 'Azure DevOps' }}"
-  validator: "{% if azdo_org is not extant_azdo_org %}Azure DevOps Organization Does Not Exist{% endif %}"
+  # validator: "{% if azdo_org is not extant_azdo_org %}Azure DevOps Organization Does Not Exist{% endif %}"
 
 azdo_token:
   type: str
@@ -72,41 +72,41 @@ azdo_token:
   help: |
     An Azure DevOps Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
   when: "{{ developer_platform == 'Azure DevOps' and repo_actions != 'None' }}"
-  validator: "{% if azdo_token is not valid_azdo_token_for_org(azdo_org) and (developer_platform == 'Azure DevOps' and repo_actions != 'None') %}Azure DevOps Token Invalid{% endif %}"
+  # validator: "{% if azdo_token is not valid_azdo_token_for_org(azdo_org) and (developer_platform == 'Azure DevOps' and repo_actions != 'None') %}Azure DevOps Token Invalid{% endif %}"
 
 azdo_project:
   type: str
   help: An Azure DevOps project in organization '{{ azdo_org }}'.
   when: "{{ developer_platform == 'Azure DevOps' }}"
-  validator: "{% if azdo_project is not valid_azdo_project_for_token_and_org(azdo_token, azdo_org) %}Azure DevOps Project Doesn't Exist{% endif %}"
+  # validator: "{% if azdo_project is not valid_azdo_project_for_token_and_org(azdo_token, azdo_org) %}Azure DevOps Project Doesn't Exist{% endif %}"
 
 repo_name:
   type: str
   help: |
     The name of this project's Git repository. Will be {% if repo_actions == 'Create Repo' %}created{% else %}reused{% endif %} by this template.
   when: "{{ repo_actions != 'None' }}"
-  validator: |
-    {% if repo_actions == 'Create Repo' -%}
-      {%- if developer_platform == 'GitHub' -%}
-        {%- if repo_name is not available_gh_repo_name_for_owner(github_username) -%}
-          GitHub Repo {{ github_username }}/{{ repo_name }} already exists
-        {%- endif -%}
-      {%- elif developer_platform == 'Azure DevOps' -%}
-        {%- if repo_name is not available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
-          Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} already exists
-        {%- endif -%}
-      {%- endif -%}
-    {%- else -%}
-      {%- if developer_platform == 'GitHub' -%}
-        {%- if repo_name is available_gh_repo_name_for_owner(github_username) -%}
-          GitHub Repo {{ github_username }}/{{ repo_name }} does not exist
-        {%- endif -%}
-      {%- elif developer_platform == 'Azure DevOps' -%}
-        {%- if repo_name is available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
-          Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} does not exist
-        {%- endif -%}
-      {%- endif -%}
-    {%- endif %}
+  # validator: |
+  #   {% if repo_actions == 'Create Repo' -%}
+  #     {%- if developer_platform == 'GitHub' -%}
+  #       {%- if repo_name is not available_gh_repo_name_for_owner(github_username) -%}
+  #         GitHub Repo {{ github_username }}/{{ repo_name }} already exists
+  #       {%- endif -%}
+  #     {%- elif developer_platform == 'Azure DevOps' -%}
+  #       {%- if repo_name is not available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
+  #         Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} already exists
+  #       {%- endif -%}
+  #     {%- endif -%}
+  #   {%- else -%}
+  #     {%- if developer_platform == 'GitHub' -%}
+  #       {%- if repo_name is available_gh_repo_name_for_owner(github_username) -%}
+  #         GitHub Repo {{ github_username }}/{{ repo_name }} does not exist
+  #       {%- endif -%}
+  #     {%- elif developer_platform == 'Azure DevOps' -%}
+  #       {%- if repo_name is available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
+  #         Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} does not exist
+  #       {%- endif -%}
+  #     {%- endif -%}
+  #   {%- endif %} #}
 
 project_type:
   type: str
