@@ -85,28 +85,28 @@ repo_name:
   help: |
     The name of this project's Git repository. Will be {% if repo_actions == 'Create Repo' %}created{% else %}reused{% endif %} by this template.
   when: "{{ repo_actions != 'None' }}"
-  {# validator: |
-    {% if repo_actions == 'Create Repo' -%}
-      {%- if developer_platform == 'GitHub' -%}
-        {%- if repo_name is not available_gh_repo_name_for_owner(github_username) -%}
-          GitHub Repo {{ github_username }}/{{ repo_name }} already exists
-        {%- endif -%}
-      {%- elif developer_platform == 'Azure DevOps' -%}
-        {%- if repo_name is not available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
-          Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} already exists
-        {%- endif -%}
-      {%- endif -%}
-    {%- else -%}
-      {%- if developer_platform == 'GitHub' -%}
-        {%- if repo_name is available_gh_repo_name_for_owner(github_username) -%}
-          GitHub Repo {{ github_username }}/{{ repo_name }} does not exist
-        {%- endif -%}
-      {%- elif developer_platform == 'Azure DevOps' -%}
-        {%- if repo_name is available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
-          Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} does not exist
-        {%- endif -%}
-      {%- endif -%}
-    {%- endif %} #}
+  # validator: |
+  #   {% if repo_actions == 'Create Repo' -%}
+  #     {%- if developer_platform == 'GitHub' -%}
+  #       {%- if repo_name is not available_gh_repo_name_for_owner(github_username) -%}
+  #         GitHub Repo {{ github_username }}/{{ repo_name }} already exists
+  #       {%- endif -%}
+  #     {%- elif developer_platform == 'Azure DevOps' -%}
+  #       {%- if repo_name is not available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
+  #         Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} already exists
+  #       {%- endif -%}
+  #     {%- endif -%}
+  #   {%- else -%}
+  #     {%- if developer_platform == 'GitHub' -%}
+  #       {%- if repo_name is available_gh_repo_name_for_owner(github_username) -%}
+  #         GitHub Repo {{ github_username }}/{{ repo_name }} does not exist
+  #       {%- endif -%}
+  #     {%- elif developer_platform == 'Azure DevOps' -%}
+  #       {%- if repo_name is available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
+  #         Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} does not exist
+  #       {%- endif -%}
+  #     {%- endif -%}
+  #   {%- endif %} #}
 
 project_type:
   type: str
