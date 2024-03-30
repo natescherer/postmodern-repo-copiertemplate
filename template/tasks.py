@@ -201,6 +201,8 @@ def initialize_and_commit(c, answers_json):
 @task
 def delete_files(c):
     """Delete files used only in the template build process, including this tasks.py file"""
+    print("[bold green]*** 'delete_files' task start ***[/bold green]")
     os.remove("template_copy.zip")
     os.remove("token.json")
     os.remove(__file__)
+    print("[bold green]*** 'delete_files' task end ***[/bold green]")
