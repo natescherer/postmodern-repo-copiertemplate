@@ -1,6 +1,9 @@
-# postmodern-repo-copiertemplate
+# Postmodern Repo Copier Template
 
 [![All Contributors][all-contributors-badge]](#contributors)
+
+| :exclamation:  Notice: This project is currently in a Pre-Alpha state and is not ready for public use.  |
+|-----------------------------------------|
 
 A [Copier][copier] template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
 
