@@ -151,7 +151,7 @@ license:
   when: "{{ project_visibility == 'public' }}"
 
 lifecycle:
-  type: choice
+  type: str
   help: Choose what state this project is in.
   choices:
     - Pre-Alpha
