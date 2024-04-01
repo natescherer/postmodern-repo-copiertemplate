@@ -1,5 +1,5 @@
 mode: ContinuousDeployment
-next-version: 0.1.0
+next-version: {% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}
 continuous-delivery-fallback-tag: ''
 branches:
   main:
