@@ -195,6 +195,7 @@ is_template:
 is_prerelease:
   type: bool
   default: "{% if lifecycle == 'Pre-Alpha' or lifecycle == 'Alpha' or lifecycle == 'Beta' %}true{% endif %}"
+  when: falsecopier.yml
 
 should_create_repo:
   type: bool
