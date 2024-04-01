@@ -62,7 +62,7 @@ github_username:
 github_org:
   type: str
   help: (OPTIONAL) If this repo {% if repo_actions == 'Create Repo' %} should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here.
-  when: "{{ developer_platform == 'GitHub' and repo_actions != 'None' }}"
+  when: "{{ developer_platform == 'GitHub' }}"
 
 azdo_org:
   type: str
@@ -89,7 +89,6 @@ repo_name:
   type: str
   help: |
     The name of this project's Git repository. Will be {% if repo_actions == 'Create Repo' %}created{% else %}reused{% endif %} by this template.
-  when: "{{ repo_actions != 'None' }}"
   # validator: |
   #   {% if repo_actions == 'Create Repo' -%}
   #     {%- if developer_platform == 'GitHub' -%}
@@ -195,7 +194,7 @@ is_template:
 
 is_prerelease:
   type: bool
-  default: "{% if project_type == 'Pre-Alpha' or project_type == 'Alpha' or project_type == 'Beta' %}true{% endif %}"
+  default: "{% if lifecycle == 'Pre-Alpha' or lifecycle == 'Alpha' or lifecycle == 'Beta' %}true{% endif %}"
 
 should_create_repo:
   type: bool
