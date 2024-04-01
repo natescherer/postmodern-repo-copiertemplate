@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Remove copier.yml 'when' statements that caused important answers to be lost on template updates
+- Remove template_copy.zip before generating new one
 
 ## [0.1.8] - 2024-04-01
 ### Added

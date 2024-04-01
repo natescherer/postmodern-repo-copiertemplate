@@ -35,6 +35,8 @@ jobs:
         with:
           mode: release
           releaseVersion: ${{ steps.gitversion.outputs.SemVer }}
+      - run: rm template/template_copy.zip
+        name: Remove Old template_copy.zip
       - name: Create Template Zip
         uses: thedoctor0/zip-release@0.7.6
         with:
