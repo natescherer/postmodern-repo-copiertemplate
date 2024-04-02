@@ -32,7 +32,8 @@ jobs:
           node-version: lts/*
       - name: Run 'commit-and-tag-version'
         id: commit-and-tag-version
-        pwsh: |
+        shell: pwsh
+        run: |
           {% raw %}git config user.name ${{ github.actor }}{% endraw %}
           {% raw %}git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com{% endraw %}
 
@@ -66,7 +67,7 @@ jobs:
         with:
           mode: release
           releaseVersion: {% raw %}${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
-{%- endif -%}
+{%- endif %}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         id: cpr
