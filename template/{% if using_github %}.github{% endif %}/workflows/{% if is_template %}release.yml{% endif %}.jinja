@@ -1,0 +1,83 @@
+name: Release Template
+
+on:
+  workflow_dispatch:
+    inputs:
+      ReleaseHeader:
+        description: The header to be added to the release.
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  MINIMUM_VERSION: {% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: lts
+      - name: Run 'commit-and-tag-version'
+        id: commit-and-tag-version
+        pwsh: |
+          $TempFilePath = version-tempfile-for-ci-output.txt
+          New-Item -ItemType File -Path $TempFilePath
+          $LatestTag = git tag -l v* --sort=-v:refname | Select-Object -First 1
+          if (($null -eq $LatestTag) -or ([System.Version]$LatestTag -gt [System.Version]$env:MINIMUM_VERSION)) {
+            npx --yes commit-and-tag-version --release-as $env:MINIMUM_VERSION
+          } else {
+            npx --yes commit-and-tag-version
+          }
+          "newVersion=$(Get-Content -Path $TempFilePath)"
+          Get-Content -Path $TempFilePath | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf-8 -Append
+          Remove-Item -Path $TempFilePath
+{% if using_cc -%}
+      - name: Update Changelog
+        id: changelog
+        uses: natescherer/changelog-management-action@v1
+        with:
+          mode: release
+          releaseVersion: ${{ steps.commit-and-tag-version.outputs.newVersion }}
+{%- endif %}
+      - name: Create Template Zip
+        uses: thedoctor0/zip-release@0.7.6
+        with:
+          filename: template/template_copy.zip
+          path: template
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        id: cpr
+        with:
+          base: main
+          commit-message: "chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"
+          branch: release/v${{ steps.commit-and-tag-version.outputs.newVersion }}
+          title: "chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"
+          body: Metadata update for release v${{ steps.commit-and-tag-version.outputs.newVersion }}
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: v${{ steps.commit-and-tag-version.outputs.newVersion }}
+          files: 'out'
+          tag_name: v${{ steps.commit-and-tag-version.outputs.newVersion }}
+          body: |
+            # Release v${{ steps.commit-and-tag-version.outputs.newVersion }}
+            ${{ github.event.inputs.ReleaseHeader}}
+
+            ## Changes
+            ${{ steps.changelog.outputs.releasenotes }}

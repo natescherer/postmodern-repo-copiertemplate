@@ -150,6 +150,13 @@ license:
     - Provide Own
   when: "{{ project_visibility == 'public' }}"
 
+changelog_type:
+  type: str
+  help: Choose the type of changelog you want this project to use.
+  choices:
+    - Keep a Changelog
+    - Conventional Changelog
+
 lifecycle:
   type: str
   help: Choose what state this project is in.
@@ -175,6 +182,16 @@ using_azdo:
 using_mit:
   type: bool
   default: "{% if license == 'MIT' %}true{% endif %}"
+  when: false
+
+using_kac:
+  type: bool
+  default: "{% if changelog_type == 'Keep a Changelog' %}true{% endif %}"
+  when: false
+
+using_cc:
+  type: bool
+  default: "{% if changelog_type == 'Conventional Changelog' %}true{% endif %}"
   when: false
 
 is_public:
