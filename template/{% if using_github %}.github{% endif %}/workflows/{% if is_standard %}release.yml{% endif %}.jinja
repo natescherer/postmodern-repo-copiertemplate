@@ -65,22 +65,17 @@ jobs:
         uses: natescherer/changelog-management-action@v1
         with:
           mode: release
-          releaseVersion: {% raw %}${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
+          releaseVersion: {% raw %}${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
 {%- endif -%}
-      - name: Create Template Zip
-        uses: thedoctor0/zip-release@0.7.6
-        with:
-          filename: template/template_copy.zip
-          path: template
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         id: cpr
         with:
           base: main
-          commit-message: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"{% endraw %}
-          branch: {% raw %}release/v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
-          title: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"{% endraw %}
-          body: {% raw %}Metadata update for release v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
+          commit-message: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newversion }}"{% endraw %}
+          branch: {% raw %}release/v${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
+          title: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newversion }}"{% endraw %}
+          body: {% raw %}Metadata update for release v${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
       - name: Enable Pull Request Automerge
         run: {% raw %}gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"{% endraw %}
         env:
@@ -88,11 +83,11 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
+          name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
           files: out
-          tag_name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
+          tag_name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
           body: |
-            {% raw %}# Release v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
+            {% raw %}# Release v${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
             {% raw %}${{ github.event.inputs.ReleaseHeader}}{% endraw %}
 
             ## Changes

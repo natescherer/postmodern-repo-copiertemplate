@@ -5,9 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## Added
+- Support for choosing between Keep a Changelog and Conventional Changelog
+
 ## Fixed
 - Update bad variable in standard project readme
 - 'template_copy.zip' will no longer be committed to git for template repos
+
+## Changed
+- GitVersion replaced with commit-and-tag-version
 
 ## [0.1.12] - 2024-04-01
 ### Fixed
