@@ -2,10 +2,6 @@ name: Release Template
 
 on:
   workflow_dispatch:
-    inputs:
-      ReleaseHeader:
-        description: The header to be added to the release.
-        required: false
 
 permissions:
   contents: write
@@ -57,9 +53,7 @@ jobs:
           Out-File -InputObject $VersionOutput -FilePath $env:GITHUB_OUTPUT -Encoding utf-8 -Append
           Remove-Item -Path $TempFilePath
 
-          [string]$ReleaseNotes = npx --yes extract-changelog-release
-          $ReleaseNotesOutput = "releasenotes=$ReleaseNotesOutput"
-          Out-File -InputObject $ReleaseNotesOutput -FilePath $env:GITHUB_OUTPUT -Encoding utf-8 -Append
+          npx --yes extract-changelog-release | Out-File -FilePath $env:RUNNER_TEMP/releasenotes.txt
 {%- if using_kac %}
       - name: Update Changelog
         id: changelog
@@ -81,7 +75,11 @@ jobs:
           commit-message: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"{% endraw %}
           branch: {% raw %}release/v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
           title: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"{% endraw %}
-          body: {% raw %}Metadata update for release v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
+{%- if using_kac %}
+          body: {% raw %}${{ steps.changelog.outputs.releasenotes }}{% endraw %}
+{%- else -%}
+          body-path: {% raw %}${{ runner.temp }}/releasenotes.txt{% endraw %}
+{%- endif %}
       - name: Enable Pull Request Automerge
         run: {% raw %}gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"{% endraw %}
         env:
@@ -92,13 +90,8 @@ jobs:
           name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
           files: out
           tag_name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
-          body: |
-            {% raw %}# Release v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
-            {% raw %}${{ github.event.inputs.ReleaseHeader}}{% endraw %}
-
-            ## Changes
 {%- if using_kac %}
-            {% raw %}${{ steps.changelog.outputs.releasenotes }}{% endraw %}
+          body: {% raw %}${{ steps.changelog.outputs.releasenotes }}{% endraw %}
 {%- else -%}
-            {% raw %}${{ steps.commit-and-tag-version.outputs.releasenotes }}{% endraw %}
+          body_path: {% raw %}${{ runner.temp }}/releasenotes.txt{% endraw %}
 {%- endif %}
