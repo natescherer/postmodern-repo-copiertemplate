@@ -182,7 +182,7 @@ def initialize_and_commit(c, answers_json):
     print("[cyan]Initializing git repo with 'main' branch...[/cyan]")
     c.run("git init -b main")
     print("[cyan]Adding files to commit...[/cyan]")
-    c.run("git add --all -- ':!tasks.py' ':!token.json'")
+    c.run("git add --all -- ':!tasks.py' ':!token.json' ':!template_copy.zip'")
     print("[cyan]Committing...[/cyan]")
     c.run("git commit -m 'feat: initialize project'")
     if answers["developer_platform"] == "GitHub":
