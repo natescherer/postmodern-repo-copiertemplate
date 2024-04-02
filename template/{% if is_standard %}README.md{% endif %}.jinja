@@ -4,7 +4,7 @@
 [![All Contributors][all-contributors-badge]](#contributors)
 {%- endif %}
 {% if is_prerelease -%}
-| :exclamation:  Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or project_state == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}.  |
+| :exclamation:  Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or lifecycle == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}.  |
 |-----------------------------------------|
 {%- endif -%}
 {%- if lifecycle == "Inactive" -%}
