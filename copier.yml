@@ -242,7 +242,7 @@ _tasks:
     invoke repo-create-azdo --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
-    {%- if should_set_repo_settings -%}
+    {%- if should_set_repo_settings and using_github -%}
     invoke repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
