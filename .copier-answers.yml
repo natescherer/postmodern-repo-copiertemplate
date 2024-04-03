@@ -1,7 +1,8 @@
 # Changes here will be overwritten by Copier
-_commit: v0.1.12
+_commit: v0.1.15
 _src_path: gh:natescherer/postmodern-repo-copiertemplate
 author_name: Nate Scherer
+changelog_type: Keep a Changelog
 developer_platform: GitHub
 github_org: ''
 github_username: natescherer

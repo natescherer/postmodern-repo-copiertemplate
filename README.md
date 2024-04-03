@@ -1,7 +1,6 @@
 # Postmodern Repo Copier Template
 
 [![All Contributors][all-contributors-badge]](#contributors)
-
 | :exclamation:  Notice: This project is currently in a Pre-Alpha state and is not ready for public use.  |
 |-----------------------------------------|
 
@@ -108,7 +107,6 @@ If you have questions, comments, etc, please enter a GitHub Issue with the "ques
 ## Contributing/Bug Reporting
 
 Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
 
 ## Contributors
 
