@@ -62,13 +62,14 @@ jobs:
           mode: release
           releaseVersion: {% raw %}${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
 {%- endif %}
-      - run: Remove-Item -Path template/template_copy.zip
+      - run: Remove-Item -Path template/template_copy.tar.gz
         shell: pwsh
-        name: Remove Old template_copy.zip
-      - name: Create Template Zip
+        name: Remove Old template_copy.tar.gz
+      - name: Create Template Tarball
         uses: thedoctor0/zip-release@0.7.6
         with:
-          filename: template/template_copy.zip
+          type: tar
+          filename: template/template_copy.tar.gz
           path: template
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
@@ -83,7 +84,7 @@ jobs:
 {%- else -%}
           body-path: {% raw %}${{ runner.temp }}/releasenotes.txt{% endraw %}
 {%- endif %}
-      # This step can be removed once zip creation can be moved into the template and out of the action
+      # This step can be removed once tarball creation can be moved into the template and out of the action
       - run: |
           {% raw %}
           git config user.name ${{ github.actor }}

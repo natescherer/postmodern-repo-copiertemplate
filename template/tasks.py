@@ -15,11 +15,11 @@ from invoke import task
 from rich import print
 
 @task
-def unpack_and_delete_template_zip(c):
-    """For project_type == 'Template', unpack and delete template/clean_template.zip"""
-    print("[bold green]*** 'unpack-and-delete-template-zip' task start ***[/bold green]")
-    shutil.unpack_archive("template_copy.zip", ".")
-    print("[bold green]*** 'unpack-and-delete-template-zip' task end ***[/bold green]")
+def unpack_and_delete_template_tarball(c):
+    """For project_type == 'Template', unpack and delete template/clean_template.tarball"""
+    print("[bold green]*** 'unpack-and-delete-template-tarball' task start ***[/bold green]")
+    shutil.unpack_archive("template_copy.tar.gz", ".")
+    print("[bold green]*** 'unpack-and-delete-template-tarball' task end ***[/bold green]")
 
 @task
 def create_repo_github(c, answers_json):
@@ -183,7 +183,7 @@ def initialize_repo_and_commit_files(c, answers_json):
     print("[cyan]Initializing git repo with 'main' branch...[/cyan]")
     c.run("git init -b main")
     print("[cyan]Adding files to commit...[/cyan]")
-    c.run("git add --all -- ':!tasks.py' ':!token.json' ':!template_copy.zip'")
+    c.run("git add --all -- ':!tasks.py' ':!token.json' ':!template_copy.tar.gz'")
     print("[cyan]Committing...[/cyan]")
     c.run("git commit -m 'feat: initialize project'")
     if answers["developer_platform"] == "GitHub":
@@ -242,7 +242,7 @@ def create_pipelines_azdo(c, answers_json):
 def delete_unneeded_template_files(c):
     """Delete files used only in the template build process, including this tasks.py file"""
     print("[bold green]*** 'delete-unneeded-template-files' task start ***[/bold green]")
-    os.remove("template_copy.zip")
+    os.remove("template_copy.tar.gz")
     os.remove("token.json")
     os.remove(__file__)
     print("[bold green]*** 'delete-unneeded-template-files' task end ***[/bold green]")

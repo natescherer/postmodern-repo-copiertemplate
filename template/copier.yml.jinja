@@ -242,7 +242,7 @@ should_set_repo_settings:
 _tasks:
   - >-
   {%- if is_template -%}
-  invoke unpack-and-delete-template-zip
+  invoke unpack-and-delete-template-tarball
   {%- endif -%}
   - invoke set-inherited-variables --answers-json '{{ _copier_answers | to_json }}'
   - >-

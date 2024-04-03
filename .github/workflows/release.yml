@@ -57,13 +57,14 @@ jobs:
         with:
           mode: release
           releaseVersion: ${{ steps.commit-and-tag-version.outputs.newVersion }}
-      - run: Remove-Item -Path template/template_copy.zip
+      - run: Remove-Item -Path template/template_copy.tar.gz
         shell: pwsh
-        name: Remove Old template_copy.zip
-      - name: Create Template Zip
+        name: Remove Old template_copy.tar.gz
+      - name: Create Template Tarball
         uses: thedoctor0/zip-release@0.7.6
         with:
-          filename: template/template_copy.zip
+          type: tar
+          filename: template/template_copy.tar.gz
           path: template
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
