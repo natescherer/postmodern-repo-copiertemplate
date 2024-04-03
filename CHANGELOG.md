@@ -5,45 +5,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add full automation for template inheritance links
 
 ## [0.1.18] - 2024-04-03
-## Added
+### Added
 - Make template inheritance links (somewhat) dynamic
-<<<<<<< Updated upstream
-=======
 
-## Fixed
+### Fixed
 - Commit formatting on Azure DevOps pipelines autocommits
->>>>>>> Stashed changes
 
 ## [0.1.17] - 2024-04-03
-## Fixed
+### Fixed
 - Actually fix versionrc.json parserOpts for Azure DevOps
 
 ## [0.1.16] - 2024-04-03
-## Fixed
+### Fixed
 - Jinja whitespace formatting in README docs
 - versionrc.json parserOpts for Azure DevOps
 - extract-changelog-release removed when in Keep a Changelog mode
 
 ## [0.1.15] - 2024-04-03
-## Added
+### Added
 - Add Azure DevOps template release pipeline
 - Add Azure DevOps pipeline creation
 
 ## [0.1.14] - 2024-04-02
-## Fixed
+### Fixed
 - Fix run statements in release workflows
 
 ## [0.1.13] - 2024-04-02
-## Added
+### Added
 - Support for choosing between Keep a Changelog and Conventional Changelog
 
-## Fixed
+### Fixed
 - Update bad variable in standard project readme
 - 'template_copy.zip' will no longer be committed to git for template repos
 
-## Changed
+### Changed
 - GitVersion replaced with commit-and-tag-version
 
 ## [0.1.12] - 2024-04-01

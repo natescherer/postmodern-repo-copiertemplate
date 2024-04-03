@@ -17,14 +17,14 @@ from rich import print
 @task
 def unpack_and_delete_template_zip(c):
     """For project_type == 'Template', unpack and delete template/clean_template.zip"""
-    print("[bold green]*** 'unpack_and_delete_template_zip' task start ***[/bold green]")
+    print("[bold green]*** 'unpack-and-delete-template-zip' task start ***[/bold green]")
     shutil.unpack_archive("template_copy.zip", ".")
-    print("[bold green]*** 'unpack_and_delete_template_zip' task end ***[/bold green]")
+    print("[bold green]*** 'unpack-and-delete-template-zip' task end ***[/bold green]")
 
 @task
-def repo_create_github(c, answers_json):
+def create_repo_github(c, answers_json):
     """Create a GitHub repo"""
-    print("[bold green]*** 'repo-create-github' task start ***[/bold green]")
+    print("[bold green]*** 'create-repo-github' task start ***[/bold green]")
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
@@ -35,7 +35,7 @@ def repo_create_github(c, answers_json):
         "name": answers["repo_name"],
         "description": answers["project_short_description"],
         "homepage": answers["project_website"],
-        "private": True if answers["project_visibility"] == "private" else False
+        "private": True if answers["project_visibility"] == "Private" else False
     }
     if answers["github_org"]:
         print("[cyan]Creating repo in GitHub organization...[/cyan]")
@@ -49,12 +49,12 @@ def repo_create_github(c, answers_json):
         )
         print("[cyan]Creating repo in GitHub user account...[/cyan]")
         github.rest.repos.create_for_authenticated_user(data=repo_data)
-    print("[bold green]*** 'repo-create-github' task end ***[/bold green]")
+    print("[bold green]*** 'create-repo-github' task end ***[/bold green]")
 
 @task
-def repo_create_azdo(c, answers_json):
+def create_repo_azdo(c, answers_json):
     """Create an Azure DevOps repo"""
-    print("[bold green]*** 'repo-create-azdo' task start ***[/bold green]")
+    print("[bold green]*** 'create-repo-azdo' task start ***[/bold green]")
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
@@ -68,12 +68,12 @@ def repo_create_azdo(c, answers_json):
     }
     print("[cyan]Creating repo in Azure DevOps...[/cyan]")
     git_client.create_repository(repo_data, project=answers["azdo_project"])
-    print("[bold green]*** 'repo-create-azdo' task end ***[/bold green]")
+    print("[bold green]*** 'create-repo-azdo' task end ***[/bold green]")
 
 @task
-def repo_settings_github(c, answers_json):
+def set_repo_settings_github(c, answers_json):
     """Set settings on a GitHub repo"""
-    print("[bold green]*** 'repo-settings-github' task start ***[/bold green]")
+    print("[bold green]*** 'set-repo-settings-github' task start ***[/bold green]")
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
@@ -121,12 +121,12 @@ def repo_settings_github(c, answers_json):
     }
     print("[cyan]Setting Actions workflow settings...[/cyan]")
     github.rest.actions.set_github_actions_default_workflow_permissions_repository(owner=owner, repo=answers["repo_name"], data=workflow_perm_data)
-    print("[bold green]*** 'repo-settings-github' task end ***[/bold green]")
+    print("[bold green]*** 'set-repo-settings-github' task end ***[/bold green]")
 
 @task
-def branch_protection_ruleset_github(c, answers_json):
+def set_branch_protection_ruleset_github(c, answers_json):
     """Set branch protection ruleset on a GitHub repo"""
-    print("[bold green]*** 'branch_protection_ruleset_github' task start ***[/bold green]")
+    print("[bold green]*** 'set-branch-protection-ruleset-github' task start ***[/bold green]")
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
@@ -171,12 +171,12 @@ def branch_protection_ruleset_github(c, answers_json):
         github.rest.repos.create_repo_ruleset(owner=owner, repo=answers["repo_name"], data=ruleset_data)
     else:
         print("[yellow]Repo ruleset 'default-branch-protection' already exists, skipping creation. Please verify this ruleset was made by this template or GitHub Actions workflows might not work correctly![/yellow]")
-    print("[bold green]*** 'branch_protection_ruleset_github' task end ***[/bold green]")
+    print("[bold green]*** 'set-branch-protection-ruleset-github' task end ***[/bold green]")
 
 @task
-def initialize_and_commit(c, answers_json):
+def initialize_repo_and_commit_files(c, answers_json):
     """Create an initial branch and commit files"""
-    print("[bold green]*** 'initialize_and_commit' task start ***[/bold green]")
+    print("[bold green]*** 'initialize-repo-and-commit-files' task start ***[/bold green]")
     answers = json.loads(answers_json)
     owner = answers.get("github_org") or answers.get("github_username")
 
@@ -197,15 +197,15 @@ def initialize_and_commit(c, answers_json):
     c.run(f"git remote add origin {remote_url}")
     print("[cyan]Pushing to remote...[/cyan]")
     c.run(f"git push -u origin --all")
-    print("[bold green]*** 'initialize_and_commit' task end ***[/bold green]")
+    print("[bold green]*** 'initialize-repo-and-commit-files' task end ***[/bold green]")
 
 @task
-def pipelines_create_azdo(c, answers_json):
+def create_pipelines_azdo(c, answers_json):
     """Register pipeliens for an Azure DevOps repo"""
     # Note that pipeline creation with the python module straight-up doesn't
     # work, so gotta do this the old-fashioned way.
     # See https://github.com/microsoft/azure-devops-python-api/issues/432
-    print("[bold green]*** 'pipelines_create_azdo' task start ***[/bold green]")
+    print("[bold green]*** 'create-pipelines-azdo' task start ***[/bold green]")
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
@@ -236,13 +236,13 @@ def pipelines_create_azdo(c, answers_json):
         "Accept": "application/json"
     }
     requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{answers['azdo_project']}/_apis/pipelines?api-version=7.1-preview.1", data=json.dumps(release_pipeline_data), auth=('', token), headers=headers)
-    print("[bold green]*** 'pipelines_create_azdo' task end ***[/bold green]")
+    print("[bold green]*** 'create-pipelines-azdo' task end ***[/bold green]")
 
 @task
-def delete_files(c):
+def delete_unneeded_template_files(c):
     """Delete files used only in the template build process, including this tasks.py file"""
-    print("[bold green]*** 'delete_files' task start ***[/bold green]")
+    print("[bold green]*** 'delete-unneeded-template-files' task start ***[/bold green]")
     os.remove("template_copy.zip")
     os.remove("token.json")
     os.remove(__file__)
-    print("[bold green]*** 'delete_files' task end ***[/bold green]")
+    print("[bold green]*** 'delete-unneeded-template-files' task end ***[/bold green]")

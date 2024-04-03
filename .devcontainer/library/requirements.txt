@@ -6,3 +6,4 @@ jinja2-shell-extension
 jinja2-time
 requests
 rich
+pyyaml-include==1.4.1

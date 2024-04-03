@@ -1,7 +1,14 @@
 ## Inherited Variables from Parent Template
-parent_template_name: Postmodern Repo Copier Template
-parent_template_url: https://github.com/natescherer/postmodern-repo-copiertemplate
+parent_template_name:
+  type: str
+  default: {{ project_name }}
+  when: false
+parent_template_url:
+  type: str
+  default: {% if using_github %}{% if github_org %}"https://github.com/{{ github_org }}/{{ repo_name }}"{% else %}"https://github.com/{{ github_username }}/{{ repo_name }}"{% endif %}{% endif %}{% if using_azdo %}"https://dev.azure.com/{{ azdo_org }}/{{ azdo_project }}/_git/{{ repo_name }}"{% endif %}
+  when: false
 
+{% raw %}
 ## Initial Settings
 
 _min_copier_version: "9.1.1"
@@ -140,10 +147,10 @@ project_visibility:
   help: Choose if you want this project to be Public or Private.
   choices:
     Public:
-      value: public
+      value: Public
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     Private:
-      value: private
+      value: Private
 
 license:
   type: str
@@ -151,7 +158,7 @@ license:
   choices:
     - MIT
     - Provide Own
-  when: "{{ project_visibility == 'public' }}"
+  when: "{{ project_visibility == 'Public' }}"
 
 changelog_type:
   type: str
@@ -159,7 +166,7 @@ changelog_type:
   choices:
     Keep a Changelog:
       value: Keep a Changelog
-      validator:  "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
+      validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     Conventional Changelog:
       value: Conventional Changelog
 
@@ -202,7 +209,7 @@ using_cc:
 
 is_public:
   type: bool
-  default: "{% if project_visibility == 'public' %}true{% endif %}"
+  default: "{% if project_visibility == 'Public' %}true{% endif %}"
   when: false
 
 is_standard:
@@ -234,31 +241,33 @@ should_set_repo_settings:
 
 _tasks:
   - >-
-    {%- if is_template -%}
-    invoke unpack-and-delete-template-zip
-    {%- endif -%}
+  {%- if is_template -%}
+  invoke unpack-and-delete-template-zip
+  {%- endif -%}
+  - invoke set-inherited-variables --answers-json '{{ _copier_answers | to_json }}'
   - >-
-    {%- if should_create_repo and using_github -%}
-    invoke repo-create-github --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
+  {%- if should_create_repo and using_github -%}
+  invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
+  {%- endif -%}
   - >-
-    {%- if should_create_repo and using_azdo -%}
-    invoke repo-create-azdo --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
+  {%- if should_create_repo and using_azdo -%}
+  invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
+  {%- endif -%}
   - >-
-    {%- if should_set_repo_settings and using_github -%}
-    invoke repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
+  {%- if should_set_repo_settings and using_github -%}
+  invoke set-repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
+  {%- endif -%}
   - >-
-    {%- if should_create_repo -%}
-    invoke initialize-and-commit --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
+  {%- if should_create_repo -%}
+  invoke initialize-repo-and-commit-files --answers-json '{{ _copier_answers | to_json }}'
+  {%- endif -%}
   - >-
-    {%- if should_set_repo_settings and using_github -%}
-    invoke branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
+  {%- if should_set_repo_settings and using_github -%}
+  invoke set-branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
+  {%- endif -%}
   - >-
-    {%- if should_set_repo_settings and using_azdo -%}
-    invoke pipelines-create-azdo --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
-  - invoke delete-files
+  {%- if should_set_repo_settings and using_azdo -%}
+  invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
+  {%- endif -%}
+  - invoke delete-unneded-template-files
+{% endraw %}
