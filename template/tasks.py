@@ -35,7 +35,7 @@ def create_repo_github(c, answers_json):
         "name": answers["repo_name"],
         "description": answers["project_short_description"],
         "homepage": answers["project_website"],
-        "private": True if answers["project_visibility"] == "private" else False
+        "private": True if answers["project_visibility"] == "Private" else False
     }
     if answers["github_org"]:
         print("[cyan]Creating repo in GitHub organization...[/cyan]")
@@ -71,7 +71,7 @@ def create_repo_azdo(c, answers_json):
     print("[bold green]*** 'create-repo-azdo' task end ***[/bold green]")
 
 @task
-def repo_settings_github(c, answers_json):
+def set_repo_settings_github(c, answers_json):
     """Set settings on a GitHub repo"""
     print("[bold green]*** 'set-repo-settings-github' task start ***[/bold green]")
     answers = json.loads(answers_json)
