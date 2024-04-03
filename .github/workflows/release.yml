@@ -21,7 +21,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-tags: true
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -58,6 +57,8 @@ jobs:
         with:
           mode: release
           releaseVersion: ${{ steps.commit-and-tag-version.outputs.newVersion }}
+      - run: rm template/template_copy.zip
+        name: Remove Old template_copy.zip
       - name: Create Template Zip
         uses: thedoctor0/zip-release@0.7.6
         with:
