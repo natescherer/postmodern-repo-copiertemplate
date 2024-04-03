@@ -51,8 +51,9 @@ jobs:
           $VersionOutput = "newversion=$(Get-Content -Path $TempFilePath)"
           Out-File -InputObject $VersionOutput -FilePath $env:GITHUB_OUTPUT -Encoding utf-8 -Append
           Remove-Item -Path $TempFilePath
-
+{%- if using_cc %}
           npx --yes extract-changelog-release | Out-File -FilePath $env:RUNNER_TEMP/releasenotes.txt
+{%- endif %}
 {%- if using_kac %}
       - name: Update Changelog
         id: changelog
