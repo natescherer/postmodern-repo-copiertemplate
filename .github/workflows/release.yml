@@ -27,7 +27,6 @@ jobs:
           node-version: lts/*
       - name: Run 'commit-and-tag-version'
         id: commit-and-tag-version
-        shell: pwsh
         run: |
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
@@ -58,14 +57,15 @@ jobs:
           mode: release
           releaseVersion: ${{ steps.commit-and-tag-version.outputs.newVersion }}
       - run: Remove-Item -Path template/template_copy.tar.gz -ErrorAction SilentlyContinue
-        shell: pwsh
         name: Remove Old template_copy.tar.gz
       - name: Create Template Tarball
         uses: thedoctor0/zip-release@0.7.6
         with:
           type: tar
-          filename: template/template_copy.tar.gz
+          filename: template_copy.tar.gz
           path: template
+      - run: Move-Item -Path template_copy.tar.gz -Destination template
+        name: Move Tarball
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         id: cpr
