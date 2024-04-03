@@ -73,7 +73,7 @@
     "bump": false,
     "changelog": true,
     "commit": true,
-    "tag": false
+    "tag": true
   },
   "tagPrefix": "v",
   "noVerify": true,
