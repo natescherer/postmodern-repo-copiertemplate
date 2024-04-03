@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ## Fixed
 - Jinja whitespace formatting in README docs
+- versionrc.json parserOpts for Azure DevOps
 
 ## [0.1.15] - 2024-04-03
 ## Added
