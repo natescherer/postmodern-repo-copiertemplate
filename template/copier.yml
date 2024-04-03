@@ -1,4 +1,8 @@
-### Initial Settings
+## Inherited Variables from Parent Template
+parent_template_name: Postmodern Repo Copier Template
+parent_template_url: https://github.com/natescherer/postmodern-repo-copiertemplate
+
+## Initial Settings
 
 _min_copier_version: "9.1.1"
 

@@ -62,7 +62,8 @@ jobs:
           mode: release
           releaseVersion: {% raw %}${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
 {%- endif %}
-      - run: rm template/template_copy.zip
+      - run: Remove-Item -Path template/template_copy.zip
+        shell: pwsh
         name: Remove Old template_copy.zip
       - name: Create Template Zip
         uses: thedoctor0/zip-release@0.7.6

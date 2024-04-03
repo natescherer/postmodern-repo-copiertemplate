@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## Added
+- Make template inheritance links (somewhat) dynamic
+<<<<<<< Updated upstream
+=======
+
+## Fixed
+- Commit formatting on Azure DevOps pipelines autocommits
+>>>>>>> Stashed changes
 
 ## [0.1.17] - 2024-04-03
 ## Fixed

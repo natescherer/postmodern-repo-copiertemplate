@@ -3,7 +3,6 @@
 {%- if is_public -%}
 [![All Contributors](https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square)](#contributors)
 {%- endif %}
-
 {% if is_prerelease -%}
 | :exclamation:  Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or lifecycle == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}.  |
 |-----------------------------------------|
@@ -136,7 +135,7 @@ This project is licensed under The MIT License - see [LICENSE](LICENSE) for deta
 
 ## Repository Template
 
-This repository is based on the [Postmodern Repo Copier Template][pm-repo-template].
+This repository is based on the [{{ parent_template_name }}]({{ parent_template_url }}).
 
 [all-contributors]: https://allcontributors.org/
 [all-contributors-app]: https://github.com/apps/allcontributors/installations/new
@@ -153,6 +152,5 @@ This repository is based on the [Postmodern Repo Copier Template][pm-repo-templa
 [keep-a-changelog]: https://keepachangelog.com/en/1.1.0/
 [mit-license]: https://choosealicense.com/licenses/mit/
 [prettier]: https://prettier.io/
-[pm-repo-template]: https://github.com/natescherer/postmodern-repo-copiertemplate
 [semver]: https://semver.org/
 [trunk-github-setup]: https://docs.trunk.io/check/check-cloud-ci-integration/get-started
