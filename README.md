@@ -1,5 +1,6 @@
-# Postmodern Repo Copier Template[![All Contributors](https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449&style=flat-square)](#contributors)
+# Postmodern Repo Copier Template
 
+[![All Contributors](https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449&style=flat-square)](#contributors)
 | :exclamation:  Notice: This project is currently in a Pre-Alpha state and is not ready for public use.  |
 |-----------------------------------------|
 
@@ -131,7 +132,9 @@ Contributions of any kind are welcome!
 
 ## License
 
-This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.## Repository Template
+This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
+
+## Repository Template
 
 This repository is based on the template of itself. Neat, huh?
 

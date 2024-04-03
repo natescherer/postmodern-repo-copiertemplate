@@ -75,6 +75,7 @@ jobs:
           branch: release/v${{ steps.commit-and-tag-version.outputs.newVersion }}
           title: "chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"
           body: ${{ steps.changelog.outputs.releasenotes }}
+      # This step can be removed once tarball creation can be moved into the template and out of the action
       - run: |
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
