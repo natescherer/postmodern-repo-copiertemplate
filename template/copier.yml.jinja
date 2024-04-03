@@ -1,13 +1,14 @@
 ## Inherited Variables from Parent Template
 parent_template_name:
   type: str
-  default: Set by set_inherited_variables task
+  default: {{ project_name}}
   when: false
 parent_template_url:
   type: str
-  default: Set by set_inherited_variables task
+  default: {% if using_github %}{% if github_org %}"https://github.com/{{ github_org }}/{{ repo_name }}"{% else %}"https://github.com/{{ github_username }}/{{ repo_name }}"{% endif %}{% endif %}{% if using_azdo %}"https://dev.azure.com/{{ azdo_org }}/{{ azdo_project }}/_git/{{ repo_name }}"{% endif %}
   when: false
 
+{% raw %}
 ## Initial Settings
 
 _min_copier_version: "9.1.1"
@@ -243,6 +244,7 @@ _tasks:
   {%- if is_template -%}
   invoke unpack-and-delete-template-zip
   {%- endif -%}
+  - invoke set-inherited-variables --answers-json '{{ _copier_answers | to_json }}'
   - >-
   {%- if should_create_repo and using_github -%}
   invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
@@ -268,3 +270,4 @@ _tasks:
   invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
   {%- endif -%}
   - invoke delete-unneded-template-files
+{% endraw %}
