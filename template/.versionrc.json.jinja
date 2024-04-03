@@ -5,7 +5,7 @@
   },
 {% if using_azdo -%}
   "parserOpts": {
-    "headerPattern": "(?:\(Merged PR \d+: \))?([a-zA-Z]+)(?:\(([\w$\.\-*\s]*)\))?\!?:(.*)"
+    "headerPattern": "(?:\\(Merged PR \\d+: \\))?([a-zA-Z]+)(?:\\(([\\w$\\.\\-*\\s]*)\\))?\\!?:(.*)"
   },
 {%- endif %}
   "bumpFiles": [
