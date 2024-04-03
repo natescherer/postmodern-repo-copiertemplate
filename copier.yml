@@ -1,6 +1,12 @@
 ## Inherited Variables from Parent Template
-parent_template_name: Postmodern Repo Copier Template
-parent_template_url: https://github.com/natescherer/postmodern-repo-copiertemplate
+parent_template_name:
+  type: str
+  default: Postmodern Repo Copier Template
+  when: false
+parent_template_url:
+  type: str
+  default: https://github.com/natescherer/postmodern-repo-copiertemplate
+  when: false
 
 ## Initial Settings
 
@@ -140,10 +146,10 @@ project_visibility:
   help: Choose if you want this project to be Public or Private.
   choices:
     Public:
-      value: public
+      value: Public
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     Private:
-      value: private
+      value: Private
 
 license:
   type: str
@@ -151,7 +157,7 @@ license:
   choices:
     - MIT
     - Provide Own
-  when: "{{ project_visibility == 'public' }}"
+  when: "{{ project_visibility == 'Public' }}"
 
 changelog_type:
   type: str
@@ -202,7 +208,7 @@ using_cc:
 
 is_public:
   type: bool
-  default: "{% if project_visibility == 'public' %}true{% endif %}"
+  default: "{% if project_visibility == 'Public' %}true{% endif %}"
   when: false
 
 is_standard:
