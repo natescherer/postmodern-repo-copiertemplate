@@ -3,3 +3,6 @@
 
 # Release-related files
 out/
+
+# Data files for running copier
+data.yml
