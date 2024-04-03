@@ -27,7 +27,6 @@ jobs:
           node-version: lts/*
       - name: Run 'commit-and-tag-version'
         id: commit-and-tag-version
-        shell: pwsh
         run: |
           {% raw %}git config user.name ${{ github.actor }}{% endraw %}
           {% raw %}git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com{% endraw %}
