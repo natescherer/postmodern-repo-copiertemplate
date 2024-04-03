@@ -244,7 +244,6 @@ _tasks:
   {%- if is_template -%}
   invoke unpack-and-delete-template-tarball
   {%- endif -%}
-  - invoke set-inherited-variables --answers-json '{{ _copier_answers | to_json }}'
   - >-
   {%- if should_create_repo and using_github -%}
   invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
