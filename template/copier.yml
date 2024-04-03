@@ -115,7 +115,6 @@ repo_name:
 project_type:
   type: str
   help: If you are creating another Copier template that will inherit from this one, choose Template. Otherwise, choose Standard.
-  default: Standard
   choices:
     - Standard
     - Template
@@ -154,8 +153,11 @@ changelog_type:
   type: str
   help: Choose the type of changelog you want this project to use.
   choices:
-    - Keep a Changelog
-    - Conventional Changelog
+    Keep a Changelog:
+      value: Keep a Changelog
+      validator:  "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
+    Conventional Changelog:
+      value: Conventional Changelog
 
 lifecycle:
   type: str
@@ -240,7 +242,7 @@ _tasks:
     invoke repo-create-azdo --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
-    {%- if should_set_repo_settings -%}
+    {%- if should_set_repo_settings and using_github -%}
     invoke repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
@@ -250,5 +252,9 @@ _tasks:
   - >-
     {%- if should_set_repo_settings and using_github -%}
     invoke branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
+    {%- endif -%}
+  - >-
+    {%- if should_set_repo_settings and using_azdo -%}
+    invoke pipelines-create-azdo --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - invoke delete-files
