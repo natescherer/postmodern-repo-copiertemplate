@@ -241,7 +241,7 @@ should_set_repo_settings:
 _tasks:
   - >-
     {%- if is_template -%}
-    invoke unpack-and-delete-template-zip
+    invoke unpack-and-delete-template-tarball
     {%- endif -%}
   - >-
     {%- if should_create_repo and using_github -%}
