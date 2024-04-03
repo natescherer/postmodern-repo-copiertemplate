@@ -62,7 +62,7 @@ jobs:
           mode: release
           releaseVersion: {% raw %}${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
 {%- endif %}
-      - run: Remove-Item -Path template/template_copy.tar.gz
+      - run: Remove-Item -Path template/template_copy.tar.gz -ErrorAction SilentlyContinue
         shell: pwsh
         name: Remove Old template_copy.tar.gz
       - name: Create Template Tarball

@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Switch to using tarball for template copy
 
+### Fixed
+- Tarball deletion will gracefully fail if file is missing
+
 ## [0.1.21] - 2024-04-03
 ### Fixed
 - Escaping in github release workflows
