@@ -253,4 +253,8 @@ _tasks:
     {%- if should_set_repo_settings and using_github -%}
     invoke branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
+  - >-
+    {%- if should_set_repo_settings and using_azdo -%}
+    invoke pipelines-create-azdo --answers-json '{{ _copier_answers | to_json }}'
+    {%- endif -%}
   - invoke delete-files

@@ -199,6 +199,33 @@ def initialize_and_commit(c, answers_json):
     print("[bold green]*** 'initialize_and_commit' task end ***[/bold green]")
 
 @task
+def pipelines_create_azdo(c, answers_json):
+    """Register pipeliens for an Azure DevOps repo"""
+    print("[bold green]*** 'pipelines_create_azdo' task start ***[/bold green]")
+    answers = json.loads(answers_json)
+    with open("token.json") as token_file:
+        token = json.loads(token_file.read())["token"]
+
+    print("[cyan]Authenticating to Azure DevOps...[/cyan]")
+    credentials = BasicAuthentication('', token)
+    connection = Connection(base_url=f"https://dev.azure.com/{answers['azdo_org']}", creds=credentials)
+    pipelines_client = connection.clients_v5_1.get_pipelines_client()
+    release_pipeline_data = {
+        "configuration": {
+            "type": "yaml",
+            "path": ".azurepipelines/azure-pipelines-release.yml",
+            "repository": {
+                "name": answers["repo_name"],
+                "type": "azureReposGit"
+            }
+        },
+        "name": answers["repo_name"],
+    }
+    print("[cyan]Creating release pipeline in Azure DevOps...[/cyan]")
+    pipelines_client.create_pipeline(release_pipeline_data, project=answers["azdo_project"])
+    print("[bold green]*** 'pipelines_create_azdo' task end ***[/bold green]")
+
+@task
 def delete_files(c):
     """Delete files used only in the template build process, including this tasks.py file"""
     print("[bold green]*** 'delete_files' task start ***[/bold green]")
