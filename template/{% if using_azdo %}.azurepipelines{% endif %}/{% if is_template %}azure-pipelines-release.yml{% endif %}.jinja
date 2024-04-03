@@ -42,6 +42,8 @@ steps:
       npx --yes extract-changelog-release | Out-File -FilePath $env:AGENT_TEMPDIRECTORY/releasenotes.txt
     failOnStderr: false # Git writes to stderr normally
     displayName: Run 'commit-and-tag-version'
+  - pwsh: Remove-Item -Path template/template_copy.zip
+    name: Remove Old template_copy.zip
   - task: ArchiveFiles@2
     displayName: Create Template Zip
     inputs:
@@ -54,7 +56,7 @@ steps:
       git config user.name "Azure DevOps"
       git checkout -b release/$(newversion)
       git add --all
-      git commit -m "Release v$(newversion) [skip ci]"
+      git commit -m "chore: release v$(newversion) [skip ci]"
       git push --set-upstream origin release/$(newversion)
       git push origin --tags
     failOnStderr: false # Git writes to stderr normally
@@ -83,7 +85,7 @@ steps:
         Body = ConvertTo-Json @{
           sourceRefName = "refs/heads/release/$(newversion)"
           targetRefName = "$(Build.SourceBranch)"
-          title = "Release v$(newversion)"
+          title = "chore: release v$(newversion)"
           description = "Release v$(newversion)"
         }
       }
@@ -126,7 +128,7 @@ steps:
             bypassPolicy = $true
             bypassReason = "Automated version number update"
             deleteSourceBranch = $true
-            mergeCommitMessage = "Release v$(newversion) [skip ci]"
+            mergeCommitMessage = "chore: release v$(newversion) [skip ci]"
             mergeStrategy = "noFastForward"
           }
         }

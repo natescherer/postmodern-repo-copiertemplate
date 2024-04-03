@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ## Added
 - Make template inheritance links (somewhat) dynamic
+<<<<<<< Updated upstream
+=======
+
+## Fixed
+- Commit formatting on Azure DevOps pipelines autocommits
+>>>>>>> Stashed changes
 
 ## [0.1.17] - 2024-04-03
 ## Fixed
