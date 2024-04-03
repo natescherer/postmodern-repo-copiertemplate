@@ -42,15 +42,15 @@ steps:
       npx --yes extract-changelog-release | Out-File -FilePath $env:AGENT_TEMPDIRECTORY/releasenotes.txt
     failOnStderr: false # Git writes to stderr normally
     displayName: Run 'commit-and-tag-version'
-  - pwsh: Remove-Item -Path template/template_copy.zip
-    name: Remove Old template_copy.zip
+  - pwsh: Remove-Item -Path template/template_copy.tar.gz
+    name: Remove Old template_copy.tar.gz
   - task: ArchiveFiles@2
-    displayName: Create Template Zip
+    displayName: Create Template Tarball
     inputs:
       rootFolderOrFile: template
       includeRootFolder: false
-      archiveType: zip
-      archiveFile: template/template_copy.zip
+      archiveType: tar
+      archiveFile: template/template_copy.tar.gz
   - pwsh: |
       git config user.email "azuredevops@microsoft.com"
       git config user.name "Azure DevOps"
