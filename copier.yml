@@ -239,26 +239,26 @@ _tasks:
     {%- endif -%}
   - >-
     {%- if should_create_repo and using_github -%}
-    invoke repo-create-github --answers-json '{{ _copier_answers | to_json }}'
+    invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
     {%- if should_create_repo and using_azdo -%}
-    invoke repo-create-azdo --answers-json '{{ _copier_answers | to_json }}'
+    invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
     {%- if should_set_repo_settings and using_github -%}
-    invoke repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
+    invoke set-repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
     {%- if should_create_repo -%}
-    invoke initialize-and-commit --answers-json '{{ _copier_answers | to_json }}'
+    invoke initialize-repo-and-commit-files --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
     {%- if should_set_repo_settings and using_github -%}
-    invoke branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
+    invoke set-branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
     {%- if should_set_repo_settings and using_azdo -%}
-    invoke pipelines-create-azdo --answers-json '{{ _copier_answers | to_json }}'
+    invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
-  - invoke delete-files
+  - invoke delete-unneeded-template-files
