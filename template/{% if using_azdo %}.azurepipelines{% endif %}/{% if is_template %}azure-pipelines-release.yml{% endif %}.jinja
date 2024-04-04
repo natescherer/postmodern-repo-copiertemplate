@@ -57,6 +57,7 @@ steps:
       git checkout -b release/$(newversion)
       git add --all
       git commit -m "chore: release v$(newversion) [skip ci]"
+      git tag v$(newversion)
       git push --set-upstream origin release/$(newversion)
       git push origin --tags
     failOnStderr: false # Git writes to stderr normally
