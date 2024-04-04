@@ -241,31 +241,31 @@ should_set_repo_settings:
 
 _tasks:
   - >-
-  {%- if is_template -%}
-  invoke unpack-and-delete-template-tarball
-  {%- endif -%}
+    {%- if is_template -%}
+    invoke unpack-and-delete-template-tarball
+    {%- endif -%}
   - >-
-  {%- if should_create_repo and using_github -%}
-  invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
-  {%- endif -%}
+    {%- if should_create_repo and using_github -%}
+    invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
+    {%- endif -%}
   - >-
-  {%- if should_create_repo and using_azdo -%}
-  invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
-  {%- endif -%}
+    {%- if should_create_repo and using_azdo -%}
+    invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
+    {%- endif -%}
   - >-
-  {%- if should_set_repo_settings and using_github -%}
-  invoke set-repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
-  {%- endif -%}
+    {%- if should_set_repo_settings and using_github -%}
+    invoke set-repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
+    {%- endif -%}
   - >-
-  {%- if should_create_repo -%}
-  invoke initialize-repo-and-commit-files --answers-json '{{ _copier_answers | to_json }}'
-  {%- endif -%}
+    {%- if should_create_repo -%}
+    invoke initialize-repo-and-commit-files --answers-json '{{ _copier_answers | to_json }}'
+    {%- endif -%}
   - >-
-  {%- if should_set_repo_settings and using_github -%}
-  invoke set-branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
-  {%- endif -%}
+    {%- if should_set_repo_settings and using_github -%}
+    invoke set-branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
+    {%- endif -%}
   - >-
-  {%- if should_set_repo_settings and using_azdo -%}
-  invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
-  {%- endif -%}
+    {%- if should_set_repo_settings and using_azdo -%}
+    invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
+    {%- endif -%}
   - invoke delete-unneded-template-files
