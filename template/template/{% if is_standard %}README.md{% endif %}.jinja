@@ -1,0 +1,79 @@
+# {{ project_name }}
+
+{% if is_public -%}
+[![All Contributors](https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square)](#contributors)
+
+{%- endif %}
+
+{% if is_prerelease -%}
+| :exclamation:  Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or lifecycle == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}.  |
+|-----------------------------------------|
+{%- endif -%}
+{%- if lifecycle == "Inactive" -%}
+| :zap:  Notice: This project is no longer under active development.  |
+|-----------------------------------------|
+{%- endif %}
+
+{{ project_short_description }}
+
+## Features
+
+- Feature 1
+- Feature 2
+- Feature 3
+
+## Installing
+
+### Prerequisites
+
+No prerequisites are required.
+
+### Main Installation
+
+FILL ME IN
+
+## Usage
+
+### Examples
+
+EXAMPLES HERE
+
+### Documentation
+
+For detailed documentation, [click here](docs).
+
+## Building
+
+BUILD INFO HERE
+
+{% if is_public -%}
+## Questions/Comments
+
+If you have questions, comments, etc, please enter a GitHub Issue with the "question" tag.
+
+## Contributing/Bug Reporting
+
+Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
+
+## License
+
+This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
+{%- endif %}
+
+## Repository Template
+
+This repository is based on the [{{ parent_template_name }}]({{ parent_template_url }}).
