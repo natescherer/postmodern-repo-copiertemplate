@@ -268,4 +268,4 @@ _tasks:
     {%- if should_set_repo_settings and using_azdo -%}
     invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
-  - invoke delete-unneded-template-files
+  - invoke delete-unneeded-template-files
