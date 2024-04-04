@@ -215,7 +215,7 @@ def create_pipelines_azdo(c, answers_json):
     connection = Connection(base_url=f"https://dev.azure.com/{answers['azdo_org']}", creds=credentials)
     git_client = connection.clients_v5_1.get_git_client()
     repo_return = git_client.get_repositories(project=answers["azdo_project"])
-    matching_repo_object = [x for x in repo_return if x.name == "testrepo1"][0]
+    matching_repo_object = [x for x in repo_return if x.name == answers["repo_name"]][0]
     repo_id = matching_repo_object.id
 
     release_pipeline_data = {
