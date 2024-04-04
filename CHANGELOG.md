@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Remove template-only files from being laid down in Standard mode
+- Bad indentation in copier.yml tasks
 
 ## [0.1.23] - 2024-04-03
 ### Fixed
