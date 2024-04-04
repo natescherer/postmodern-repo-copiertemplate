@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Root-level files synchronized into template
+- Switch subtemplate generation from zip to copying to a subdirectory
 
 ## [0.1.27] - 2024-04-04
 ### Fixed
