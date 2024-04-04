@@ -61,16 +61,12 @@ jobs:
           mode: release
           releaseVersion: {% raw %}${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
 {%- endif %}
-      - run: Remove-Item -Path template/template_copy.tar.gz -ErrorAction SilentlyContinue
-        name: Remove Old template_copy.tar.gz
-      - name: Create Template Tarball
-        uses: thedoctor0/zip-release@0.7.6
-        with:
-          type: tar
-          filename: template_copy.tar.gz
-          path: template
-      - run: Move-Item -Path template_copy.tar.gz -Destination template
-        name: Move Tarball
+      # The following step can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
+      - run: |
+          Remove-Item -Path (Join-Path "template" "template") -Recurse -ErrorAction SilentlyContinue
+          Copy-Item -Path "template" -Destination "template_copy" -Recurse
+          Move-Item -Path "template_copy" -Destination (Join-Path "template" "template")
+        name: Create Subtemplate Directory
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         id: cpr
@@ -84,7 +80,7 @@ jobs:
 {%- else -%}
           body-path: {% raw %}${{ runner.temp }}/releasenotes.txt{% endraw %}
 {%- endif %}
-      # This step can be removed once tarball creation can be moved into the template and out of the action
+      # This step can be removed once subtemplate directory creation can be moved into the template and out of the action
       - run: |
           {% raw %}
           git config user.name ${{ github.actor }}

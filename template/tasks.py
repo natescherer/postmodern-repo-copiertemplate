@@ -15,13 +15,6 @@ from invoke import task
 from rich import print
 
 @task
-def unpack_and_delete_template_tarball(c):
-    """For project_type == 'Template', unpack and delete template/clean_template.tarball"""
-    print("[bold green]*** 'unpack-and-delete-template-tarball' task start ***[/bold green]")
-    shutil.unpack_archive("template_copy.tar.gz", ".")
-    print("[bold green]*** 'unpack-and-delete-template-tarball' task end ***[/bold green]")
-
-@task
 def create_repo_github(c, answers_json):
     """Create a GitHub repo"""
     print("[bold green]*** 'create-repo-github' task start ***[/bold green]")

@@ -23,12 +23,5 @@ workflows:write | Needed to allow template tasks to commit workflows
 
 **Scope** | **Reason**
 ---|---
-code:full | Needed to create repo & set its settings
-release:read, write, execute, & manage | Needed to create pipelines
-
-## Azure DevOps
-
-**Scope** | **Reason**
----|---
 Build: Read & Execute | Needed to allow creating Azure Pipelines
 Code: Full | Needed to create repo

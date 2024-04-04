@@ -6,7 +6,7 @@ updates:
     schedule:
       interval: "monthly"
 
-{% if project_type == 'Template' -%}
+{%- if project_type == 'Template' %}
   - package-ecosystem: "github-actions"
     directory: /template/.github/workflows
     schedule:

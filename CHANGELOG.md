@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Root-level files synchronized into template
+- Switch subtemplate generation from zip to copying to a subdirectory
 
 ## [0.1.27] - 2024-04-04
 ### Fixed

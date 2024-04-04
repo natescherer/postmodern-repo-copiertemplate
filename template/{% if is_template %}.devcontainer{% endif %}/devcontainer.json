@@ -9,6 +9,8 @@
   },
   "remoteUser": "vscode",
   "features": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/powershell:1": {},
     "ghcr.io/natescherer/devcontainers-custom-features/hypermodern-python:1": {
       "versions": "3.11", // 'azure-devops' python packages pins us at 3.11, see https://github.com/microsoft/azure-devops-python-api/issues/461
       "requirementsFile": "/opt/devcontainer/requirements.txt"
