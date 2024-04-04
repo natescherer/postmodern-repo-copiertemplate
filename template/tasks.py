@@ -235,7 +235,6 @@ def create_pipelines_azdo(c, answers_json):
 def delete_unneeded_template_files(c):
     """Delete files used only in the template build process, including this tasks.py file"""
     print("[bold green]*** 'delete-unneeded-template-files' task start ***[/bold green]")
-    os.remove("template_copy.tar.gz")
     os.remove("token.json")
     os.remove(__file__)
     print("[bold green]*** 'delete-unneeded-template-files' task end ***[/bold green]")
