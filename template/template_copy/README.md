@@ -4,11 +4,7 @@
 | :exclamation:  Notice: This project is currently in a Pre-Alpha state and is not ready for public use.  |
 |-----------------------------------------|
 
-A [Copier][copier] template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
-
-This template is heavily inspired by the [Hypermodern Python Cookiecutter](hypermodern-cc).
-
-Why Postmodern? Besides being a cheeky homage to this template's inspiration, I think that Postmodern philosophy's idea of the relativity of truth applies very well to software. There's no objectively best way to do CI/CD, this is just one way that works, and it might work for you too!
+A Copier template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
 
 ## Included Features
 
@@ -113,14 +109,6 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/natescherer"><img src="https://avatars.githubusercontent.com/u/376408?v=4?s=100" width="100px;" alt="Nate Scherer"/><br /><sub><b>Nate Scherer</b></sub></a><br /><a href="#code-natescherer" title="Code">💻</a> <a href="#maintenance-natescherer" title="Maintenance">🚧</a> <a href="#doc-natescherer" title="Documentation">📖</a> <a href="#infra-natescherer" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/apps/github-actions"><img src="https://avatars.githubusercontent.com/in/15368?v=4?s=100" width="100px;" alt="github-actions[bot]"/><br /><sub><b>github-actions[bot]</b></sub></a><br /><a href="#maintenance-github-actions[bot]" title="Maintenance">🚧</a> <a href="#code-github-actions[bot]" title="Code">💻</a></td>
-    </tr>
-  </tbody>
-</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
@@ -136,7 +124,7 @@ This project is licensed under The MIT License - see [LICENSE](LICENSE) for deta
 
 ## Repository Template
 
-This repository is based on the template of itself. Neat, huh?
+This repository is based on the [Postmodern Repo Copier Template](https://github.com/natescherer/postmodern-repo-copiertemplate).
 
 [all-contributors]: https://allcontributors.org/
 [all-contributors-app]: https://github.com/apps/allcontributors/installations/new
