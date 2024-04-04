@@ -1,0 +1,17 @@
+name: Dependabot PR Merge
+
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Enable auto-merge for Dependabot PRs
+        uses: fastify/github-action-merge-dependabot@v3
+        with:
+          use-github-auto-merge: true
