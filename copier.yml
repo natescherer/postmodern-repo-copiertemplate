@@ -1,5 +1,4 @@
 ## Initial Settings
-
 _min_copier_version: "9.1.1"
 
 _jinja_extensions:
@@ -26,9 +25,7 @@ parent_template_url:
   default: "https://github.com/natescherer/postmodern-repo-copiertemplate"
   when: false
 
-
 ## Questions
-
 author_name:
   type: str
   help: The name to whom this project will be credited. Autodetect attempted from Git 'user.name'.
