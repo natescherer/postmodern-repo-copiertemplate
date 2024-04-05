@@ -106,7 +106,7 @@ jobs:
         env:
           GH_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
           files: out
