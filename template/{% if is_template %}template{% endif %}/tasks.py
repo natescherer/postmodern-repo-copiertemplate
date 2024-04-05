@@ -4,7 +4,6 @@ This file is to be executed with https://www.pyinvoke.org/ in Python 3.6+.
 """
 import json
 import os
-import shutil
 import urllib.parse
 import githubkit
 import requests
@@ -13,6 +12,26 @@ from azure.devops.exceptions import AzureDevOpsServiceError
 from msrest.authentication import BasicAuthentication
 from invoke import task
 from rich import print
+
+@task
+def rename_template_files(c):
+    """Renames files in template that were renamed during build to block rendering."""
+    print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
+    for root, dirnames, fnames in os.walk("template"):
+        for dirname in dirnames:
+            fullpath = os.path.join(root, dirname)
+            os.rename(fullpath, fullpath.replace("[", "{"))
+
+    for root, dirnames, fnames in os.walk("template"):
+        for fname in fnames:
+            fullpath = os.path.join(root, fname)
+            os.rename(fullpath, fullpath.replace("[", "{"))
+
+    for root, dirnames, fnames in os.walk("template"):
+        for fname in fnames:
+            fullpath = os.path.join(root, fname)
+            os.rename(fullpath, fullpath.replace(".jinja.raw", ".jinja"))
+    print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
 
 @task
 def create_repo_github(c, answers_json):

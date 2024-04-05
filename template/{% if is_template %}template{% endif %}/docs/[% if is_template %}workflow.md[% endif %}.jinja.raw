@@ -13,9 +13,17 @@ To apply this template to an existing project, follow these steps:
 1. Create a new branch (`copier-template-apply`, for example) from your default branch
 1. Run the following in order to apply the template to your local project, changing that path as appropriate:
 
+{%- if using_github %}
     ``` shell
-    copier copy --trust --overwrite gh:natescherer/postmodern-repo-template /path/to/project
+    copier copy --trust --overwrite gh:{{ github_org}}{{ github_user }}/{{ repo_name }} /path/to/project
     ```
+{%- endif %}
+{%- if using_azdo %}
+    ``` shell
+    copier copy --trust --overwrite gh:{{ github_org}}{{ github_user }}/{{ repo_name }} /path/to/project
+    ```
+{%- endif %}
+
 
 1. Make sure to choose `Set Repo Rules` in the first question
 1. Set all other settings as appropriate for your project
