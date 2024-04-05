@@ -64,9 +64,12 @@ jobs:
           Copy-Item -Path "template" -Destination "template_copy" -Recurse
           Move-Item -Path "template_copy" -Destination "template"
           Rename-Item -Path "template/template_copy" -NewName "{% if is_template %}template{% endif %}"
-          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Hidden -Recurse -Directory | ForEach {if ($_.name -like "*{*") {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace("{","[")}}
-          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Hidden -Recurse | ForEach {if ($_.name -like "*{*") {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace("{","[")}}
-          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Hidden -Recurse | ForEach {if ($_.name -like "*.jinja") {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(".jinja",".jinja.raw")}}
+          # Rename bracket folders
+          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Hidden -Recurse -Directory | ForEach {if ($_.Name -like "*{*") {$NewName = (Join-Path (Split-Path -Path $_.FullName -Parent) ($_.Name).Replace("{","[")); Rename-Item -LiteralPath $_.FullName -NewName $NewName}}
+          # Rename bracket files
+          pwsh -c 'Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Hidden -Recurse | ForEach {if ($_.Name -like "*{*") {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace("{","[")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}
+          # Rename raw files
+          pwsh -c 'Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Hidden -Recurse | ForEach {if ($_.Name -like "*.jinja") {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(".jinja",".jinja.raw")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}
         name: Create Subtemplate Directory
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
