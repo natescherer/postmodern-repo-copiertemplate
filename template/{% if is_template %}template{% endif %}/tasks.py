@@ -24,9 +24,9 @@ def rename_template_files(c):
           # Rename bracket folders
           c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse -Directory | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewName = (Join-Path (Split-Path -Path $_.FullName -Parent) ($_.Name).Replace(\"[\",\"{\")); Rename-Item -LiteralPath $_.FullName -NewName $NewName}}'")
           # Rename bracket files
-          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewName = $_.Name.Replace(\"[\",\"{\"); Move-Item -LiteralPath $_.FullName -NewName $NewName -Force}}'")
+          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewName = $_.Name.Replace(\"[\",\"{\"); Move-Item -LiteralPath $_.FullName -Destination $NewName -Force}}'")
           # Rename raw files
-          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse | ForEach {if (($_.Name -like \"*.jinja.raw\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewName = $_.Name.Replace(\".jinja.raw\",\".jinja\"); Move-Item -LiteralPath $_.FullName -NewName $NewName -Force}}'")
+          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse | ForEach {if (($_.Name -like \"*.jinja.raw\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewName = $_.Name.Replace(\".jinja.raw\",\".jinja\"); Move-Item -LiteralPath $_.FullName -Destination $NewName -Force}}'")
     else:
         raise("PowerShell needs installed for the time being. Sorry.")
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
