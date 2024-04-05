@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.35] - 2024-04-05
 ### Fixed
 - Update rename-template-files task to only alter files in template, not subtemplate
 
@@ -177,7 +179,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.34..HEAD
+[Unreleased]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.35..HEAD
+[0.1.35]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.34..v0.1.35
 [0.1.34]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.33..v0.1.34
 [0.1.33]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.32..v0.1.33
 [0.1.32]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.31..v0.1.32
