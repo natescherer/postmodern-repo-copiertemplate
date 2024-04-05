@@ -5,14 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Update rename-template-files task to only alter files in template, not subtemplate
 
 ## [0.1.34] - 2024-04-05
 ### Fixed
-- Fixed root path for rename-template-files step
-
+- Fixed root path for rename-template-files task
 ## [0.1.33] - 2024-04-05
 ### Fixed
-- rename-template-files step will now overwrite files
+- rename-template-files task will now overwrite files
 
 ## [0.1.32] - 2024-04-05
 ### Added
