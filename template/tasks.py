@@ -22,8 +22,7 @@ def rename_template_files(c):
         for dirname in dirnames:
             if "{% if is_template %}template{% endif %}" not in root:
                 fullpath = os.path.join(root, dirname)
-                newfullpath = os.path.join(root, dirname.replace("[", "{"))
-                shutil.move(fullpath, newfullpath)
+                shutil.move(fullpath, dirname.replace("[", "{"))
 
     for root, dirnames, fnames in os.walk("template"):
         for fname in fnames:
