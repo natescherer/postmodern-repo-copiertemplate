@@ -15,12 +15,12 @@ To apply this template to an existing project, follow these steps:
 
 {%- if using_github %}
     ``` shell
-    copier copy --trust --overwrite gh:{{ github_org}}{{ github_user }}/{{ repo_name }} /path/to/project
+    copier copy --trust --overwrite gh:{{ github_org }}{{ github_username }}/{{ repo_name }} /path/to/project
     ```
 {%- endif %}
 {%- if using_azdo %}
     ``` shell
-    copier copy --trust --overwrite gh:{{ github_org}}{{ github_user }}/{{ repo_name }} /path/to/project
+    copier copy --trust --overwrite git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project }}/_git/{{ repo_name }} /path/to/project
     ```
 {%- endif %}
 
