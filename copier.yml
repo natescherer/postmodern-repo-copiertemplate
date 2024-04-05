@@ -1,14 +1,3 @@
-## Inherited Variables from Parent Template
-parent_template_name:
-  type: str
-  default: Postmodern Repo Copier Template
-  when: false
-parent_template_url:
-  type: str
-  default: "https://github.com/natescherer/postmodern-repo-copiertemplate"
-  when: false
-
-
 ## Initial Settings
 
 _min_copier_version: "9.1.1"
@@ -26,6 +15,17 @@ _jinja_extensions:
   - extensions/context.py:ContextUpdater
 
 _subdirectory: template
+
+## Inherited Variables from Parent Template
+parent_template_name:
+  type: str
+  default: Postmodern Repo Copier Template
+  when: false
+parent_template_url:
+  type: str
+  default: "https://github.com/natescherer/postmodern-repo-copiertemplate"
+  when: false
+
 
 ## Questions
 
