@@ -18,17 +18,17 @@ from rich import print
 def rename_template_files(c):
     """Renames files in template that were renamed during build to block rendering."""
     print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
-    for root, dirnames, fnames in os.walk("template"):
+    for root, dirnames, fnames in os.walk("template/template"):
         for dirname in dirnames:
             fullpath = os.path.join(root, dirname)
             shutil.move(fullpath, fullpath.replace("[", "{"))
 
-    for root, dirnames, fnames in os.walk("template"):
+    for root, dirnames, fnames in os.walk("template/template"):
         for fname in fnames:
             fullpath = os.path.join(root, fname)
             shutil.move(fullpath, fullpath.replace("[", "{"))
 
-    for root, dirnames, fnames in os.walk("template"):
+    for root, dirnames, fnames in os.walk("template/template"):
         for fname in fnames:
             fullpath = os.path.join(root, fname)
             shutil.move(fullpath, fullpath.replace(".jinja.raw", ".jinja"))
