@@ -65,11 +65,11 @@ jobs:
           Move-Item -Path "template_copy" -Destination "template"
           Rename-Item -Path "template/template_copy" -NewName "{% if is_template %}template{% endif %}"
           # Rename bracket folders
-          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Hidden -Recurse -Directory | ForEach {if ($_.Name -like "*{*") {$NewName = (Join-Path (Split-Path -Path $_.FullName -Parent) ($_.Name).Replace("{","[")); Rename-Item -LiteralPath $_.FullName -NewName $NewName}}
+          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Force -Recurse -Directory | ForEach {if ($_.Name -like "*{*") {$NewName = (Join-Path (Split-Path -Path $_.FullName -Parent) ($_.Name).Replace("{","[")); Rename-Item -LiteralPath $_.FullName -NewName $NewName}}
           # Rename bracket files
-          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Hidden -Recurse | ForEach {if ($_.Name -like "*{*") {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace("{","[")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}
+          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Force -Recurse | ForEach {if ($_.Name -like "*{*") {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace("{","[")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}
           # Rename raw files
-          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Hidden -Recurse | ForEach {if ($_.Name -like "*.jinja") {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(".jinja",".jinja.raw")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}
+          Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Force -Recurse | ForEach {if ($_.Name -like "*.jinja") {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(".jinja",".jinja.raw")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}
         name: Create Subtemplate Directory
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
