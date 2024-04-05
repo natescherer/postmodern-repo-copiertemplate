@@ -34,7 +34,8 @@ def rename_template_files(c):
         if "{% if is_template %}template{% endif %}" not in root:
             for dirname in dirnames:
                 fullpath = os.path.join(root, dirname)
-                shutil.move(fullpath, dirname.replace("[", "{"))
+                newfullpath = os.path.join(root, dirname.replace("[", "{"))
+                shutil.copytree("fullpath", "newfullpath", dirs_exist_ok=True)
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
 
 @task
