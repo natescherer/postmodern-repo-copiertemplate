@@ -19,12 +19,6 @@ def rename_template_files(c):
     """Renames files in template that were renamed during build to block rendering."""
     print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
     for root, dirnames, fnames in os.walk("template"):
-        for dirname in dirnames:
-            if "{% if is_template %}template{% endif %}" not in root:
-                fullpath = os.path.join(root, dirname)
-                shutil.move(fullpath, fullpath.replace("[", "{"))
-
-    for root, dirnames, fnames in os.walk("template"):
         for fname in fnames:
             if "{% if is_template %}template{% endif %}" not in root:
                 fullpath = os.path.join(root, fname)
@@ -35,6 +29,12 @@ def rename_template_files(c):
             if "{% if is_template %}template{% endif %}" not in root:
                 fullpath = os.path.join(root, fname)
                 shutil.move(fullpath, fullpath.replace(".jinja.raw", ".jinja"))
+
+    for root, dirnames, fnames in os.walk("template"):
+        for dirname in dirnames:
+            if "{% if is_template %}template{% endif %}" not in root:
+                fullpath = os.path.join(root, dirname)
+                shutil.move(fullpath, fullpath.replace("[", "{"))
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
 
 @task
