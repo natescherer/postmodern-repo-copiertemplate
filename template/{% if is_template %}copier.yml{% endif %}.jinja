@@ -5,7 +5,7 @@ parent_template_name:
   when: false
 parent_template_url:
   type: str
-  default: {% if using_github %}{% if github_org %}"https://github.com/{{ github_org }}/{{ repo_name }}"{% else %}"https://github.com/{{ github_username }}/{{ repo_name }}"{% endif %}{% endif %}{% if using_azdo %}"https://dev.azure.com/{{ azdo_org }}/{{ azdo_project }}/_git/{{ repo_name }}"{% endif %}
+  default: {% if using_github %}{% if github_org %}"https://github.com/{{ github_org }}/{{ repo_name }}"{% else %}"https://github.com/{{ github_username }}/{{ repo_name }}"{% endif %}{% endif %}{% if using_azdo %}"https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","\%20") }}/_git/{{ repo_name }}"{% endif %}
   when: false
 
 {% raw %}
