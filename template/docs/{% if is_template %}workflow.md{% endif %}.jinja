@@ -20,7 +20,7 @@ To apply this template to an existing project, follow these steps:
 {%- endif %}
 {%- if using_azdo %}
     ``` shell
-    copier copy --trust --overwrite git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","\%20") }}/_git/{{ repo_name }} /path/to/project
+    copier copy --trust --overwrite git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }} /path/to/project
     ```
 {%- endif %}
 
