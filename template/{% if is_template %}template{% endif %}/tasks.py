@@ -19,9 +19,14 @@ def rename_template_files(c):
     """Renames files in template that were renamed during build to block rendering."""
     print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
     if shutil.which("pwsh"):
-          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse -Directory | ForEach {if (($_.name -like \"*[[]*\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewName = ($_.name).Replace(\"[\",\"{\")}}; if (Test-Path $NewName) {Remove-Item $NewName -Force -Recurse}; Rename-Item -LiteralPath $_.FullName -NewName $NewName'")
-          c.run("pwsh -c 'Get-ChildItem -Path \"template/{% if is_template %}template{% endif %}\" -Recurse | ForEach {if (($_.name -like \"*[[]*\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\"[\",\"{\")}}'")
-          c.run("pwsh -c 'Get-ChildItem -Path \"template/{% if is_template %}template{% endif %}\" -Recurse | ForEach {if (($_.name -like \"*.jinja.raw\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\".jinja.raw\",\".jinja\")}}'")
+          # Wipe any conflicting target
+          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse -Directory | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) ($_.Name).Replace(\"[\",\"{\")); if (Test-Path $NewPath) {Remove-Item $NewPath -Force -Recurse}}}'")
+          # Rename bracket folders
+          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse -Directory | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewName = (Join-Path (Split-Path -Path $_.FullName -Parent) ($_.Name).Replace(\"[\",\"{\")); Rename-Item -LiteralPath $_.FullName -NewName $NewName}}'")
+          # Rename bracket files
+          c.run("pwsh -c 'Get-ChildItem -Path \"template/{% if is_template %}template{% endif %}\" -Recurse | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewName = $_.Name.Replace(\"[\",\"{\"); Rename-Item -LiteralPath $_.FullName -NewName $NewName}}'")
+          # Rename raw files
+          c.run("pwsh -c 'Get-ChildItem -Path \"template/{% if is_template %}template{% endif %}\" -Recurse | ForEach {if (($_.Name -like \"*.jinja.raw\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewName = $_.Name.Replace(\".jinja.raw\",\".jinja\"); Rename-Item -LiteralPath $_.FullName -NewName $NewName}}'")
     else:
         raise("PowerShell needs installed for the time being. Sorry.")
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
