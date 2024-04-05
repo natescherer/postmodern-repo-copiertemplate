@@ -1,0 +1,100 @@
+name: Release Template
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  MINIMUM_VERSION: {% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Run 'commit-and-tag-version'
+        id: commit-and-tag-version
+        run: |
+          {% raw %}git config user.name ${{ github.actor }}{% endraw %}
+          {% raw %}git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com{% endraw %}
+
+          $TempFilePath = "version-tempfile-for-ci-output.txt"
+          New-Item -ItemType File -Path $TempFilePath | Out-Null
+          $LatestTag = git tag -l "v*" --sort "-v:refname" | Select-Object -First 1
+          if ($null -eq $LatestTag) {
+            Write-Host "No existing tags found. Will release with minimum version '$env:MINIMUM_VERSION'."
+            npx --yes commit-and-tag-version --release-as $env:MINIMUM_VERSION
+          } else {
+            $LatestVersion = $LatestTag.Substring(1)
+            if ([System.Version]$LatestVersion -ge [System.Version]$env:MINIMUM_VERSION) {
+              Write-Host "Latest version from tags is '$LatestVersion', which is greater than or equal to minimum version '$env:MINIMUM_VERSION'. New version will be automatically calculated."
+              npx --yes commit-and-tag-version
+            } else {
+              Write-Host "Latest version from tags is '$LatestVersion', which is less than minimum version '$env:MINIMUM_VERSION'. Minimum version will be forced."
+              npx --yes commit-and-tag-version --release-as $env:MINIMUM_VERSION
+            }
+          }
+          $VersionOutput = "newversion=$(Get-Content -Path $TempFilePath)"
+          Out-File -InputObject $VersionOutput -FilePath $env:GITHUB_OUTPUT -Encoding utf-8 -Append
+          Remove-Item -Path $TempFilePath
+{%- if using_cc %}
+          npx --yes extract-changelog-release | Out-File -FilePath $env:RUNNER_TEMP/releasenotes.txt
+{%- endif %}
+{%- if using_kac %}
+      - name: Update Changelog
+        id: changelog
+        uses: natescherer/changelog-management-action@v1
+        with:
+          mode: release
+          releaseVersion: {% raw %}${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
+{%- endif %}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        id: cpr
+        with:
+          base: main
+          commit-message: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newversion }}"{% endraw %}
+          branch: {% raw %}release/v${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
+          title: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newversion }}"{% endraw %}
+{%- if using_kac %}
+          body: {% raw %}${{ steps.changelog.outputs.releasenotes }}{% endraw %}
+{%- else -%}
+          body-path: {% raw %}${{ runner.temp }}/releasenotes.txt{% endraw %}
+{%- endif %}
+      - run: |
+          {% raw %}
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+          git checkout release/v${{ steps.commit-and-tag-version.outputs.newVersion }}
+          git tag v${{ steps.commit-and-tag-version.outputs.newVersion }}
+          git push origin v${{ steps.commit-and-tag-version.outputs.newVersion }}
+          {% endraw %}
+        name: Add Version Tag
+      - name: Enable Pull Request Automerge
+        run: {% raw %}gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"{% endraw %}
+        env:
+          GH_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
+          files: out
+          tag_name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newversion }}{% endraw %}
+{%- if using_kac %}
+          body: {% raw %}${{ steps.changelog.outputs.releasenotes }}{% endraw %}
+{%- else -%}
+          body_path: {% raw %}${{ runner.temp }}/releasenotes.txt{% endraw %}
+{%- endif %}
