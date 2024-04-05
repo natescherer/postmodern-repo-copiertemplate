@@ -1,5 +1,4 @@
 ## Initial Settings
-
 _min_copier_version: "9.1.1"
 
 _jinja_extensions:
@@ -26,9 +25,8 @@ parent_template_url:
   default: {% if using_github %}{% if github_org %}"https://github.com/{{ github_org }}/{{ repo_name }}"{% else %}"https://github.com/{{ github_username }}/{{ repo_name }}"{% endif %}{% endif %}{% if using_azdo %}"https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}"{% endif %}
   when: false
 
-{% raw %}
+{%- raw %}
 ## Questions
-
 author_name:
   type: str
   help: The name to whom this project will be credited. Autodetect attempted from Git 'user.name'.
@@ -269,4 +267,4 @@ _tasks:
     invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - invoke delete-unneeded-template-files
-{% endraw %}
+{%- endraw %}
