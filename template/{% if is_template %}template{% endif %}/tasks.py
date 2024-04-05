@@ -20,7 +20,7 @@ def rename_template_files(c):
     print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
     if shutil.which("pwsh"):
           # Wipe any conflicting target
-          # c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Force -Recurse -Directory | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) ($_.Name).Replace(\"[\",\"{\")); if (Test-Path $NewPath) {Remove-Item $NewPath -Force -Recurse}}}'")
+          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Force -Recurse -Directory | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) ($_.Name).Replace(\"[\",\"{\")); if (Test-Path $NewPath) {Remove-Item $NewPath -Force -Recurse}}}'")
           # Rename bracket folders
           c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Force -Recurse -Directory | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(\"[\",\"{\")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}'")
           # Rename bracket files
