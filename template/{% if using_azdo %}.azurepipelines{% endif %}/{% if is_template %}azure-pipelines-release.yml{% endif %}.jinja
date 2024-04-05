@@ -42,15 +42,23 @@ steps:
       npx --yes extract-changelog-release | Out-File -FilePath $env:AGENT_TEMPDIRECTORY/releasenotes.txt
     failOnStderr: false # Git writes to stderr normally
     displayName: Run 'commit-and-tag-version'
-  - pwsh: Remove-Item -Path template/template_copy.tar.gz
-    name: Remove Old template_copy.tar.gz
-  - task: ArchiveFiles@2
-    displayName: Create Template Tarball
-    inputs:
-      rootFolderOrFile: template
-      includeRootFolder: false
-      archiveType: tar
-      archiveFile: template/template_copy.tar.gz
+    # The following step can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
+    - pwsh: |
+{%- raw %}
+        if (Test-Path "template/{% if is_template %}template{% endif %}") {
+          Remove-Item -Path "template/{% if is_template %}template{% endif %}" -Recurse -Force
+        }
+        Copy-Item -Path "template" -Destination "template_copy" -Recurse
+        Move-Item -Path "template_copy" -Destination "template"
+        Rename-Item -Path "template/template_copy" -NewName "{% if is_template %}template{% endif %}"
+        # Rename bracket folders
+        Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Force -Recurse -Directory | ForEach {if ($_.Name -like "*{*") {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace("{","[")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}
+        # Rename bracket files
+        Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Force -Recurse | ForEach {if ($_.Name -like "*{*") {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace("{","[")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}
+        # Rename raw files
+        Get-ChildItem -Path "template/{% if is_template %}template{% endif %}" -Force -Recurse | ForEach {if ($_.Name -like "*.jinja") {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(".jinja",".jinja.raw")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}
+{%- endraw %}
+      displayName: Create Subtemplate Directory
   - pwsh: |
       git config user.email "azuredevops@microsoft.com"
       git config user.name "Azure DevOps"
