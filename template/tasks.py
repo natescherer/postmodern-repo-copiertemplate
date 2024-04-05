@@ -20,20 +20,21 @@ def rename_template_files(c):
     print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
     for root, dirnames, fnames in os.walk("template"):
         for fname in fnames:
-            fullpath = os.path.join(root, fname)
-            newfullpath = os.path.join(root, fname.replace("[", "{"))
-            shutil.move(fullpath, newfullpath)
+            if "{% if is_template %}template{% endif %}" not in root:
+                fullpath = os.path.join(root, fname)
+                shutil.move(fullpath, fname.replace("[", "{"))
 
     for root, dirnames, fnames in os.walk("template"):
         for fname in fnames:
-            fullpath = os.path.join(root, fname)
-            newfullpath = os.path.join(root, fname.replace(".jinja.raw", ".jinja"))
-            shutil.move(fullpath, newfullpath)
+            if "{% if is_template %}template{% endif %}" not in root:
+                fullpath = os.path.join(root, fname)
+                shutil.move(fullpath, fname.replace(".jinja.raw", ".jinja"))
 
-    # for root, dirnames, fnames in os.walk("template"):
-    #     for dirname in dirnames:
-    #         fullpath = os.path.join(root, dirname)
-    #         shutil.move(fullpath, dirname.replace("[", "{"))
+    for root, dirnames, fnames in os.walk("template"):
+        if "{% if is_template %}template{% endif %}" not in root:
+            for dirname in dirnames:
+                fullpath = os.path.join(root, dirname)
+                shutil.move(fullpath, dirname.replace("[", "{"))
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
 
 @task
