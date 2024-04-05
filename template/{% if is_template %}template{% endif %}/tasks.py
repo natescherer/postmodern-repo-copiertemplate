@@ -199,7 +199,7 @@ def initialize_repo_and_commit_files(c, answers_json):
     if answers["developer_platform"] == "GitHub":
         remote_url = f"https://github.com/{owner}/{answers['repo_name']}.git"
     elif answers["developer_platform"] == "Azure DevOps":
-        encoded_project = urllib.parse.quote_plus(answers["azdo_project"])
+        encoded_project = answers["azdo_project"].replace(" ","%20")
         remote_url = f"https://{answers['azdo_org']}@dev.azure.com/{answers['azdo_org']}/{encoded_project}/_git/{answers['repo_name']}"
         print(f"[cyan]Setting 'git config credential.useHttpPath true'...[/cyan]")
         c.run("git config credential.useHttpPath true")
@@ -245,7 +245,8 @@ def create_pipelines_azdo(c, answers_json):
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
-    requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{answers['azdo_project']}/_apis/pipelines?api-version=7.1-preview.1", data=json.dumps(release_pipeline_data), auth=('', token), headers=headers)
+    encoded_project = answers["azdo_project"].replace(" ","%20")
+    requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/pipelines?api-version=7.1-preview.1", data=json.dumps(release_pipeline_data), auth=('', token), headers=headers)
     print("[bold green]*** 'create-pipelines-azdo' task end ***[/bold green]")
 
 @task
