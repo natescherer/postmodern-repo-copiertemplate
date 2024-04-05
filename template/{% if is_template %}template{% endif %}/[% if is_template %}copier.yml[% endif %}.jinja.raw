@@ -26,6 +26,7 @@ parent_template_url:
   when: false
 
 {%- raw %}
+
 ## Questions
 author_name:
   type: str
