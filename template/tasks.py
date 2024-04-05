@@ -23,21 +23,21 @@ def rename_template_files(c):
             if "{% if is_template %}template{% endif %}" not in root:
                 fullpath = os.path.join(root, dirname)
                 newfullpath = os.path.join(root, dirname.replace("[", "{"))
-                os.rename(fullpath, newfullpath)
+                shutil.move(fullpath, newfullpath)
 
     for root, dirnames, fnames in os.walk("template"):
         for fname in fnames:
             if "{% if is_template %}template{% endif %}" not in root:
                 fullpath = os.path.join(root, fname)
                 newfullpath = os.path.join(root, fname.replace("[", "{"))
-                os.rename(fullpath, newfullpath)
+                shutil.move(fullpath, newfullpath)
 
     for root, dirnames, fnames in os.walk("template"):
         for fname in fnames:
             if "{% if is_template %}template{% endif %}" not in root:
                 fullpath = os.path.join(root, fname)
                 newfullpath = os.path.join(root, fname.replace(".jinja.raw", ".jinja"))
-                os.rename(fullpath, newfullpath)
+                shutil.move(fullpath, newfullpath)
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
 
 @task
