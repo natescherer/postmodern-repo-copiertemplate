@@ -27,7 +27,8 @@
         "samuelcolvin.jinjahtml",
         "streetsidesoftware.code-spell-checker",
         "KnisterPeter.vscode-commitizen",
-        "trunk.io"
+        "trunk.io",
+        "eamodio.gitlens"
       ]
     }
   }

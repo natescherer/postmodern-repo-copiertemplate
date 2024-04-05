@@ -58,7 +58,7 @@ jobs:
           releaseVersion: ${{ steps.commit-and-tag-version.outputs.newVersion }}
       # The following step can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
       - run: |
-          Remove-Item -Path (Join-Path "template" "template") -Recurse -ErrorAction SilentlyContinue
+          Remove-Item -Path (Join-Path "template" "template") -Recurse -Force -ErrorAction SilentlyContinue
           Copy-Item -Path "template" -Destination "template_copy" -Recurse
           Move-Item -Path "template_copy" -Destination (Join-Path "template" "template")
         name: Create Subtemplate Directory
