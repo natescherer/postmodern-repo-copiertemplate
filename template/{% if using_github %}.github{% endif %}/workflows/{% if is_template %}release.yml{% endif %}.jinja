@@ -82,13 +82,13 @@ jobs:
 {%- endif %}
       # This step can be removed once subtemplate directory creation can be moved into the template and out of the action
       - run: |
-          {% raw %}
+          {%- raw %}
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
           git checkout release/v${{ steps.commit-and-tag-version.outputs.newVersion }}
           git tag v${{ steps.commit-and-tag-version.outputs.newVersion }}
           git push origin v${{ steps.commit-and-tag-version.outputs.newVersion }}
-          {% endraw %}
+          {%- endraw %}
         name: Add Version Tag
       - name: Enable Pull Request Automerge
         run: {% raw %}gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"{% endraw %}
