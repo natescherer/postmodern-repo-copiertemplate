@@ -3,6 +3,7 @@
 This file is to be executed with https://www.pyinvoke.org/ in Python 3.6+.
 """
 import json
+import shutil
 import os
 import urllib.parse
 import githubkit
@@ -20,17 +21,17 @@ def rename_template_files(c):
     for root, dirnames, fnames in os.walk("template"):
         for dirname in dirnames:
             fullpath = os.path.join(root, dirname)
-            os.rename(fullpath, fullpath.replace("[", "{"))
+            shutil.move(fullpath, fullpath.replace("[", "{"))
 
     for root, dirnames, fnames in os.walk("template"):
         for fname in fnames:
             fullpath = os.path.join(root, fname)
-            os.rename(fullpath, fullpath.replace("[", "{"))
+            shutil.move(fullpath, fullpath.replace("[", "{"))
 
     for root, dirnames, fnames in os.walk("template"):
         for fname in fnames:
             fullpath = os.path.join(root, fname)
-            os.rename(fullpath, fullpath.replace(".jinja.raw", ".jinja"))
+            shutil.move(fullpath, fullpath.replace(".jinja.raw", ".jinja"))
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
 
 @task
