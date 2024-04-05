@@ -8,7 +8,7 @@ permissions:
   pull-requests: write
 
 env:
-  MINIMUM_VERSION: {% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}
+  MINIMUM_VERSION: 0.1.0
 
 jobs:
   Release:
@@ -28,8 +28,8 @@ jobs:
       - name: Run 'commit-and-tag-version'
         id: commit-and-tag-version
         run: |
-          {% raw %}git config user.name ${{ github.actor }}{% endraw %}
-          {% raw %}git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com{% endraw %}
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
 
           $TempFilePath = "version-tempfile-for-ci-output.txt"
           New-Item -ItemType File -Path $TempFilePath | Out-Null
@@ -50,17 +50,12 @@ jobs:
           $VersionOutput = "newversion=$(Get-Content -Path $TempFilePath)"
           Out-File -InputObject $VersionOutput -FilePath $env:GITHUB_OUTPUT -Encoding utf-8 -Append
           Remove-Item -Path $TempFilePath
-{%- if using_cc %}
-          npx --yes extract-changelog-release | Out-File -FilePath $env:RUNNER_TEMP/releasenotes.txt
-{%- endif %}
-{%- if using_kac %}
       - name: Update Changelog
         id: changelog
         uses: natescherer/changelog-management-action@v1
         with:
           mode: release
-          releaseVersion: {% raw %}${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
-{%- endif %}
+          releaseVersion: ${{ steps.commit-and-tag-version.outputs.newVersion }}
       # The following step can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
       - run: |
           Remove-Item -Path (Join-Path "template" "template") -Recurse -ErrorAction SilentlyContinue
@@ -72,36 +67,28 @@ jobs:
         id: cpr
         with:
           base: main
-          commit-message: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"{% endraw %}
-          branch: {% raw %}release/v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
-          title: {% raw %}"chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"{% endraw %}
-{%- if using_kac %}
-          body: {% raw %}${{ steps.changelog.outputs.releasenotes }}{% endraw %}
-{%- else -%}
-          body-path: {% raw %}${{ runner.temp }}/releasenotes.txt{% endraw %}
-{%- endif %}
+          commit-message: "chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"
+          branch: release/v${{ steps.commit-and-tag-version.outputs.newVersion }}
+          title: "chore: release v${{ steps.commit-and-tag-version.outputs.newVersion }}"
+          body: ${{ steps.changelog.outputs.releasenotes }}
       # This step can be removed once subtemplate directory creation can be moved into the template and out of the action
       - run: |
-          {% raw %}
+          
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
           git checkout release/v${{ steps.commit-and-tag-version.outputs.newVersion }}
           git tag v${{ steps.commit-and-tag-version.outputs.newVersion }}
           git push origin v${{ steps.commit-and-tag-version.outputs.newVersion }}
-          {% endraw %}
+          
         name: Add Version Tag
       - name: Enable Pull Request Automerge
-        run: {% raw %}gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"{% endraw %}
+        run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
-          GH_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
+          name: v${{ steps.commit-and-tag-version.outputs.newVersion }}
           files: out
-          tag_name: {% raw %}v${{ steps.commit-and-tag-version.outputs.newVersion }}{% endraw %}
-{%- if using_kac %}
-          body: {% raw %}${{ steps.changelog.outputs.releasenotes }}{% endraw %}
-{%- else -%}
-          body_path: {% raw %}${{ runner.temp }}/releasenotes.txt{% endraw %}
-{%- endif %}
+          tag_name: v${{ steps.commit-and-tag-version.outputs.newVersion }}
+          body: ${{ steps.changelog.outputs.releasenotes }}

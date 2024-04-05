@@ -1,0 +1,18 @@
+# Changes here will be overwritten by Copier
+_commit: v0.1.29
+_src_path: gh:natescherer/postmodern-repo-copiertemplate
+author_name: Nate Scherer
+changelog_type: Keep a Changelog
+developer_platform: GitHub
+github_org: ''
+github_username: natescherer
+license: MIT
+lifecycle: Pre-Alpha
+project_name: Postmodern Repo Copier Template
+project_short_description: A Copier template for creating a basic repository with
+    full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
+project_type: Template
+project_visibility: Public
+project_website: ''
+repo_actions: None
+repo_name: postmodern-repo-copiertemplate
