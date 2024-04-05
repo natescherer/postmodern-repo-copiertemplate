@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Whitespace issues in github release workflow
+- Remove unneeded .versionrc.json
 
 ## [0.1.29] - 2024-04-04
 ### Fixed
