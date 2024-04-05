@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.54] - 2024-04-05
 ### Fixed
 - Use same renaming format both ways for subtemplate
 
@@ -255,7 +257,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.53..HEAD
+[Unreleased]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.54..HEAD
+[0.1.54]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.53..v0.1.54
 [0.1.53]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.52..v0.1.53
 [0.1.52]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.51..v0.1.52
 [0.1.51]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.50..v0.1.51
