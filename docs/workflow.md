@@ -12,10 +12,10 @@ To apply this template to an existing project, follow these steps:
     1. Default branch is checked out
 1. Create a new branch (`copier-template-apply`, for example) from your default branch
 1. Run the following in order to apply the template to your local project, changing that path as appropriate:
-
     ``` shell
-    copier copy --trust --overwrite gh:natescherer/postmodern-repo-template /path/to/project
+    copier copy --trust --overwrite gh:/postmodern-repo-copiertemplate /path/to/project
     ```
+
 
 1. Make sure to choose `Set Repo Rules` in the first question
 1. Set all other settings as appropriate for your project
