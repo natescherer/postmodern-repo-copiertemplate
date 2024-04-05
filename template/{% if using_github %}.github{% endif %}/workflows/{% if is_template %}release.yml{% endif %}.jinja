@@ -69,6 +69,8 @@ jobs:
           Copy-Item -Path "template" -Destination "template_copy" -Recurse
           Move-Item -Path "template_copy" -Destination "template"
           Rename-Item -Path "template/template_copy" -NewName "template"
+          Get-ChildItem -Path "template/template" | ForEach {if ($_.name -like "*.jinja") {Rename-Item $_.FullName -NewName ($_.name).Replace(".jinja",".jinja.raw")}}
+          Get-ChildItem -Path "template/template" | ForEach {if ($_.name -like "*{*") {Rename-Item $_.FullName -NewName ($_.name).Replace("{","[")}}
         name: Create Subtemplate Directory
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6

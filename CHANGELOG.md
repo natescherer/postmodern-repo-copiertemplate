@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Dynamic repo URL in workflow doc
 
+### Fixed
+- New renaming-based subtemplate methodology
+
 ## [0.1.31] - 2024-04-05
 ### Fixed
 - Fix bad template subtemplate generation
