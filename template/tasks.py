@@ -19,8 +19,8 @@ def rename_template_files(c):
     """Renames files in template that were renamed during build to block rendering."""
     print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
     if shutil.which("pwsh"):
-          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse -Directory | ForEach {if (($_.name -like \"*[*\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\"[\",\"{\")}}'")
-          c.run("pwsh -c 'Get-ChildItem -Path \"template/{% if is_template %}template{% endif %}\" -Recurse | ForEach {if (($_.name -like \"*[*\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\"[\",\"{\")}}'")
+          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse -Directory | ForEach {if (($_.name -like \"*`[*\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\"[\",\"{\")}}'")
+          c.run("pwsh -c 'Get-ChildItem -Path \"template/{% if is_template %}template{% endif %}\" -Recurse | ForEach {if (($_.name -like \"*`[*\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\"[\",\"{\")}}'")
           c.run("pwsh -c 'Get-ChildItem -Path \"template/{% if is_template %}template{% endif %}\" -Recurse | ForEach {if (($_.name -like \"*.jinja.raw\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\".jinja.raw\",\".jinja\")}}'")
     else:
         raise("PowerShell needs installed for the time being. Sorry.")
