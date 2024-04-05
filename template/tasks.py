@@ -18,26 +18,12 @@ from rich import print
 def rename_template_files(c):
     """Renames files in template that were renamed during build to block rendering."""
     print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
-    for root, dirnames, fnames in os.walk("template"):
-        for fname in fnames:
-            if "{% if is_template %}template{% endif %}" not in root:
-                fullpath = os.path.join(root, fname)
-                newfullpath = fullpath.replace("[", "{")
-                shutil.move(fullpath, newfullpath)
-
-    for root, dirnames, fnames in os.walk("template"):
-        for fname in fnames:
-            if "{% if is_template %}template{% endif %}" not in root:
-                fullpath = os.path.join(root, fname)
-                newfullpath = fullpath.replace(".jinja.raw", ".jinja")
-                shutil.move(fullpath, newfullpath)
-
-    for root, dirnames, fnames in os.walk("template"):
-        if "{% if is_template %}template{% endif %}" not in root:
-            for dirname in dirnames:
-                fullpath = os.path.join(root, dirname)
-                newfullpath = os.path.join(root, dirname.replace("[", "{"))
-                shutil.copytree(fullpath, newfullpath, dirs_exist_ok=True)
+    if shutil.which("pwsh"):
+          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Recurse -Directory | ForEach {if (($_.name -like \"*[*\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\"[\",\"{\")}}'")
+          c.run("pwsh -c 'Get-ChildItem -Path \"template/{% if is_template %}template{% endif %}\" -Recurse | ForEach {if (($_.name -like \"*[*\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\"[\",\"{\")}}'")
+          c.run("pwsh -c 'Get-ChildItem -Path \"template/{% if is_template %}template{% endif %}\" -Recurse | ForEach {if (($_.name -like \"*.jinja.raw\") -and ($_.name -notlike \"*{% if is_template %}template{% endif %}*\")) {Rename-Item -LiteralPath $_.FullName -NewName ($_.name).Replace(\".jinja.raw\",\".jinja\")}}'")
+    else:
+        raise("PowerShell needs installed for the time being. Sorry.")
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
 
 @task
