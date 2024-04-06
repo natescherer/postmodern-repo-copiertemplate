@@ -266,3 +266,7 @@ _tasks:
     invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - invoke delete-unneeded-template-files
+
+---
+!include copier-question-overrides.yml
+---
