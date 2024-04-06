@@ -269,3 +269,7 @@ _tasks:
     {%- endif -%}
   - invoke delete-unneeded-template-files
 {%- endraw %}
+
+---
+!include copier-question-overrides.yml
+---
