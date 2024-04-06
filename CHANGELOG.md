@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.65] - 2024-04-06
 ### Added 
+- Question override file for child templates
 
 ## [0.1.64] - 2024-04-05
 ### Added
