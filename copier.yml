@@ -237,6 +237,7 @@ should_set_repo_settings:
 ## Tasks
 
 _tasks:
+  # The following task can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
   - >-
     {%- if is_template -%}
     invoke rename-template-files

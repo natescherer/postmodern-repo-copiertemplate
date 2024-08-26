@@ -8,15 +8,13 @@ import os
 import urllib.parse
 import githubkit
 import requests
-from azure.devops.connection import Connection
-from azure.devops.exceptions import AzureDevOpsServiceError
-from msrest.authentication import BasicAuthentication
 from invoke import task
 from rich import print
 
 @task
 def rename_template_files(c):
     """Renames files in template that were renamed during build to block rendering."""
+    # This function can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
     print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
     if shutil.which("pwsh"):
           # Wipe any conflicting target
@@ -28,7 +26,7 @@ def rename_template_files(c):
           # Rename raw files
           c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Force -Recurse | ForEach {if (($_.Name -like \"*.jinja.raw\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(\".jinja.raw\",\".jinja\")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}'")
     else:
-        raise("PowerShell needs installed for the time being. Sorry.")
+        raise FileNotFoundError("PowerShell needs installed for the time being. Sorry.")
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
 
 @task
