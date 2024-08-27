@@ -12,13 +12,15 @@
     "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers/features/powershell:1": {},
     "ghcr.io/natescherer/devcontainers-custom-features/hypermodern-python:1": {
-      "versions": "3.11", // 'azure-devops' python packages pins us at 3.11, see https://github.com/microsoft/azure-devops-python-api/issues/461
+      "versions": "3.12",
       "requirementsFile": "/opt/devcontainer/requirements.txt"
     }
   },
   "onCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
   "mounts": [
-      "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/host-home,type=bind,consistency=cached"
+      "source=${localEnv:HOME},target=/host-home,type=bind,consistency=cached"
+      // If you are on Windows and get a CreateFile error, use this instead:
+      // "source=${localEnv:USERPROFILE},target=/host-home,type=bind,consistency=cached"
   ],
   "customizations": {
     "vscode": {
