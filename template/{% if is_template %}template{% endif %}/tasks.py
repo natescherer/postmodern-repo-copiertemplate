@@ -5,18 +5,15 @@ This file is to be executed with https://www.pyinvoke.org/ in Python 3.6+.
 import json
 import shutil
 import os
-import urllib.parse
 import githubkit
 import requests
-from azure.devops.connection import Connection
-from azure.devops.exceptions import AzureDevOpsServiceError
-from msrest.authentication import BasicAuthentication
 from invoke import task
 from rich import print
 
 @task
 def rename_template_files(c):
     """Renames files in template that were renamed during build to block rendering."""
+    # This function can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
     print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
     if shutil.which("pwsh"):
           # Wipe any conflicting target
@@ -28,7 +25,7 @@ def rename_template_files(c):
           # Rename raw files
           c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Force -Recurse | ForEach {if (($_.Name -like \"*.jinja.raw\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(\".jinja.raw\",\".jinja\")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}'")
     else:
-        raise("PowerShell needs installed for the time being. Sorry.")
+        raise FileNotFoundError("PowerShell needs installed for the time being. Sorry.")
     print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
 
 @task
@@ -69,15 +66,17 @@ def create_repo_azdo(c, answers_json):
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
 
-    print("[cyan]Authenticating to Azure DevOps...[/cyan]")
-    credentials = BasicAuthentication('', token)
-    connection = Connection(base_url=f"https://dev.azure.com/{answers['azdo_org']}", creds=credentials)
-    git_client = connection.clients_v5_1.get_git_client()
     repo_data = {
-        "name": answers["repo_name"],
+        "name": answers["repo_name"]
     }
     print("[cyan]Creating repo in Azure DevOps...[/cyan]")
-    git_client.create_repository(repo_data, project=answers["azdo_project"])
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    encoded_project = answers["azdo_project"].replace(" ","%20")
+    print("[cyan]Creating repo in Azure DevOps...[/cyan]")
+    requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/pipelines?api-version=7.1-preview.1", data=json.dumps(repo_data), auth=('', token), headers=headers)
     print("[bold green]*** 'create-repo-azdo' task end ***[/bold green]")
 
 @task
@@ -211,42 +210,41 @@ def initialize_repo_and_commit_files(c, answers_json):
 
 @task
 def create_pipelines_azdo(c, answers_json):
-    """Register pipeliens for an Azure DevOps repo"""
-    # Note that pipeline creation with the python module straight-up doesn't
-    # work, so gotta do this the old-fashioned way.
-    # See https://github.com/microsoft/azure-devops-python-api/issues/432
+    """Register pipeline for an Azure DevOps repo"""
     print("[bold green]*** 'create-pipelines-azdo' task start ***[/bold green]")
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
 
-    print("[cyan]Authenticating to Azure DevOps...[/cyan]")
-    credentials = BasicAuthentication('', token)
-    connection = Connection(base_url=f"https://dev.azure.com/{answers['azdo_org']}", creds=credentials)
-    git_client = connection.clients_v5_1.get_git_client()
-    repo_return = git_client.get_repositories(project=answers["azdo_project"])
-    matching_repo_object = [x for x in repo_return if x.name == answers["repo_name"]][0]
-    repo_id = matching_repo_object.id
-
-    release_pipeline_data = {
-        "configuration": {
-            "type": "yaml",
-            "path": ".azurepipelines/azure-pipelines-release.yml",
-            "repository": {
-                "id": repo_id,
-                "type": "azureReposGit"
-            }
-        },
+    pipeline_data = {
         "name": answers["repo_name"],
-        "folder": "\\"
+        "repository": {
+            "name": answers["repo_name"],
+            "type": "TfsGit"
+        },
+        "process": {
+            "yamlFilename": ".azurepipelines/azure-pipelines.yml",
+            "type": 2
+        },
+        "path": "\\",
+        "queue": {
+            "name": "Azure Pipelines"
+        },
+        "triggers": [
+            {
+                "settingsSourceType": 2,
+                "triggerType": "continuousIntegration"
+            }
+        ],
+        "type": "build"
     }
-    print("[cyan]Creating release pipeline in Azure DevOps...[/cyan]")
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
     encoded_project = answers["azdo_project"].replace(" ","%20")
-    requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/pipelines?api-version=7.1-preview.1", data=json.dumps(release_pipeline_data), auth=('', token), headers=headers)
+    print("[cyan]Creating pipeline in Azure DevOps...[/cyan]")
+    requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7", data=json.dumps(pipeline_data), auth=('', token), headers=headers)
     print("[bold green]*** 'create-pipelines-azdo' task end ***[/bold green]")
 
 @task
