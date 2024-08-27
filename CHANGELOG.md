@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Devcontainer moved to use Python 3.12 and versioned requirements
+- Azure DevOps Python library dependency removed
+
+### Fixed
+- Azure DevOps pipeline creation
 
 ## [0.1.67] - 2024-04-06
 ### Fixed
