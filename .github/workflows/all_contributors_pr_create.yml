@@ -10,8 +10,9 @@ permissions:
     pull-requests: write
 
 jobs:
-  contributors:
+  allcontributors_create_pr:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'github-actions[bot]' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

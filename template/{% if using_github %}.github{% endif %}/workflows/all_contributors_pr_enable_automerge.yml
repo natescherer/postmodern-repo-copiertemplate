@@ -1,4 +1,4 @@
-name: All Contributors PR Merge
+name: All Contributors PR Enable Automerge
 
 on: pull_request
 
@@ -7,7 +7,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  dependabot:
+  allcontributors_pr_enable_automerge:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'allcontributors[bot]' }}
     steps:
