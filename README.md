@@ -117,7 +117,6 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/natescherer"><img src="https://avatars.githubusercontent.com/u/376408?v=4?s=100" width="100px;" alt="Nate Scherer"/><br /><sub><b>Nate Scherer</b></sub></a><br /><a href="#code-natescherer" title="Code">💻</a> <a href="#maintenance-natescherer" title="Maintenance">🚧</a> <a href="#doc-natescherer" title="Documentation">📖</a> <a href="#infra-natescherer" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/apps/github-actions"><img src="https://avatars.githubusercontent.com/in/15368?v=4?s=100" width="100px;" alt="github-actions[bot]"/><br /><sub><b>github-actions[bot]</b></sub></a><br /><a href="#maintenance-github-actions[bot]" title="Maintenance">🚧</a> <a href="#code-github-actions[bot]" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
