@@ -10,7 +10,6 @@ _jinja_extensions:
   - extensions/azure_devops_extension.py:AzureDevOpsExtension
   - extensions/path_tests_extension.py:PathTestsExtension
   - extensions/github_extension.py:GitHubExtension
-  - extensions/pre_render_functions_extension.py:PreRenderFunctionsExtension
   - extensions/context.py:ContextUpdater
 
 _subdirectory: template
