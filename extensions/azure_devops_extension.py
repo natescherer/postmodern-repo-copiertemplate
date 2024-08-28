@@ -52,5 +52,4 @@ class AzureDevOpsExtension(Extension):
         super().__init__(environment)
         environment.tests["extant_azdo_org"] = extant_azdo_org
         environment.tests["valid_azdo_token_for_org"] = valid_azdo_token_for_org
-        environment.tests["valid_azdo_project_for_token_and_org"] = valid_azdo_project_for_token_and_org
         environment.tests["available_azdo_repo_name_for_token_and_org_and_project"] = available_azdo_repo_name_for_token_and_org_and_project
