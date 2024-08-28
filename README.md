@@ -42,7 +42,7 @@ It is highly encouraged for you to take this template and make your own child te
 
 - Creation of new repos and `initial` branch containing template code
 - Setting of repo settings & branch protection rules
-- Creation of useful non-default issue labels via [GitHub CLI][github-cli] script: `awaiting pr` and `blocked`
+- Creation of useful non-default issue labels: `awaiting pr` and `blocked`
 - Contributor management and crediting via [All Contributors][all-contributors]
 - GitHub Actions dependency updating via [Dependabot][dependabot]
 - Synchronization with updates to this template via [cruft][cruft]
@@ -147,7 +147,6 @@ This repository is based on the template of itself. Neat, huh?
 [devcontainer]: https://containers.dev/
 [doppler]: https://www.doppler.com
 [doppler-actions-instructions]: https://docs.doppler.com/docs/github-actions
-[github-cli]: https://cli.github.com/
 [gitversion]: https://gitversion.net/
 [hypermodern-cc]: https://github.com/cjolowicz/cookiecutter-hypermodern-python
 [keep-a-changelog]: https://keepachangelog.com/en/1.1.0/
