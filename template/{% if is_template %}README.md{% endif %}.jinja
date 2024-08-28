@@ -60,7 +60,7 @@ It is highly encouraged for you to take this template and make your own child te
 
 ### Support Files
 
-- `.gitignore`, set to ignore macOS `.DS_Store` files
+- `.gitignore`, set to ignore macOS `.DS_Store` files and Windows `Thumbs.db` files
 - `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant][contributor-covenant]
 - `CONTRIBUTING.md`, designed help novices to make their first contribution
 - `LICENSE`, a copy of the [MIT License][mit-license]
