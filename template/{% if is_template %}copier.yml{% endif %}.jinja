@@ -92,7 +92,6 @@ azdo_project:
   type: str
   help: An Azure DevOps project in organization '{{ azdo_org }}'.
   when: "{{ developer_platform == 'Azure DevOps' }}"
-  # validator: "{% if azdo_project is not valid_azdo_project_for_token_and_org(azdo_token, azdo_org) %}Azure DevOps Project Doesn't Exist{% endif %}"
 
 repo_name:
   type: str
@@ -238,6 +237,7 @@ should_set_repo_settings:
 ## Tasks
 
 _tasks:
+  # The following task can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
   - >-
     {%- if is_template -%}
     invoke rename-template-files
