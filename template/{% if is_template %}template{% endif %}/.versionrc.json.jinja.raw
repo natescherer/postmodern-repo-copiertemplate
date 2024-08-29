@@ -3,7 +3,7 @@
     "reverse": false,
     "commitsSort": false
   },
-{% if using_azdo -%}
+{%- if using_azdo %}
   "parserOpts": {
     "headerPattern": "(?:\\(Merged PR \\d+: \\))?([a-zA-Z]+)(?:\\(([\\w$\\.\\-*\\s]*)\\))?\\!?:(.*)"
   },
