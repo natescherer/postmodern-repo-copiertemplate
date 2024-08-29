@@ -84,7 +84,7 @@ jobs:
           {% endraw %}
         name: Add Version Tag
       - name: Enable Pull Request Automerge
-        run: {% raw %}gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"{% endraw %}
+        run: {% raw %}gh pr merge --merge --admin "${{ steps.cpr.outputs.pull-request-number }}"{% endraw %}
         env:
           GH_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
       - name: Create Release
