@@ -1,8 +1,5 @@
 # macOS .DS_Store files
 .DS_Store
 
-# Release-related files
-out/
-
-# Data files for running copier
-data.yml
+# Windows Thumbs.db files
+Thumbs.db

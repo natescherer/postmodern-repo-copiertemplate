@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.69] - 2024-08-29
 ### Fixed
 - Synchronized files from root into template
 - Azure DevOps template functions fixed to not use old Python library
@@ -321,7 +323,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.68..HEAD
+[Unreleased]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.69..HEAD
+[0.1.69]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.68..v0.1.69
 [0.1.68]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.67..v0.1.68
 [0.1.67]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.66..v0.1.67
 [0.1.66]: https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.1.65..v0.1.66
