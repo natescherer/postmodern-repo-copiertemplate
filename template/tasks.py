@@ -3,30 +3,31 @@
 This file is to be executed with https://www.pyinvoke.org/ in Python 3.6+.
 """
 import json
-import shutil
 import os
+import shutil
+import tempfile
+import copier.vcs
 import githubkit
 import requests
 from invoke import task
 from rich import print
 
 @task
-def rename_template_files(c):
-    """Renames files in template that were renamed during build to block rendering."""
-    # This function can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
-    print("[bold green]*** 'rename-template-files' task start ***[/bold green]")
-    if shutil.which("pwsh"):
-          # Wipe any conflicting target
-          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Force -Recurse -Directory | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) ($_.Name).Replace(\"[\",\"{\")); if (Test-Path $NewPath) {Remove-Item $NewPath -Force -Recurse}}}'")
-          # Rename bracket folders
-          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Force -Recurse -Directory | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(\"[\",\"{\")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}'")
-          # Rename bracket files
-          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Force -Recurse | ForEach {if (($_.Name -like \"*[[]*\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(\"[\",\"{\")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}'")
-          # Rename raw files
-          c.run("pwsh -c 'Get-ChildItem -Path \"template\" -Force -Recurse | ForEach {if (($_.Name -like \"*.jinja.raw\") -and ($_.FullName -notlike \"*{% if is_template %}template{% endif %}*\")) {$NewPath = (Join-Path (Split-Path -Path $_.FullName -Parent) $_.Name.Replace(\".jinja.raw\",\".jinja\")); Move-Item -LiteralPath $_.FullName -Destination $NewPath -Force}}'")
-    else:
-        raise FileNotFoundError("PowerShell needs installed for the time being. Sorry.")
-    print("[bold green]*** 'rename-template-files' task end ***[/bold green]")
+def copy_template_files(c, answers_json):
+    """Pulls down an additional copy of template files."""
+    print("[bold green]*** 'copy-template-files' task start ***[/bold green]")
+    answers = json.loads(answers_json)
+    source = answers["_src_path"]
+    ref = answers["_commit"]
+    source_url = copier.vcs.get_repo(source)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        if ref != "HEAD" and ref is not None:
+            c.run(f"cd {tmpdir}; git -c advice.detachedHead=false clone -q --depth 1 --branch {ref} {source_url} .")
+        else:
+            c.run(f"cd {tmpdir}; git -c advice.detachedHead=false clone -q --depth 1 {source_url} .")
+        shutil.copytree(f"{tmpdir}/template", "template", dirs_exist_ok=True)
+    print("[bold green]*** 'copy-template-files' task end ***[/bold green]")
 
 @task
 def create_repo_github(c, answers_json):
@@ -69,14 +70,14 @@ def create_repo_azdo(c, answers_json):
     repo_data = {
         "name": answers["repo_name"]
     }
-    print("[cyan]Creating repo in Azure DevOps...[/cyan]")
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
     encoded_project = answers["azdo_project"].replace(" ","%20")
     print("[cyan]Creating repo in Azure DevOps...[/cyan]")
-    requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/pipelines?api-version=7.1-preview.1", data=json.dumps(repo_data), auth=('', token), headers=headers)
+    response = requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/git/repositories?api-version=7.2-preview.1", data=json.dumps(repo_data), auth=('', token), headers=headers)
+    response.raise_for_status()
     print("[bold green]*** 'create-repo-azdo' task end ***[/bold green]")
 
 @task
@@ -162,17 +163,6 @@ def set_branch_protection_ruleset_github(c, answers_json):
                     "require_last_push_approval": False,
                     "required_approving_review_count": 0,
                     "required_review_thread_resolution": False
-                },
-                {
-                "type": "required_status_checks",
-                    "parameters": {
-                        "strict_required_status_checks_policy": False,
-                        "required_status_checks": [
-                            {
-                                "context": "status_checks_pr"
-                            }
-                        ]
-                    }
                 }
             ]
         }
@@ -188,13 +178,20 @@ def initialize_repo_and_commit_files(c, answers_json):
     print("[bold green]*** 'initialize-repo-and-commit-files' task start ***[/bold green]")
     answers = json.loads(answers_json)
     owner = answers.get("github_org") or answers.get("github_username")
+    if answers["lifecycle"] in ["Pre-Alpha", "Alpha", "Beta"]:
+        first_version = "0.1.0" 
+    else:
+        first_version =  "1.0.0"
 
     print("[cyan]Initializing git repo with 'main' branch...[/cyan]")
     c.run("git init -b main")
     print("[cyan]Adding files to commit...[/cyan]")
     c.run("git add --all -- ':!tasks.py' ':!token.json' ':!template_copy.tar.gz'")
     print("[cyan]Committing...[/cyan]")
-    c.run("git commit -m 'feat: initialize project'")
+    commit_message = ("git commit -m 'feat: initialize project'")
+    if answers["developer_platform"] == "GitHub":
+        commit_message += f" -m 'Release-As: {first_version}'"
+    c.run(commit_message)
     if answers["developer_platform"] == "GitHub":
         remote_url = f"https://github.com/{owner}/{answers['repo_name']}.git"
     elif answers["developer_platform"] == "Azure DevOps":
@@ -244,7 +241,8 @@ def create_pipelines_azdo(c, answers_json):
     }
     encoded_project = answers["azdo_project"].replace(" ","%20")
     print("[cyan]Creating pipeline in Azure DevOps...[/cyan]")
-    requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7", data=json.dumps(pipeline_data), auth=('', token), headers=headers)
+    response = requests.post(f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7", data=json.dumps(pipeline_data), auth=('', token), headers=headers)
+    response.raise_for_status()
     print("[bold green]*** 'create-pipelines-azdo' task end ***[/bold green]")
 
 @task

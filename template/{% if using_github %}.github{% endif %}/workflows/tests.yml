@@ -1,16 +1,17 @@
-name: Status Checks Push
+name: Tests
 
 on:
+  pull_request:
   push:
     branches-ignore:
       - main
 
 jobs:
-  status_checks_push:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Example Check
+      - name: Example Tests
         run: |
           FILE=README.md
           if [ -f "$FILE" ]; then

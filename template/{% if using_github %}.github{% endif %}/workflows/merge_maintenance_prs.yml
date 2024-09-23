@@ -1,4 +1,4 @@
-name: All Contributors PR Merge
+name: Merge Repo Maintenance PRs
 
 on: pull_request
 
@@ -9,9 +9,9 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'allcontributors[bot]' }}
+    if: ${{ github.actor == 'allcontributors[bot]' || github.actor == 'dependabot[bot]' }}
     steps:
-      - name: Enable auto-merge for AllContributors PRs
+      - name: Merge Repo Maintenance PRs
         run: |
           # Retry to work around "Base branch was modified." error.
           # Ref: https://github.com/cli/cli/issues/8092
