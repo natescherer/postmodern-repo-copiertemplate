@@ -15,9 +15,9 @@ workflow | Needed to allow template tasks to commit workflows
 
 **Permission** | **Reason**
 ---|---
-administration:write | Needed to create repo & set its settings
-issues:write | Needed to create custom labels
-workflows:write | Needed to allow template tasks to commit workflows
+Repository > Administration: Read & Write | Needed to create repo & set its settings
+Repository > Issues: Read & Write | Needed to create custom labels
+Repository > Workflows: Read & Write | Needed to allow template tasks to commit workflows
 
 ## Azure DevOps
 
