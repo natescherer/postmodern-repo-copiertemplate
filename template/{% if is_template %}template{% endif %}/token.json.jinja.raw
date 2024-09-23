@@ -1,4 +1,0 @@
-{
-    "about": "This file is used to securely store GitHub/Azure DevOps tokens during the template building process to avoid possibly leaking them into command line output. It is deleted at the end of the template creation process and is not committed to Git.",
-    "token": "{{ github_token }}{{ azdo_token }}"
-}

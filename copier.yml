@@ -8,9 +8,11 @@ _jinja_extensions:
   - jinja2_time.TimeExtension
   # Internal Dependencies
   - extensions/azure_devops_extension.py:AzureDevOpsExtension
-  - extensions/path_tests_extension.py:PathTestsExtension
-  - extensions/github_extension.py:GitHubExtension
   - extensions/context.py:ContextUpdater
+  - extensions/github_extension.py:GitHubExtension
+  - extensions/path_tests_extension.py:PathTestsExtension
+  - extensions/phase_extension.py:PhaseExtension
+  - extensions/version_extension.py:VersionExtension
 
 _subdirectory: template
 
@@ -32,15 +34,15 @@ author_name:
 
 developer_platform:
   type: str
-  help: The platform where you are going to host your Git repo and CI/CD.
+  help: The platform where you are going to host your Git repo and CI/CD. This value should not be changed on update.
   choices:
     - GitHub
     - Azure DevOps
 
-# Restore New/Existing validators once https://github.com/copier-org/copier/issues/1050 is resolved
+# Restore validators once https://github.com/copier-org/copier/issues/1050 is resolved
 repo_actions:
   type: str
-  help: If you are making a new project and want to have this template create the repo, choose 'Create Repo'. If you are applying this template to an existing project and want to just set repository rules, choose 'Set Repo Rules'. If you want don't want the template to do any repo-related automations, choose 'None'.
+  help: If you are making a new project and want to have this template create the repo, choose 'Create Repo'. If you are applying this template to an existing project and want to just set repository rules, choose 'Set Repo Rules'. If this is an update run, or you want don't want the template to do any repo-related automations, choose 'None'.
   choices:
     Create Repo:
       value: Create Repo
@@ -55,46 +57,44 @@ github_token:
   type: str
   secret: true
   default: ""
-  help: |
-    A GitHub Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
+  help: A GitHub Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
   when: "{{ developer_platform == 'GitHub' and repo_actions != 'None' }}"
-  # validator: "{% if github_token is not valid_gh_token and (developer_platform == 'GitHub' and repo_actions != 'None') %}GitHub Token Invalid{% endif %}"
+  validator: "{% if github_token is not valid_gh_token and (developer_platform == 'GitHub' and repo_actions != 'None') %}GitHub Token Invalid{% endif %}"
 
 github_username:
   type: str
-  help: Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.
+  help: Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'. This value should not be changed on update.
   default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
   when: "{{ developer_platform == 'GitHub' }}"
 
 github_org:
   type: str
-  help: (OPTIONAL) If this repo {% if repo_actions == 'Create Repo' %} should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here.
+  help: (OPTIONAL) If this repo {% if repo_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here. This value should not be changed on update.
   when: "{{ developer_platform == 'GitHub' }}"
 
 azdo_org:
   type: str
-  help: The Azure DevOps organization to use for the new project.
+  help: The Azure DevOps organization to use for the new project. This value should not be changed on update.
   when: "{{ developer_platform == 'Azure DevOps' }}"
-  # validator: "{% if azdo_org is not extant_azdo_org %}Azure DevOps Organization Does Not Exist{% endif %}"
+  validator: "{% if azdo_org is not extant_azdo_org %}Azure DevOps Organization Does Not Exist{% endif %}"
 
 azdo_token:
   type: str
   secret: true
   default: ""
-  help: |
-    An Azure DevOps Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
+  help: An Azure DevOps Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
   when: "{{ developer_platform == 'Azure DevOps' and repo_actions != 'None' }}"
-  # validator: "{% if azdo_token is not valid_azdo_token_for_org(azdo_org) and (developer_platform == 'Azure DevOps' and repo_actions != 'None') %}Azure DevOps Token Invalid{% endif %}"
+  validator: "{% if azdo_token is not valid_azdo_token_for_org(azdo_org) and (developer_platform == 'Azure DevOps' and repo_actions != 'None') %}Azure DevOps Token Invalid{% endif %}"
 
 azdo_project:
   type: str
-  help: An Azure DevOps project in organization '{{ azdo_org }}'.
+  help: An Azure DevOps project in organization '{{ azdo_org }}'. This value should not be changed on update.
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
 repo_name:
   type: str
-  help: |
-    The name of this project's Git repository. Will be {% if repo_actions == 'Create Repo' %}created{% else %}reused{% endif %} by this template.
+  help: The name of this project's Git repository. Will be {% if repo_actions == 'Create Repo' %}created{% else %}reused{% endif %} by this template. This value should not be changed on update.
+  # Validator is currently disabled as it is buggy on updates
   # validator: |
   #   {% if repo_actions == 'Create Repo' -%}
   #     {%- if developer_platform == 'GitHub' -%}
@@ -116,11 +116,11 @@ repo_name:
   #         Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} does not exist
   #       {%- endif -%}
   #     {%- endif -%}
-  #   {%- endif %} #}
+  #   {%- endif %}
 
 project_type:
   type: str
-  help: If you are creating another Copier template that will inherit from this one, choose Template. Otherwise, choose Standard.
+  help: If you are creating another Copier template that will inherit from this one, choose Template. Otherwise, choose Standard. This value should not be changed on update.
   choices:
     - Standard
     - Template
@@ -139,7 +139,7 @@ project_website:
 
 project_visibility:
   type: str
-  help: Choose if you want this project to be Public or Private.
+  help: Choose if you want this project to be Public or Private. This value should not be changed on update.
   choices:
     Public:
       value: Public
@@ -154,16 +154,6 @@ license:
     - MIT
     - Provide Own
   when: "{{ project_visibility == 'Public' }}"
-
-changelog_type:
-  type: str
-  help: Choose the type of changelog you want this project to use.
-  choices:
-    Keep a Changelog:
-      value: Keep a Changelog
-      validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
-    Conventional Changelog:
-      value: Conventional Changelog
 
 lifecycle:
   type: str
@@ -190,16 +180,6 @@ using_azdo:
 using_mit:
   type: bool
   default: "{% if license == 'MIT' %}true{% endif %}"
-  when: false
-
-using_kac:
-  type: bool
-  default: "{% if changelog_type == 'Keep a Changelog' %}true{% endif %}"
-  when: false
-
-using_cc:
-  type: bool
-  default: "{% if changelog_type == 'Conventional Changelog' %}true{% endif %}"
   when: false
 
 is_public:
@@ -235,10 +215,9 @@ should_set_repo_settings:
 ## Tasks
 
 _tasks:
-  # The following task can be removed once https://github.com/copier-org/copier/pull/1511 is implemented
   - >-
     {%- if is_template -%}
-    invoke rename-template-files
+    invoke copy-template-files --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - >-
     {%- if should_create_repo and using_github -%}
@@ -265,6 +244,13 @@ _tasks:
     invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
     {%- endif -%}
   - invoke delete-unneeded-template-files
+
+_message_after_update: |
+  {%- if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %}
+  It looks like you have switched this project's lifecycle to 'Stable' for the first time. If this is true, merge the folliwng commit to main to have Release Please bump the version number properly.
+
+  git commit --allow-empty -m "chore: bump version to v1.0.0" -m "Release-As: 1.0.0"
+  {%- endif %}
 
 ---
 !include copier-question-overrides.yml

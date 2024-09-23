@@ -1,0 +1,13 @@
+{
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "extra-label": "release-please",
+  "include-v-in-tag": true,
+  "plugins": ["sentence-case"],
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "changelog-path": "CHANGELOG.md"
+    }
+  }
+}

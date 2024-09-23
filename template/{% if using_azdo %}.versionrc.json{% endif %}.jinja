@@ -3,18 +3,15 @@
     "reverse": false,
     "commitsSort": false
   },
-{%- if using_azdo %}
   "parserOpts": {
     "headerPattern": "(?:\\(Merged PR \\d+: \\))?([a-zA-Z]+)(?:\\(([\\w$\\.\\-*\\s]*)\\))?\\!?:(.*)"
   },
-{%- endif %}
   "bumpFiles": [
     {
-      "filename": "version-tempfile-for-ci-output.txt",
+      "filename": ".version.txt",
       "type": "plain-text"
     }
   ],
-  "header": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Conventional Changelog](https://github.com/conventional-changelog/conventional-changelog),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)\n",
   "releaseCommitMessageFormat": {% raw %}"chore: release {{currentTag}} [skip ci]"{% endraw %},
   "types": [
     {
@@ -73,11 +70,14 @@
       "hidden": false
     }
   ],
+{% if is_prerelease -%}
+  "preMajor": true,
+{%- endif %}
   "skip": {
     "bump": false,
-    "changelog": {% if using_kac %}true{% else %}false{% endif %},
-    "commit": true,
-    "tag": true
+    "changelog": false,
+    "commit": false,
+    "tag": false
   },
   "tagPrefix": "v",
   "noVerify": true,
