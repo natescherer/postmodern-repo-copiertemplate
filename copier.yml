@@ -245,12 +245,11 @@ _tasks:
     {%- endif -%}
   - invoke delete-unneeded-template-files
 
-_message_after_update: |
-  {%- if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %}
+_message_after_update: >-
+  {% if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %}
   It looks like you have switched this project's lifecycle to 'Stable' for the first time. If this is true, merge the folliwng commit to main to have Release Please bump the version number properly.
 
   git commit --allow-empty -m "chore: bump version to v1.0.0" -m "Release-As: 1.0.0"
-  {%- endif %}
-
+  {% endif %}
 ---
 !include copier-question-overrides.yml

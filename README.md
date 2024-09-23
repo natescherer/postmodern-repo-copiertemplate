@@ -40,13 +40,12 @@ It is highly encouraged for you to take this template and make your own child te
 
 ### Repository Management
 
-- Creation of new repos and `initial` branch containing template code
+- Creation of new repos and branches
 - Setting of repo settings & branch protection rules
 - Creation of useful non-default issue labels: `awaiting pr` and `blocked`
 - Contributor management and crediting via [All Contributors][all-contributors]
-- GitHub Actions dependency updating via [Dependabot][dependabot]
-- Synchronization with updates to this template via [cruft][cruft]
-- (Optional) Secret management via [Doppler][doppler]
+- Dependency updates via [Dependabot][dependabot]
+- (Optional) Scheduled checks for updates from parent template
 
 ### Code Management and Formatting
 
@@ -86,18 +85,13 @@ There are two ways to install the prerequisites needed on your machine: running 
 1. Set up the Trunk.io GitHub integration using [their instructions](trunk-github-setup)
    - You can either give it access to all your repositories, which means you only need to do this step once, or you can select repositories individually, in which case you will need to do this for each new repo you create.
 
-### Per-Repository Actions
-
-1. (If using Doppler for secret management) Ensure you have a [Doppler][doppler] account created, then set up the GitHub Actions integration via [these instructions][doppler-actions-instructions].
-   - This only needs done once for all repositories
-
 ## Using this template
 
 1. Open a terminal to the parent directory where you want the repo subdirectory to be created
-1. Run the following to initialize the template (and the linked GitHub repo):
+1. Run the following to initialize the template:
 
    ```bash
-   copier copy --trust gh:natescherer/postmodern-repo-template .
+   copier copy --trust gh:natescherer/postmodern-repo-copiertemplate .
    ```
 
 ## Questions/Comments
@@ -145,8 +139,6 @@ This repository is based on the template of itself. Neat, huh?
 [cruft]: https://cruft.github.io/cruft/
 [dependabot]: https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide
 [devcontainer]: https://containers.dev/
-[doppler]: https://www.doppler.com
-[doppler-actions-instructions]: https://docs.doppler.com/docs/github-actions
 [gitversion]: https://gitversion.net/
 [hypermodern-cc]: https://github.com/cjolowicz/cookiecutter-hypermodern-python
 [keep-a-changelog]: https://keepachangelog.com/en/1.1.0/
