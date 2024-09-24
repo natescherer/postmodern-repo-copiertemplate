@@ -16,7 +16,6 @@
       "requirementsFile": "/opt/devcontainer/requirements.txt"
     }
   },
-  "onCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
   "mounts": [
       "source=${localEnv:HOME},target=/host-home,type=bind,consistency=cached"
       // If you are on Windows and get a CreateFile error, use this instead:
@@ -25,10 +24,13 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "github.vscode-github-actions",
+        "joshbolduc.commitlint",
+        "KnisterPeter.vscode-commitizen",
+        "ms-azure-devops.azure-pipelines",
         "ms-python.python",
         "samuelcolvin.jinjahtml",
         "streetsidesoftware.code-spell-checker",
-        "KnisterPeter.vscode-commitizen",
         "trunk.io"
       ]
     }

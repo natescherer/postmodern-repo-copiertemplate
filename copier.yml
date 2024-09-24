@@ -16,7 +16,7 @@ _jinja_extensions:
 
 _subdirectory: template
 
-## The below variables automatically track the parent of this template and do not need manually adjusted
+## The below variables are used to track parent/child template relationships and should not be manually adjusted.
 parent_template_name:
   type: str
   default: Postmodern Repo Copier Template
