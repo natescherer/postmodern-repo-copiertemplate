@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.0...v0.2.1) (2024-09-24)
+
+
+### Features
+
+* Update vscode extensions ([5e46c4f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5e46c4f186f7c580c4562e8821edb8f483e51b90))
+
+
+### Bug Fixes
+
+* Fix license file ([6fc1d10](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6fc1d10c628cc1843abd7e55ac0dc31dbf8847fe))
+* Fix pull request ruleset settings (closes [#221](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/221)) ([f882058](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f882058927b4b73c437857fd1f2814bd23aab3cf))
+
 ## [0.2.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.0.1...v0.2.0) (2024-09-23)
 
 
