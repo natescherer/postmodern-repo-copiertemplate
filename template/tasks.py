@@ -158,11 +158,13 @@ def set_branch_protection_ruleset_github(c, answers_json):
                 {"type": "non_fast_forward"},
                 {
                     "type": "pull_request",
-                    "dismiss_stale_reviews_on_push": False,
-                    "require_code_owner_review": False,
-                    "require_last_push_approval": False,
-                    "required_approving_review_count": 0,
-                    "required_review_thread_resolution": False
+                    "parameters": {
+                        "dismiss_stale_reviews_on_push": False,
+                        "require_code_owner_review": False,
+                        "require_last_push_approval": False,
+                        "required_approving_review_count": 0,
+                        "required_review_thread_resolution": False
+                    }
                 }
             ]
         }
