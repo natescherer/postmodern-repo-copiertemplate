@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.1...v0.2.2) (2024-09-24)
+
+
+### Features
+
+* Ensure devcontainer folder is made for all projects ([e5ae1c7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e5ae1c7dd6014bc8f78c371735fd0c78eb7eb5b9))
+
 ## [0.2.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.0...v0.2.1) (2024-09-24)
 
 
