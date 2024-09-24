@@ -1,18 +1,16 @@
 {
-    "cSpell.words": [
-        "Unauth"
-    ],
-    "files.associations": {
-        "**.all-contributorsrc*.jinja": "jinja-json",
-        "**LICENSE*.jinja": "jinja",
-        "**.json*.jinja": "jinja-json",
-        "**.md*.jinja*": "jinja-md",
-        "**.y*ml*.jinja": "jinja-yaml",
-        "copier.yml": "jinja-yaml",
-        "**.md[{]% endif %[}]": "markdown",
-        "**.y*ml[{]% endif %[}]": "yaml",
-        "**.py[{]% endif %[}]": "python",
-        "**.json[{]% endif %[}]": "json"
+  "cSpell.words": ["Unauth"],
+  "editor.defaultFormatter": "trunk.io",
+  "files.associations": {
+    "**.all-contributorsrc*.jinja": "jinja-json",
+    "**LICENSE*.jinja": "jinja",
+    "**.json*.jinja": "jinja-json",
+    "**.md*.jinja*": "jinja-md",
+    "**.y*ml*.jinja": "jinja-yaml",
+    "copier.yml": "jinja-yaml",
+    "**.md[{]% endif %[}]": "markdown",
+    "**.y*ml[{]% endif %[}]": "yaml",
+    "**.py[{]% endif %[}]": "python",
+    "**.json[{]% endif %[}]": "json"
   }
-
 }

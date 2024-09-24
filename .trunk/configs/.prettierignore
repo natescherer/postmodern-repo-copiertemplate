@@ -1,0 +1,5 @@
+# All Contributors CLI will apply its own formatting
+.all-contributorsrc
+
+# Changelog files use their own Markdown formatting
+**/CHANGELOG.md
