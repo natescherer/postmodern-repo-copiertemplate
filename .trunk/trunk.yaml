@@ -29,11 +29,11 @@ lint:
   ignore:
     - linters: [ALL]
       paths:
-        - .all-contributorsrc
         - .copier-answers.yml
-        - .release-please-manifest.json
         - CHANGELOG.md
+        - .all-contributorsrc
         - CODE_OF_CONDUCT.md
+        - .release-please-manifest.json
 actions:
   enabled:
     - commitlint
