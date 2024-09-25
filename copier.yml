@@ -1,5 +1,5 @@
 ## Initial Settings
-_min_copier_version: "9.1.1"
+_min_copier_version: 9.1.1
 
 _jinja_extensions:
   # External Dependencies
@@ -23,7 +23,7 @@ parent_template_name:
   when: false
 parent_template_url:
   type: str
-  default: "https://github.com/natescherer/postmodern-repo-copiertemplate"
+  default: https://github.com/natescherer/postmodern-repo-copiertemplate
   when: false
 
 ## Questions
@@ -215,39 +215,25 @@ should_set_repo_settings:
 ## Tasks
 
 _tasks:
-  - >-
-    {%- if is_template -%}
-    invoke copy-template-files --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
-  - >-
-    {%- if should_create_repo and using_github -%}
-    invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
-  - >-
-    {%- if should_create_repo and using_azdo -%}
-    invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
-  - >-
-    {%- if should_set_repo_settings and using_github -%}
-    invoke set-repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
-  - >-
-    {%- if should_create_repo -%}
-    invoke initialize-repo-and-commit-files --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
-  - >-
-    {%- if should_set_repo_settings and using_github -%}
-    invoke set-branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
-  - >-
-    {%- if should_set_repo_settings and using_azdo -%}
-    invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
-    {%- endif -%}
+  - command: invoke copy-template-files --answers-json '{{ _copier_answers | to_json }}'
+    when: "{% is_template %}"
+  - command: invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
+    when: "{% should_create_repo and using_github %}"
+  - command: invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
+    when: "{% should_create_repo and using_azdo %}"
+  - command: invoke set-repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
+    when: "{% should_set_repo_settings and using_github %}"
+  - command: invoke initialize-repo-and-commit-files --answers-json '{{ _copier_answers | to_json }}'
+    when: "{% should_create_repo %}"
+  - command: invoke set-branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
+    when: "{% should_set_repo_settings and using_github %}"
+  - command: invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
+    when: "{% should_set_repo_settings and using_azdo %}"
   - invoke delete-unneeded-template-files
 
 _message_after_update: >-
   {% if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %}
-  It looks like you have switched this project's lifecycle to 'Stable' for the first time. If this is true, merge the folliwng commit to main to have Release Please bump the version number properly.
+  It looks like you have switched this project's lifecycle to 'Stable' for the first time. If this is true, merge the following commit to main to have Release Please bump the version number properly.
 
   git commit --allow-empty -m "chore: bump version to v1.0.0" -m "Release-As: 1.0.0"
   {% endif %}

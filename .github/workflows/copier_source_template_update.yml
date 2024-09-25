@@ -2,7 +2,7 @@ name: Copier Source Template Update
 
 on:
   schedule:
-    - cron: "0 2 * * 1" # Every Monday at 2am
+    - cron: 0 2 * * 1 # Every Monday at 2am
   workflow_dispatch:
 
 permissions:
@@ -20,7 +20,7 @@ jobs:
       - name: Install Copier & Dependencies
         run: pip install -r .devcontainer/library/requirements.txt
       - name: Get New Template Version
-        id: getver
+        id: get_ver
         shell: pwsh
         run: |
           $Output = copier update -A -n --trust 2>&1
@@ -32,12 +32,12 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "feat: apply template v${{ steps.getver.outputs.NEW_VERSION }}"
+          commit-message: "feat: apply template v${{ steps.get_ver.outputs.NEW_VERSION }}"
           branch: copier-template-update
           delete-branch: true
           branch-suffix: timestamp
-          title: "feat: apply template v${{ steps.getver.outputs.NEW_VERSION }}"
+          title: "feat: apply template v${{ steps.get_ver.outputs.NEW_VERSION }}"
           body: |
-            Copier has applied v${{ steps.getver.outputs.NEW_VERSION }} from the parent template.
+            Copier has applied v${{ steps.get_ver.outputs.NEW_VERSION }} from the parent template.
 
             Check out the branch for the PR and edit as needed.

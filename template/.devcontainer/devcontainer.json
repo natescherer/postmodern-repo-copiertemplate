@@ -26,13 +26,12 @@
     "vscode": {
       "extensions": [
         "github.vscode-github-actions",
-        "joshbolduc.commitlint",
-        "KnisterPeter.vscode-commitizen",
         "ms-azure-devops.azure-pipelines",
+        "ms-azuretools.vscode-docker",
         "ms-python.python",
         "samuelcolvin.jinjahtml",
-        "streetsidesoftware.code-spell-checker",
-        "trunk.io"
+        "trunk.io",
+        "vivaxy.vscode-conventional-commits"
       ]
     }
   }

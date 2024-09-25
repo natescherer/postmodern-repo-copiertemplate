@@ -16,14 +16,14 @@ Private repos omit the following features that would not be relevant to them, wi
 
 ### Repository Management
 
-* Contributor management and crediting via All Contributors
-    * Unnecessary and likely unworkable inside an organizational context
+- Contributor management and crediting via All Contributors
+  - Unnecessary and likely unworkable inside an organizational context
 
 ### Support Files
 
-* `CODE_OF_CONDUCT.md`
-    * It is assumed your organization will provide appropriate conduct code by other means
-* `CONTRIBUTING.md`
-    * Likely not needed for a private project, but you can always provide your own custom file which will be ignored by template updates
-* `LICENSE`
-    * If needed, you can always provide your own custom file which will be ignored by template updates
+- `CODE_OF_CONDUCT.md`
+  - It is assumed your organization will provide appropriate conduct code by other means
+- `CONTRIBUTING.md`
+  - Likely not needed for a private project, but you can always provide your own custom file which will be ignored by template updates
+- `LICENSE`
+  - If needed, you can always provide your own custom file which will be ignored by template updates

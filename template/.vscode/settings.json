@@ -1,5 +1,4 @@
 {
-  "cSpell.words": ["Unauth"],
   "editor.defaultFormatter": "trunk.io",
   "files.associations": {
     "**.all-contributorsrc*.jinja": "jinja-json",

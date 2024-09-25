@@ -17,9 +17,9 @@
     }
   },
   "mounts": [
-      "source=${localEnv:HOME},target=/host-home,type=bind,consistency=cached"
-      // If you are on Windows and get a CreateFile error, use this instead:
-      // "source=${localEnv:USERPROFILE},target=/host-home,type=bind,consistency=cached"
+    "source=${localEnv:HOME},target=/host-home,type=bind,consistency=cached"
+    // If you are on Windows and get a CreateFile error, use this instead:
+    // "source=${localEnv:USERPROFILE},target=/host-home,type=bind,consistency=cached"
   ],
   "customizations": {
     "vscode": {
