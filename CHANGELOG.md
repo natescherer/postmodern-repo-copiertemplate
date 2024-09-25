@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.2...v0.2.3) (2024-09-25)
+
+
+### Features
+
+* Apply trunk quality and formatting ([cb66c16](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cb66c165720a4f6e5cc9f2942c7f3a4f4a3112a0))
+* Change devcontainer mount (closes [#211](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/211)) ([78e3353](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/78e335346322ba10d9df5202122287c4ee808154))
+* Implement trunk ([e711206](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e711206352ae9fdc9f792a3cb6eb88a117ee6366))
+
 ## [0.2.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.1...v0.2.2) (2024-09-24)
 
 
