@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.4...v0.2.5) (2024-09-25)
+
+
+### Features
+
+* Remove unneeded workflows ([17a5a4a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/17a5a4ac6e8675eb5992c13cf2f28d8d4a50333e))
+
+
+### Bug Fixes
+
+* Fix task conditionals in root copier.yml ([cdc3d4c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cdc3d4c89e9653da714c8767f4d2147a5e17dab4))
+
 ## [0.2.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.3...v0.2.4) (2024-09-25)
 
 
