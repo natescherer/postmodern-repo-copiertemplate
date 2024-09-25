@@ -1,15 +1,15 @@
 # {{ project_name }}
 
-{% if is_public -%}
+{%- if is_public %}
 [![All Contributors](https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square)](#contributors)
-
 {%- endif %}
+{%- if is_prerelease %}
 
-{% if is_prerelease -%}
 | :exclamation:  Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or lifecycle == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}.  |
 |-----------------------------------------|
-{%- endif -%}
-{%- if lifecycle == "Inactive" -%}
+{%- endif %}
+{%- if lifecycle == "Inactive" %}
+
 | :zap:  Notice: This project is no longer under active development.  |
 |-----------------------------------------|
 {%- endif %}
