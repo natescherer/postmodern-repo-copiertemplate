@@ -2,12 +2,12 @@
 
 {% if is_public -%}
 [![All Contributors](https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square)](#contributors)
-{%- endif %}
+{%- endif -%}
 {%- if is_prerelease %}
 
 | :exclamation:  Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or lifecycle == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}.  |
 |-----------------------------------------|
-{%- endif %}
+{%- endif -%}
 {%- if lifecycle == "Inactive" %}
 
 | :zap:  Notice: This project is no longer under active development.  |
@@ -45,8 +45,8 @@ For detailed documentation, [click here](docs).
 ## Building
 
 BUILD INFO HERE
-
 {% if is_public -%}
+
 ## Questions/Comments
 
 If you have questions, comments, etc, please enter a GitHub Issue with the "question" tag.
