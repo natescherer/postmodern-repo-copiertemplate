@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.5...v0.2.6) (2024-09-25)
+
+
+### Bug Fixes
+
+* Fix jinja conditionals ([8144c49](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8144c498beb7826f2be9e283767ce322760c55b8))
+
 ## [0.2.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.4...v0.2.5) (2024-09-25)
 
 
