@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.24](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.23...v0.2.24) (2024-09-25)
+
+
+### Bug Fixes
+
+* Fix versionrc formatting ([e20724c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e20724c9200fbacaad6bb1da2e572ea0fa3cfcfd))
+
 ## [0.2.23](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.22...v0.2.23) (2024-09-25)
 
 
