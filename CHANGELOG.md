@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.27](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.26...v0.2.27) (2024-09-25)
+
+
+### Features
+
+* Add more cSpell dictionaries ([a3e81c5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a3e81c5aebe17468e480f08db1c50b06249a8852))
+
 ## [0.2.26](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.25...v0.2.26) (2024-09-25)
 
 
