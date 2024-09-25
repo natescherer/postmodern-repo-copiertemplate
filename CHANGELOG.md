@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.3...v0.2.4) (2024-09-25)
+
+
+### Bug Fixes
+
+* Fix conditionals on copier tasks ([5d7baad](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5d7baad1154b7ad2ce532503c7ea7e8a055fbc21))
+
 ## [0.2.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.2...v0.2.3) (2024-09-25)
 
 
