@@ -16,7 +16,7 @@ To apply this template to an existing project, follow these steps:
 1. Make sure your shell is in the project root, then run the following in order to apply the template to your local project:
 
    ```shell
-   copier copy --trust --overwrite gh:natescherer/postmodern-repo-copiertemplate .
+    copier copy --trust --overwrite gh:natescherer/postmodern-repo-copiertemplate .
    ```
 
 1. If you are using GitHub, Make sure to choose `Set Repo Rules` in the first question
