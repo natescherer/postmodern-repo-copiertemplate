@@ -1,3 +1,4 @@
+# trunk-ignore-all(prettier)
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -8,8 +9,8 @@ updates:
       github-actions:
         patterns:
           - "*"
-  - package-ecosystem: "devcontainers"
-    directory: "/"
+  - package-ecosystem: devcontainers
+    directory: /
     schedule:
       interval: monthly
     groups:
@@ -25,8 +26,8 @@ updates:
       github-actions-template:
         patterns:
           - "*"
-  - package-ecosystem: "devcontainers"
-    directory: "/template/.devcontainer"
+  - package-ecosystem: devcontainers
+    directory: /template/.devcontainer
     schedule:
       interval: monthly
     groups:
