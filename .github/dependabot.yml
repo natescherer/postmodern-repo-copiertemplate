@@ -7,4 +7,4 @@ updates:
   - package-ecosystem: github-actions
     directory: /template/.github/workflows
     schedule:
-      interval: monthly
+      interval: "monthly"
