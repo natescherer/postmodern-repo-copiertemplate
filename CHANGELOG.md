@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.8...v0.2.9) (2024-09-25)
+
+
+### Features
+
+* Add dependabot grouping (closes [#6](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/6)) ([6dee4bb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6dee4bb415f7c52e6d5b937fcb223541165215e1))
+* Add devcontainers to dependabot (closes [#8](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/8)) ([298ffe7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/298ffe717e0812062b5a332efe7e55a70f26a8aa))
+
+
+### Bug Fixes
+
+* Add commitlint config to template ([3f2684b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3f2684be64b974f11ba100955efb517cafe75d83))
+* Fix yaml format ([9cb2bb8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9cb2bb87cbcd04938e45769f8d9955f5597c9358))
+
 ## [0.2.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.7...v0.2.8) (2024-09-25)
 
 
