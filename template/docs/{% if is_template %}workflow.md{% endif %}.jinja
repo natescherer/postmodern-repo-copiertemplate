@@ -16,7 +16,11 @@ To apply this template to an existing project, follow these steps:
 1. Make sure your shell is in the project root, then run the following in order to apply the template to your local project:
 
    ```shell
-   copier copy --trust --overwrite gh:natescherer/postmodern-repo-copiertemplate .
+{%- if using_github %}
+    copier copy --trust --overwrite gh:{{ github_org }}{{ github_username }}/{{ repo_name }} .
+{%- elif using_azdo %}
+    copier copy --trust --overwrite git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }} .
+{%- endif %}
    ```
 
 1. If you are using GitHub, Make sure to choose `Set Repo Rules` in the first question
