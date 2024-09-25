@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.18](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.17...v0.2.18) (2024-09-25)
+
+
+### Features
+
+* Skip linting/formatting on release please manifest ([8eae6f3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8eae6f34b2c30fa6b5f9a51fc768b372714f6dc6))
+
 ## [0.2.17](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.16...v0.2.17) (2024-09-25)
 
 
