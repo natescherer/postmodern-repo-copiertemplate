@@ -4,7 +4,31 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+  - package-ecosystem: devcontainers
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      devcontainer:
+        patterns:
+          - "*"
   - package-ecosystem: github-actions
     directory: /template/.github/workflows
     schedule:
-      interval: "monthly"
+      interval: monthly
+    groups:
+      github-actions-template:
+        patterns:
+          - "*"
+  - package-ecosystem: devcontainers
+    directory: /template/.devcontainer
+    schedule:
+      interval: monthly
+    groups:
+      devcontainer-template:
+        patterns:
+          - "*"
