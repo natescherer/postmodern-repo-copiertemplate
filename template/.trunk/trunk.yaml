@@ -30,9 +30,9 @@ lint:
     - linters: [ALL]
       paths:
         - .all-contributorsrc
+        - .copier-answers.yml
         - CHANGELOG.md
         - CODE_OF_CONDUCT.md
-
 actions:
   enabled:
     - commitlint
