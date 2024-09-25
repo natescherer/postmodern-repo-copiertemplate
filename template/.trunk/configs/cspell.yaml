@@ -19,6 +19,7 @@ words:
   - vivaxy
   - tamasfe
   # Code Terms
-  - contributorsrc
   - azdo
+  - contributorsrc
+  - hadolint
   - ZDOTDIR
