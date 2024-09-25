@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.21](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.20...v0.2.21) (2024-09-25)
+
+
+### Bug Fixes
+
+* Dynamic trunk ignores ([4e01eb9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4e01eb9a6fd53a58fc818bcbcd696486db5c93f3))
+
 ## [0.2.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.19...v0.2.20) (2024-09-25)
 
 
