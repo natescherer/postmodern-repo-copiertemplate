@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.18...v0.2.19) (2024-09-25)
+
+
+### Bug Fixes
+
+* Bump minimum copier version ([2d0bd03](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2d0bd030c337f10bf66a584df55d1cd19c7bb4e5))
+
 ## [0.2.18](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.17...v0.2.18) (2024-09-25)
 
 
