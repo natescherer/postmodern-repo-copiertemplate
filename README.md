@@ -5,9 +5,9 @@
 | :exclamation: Notice: This project is currently in a Pre-Alpha state and is not ready for public use. |
 | ----------------------------------------------------------------------------------------------------- |
 
-A [Copier][copier] template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
+A [Copier](https://github.com/copier-org/copier) template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
 
-This template is heavily inspired by the [Hypermodern Python Cookiecutter][hypermodern-cc].
+This template is heavily inspired by the [Hypermodern Python Cookiecutter](https://cookiecutter-hypermodern-python.readthedocs.io).
 
 Why Postmodern? Besides being a cheeky homage to this template's inspiration, I think that Postmodern philosophy's idea of the relativity of truth applies very well to software. There's no objectively best way to do CI/CD, this is just one way that works, and it might work for you too!
 
@@ -33,7 +33,7 @@ Postmodern templates are designed to allow either the creation of new templates 
 
 #### Support for Template Updates
 
-Keeping projects in sync with their parent template is a core feature of [Copier][copier], and this template will deploy a GitHub Actions Workflow/Azure DevOps Pipeline that will automate the update process.
+Keeping projects in sync with their parent template is a core feature of [Copier](https://github.com/copier-org/copier), and this template will deploy a GitHub Actions Workflow/Azure DevOps Pipeline that will automate the update process.
 
 #### Support for Child/Recursive Templates
 
@@ -44,56 +44,36 @@ It is highly encouraged for you to take this template and make your own child te
 - Creation of new repos and branches
 - Setting of repo settings & branch protection rules
 - Creation of useful non-default issue labels: `awaiting pr` and `blocked`
-- Contributor management and crediting via [All Contributors][all-contributors]
-- Dependency updates via [Dependabot][dependabot]
-- (Optional) Scheduled checks for updates from parent template
+- Contributor management and crediting via [All Contributors](https://allcontributors.org/)
+- Dependency updates via [Dependabot](https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide)
+- Scheduled checks for updates from parent template
 
 ### Code Management and Formatting
 
-- Code formatting (YAML and Markdown) via [Prettier][prettier]
+- Automatic code linting and formatting via [Trunk](https://trunk.io):
+  - Dockerfile linting via [hadolint](https://github.com/hadolint/hadolint)
+  - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
+  - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint) and formatting via [Prettier](https://prettier.io/)
+  - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
+  - Spell checking via [cSpell](https://cspell.org/)
+  - YAML linting iva [yamllint](https://github.com/adrienverge/yamllint) and formatting via [Prettier](https://prettier.io/)
 
 ### CI/CD
 
-- [SemVer][semver] version number calculation via [GitVersion][gitversion]
-- Changelog creation and upkeep in [Keep a Changelog][keep-a-changelog] format
+- Version number calculation, Changelog updating, releasing, and tagging via [Release Please](https://github.com/googleapis/release-please)
 - Simple/example release workflow via GitHub Actions
 
 ### Support Files
 
 - `.gitignore`, set to ignore macOS `.DS_Store` files and Windows `Thumbs.db` files
-- `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant][contributor-covenant]
+- `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant](https://www.contributor-covenant.org/)
 - `CONTRIBUTING.md`, designed help novices to make their first contribution
-- `LICENSE`, a copy of the [MIT License][mit-license]
+- `LICENSE`, a copy of the [MIT License](https://choosealicense.com/licenses/mit/)
 - `README.md`, designed for general products
 
-## Prerequisites
+## Getting started
 
-### Your Machine
-
-There are two ways to install the prerequisites needed on your machine: running them inside of a [devcontainer][devcontainer], or installing them manually. Please see linked documentation for details:
-
-[Prerequisites via Devcontainer](docs/prereqs_devcontainer.md) **Recommended**
-
-[Prerequisites via Manual Installation](docs/prereqs_manual.md)
-
-### GitHub
-
-### One-Time Actions for all Postmodern repositories
-
-1. Install the [AllContributors GitHub App][all-contributors-app] for your user or organization.
-   - You can either give it access to all your repositories, which means you only need to do this step once, or you can select repositories individually, in which case you will need to do this for each new repo you create.
-1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [here](https://github.com/settings/security_analysis).
-1. Set up the Trunk.io GitHub integration using [their instructions](trunk-github-setup)
-   - You can either give it access to all your repositories, which means you only need to do this step once, or you can select repositories individually, in which case you will need to do this for each new repo you create.
-
-## Using this template
-
-1. Open a terminal to the parent directory where you want the repo subdirectory to be created
-1. Run the following to initialize the template:
-
-   ```bash
-   copier copy --trust gh:natescherer/postmodern-repo-copiertemplate .
-   ```
+Intersted in using this template (or just learning more about it)? Check out [Getting Started](docs/getting_started.md).
 
 ## Questions/Comments
 
@@ -131,16 +111,3 @@ This project is licensed under The MIT License - see [LICENSE](LICENSE) for deta
 ## Repository Template
 
 This repository is based on the template of itself. Neat, huh?
-
-[all-contributors]: https://allcontributors.org/
-[all-contributors-app]: https://github.com/apps/allcontributors/installations/new
-[copier]: https://github.com/copier-org/copier
-[contributor-covenant]: https://www.contributor-covenant.org/
-[dependabot]: https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide
-[devcontainer]: https://containers.dev/
-[gitversion]: https://gitversion.net/
-[hypermodern-cc]: https://github.com/cjolowicz/cookiecutter-hypermodern-python
-[keep-a-changelog]: https://keepachangelog.com/en/1.1.0/
-[mit-license]: https://choosealicense.com/licenses/mit/
-[prettier]: https://prettier.io/
-[semver]: https://semver.org/
