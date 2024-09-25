@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.10...v0.2.11) (2024-09-25)
+
+
+### Bug Fixes
+
+* Remove unneeded ignore ([5425d18](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5425d18c8db7d9a3a69342ad77e554aa2f8e774c))
+
 ## [0.2.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.9...v0.2.10) (2024-09-25)
 
 
