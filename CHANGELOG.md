@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.15...v0.2.16) (2024-09-25)
+
+
+### Features
+
+* Add pscore to dictionary ([ec0d937](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ec0d937d3cf22e7306546dae6238144772d63e02))
+
 ## [0.2.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.14...v0.2.15) (2024-09-25)
 
 
