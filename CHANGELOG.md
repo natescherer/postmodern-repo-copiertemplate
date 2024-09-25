@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.7...v0.2.8) (2024-09-25)
+
+
+### Features
+
+* Add toml vscode plugin ([ed3c986](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ed3c986e4949c52e886e3a884186025a0c7a91fa))
+
 ## [0.2.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.6...v0.2.7) (2024-09-25)
 
 
