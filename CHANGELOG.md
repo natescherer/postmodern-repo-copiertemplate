@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.13...v0.2.14) (2024-09-25)
+
+
+### Features
+
+* Apply v0.2.13 ([f81b0b9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f81b0b929d71fb48cebfff1efa9498bc636ca600))
+* Improve formatting ([f3cf8f3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f3cf8f3875334edf342ca8eaf305f08b8bd474a1))
+
 ## [0.2.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.12...v0.2.13) (2024-09-25)
 
 
