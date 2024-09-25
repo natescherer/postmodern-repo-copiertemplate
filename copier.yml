@@ -216,19 +216,19 @@ should_set_repo_settings:
 
 _tasks:
   - command: invoke copy-template-files --answers-json '{{ _copier_answers | to_json }}'
-    when: "{% if is_template %}"
+    when: "{% if is_template %}true{% endif %}"
   - command: invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
-    when: "{% if should_create_repo and using_github %}"
+    when: "{% if should_create_repo and using_github %}true{% endif %}"
   - command: invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
-    when: "{% if should_create_repo and using_azdo %}"
+    when: "{% if should_create_repo and using_azdo %}true{% endif %}"
   - command: invoke set-repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
-    when: "{% if should_set_repo_settings and using_github %}"
+    when: "{% if should_set_repo_settings and using_github %}true{% endif %}"
   - command: invoke initialize-repo-and-commit-files --answers-json '{{ _copier_answers | to_json }}'
-    when: "{% if should_create_repo %}"
+    when: "{% if should_create_repo %}true{% endif %}"
   - command: invoke set-branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
-    when: "{% if should_set_repo_settings and using_github %}"
+    when: "{% if should_set_repo_settings and using_github %}true{% endif %}"
   - command: invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
-    when: "{% if should_set_repo_settings and using_azdo %}"
+    when: "{% if should_set_repo_settings and using_azdo %}true{% endif %}"
   - invoke delete-unneeded-template-files
 
 _message_after_update: >-
