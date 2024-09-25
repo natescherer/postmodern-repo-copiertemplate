@@ -4,12 +4,22 @@ version: "0.2"
 suggestionsTimeout: 5000 # ms
 allowCompoundWords: true
 dictionaries:
-  - en_us
+  - bash
+  - companies
+  - css
   - dotnet
+  - en_us
+  - filetypes
+  - fonts
+  - html
   - makefile
+  - misc
+  - node
+  - npm
   - powershell
   - python
-  - npm
+  - softwareTerms
+  - typescript
 words:
   # Tooling Usernames
   - natescherer
