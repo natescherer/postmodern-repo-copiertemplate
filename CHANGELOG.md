@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.6...v0.2.7) (2024-09-25)
+
+
+### Features
+
+* Apply parent template v0.2.6 ([30796a4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/30796a4ef1ff154cebd409ff3b540f8b697daefd))
+
+
+### Bug Fixes
+
+* Fix trunk nits ([49f36bc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/49f36bc981cd1d1aa6b516cee7c869ad956a94eb))
+
 ## [0.2.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.5...v0.2.6) (2024-09-25)
 
 
