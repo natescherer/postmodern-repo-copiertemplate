@@ -1,0 +1,14 @@
+rules:
+  anchors:
+    forbid-unused-anchors: true
+  document-start: disable
+  empty-values:
+    ignore: "**/workflows/*.yml"
+  indentation:
+    spaces: 2
+    check-multi-line-strings: true
+    ignore: "**/workflows/*.yml"
+  line-length: disable
+  quoted-strings:
+    required: only-when-needed
+    extra-allowed: ["{|}"]

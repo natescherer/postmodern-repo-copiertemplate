@@ -1,16 +1,18 @@
+"""Provide extension for GitHub projects."""
+
 import githubkit
 from jinja2.ext import Extension
 
+
 def valid_gh_token(token):
-    """
-    Checks if GitHub token is valid.
-    """
+    """Check if GitHub token is valid."""
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
     try:
         github.rest.users.get_authenticated()
         return True
-    except:
+    except Exception:
         return False
+
 
 # Disabled as not currently in use, may eventually delete
 # def same_as_gh_token_user(user, token):
@@ -21,22 +23,26 @@ def valid_gh_token(token):
 #     response = github.rest.users.get_authenticated()
 #     return user == response.parsed_data.login
 
+
 def available_gh_repo_name_for_owner(repo, owner):
-    """
-    Checks if a GitHub repo name is available.
-    """
+    """Check if a GitHub repo name is available."""
     github = githubkit.GitHub(githubkit.UnauthAuthStrategy())
     try:
         github.rest.repos.get(owner, repo)
         return False
-    except githubkit.exception.RequestFailed as exc:
+    except githubkit.exception.RequestFailed:
         # This is what you want, i.e. a 404 when it tries to find the repo
         return True
 
 
 class GitHubExtension(Extension):
+    """Export for use by Jinja."""
+
     def __init__(self, environment):
+        """Export for use by Jinja."""
         super().__init__(environment)
         environment.tests["valid_gh_token"] = valid_gh_token
         # environment.tests["same_as_gh_token_user"] = same_as_gh_token_user
-        environment.tests["available_gh_repo_name_for_owner"] = available_gh_repo_name_for_owner
+        environment.tests["available_gh_repo_name_for_owner"] = (
+            available_gh_repo_name_for_owner
+        )

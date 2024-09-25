@@ -1,12 +1,13 @@
 # Postmodern Repo Copier Template
 
 [![All Contributors](https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449&style=flat-square)](#contributors)
-| :exclamation:  Notice: This project is currently in a Pre-Alpha state and is not ready for public use.  |
-|-----------------------------------------|
+
+| :exclamation: Notice: This project is currently in a Pre-Alpha state and is not ready for public use. |
+| ----------------------------------------------------------------------------------------------------- |
 
 A [Copier][copier] template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
 
-This template is heavily inspired by the [Hypermodern Python Cookiecutter](hypermodern-cc).
+This template is heavily inspired by the [Hypermodern Python Cookiecutter][hypermodern-cc].
 
 Why Postmodern? Besides being a cheeky homage to this template's inspiration, I think that Postmodern philosophy's idea of the relativity of truth applies very well to software. There's no objectively best way to do CI/CD, this is just one way that works, and it might work for you too!
 
@@ -17,10 +18,10 @@ Why Postmodern? Besides being a cheeky homage to this template's inspiration, I 
 #### Support for Multiple CI/CD Platforms
 
 - GitHub **Recommended**
-   - Creating repos under both users and orgs is supported
-   - See [GitHub Org Limitations](docs/github_org_limitations.md) for details about template features excluded for Orgs
+  - Creating repos under both users and orgs is supported
+  - See [GitHub Org Limitations](docs/github_org_limitations.md) for details about template features excluded for Orgs
 - Azure DevOps
-   - See [Azure DevOps Limitations](docs/azure_devops_limitations.md) for details about features missing for AzDO
+  - See [Azure DevOps Limitations](docs/azure_devops_limitations.md) for details about features missing for AzDO
 
 #### Support for Public (Open-Source) and Private (Closed-Source) Repositories
 
@@ -136,7 +137,6 @@ This repository is based on the template of itself. Neat, huh?
 [all-contributors-app]: https://github.com/apps/allcontributors/installations/new
 [copier]: https://github.com/copier-org/copier
 [contributor-covenant]: https://www.contributor-covenant.org/
-[cruft]: https://cruft.github.io/cruft/
 [dependabot]: https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide
 [devcontainer]: https://containers.dev/
 [gitversion]: https://gitversion.net/
@@ -145,4 +145,3 @@ This repository is based on the template of itself. Neat, huh?
 [mit-license]: https://choosealicense.com/licenses/mit/
 [prettier]: https://prettier.io/
 [semver]: https://semver.org/
-[trunk-github-setup]: https://docs.trunk.io/check/check-cloud-ci-integration/get-started

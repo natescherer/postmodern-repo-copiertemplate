@@ -1,12 +1,12 @@
 {
-    "recommendations": [
-        "github.vscode-github-actions",
-        "joshbolduc.commitlint",
-        "KnisterPeter.vscode-commitizen",
-        "ms-azure-devops.azure-pipelines",
-        "ms-python.python",
-        "samuelcolvin.jinjahtml",
-        "streetsidesoftware.code-spell-checker",
-        "trunk.io"
-    ]
+  "recommendations": [
+    "github.vscode-github-actions",
+    "joshbolduc.commitlint",
+    "KnisterPeter.vscode-commitizen",
+    "ms-azure-devops.azure-pipelines",
+    "ms-python.python",
+    "samuelcolvin.jinjahtml",
+    "streetsidesoftware.code-spell-checker",
+    "trunk.io"
+  ]
 }

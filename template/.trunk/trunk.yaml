@@ -1,0 +1,46 @@
+# This file controls the behavior of Trunk: https://docs.trunk.io/cli
+# To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
+version: 0.1
+cli:
+  version: 1.22.5
+# Trunk provides extensibility via plugins. (https://docs.trunk.io/plugins)
+plugins:
+  sources:
+    - id: trunk
+      ref: v1.6.2
+      uri: https://github.com/trunk-io/plugins
+# Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
+runtimes:
+  enabled:
+    - node@18.12.1
+    - python@3.10.8
+# This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
+lint:
+  enabled:
+    - actionlint@1.7.2
+    - cspell@8.14.4
+    - git-diff-check
+    - hadolint@2.12.0
+    - markdownlint@0.42.0
+    - prettier@3.3.3
+    - ruff@0.6.7:
+        commands: [lint, format]
+    - yamllint@1.35.1
+  ignore:
+    - linters: [ALL]
+      paths:
+        - .all-contributorsrc
+        - CHANGELOG.md
+        - CODE_OF_CONDUCT.md
+
+actions:
+  enabled:
+    - commitlint
+    - commitizen
+    - trunk-announce
+    - trunk-check-pre-push
+    - trunk-fmt-pre-commit
+    - trunk-upgrade-available
+tools:
+  enabled:
+    - commitizen@4.3.0

@@ -14,24 +14,24 @@
     "ghcr.io/natescherer/devcontainers-custom-features/hypermodern-python:1": {
       "versions": "3.12",
       "requirementsFile": "/opt/devcontainer/requirements.txt"
-    }
+    },
+    "ghcr.io/trunk-io/devcontainer-feature/trunk": "latest"
   },
   "mounts": [
-      "source=${localEnv:HOME},target=/host-home,type=bind,consistency=cached"
-      // If you are on Windows and get a CreateFile error, use this instead:
-      // "source=${localEnv:USERPROFILE},target=/host-home,type=bind,consistency=cached"
+    "source=${localEnv:HOME},target=/host-home,type=bind,consistency=cached"
+    // If you are on Windows and get a CreateFile error, use this instead:
+    // "source=${localEnv:USERPROFILE},target=/host-home,type=bind,consistency=cached"
   ],
   "customizations": {
     "vscode": {
       "extensions": [
         "github.vscode-github-actions",
-        "joshbolduc.commitlint",
-        "KnisterPeter.vscode-commitizen",
         "ms-azure-devops.azure-pipelines",
+        "ms-azuretools.vscode-docker",
         "ms-python.python",
         "samuelcolvin.jinjahtml",
-        "streetsidesoftware.code-spell-checker",
-        "trunk.io"
+        "trunk.io",
+        "vivaxy.vscode-conventional-commits"
       ]
     }
   }

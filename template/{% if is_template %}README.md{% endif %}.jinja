@@ -4,10 +4,12 @@
 [![All Contributors](https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square)](#contributors)
 {%- endif %}
 {% if is_prerelease -%}
+
 | :exclamation:  Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or lifecycle == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}.  |
 |-----------------------------------------|
 {%- endif -%}
 {%- if lifecycle == "Inactive" -%}
+
 | :zap:  Notice: This project is no longer under active development.  |
 |-----------------------------------------|
 {%- endif %}
@@ -21,10 +23,10 @@
 #### Support for Multiple CI/CD Platforms
 
 - GitHub **Recommended**
-   - Creating repos under both users and orgs is supported
-   - See [GitHub Org Limitations](docs/github_org_limitations.md) for details about template features excluded for Orgs
+  - Creating repos under both users and orgs is supported
+  - See [GitHub Org Limitations](docs/github_org_limitations.md) for details about template features excluded for Orgs
 - Azure DevOps
-   - See [Azure DevOps Limitations](docs/azure_devops_limitations.md) for details about features missing for AzDO
+  - See [Azure DevOps Limitations](docs/azure_devops_limitations.md) for details about features missing for AzDO
 
 #### Support for Public (Open-Source) and Private (Closed-Source) Repositories
 
@@ -134,7 +136,6 @@ This repository is based on the [{{ parent_template_name }}]({{ parent_template_
 [all-contributors-app]: https://github.com/apps/allcontributors/installations/new
 [copier]: https://github.com/copier-org/copier
 [contributor-covenant]: https://www.contributor-covenant.org/
-[cruft]: https://cruft.github.io/cruft/
 [dependabot]: https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide
 [devcontainer]: https://containers.dev/
 [gitversion]: https://gitversion.net/
@@ -143,4 +144,3 @@ This repository is based on the [{{ parent_template_name }}]({{ parent_template_
 [mit-license]: https://choosealicense.com/licenses/mit/
 [prettier]: https://prettier.io/
 [semver]: https://semver.org/
-[trunk-github-setup]: https://docs.trunk.io/check/check-cloud-ci-integration/get-started

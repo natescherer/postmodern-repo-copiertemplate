@@ -1,0 +1,5 @@
+# Generic, formatter-friendly config.
+select = ["B","B9","C","D","DOC","E","F","I","N","S","W"]
+
+# Never enforce `E501` (line length violations). This should be handled by formatters.
+ignore = ["E501"]

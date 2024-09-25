@@ -3,15 +3,16 @@ _commit: v0.2.1
 _src_path: gh:natescherer/postmodern-repo-copiertemplate
 author_name: Nate Scherer
 developer_platform: GitHub
-github_org: ''
+github_org: ""
 github_username: natescherer
 license: MIT
 lifecycle: Pre-Alpha
 project_name: Postmodern Repo Copier Template
-project_short_description: A Copier template for creating a basic repository with
-    full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
+project_short_description:
+  A Copier template for creating a basic repository with
+  full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
 project_type: Template
 project_visibility: Public
-project_website: ''
+project_website: ""
 repo_actions: None
 repo_name: postmodern-repo-copiertemplate
