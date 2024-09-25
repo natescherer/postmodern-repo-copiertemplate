@@ -7,7 +7,9 @@ rules:
   indentation:
     spaces: 2
     check-multi-line-strings: true
-    ignore: "**/workflows/*.yml"
+    ignore:
+      - "**/workflows/*.yml"
+      - "**.azurepipelines/*.yml"
   line-length: disable
   quoted-strings:
     required: only-when-needed

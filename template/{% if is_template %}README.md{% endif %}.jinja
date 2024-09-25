@@ -2,12 +2,12 @@
 
 {% if is_public -%}
 [![All Contributors](https://img.shields.io/github/all-contributors/{{ github_username }}/{{ repo_name }}?color=ee8449&style=flat-square)](#contributors)
-{%- endif %}
+{%- endif -%}
 {%- if is_prerelease %}
 
 | :exclamation:  Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or lifecycle == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}.  |
 |-----------------------------------------|
-{%- endif %}
+{%- endif -%}
 {%- if lifecycle == "Inactive" %}
 
 | :zap:  Notice: This project is no longer under active development.  |
@@ -56,12 +56,12 @@ It is highly encouraged for you to take this template and make your own child te
 ### Code Management and Formatting
 
 - Automatic code linting and formatting via [Trunk](https://trunk.io):
-   - Dockerfile linting via [hadolint](https://github.com/hadolint/hadolint)
-   - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
-   - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint) and formatting via [Prettier](https://prettier.io/)
-   - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
-   - Spell checking via [cSpell](https://cspell.org/)
-   - YAML linting iva [yamllint](https://github.com/adrienverge/yamllint) and formatting via [Prettier](https://prettier.io/)
+  - Dockerfile linting via [hadolint](https://github.com/hadolint/hadolint)
+  - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
+  - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint) and formatting via [Prettier](https://prettier.io/)
+  - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
+  - Spell checking via [cSpell](https://cspell.org/)
+  - YAML linting iva [yamllint](https://github.com/adrienverge/yamllint) and formatting via [Prettier](https://prettier.io/)
 
 ### CI/CD
 
@@ -79,8 +79,8 @@ It is highly encouraged for you to take this template and make your own child te
 ## Getting started
 
 Intersted in using this template (or just learning more about it)? Check out [Getting Started](docs/getting_started.md).
-
 {% if is_public -%}
+
 ## Questions/Comments
 
 If you have questions, comments, etc, please enter a GitHub Issue with the "question" tag.
