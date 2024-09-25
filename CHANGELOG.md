@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.9...v0.2.10) (2024-09-25)
+
+
+### Bug Fixes
+
+* Fix bad formatting on dependabot template ([e00510c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e00510c21d3e3c6f21dbddc1b350ff973804d782))
+
 ## [0.2.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.8...v0.2.9) (2024-09-25)
 
 
