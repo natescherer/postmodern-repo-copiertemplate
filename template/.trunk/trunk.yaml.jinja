@@ -29,11 +29,15 @@ lint:
   ignore:
     - linters: [ALL]
       paths:
-        - .all-contributorsrc
         - .copier-answers.yml
-        - .release-please-manifest.json
         - CHANGELOG.md
+        {%- if is_public %}
+        - .all-contributorsrc
         - CODE_OF_CONDUCT.md
+        {%- endif %}
+        {%- if using_github %}
+        - .release-please-manifest.json
+        {%- endif %}
 actions:
   enabled:
     - commitlint
