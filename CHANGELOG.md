@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.38](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.37...v0.2.38) (2024-10-12)
+
+
+### Features
+
+* Copier update to parent template v0.2.37 ([b71857c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b71857cc0f65d399a3776955480888b5c503bdcf))
+* Remove unneeded node feature ([5937100](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/59371005dc9315ed3c5c2a3fc45f3426e48bb9c8))
+
 ## [0.2.37](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.36...v0.2.37) (2024-10-12)
 
 
