@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.30](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.29...v0.2.30) (2024-10-12)
+
+
+### Features
+
+* Fix mount permission issues on windows hosts ([0d12cc9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0d12cc901cbc7e7240fec8039f281cc819b2dc63))
+* Improve template update workflow ([0a497ff](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0a497ff28abded831b80a81fe9b52d982db7434e))
+
 ## [0.2.29](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.28...v0.2.29) (2024-10-12)
 
 
