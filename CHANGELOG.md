@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.29](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.28...v0.2.29) (2024-10-12)
+
+
+### Bug Fixes
+
+* Update base image in template ([e75ca21](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e75ca2103b98cb074d30b20d5ff875cf9c9bbabb))
+
 ## [0.2.28](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.27...v0.2.28) (2024-10-12)
 
 
