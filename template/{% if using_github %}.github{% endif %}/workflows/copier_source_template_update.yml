@@ -27,17 +27,26 @@ jobs:
           $NewVersion = $Output.ToString().Split(" ")[-1]
           echo "NEW_VERSION=$NewVersion" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append
       - name: Run Copier Update
-        run: copier update --skip-answered --trust
+        run: |
+          copier update --skip-answered --trust
+          git add .
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "feat: apply template v${{ steps.get_ver.outputs.NEW_VERSION }}"
-          branch: copier-template-update
+          commit-message: "feat: copier update to parent template v${{ steps.get_ver.outputs.NEW_VERSION }}"
+          branch: copier-template-update-v${{ steps.get_ver.outputs.NEW_VERSION }}
           delete-branch: true
           branch-suffix: timestamp
-          title: "feat: apply template v${{ steps.get_ver.outputs.NEW_VERSION }}"
+          title: "feat: copier update to parent template v${{ steps.get_ver.outputs.NEW_VERSION }}"
           body: |
-            Copier has applied v${{ steps.get_ver.outputs.NEW_VERSION }} from the parent template.
+            Copier has applied updates from parent template v${{ steps.get_ver.outputs.NEW_VERSION }}.
 
-            Check out the branch for the PR and edit as needed.
+            Review and push any needed changes to the `copier-template-update-v${{ steps.get_ver.outputs.NEW_VERSION }}` branch.
+  workflow-keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: liskin/gh-workflow-keepalive@v1
