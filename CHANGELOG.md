@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.28](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.27...v0.2.28) (2024-10-12)
+
+
+### Features
+
+* Bump devcontainer base image ([9ff6950](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9ff695093c16b44517bc68b2b5127e4e772dc049))
+
 ## [0.2.27](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.26...v0.2.27) (2024-09-25)
 
 
