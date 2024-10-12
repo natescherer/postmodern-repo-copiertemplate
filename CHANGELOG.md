@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.35](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.34...v0.2.35) (2024-10-12)
+
+
+### Features
+
+* Update cspell settings ([49c2825](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/49c282580bf5a5395652e59bf2881e54d92f4432))
+* Update trunk ([792b08e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/792b08eb800cb01406a41c15b8919440f50f7b25))
+
+
+### Bug Fixes
+
+* Fix devcontainer home mount ([1e58765](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1e58765afd7eae8a1d1525c342551a44a414f722))
+
 ## [0.2.34](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.33...v0.2.34) (2024-10-12)
 
 
