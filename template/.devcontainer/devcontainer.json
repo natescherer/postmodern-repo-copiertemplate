@@ -18,9 +18,7 @@
     "ghcr.io/trunk-io/devcontainer-feature/trunk": "latest"
   },
   "mounts": [
-    "source=${localEnv:HOME},target=/mnt/host-home,type=bind,consistency=cached"
-    // If you are on Windows and get a CreateFile error, use this instead:
-    // "source=${localEnv:USERPROFILE},target=/mnt/host-home,type=bind,consistency=cached"
+    "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/mnt/host-home,type=bind,consistency=cached"
   ],
   "customizations": {
     "vscode": {
