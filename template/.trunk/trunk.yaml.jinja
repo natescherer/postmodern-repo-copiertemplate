@@ -24,7 +24,9 @@ lint:
     - osv-scanner
     - trufflehog
   enabled:
+    {%- if using_github %}
     - actionlint@1.7.3
+    {%- endif %}
     - cspell@8.15.0
     - git-diff-check
     - hadolint@2.12.0
