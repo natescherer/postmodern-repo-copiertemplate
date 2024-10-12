@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.32](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.31...v0.2.32) (2024-10-12)
+
+
+### Bug Fixes
+
+* Fix NEW_VERSION calculation in copier update workflow ([5ee3e2d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5ee3e2d37932ffedd5a94787a8fccd289e5bbfd1))
+
 ## [0.2.31](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.30...v0.2.31) (2024-10-12)
 
 
