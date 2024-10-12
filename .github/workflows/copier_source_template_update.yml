@@ -35,7 +35,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "feat: copier update to parent template v${{ steps.get_ver.outputs.NEW_VERSION }}"
-          branch: copier-template-update-v${{ steps.get_ver.outputs.NEW_VERSION }}
+          branch: "copier-template-update-v${{ steps.get_ver.outputs.NEW_VERSION }}"
           delete-branch: true
           branch-suffix: timestamp
           title: "feat: copier update to parent template v${{ steps.get_ver.outputs.NEW_VERSION }}"
