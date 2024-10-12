@@ -34,16 +34,16 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: feat: copier update to parent template v${{ steps.get_ver.outputs.NEW_VERSION }}
-          branch: copier-template-update-v${{ steps.get_ver.outputs.NEW_VERSION }}
+          commit-message: "feat: copier update to parent template v${{ steps.get_ver.outputs.NEW_VERSION }}"
+          branch: "copier-template-update-v${{ steps.get_ver.outputs.NEW_VERSION }}"
           delete-branch: true
-          title: feat: copier update to parent template v${{ steps.get_ver.outputs.NEW_VERSION }}
+          title: "feat: copier update to parent template v${{ steps.get_ver.outputs.NEW_VERSION }}"
           body: |
             Copier has applied updates from parent template v${{ steps.get_ver.outputs.NEW_VERSION }}.
 
             Review and push any needed changes to the `copier-template-update-v${{ steps.get_ver.outputs.NEW_VERSION }}` branch.
   workflow-keepalive:
-    if: github.event_name == "schedule"
+    if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     permissions:
       actions: write
