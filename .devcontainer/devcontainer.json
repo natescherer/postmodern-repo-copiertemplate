@@ -7,7 +7,7 @@
       "NONROOT_USER": "vscode"
     }
   },
-  "remoteUser": "vscode",
+  "remoteUser": "root", // Copier (really Python shutil) can't deal with bind-mounted filed being owned as root on Windows hosts
   "features": {
     "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers/features/powershell:1": {},
