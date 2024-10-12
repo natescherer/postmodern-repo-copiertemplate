@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.36](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.35...v0.2.36) (2024-10-12)
+
+
+### Features
+
+* Copier update to parent template v0.2.35 ([910e011](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/910e011a8ab6dfe1ac75eba0d7b4f04625206cce))
+* Make plugins dynamic ([70d2070](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/70d2070500ea4e5df45963f7e7cca91e5677a9c3))
+
+
+### Bug Fixes
+
+* Add natescherer back to cspell ([fd466ba](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/fd466ba060f73add8fdc1b9ebf63c33e23b3ad9a))
+
 ## [0.2.35](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.34...v0.2.35) (2024-10-12)
 
 
