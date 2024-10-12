@@ -12,6 +12,7 @@ _jinja_extensions:
   - extensions/github_extension.py:GitHubExtension
   - extensions/path_tests_extension.py:PathTestsExtension
   - extensions/phase_extension.py:PhaseExtension
+  - extensions/slugify_extension.py:SlugifyExtension
   - extensions/version_extension.py:VersionExtension
 
 _subdirectory: template
