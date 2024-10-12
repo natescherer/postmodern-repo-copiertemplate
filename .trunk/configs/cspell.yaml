@@ -8,6 +8,7 @@ dictionaries:
   - companies
   - css
   - dotnet
+  - docker
   - en_us
   - filetypes
   - fonts
@@ -16,21 +17,19 @@ dictionaries:
   - misc
   - node
   - npm
+  - people-names
   - powershell
   - python
   - softwareTerms
   - typescript
 words:
   # Tooling Usernames
-  - natescherer
-  - scherer
-  - joshbolduc
   - Knister
   - vivaxy
   - tamasfe
   # Code Terms
   - azdo
-  - contributorsrc
+  - all-contributorsrc
   - hadolint
   - pscore
   - ZDOTDIR
