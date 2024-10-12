@@ -1,7 +1,11 @@
 {
   "recommendations": [
+    {%- if is_standard and using_github %}
     "github.vscode-github-actions",
+    {%- endif %}
+    {%- if is_standard and using_azdo %}
     "ms-azure-devops.azure-pipelines",
+    {%- endif %}
     "ms-azuretools.vscode-docker",
     "ms-python.python",
     "samuelcolvin.jinjahtml",
