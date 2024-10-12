@@ -1,7 +1,5 @@
 {
   "recommendations": [
-    "github.vscode-github-actions",
-    "ms-azure-devops.azure-pipelines",
     "ms-azuretools.vscode-docker",
     "ms-python.python",
     "samuelcolvin.jinjahtml",
