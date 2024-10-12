@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.39](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.38...v0.2.39) (2024-10-12)
+
+
+### Features
+
+* Copier update to parent template v0.2.38 ([204dfdd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/204dfdd22ee9d66b1e7ebfaab66d57ebfa58553c))
+
+
+### Bug Fixes
+
+* Only use actionlint on github projects ([37dce71](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/37dce71701ce3a862d6065bdefb3cf3628c79a8d))
+
 ## [0.2.38](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.37...v0.2.38) (2024-10-12)
 
 
