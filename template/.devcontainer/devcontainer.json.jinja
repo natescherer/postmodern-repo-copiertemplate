@@ -22,10 +22,10 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        {%- if is_standard and using_github %}
+        {%- if is_template or (is_standard and using_github) %}
         "github.vscode-github-actions",
         {%- endif %}
-        {%- if is_standard and using_azdo %}
+        {%- if is_template or (is_standard and using_azdo) %}
         "ms-azure-devops.azure-pipelines",
         {%- endif %}
         "ms-azuretools.vscode-docker",
