@@ -7,10 +7,9 @@
       "NONROOT_USER": "vscode"
     }
   },
-  "remoteUser": "root", // Copier (really Python shutil) can't deal with bind-mounted filed being owned as root on Windows hosts
+  "remoteUser": "root", // Copier (really Python shutil) can't deal with bind-mounted files being owned as root on Windows hosts
   "features": {
     "ghcr.io/devcontainers/features/node:1": {},
-    "ghcr.io/devcontainers/features/powershell:1": {},
     "ghcr.io/natescherer/devcontainers-custom-features/hypermodern-python:1": {
       "versions": "3.12",
       "requirementsFile": "/opt/devcontainer/requirements.txt"
