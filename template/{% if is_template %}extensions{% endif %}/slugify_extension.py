@@ -1,12 +1,12 @@
 """Provide extension for slugify-ing values."""
 
 from jinja2.ext import Extension
-from slugify import slugify as unicodeslugify
+from slugify import slugify as unicode_slugify
 
 
 def slugify(string):
     """Slugify given input string."""
-    return unicodeslugify(string, only_ascii=True)
+    return unicode_slugify(string, only_ascii=True)
 
 
 class SlugifyExtension(Extension):
