@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.34](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.33...v0.2.34) (2024-10-12)
+
+
+### Features
+
+* Add built-in slugify extension (closes [#300](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/300)) ([9feadb5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9feadb5b1f1463b7c0f3c0a0f89c8449bc935d4d))
+* Copier update to parent template v0.2.33 ([b03ee51](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b03ee51865cde019b0af3cf615f8f523535d9e6b))
+
 ## [0.2.33](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.32...v0.2.33) (2024-10-12)
 
 
