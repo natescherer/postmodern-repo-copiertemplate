@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.33](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.32...v0.2.33) (2024-10-12)
+
+
+### Bug Fixes
+
+* Fix copier update workflow formatting ([eab7839](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/eab78391cf3fadf12d1e753a6c350707aef28129))
+
 ## [0.2.32](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.31...v0.2.32) (2024-10-12)
 
 
