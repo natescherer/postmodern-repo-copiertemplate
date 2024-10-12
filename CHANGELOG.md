@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.37](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.36...v0.2.37) (2024-10-12)
+
+
+### Bug Fixes
+
+* Fix dynamic plugin logic ([4c9e37c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4c9e37c7ff60d05aed6eca2aa9bc507021708454))
+
 ## [0.2.36](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.35...v0.2.36) (2024-10-12)
 
 
