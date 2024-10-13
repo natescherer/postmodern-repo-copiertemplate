@@ -2,14 +2,20 @@ rules:
   anchors:
     forbid-unused-anchors: true
   document-start: disable
+  {%- if using_github %}
   empty-values:
     ignore: "**/workflows/*.yml"
+  {%- endif %}
   indentation:
     spaces: 2
     check-multi-line-strings: true
     ignore:
+      {%- if using_github %}
       - "**/workflows/*.yml"
+      {%- endif %}
+      {%- if using_azdo %}
       - "**.azurepipelines/*.yml"
+      {%- endif %}
   line-length: disable
   quoted-strings:
     required: only-when-needed
