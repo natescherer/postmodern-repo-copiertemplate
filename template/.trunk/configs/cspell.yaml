@@ -33,4 +33,6 @@ words:
   - all-contributorsrc
   - hadolint
   - pscore
+  - pydoclint
+  - pyupgrade
   - ZDOTDIR
