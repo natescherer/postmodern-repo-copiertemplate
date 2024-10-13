@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.40](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.39...v0.2.40) (2024-10-13)
+
+
+### Features
+
+* Replace bash dict with shell dict in cspell config ([f6bb0a2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f6bb0a2c1b6ebf7ae86caef6bdfb1caf09aa3961))
+
+
+### Bug Fixes
+
+* Clean up template to not deploy template-only settings for regular projects ([b696349](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b696349e1526e256a44d674a93ec004b17692b87))
+
 ## [0.2.39](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.38...v0.2.39) (2024-10-12)
 
 
