@@ -9,7 +9,6 @@ rules:
     check-multi-line-strings: true
     ignore:
       - "**/workflows/*.yml"
-      - "**.azurepipelines/*.yml"
   line-length: disable
   quoted-strings:
     required: only-when-needed

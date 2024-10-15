@@ -1,5 +1,14 @@
-# Generic, formatter-friendly config.
-select = ["B","B9","C","D","DOC","E","F","I","N","S","W"]
+# B     = flake8-bugbear
+# C     = Pylint convention rules
+# D     = pydocstyle
+# DOC   = pydoclint
+# E & W = pycodestyle
+# F     = pyflakes
+# I     = isort
+# N     = pep8-naming
+# UP    = pyupgrade
+# S     = flake8-bandit
+select = ["B","C","D","DOC","E","F","I","N","S","UP","W"]
 
 # Never enforce `E501` (line length violations). This should be handled by formatters.
 ignore = ["E501"]
