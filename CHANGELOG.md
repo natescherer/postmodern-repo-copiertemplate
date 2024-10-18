@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.2.41](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.40...v0.2.41) (2024-10-18)
+
+
+### Bug Fixes
+
+* Ensure CHANGELOG.md exists for created projects so trunk doesn't error out ([b5e3048](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b5e304881a81cdfad3bd4be6064d3157727b3afd))
+* Fix yamllint config for templates ([4a472e8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4a472e83fe0ba0c3a0d69386ad24cd4bd7369662))
+
+## [0.2.40](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.39...v0.2.40) (2024-10-13)
+
+
+### Features
+
+* Replace bash dict with shell dict in cspell config ([f6bb0a2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f6bb0a2c1b6ebf7ae86caef6bdfb1caf09aa3961))
+
+
+### Bug Fixes
+
+* Clean up template to not deploy template-only settings for regular projects ([b696349](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b696349e1526e256a44d674a93ec004b17692b87))
+
+## [0.2.39](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.38...v0.2.39) (2024-10-12)
+
+
+### Features
+
+* Copier update to parent template v0.2.38 ([204dfdd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/204dfdd22ee9d66b1e7ebfaab66d57ebfa58553c))
+
+
+### Bug Fixes
+
+* Only use actionlint on github projects ([37dce71](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/37dce71701ce3a862d6065bdefb3cf3628c79a8d))
+
 ## [0.2.38](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.37...v0.2.38) (2024-10-12)
 
 

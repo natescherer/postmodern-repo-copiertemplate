@@ -4,7 +4,6 @@ version: "0.2"
 suggestionsTimeout: 5000 # ms
 allowCompoundWords: true
 dictionaries:
-  - bash
   - companies
   - css
   - dotnet
@@ -20,6 +19,7 @@ dictionaries:
   - people-names
   - powershell
   - python
+  - shell
   - softwareTerms
   - typescript
 words:
@@ -29,8 +29,6 @@ words:
   - vivaxy
   - tamasfe
   # Code Terms
-  - azdo
-  - all-contributorsrc
-  - hadolint
   - pscore
-  - ZDOTDIR
+  - pydoclint
+  - pyupgrade

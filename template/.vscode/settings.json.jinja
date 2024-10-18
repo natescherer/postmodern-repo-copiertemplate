@@ -1,15 +1,18 @@
 {
   "editor.defaultFormatter": "trunk.io",
+{%- if is_template %}
   "files.associations": {
-    "**.all-contributorsrc*.jinja": "jinja-json",
     "**LICENSE*.jinja": "jinja",
+    "**.all-contributorsrc*.jinja": "jinja-json",
     "**.json*.jinja": "jinja-json",
     "**.md*.jinja*": "jinja-md",
-    "**.y*ml*.jinja": "jinja-yaml",
     "copier.yml": "jinja-yaml",
+    "**.y*ml*.jinja": "jinja-yaml",
+    "**.json[{]% endif %[}]": "json",
     "**.md[{]% endif %[}]": "markdown",
     "**.y*ml[{]% endif %[}]": "yaml",
     "**.py[{]% endif %[}]": "python",
-    "**.json[{]% endif %[}]": "json"
+    "**.toml[{]% endif %[}]": "toml",
   }
+{%- endif %}
 }
