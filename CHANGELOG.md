@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.42](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.41...v0.2.42) (2024-10-18)
+
+
+### Features
+
+* Add scherer back into cspell words ([8e8d625](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8e8d62581bc83b9c6a2db646a7a3f8433a9c8c45))
+* Apply linting updates from trunk ([0ed8a98](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0ed8a9807320dd29f19d91967438e5709a75eb47))
+* Copier update to parent template v0.2.41 ([9d15582](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9d15582b0514802a2542dfbefb6607e9bfb7fb71))
+* Improve spell checking ([5942041](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/59420419134ee9a24a93ed0ca35572c95d5af012))
+* Update trunk, cspell, and ruff ([500e594](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/500e59419306ec93d0cc358700456a908231c9a1))
+
 ## [0.2.41](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.40...v0.2.41) (2024-10-18)
 
 
