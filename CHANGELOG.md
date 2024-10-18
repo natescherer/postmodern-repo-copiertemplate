@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.43](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.42...v0.2.43) (2024-10-18)
+
+
+### Features
+
+* Copier update to parent template v0.2.42 ([83bca46](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/83bca468e57852fd5678b1df5d30de4feb61cf26))
+
+
+### Bug Fixes
+
+* Make parent_template_name question input-safe ([a32c6b3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a32c6b3fe6fcfdebc51d268100132a36b77c2ebb))
+
 ## [0.2.42](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.41...v0.2.42) (2024-10-18)
 
 
