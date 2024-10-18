@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.44](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.43...v0.2.44) (2024-10-18)
+
+
+### Bug Fixes
+
+* Add missing extension file ([f1ec90c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f1ec90c17517917d0de274783a73c1e17b016353))
+
 ## [0.2.43](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.42...v0.2.43) (2024-10-18)
 
 
