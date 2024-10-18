@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.41](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.40...v0.2.41) (2024-10-18)
+
+
+### Bug Fixes
+
+* Ensure CHANGELOG.md exists for created projects so trunk doesn't error out ([b5e3048](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b5e304881a81cdfad3bd4be6064d3157727b3afd))
+* Fix yamllint config for templates ([4a472e8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4a472e83fe0ba0c3a0d69386ad24cd4bd7369662))
+
 ## [0.2.40](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.39...v0.2.40) (2024-10-13)
 
 
