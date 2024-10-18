@@ -1,0 +1,56 @@
+version: "0.2"
+allowCompoundWords: true
+dictionaries:
+  - companies
+  - css
+  - dotnet
+  - docker
+  - en_us
+  - filetypes
+  - fonts
+  - html
+  - makefile
+  - misc
+  - node
+  - npm
+  - people-names
+  - powershell
+  - python
+  - shell
+  - softwareTerms
+  - typescript
+ignoreRegExpList:
+  - devcontainer-features
+  - extension-recommendations
+words:
+  # Author Name Components
+  {%- for name_component in author_name.split(" ") %}
+  - {{ name_component }}
+  {%- endfor %}
+  # Repo Name
+  - {{ repo_name }}
+  # Project Name Components
+  {%- for project_component in project_name.split(" ") %}
+  - {{ project_component }}
+  {%- endfor %}
+  {%- if using_github %}
+  # GitHub Username
+  - {{ github_username }}
+  {%- endif %}
+  {%- if using_azdo %}
+  # Azure DevOps
+  - {{ azdo_org }}
+  - {{ azdo_project }}
+  {%- endif %}
+  # Code Terms
+  - pscore
+  - pydoclint
+  - pyupgrade
+patterns:
+  - name: devcontainer-features
+    pattern: "\"features\": {(.|\\n)*}"
+  - name: extension-recommendations
+    pattern: "\"recommendations\": \\[(.|\\n)*]"
+# Suggestions can sometimes take longer on CI machines,
+# leading to inconsistent results.
+suggestionsTimeout: 5000 # ms
