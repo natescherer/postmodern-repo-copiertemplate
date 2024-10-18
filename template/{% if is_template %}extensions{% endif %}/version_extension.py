@@ -8,7 +8,7 @@ from packaging.version import Version
 
 def current_release_please_version_is_pre_1():
     """Check the current version in .release-please-manifest.json and returns True if it is less than 1.0.0."""
-    with open(".release-please-manifest.json", "r") as file:
+    with open(".release-please-manifest.json") as file:
         data = json.load(file)
     if Version(data["."]) < Version("1.0.0"):
         return True
