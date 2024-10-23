@@ -1,10 +1,7 @@
-name: Tests
+name: Tests for PRs
 
 on:
-  pull_request:
-  push:
-    branches-ignore:
-      - main
+  pull_request_target:
 
 jobs:
   tests:
@@ -21,3 +18,7 @@ jobs:
             echo "$FILE missing!"
             exit 1
           fi
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1
+        with:
+          post-annotations: true
