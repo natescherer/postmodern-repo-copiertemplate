@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.47...v0.3.0) (2024-10-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* all-contributors and dependabot PRs will no longer automatically merge
+
+### Features
+
+* Remove automerge workflow on PRs ([653d9dc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/653d9dcb31ad566651a65b49ae061b0764df04b5))
+
+
+### Bug Fixes
+
+* Fix formatting issues in template ([2cf9df2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2cf9df23ef6f243f6df539a30b54d3d9475bfe74))
+
 ## [0.2.47](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.46...v0.2.47) (2024-10-23)
 
 
