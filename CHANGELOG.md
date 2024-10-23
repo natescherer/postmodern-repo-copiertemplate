@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.46](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.45...v0.2.46) (2024-10-23)
+
+
+### Features
+
+* Copier update to parent template v0.2.45 ([9b169fe](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9b169fe08a7830c5b623843f5d6a1fab690e4e4a))
+
+
+### Bug Fixes
+
+* Fix extension recs in template ([7fe3770](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7fe3770f597a695a5ee6188f742134241091632d))
+
 ## [0.2.45](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.44...v0.2.45) (2024-10-18)
 
 
