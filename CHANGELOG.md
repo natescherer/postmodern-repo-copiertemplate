@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.47](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.46...v0.2.47) (2024-10-23)
+
+
+### Features
+
+* Copier update to parent template v0.2.46 ([34f31fe](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/34f31fe6bf1c5ff9242ad2debfba58304ec8cc63))
+
+
+### Bug Fixes
+
+* Don't create public workflows for private gh repos ([c4279da](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c4279da97e8804e33567b7bdaf016690ea985f08))
+* Fix trunk check prs (closes [#316](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/316)) ([0191943](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0191943b9e2bad400a22d83ab240c77d42c2bfe9))
+
 ## [0.2.46](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.45...v0.2.46) (2024-10-23)
 
 
