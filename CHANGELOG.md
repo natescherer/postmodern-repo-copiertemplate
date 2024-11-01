@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.3...v0.3.4) (2024-11-01)
+
+
+### Bug Fixes
+
+* Fix payload for azdo pipeline creation ([ee2ddf7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ee2ddf7212ab62b420bf7579086d28b15d183352))
+
 ## [0.3.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.2...v0.3.3) (2024-11-01)
 
 
