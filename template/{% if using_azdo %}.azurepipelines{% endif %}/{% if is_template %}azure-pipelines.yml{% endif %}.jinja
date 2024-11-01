@@ -31,15 +31,19 @@ stages:
               version: ">=22.x"
             displayName: Install Node
           - pwsh: |
+              $env:NODE_NO_WARNINGS = 1 # This can be removed once https://github.com/npm/cli/issues/7857 is resolved
+
               $VersionFile = ".version.txt"
               if (Test-Path -Path $VersionFile) {
                 $CurrentVersion = Get-Content -Path $VersionFile
               } else {
-                New-Item -ItemType File -Path $VersionFile | Out-Null
+                Write-Host "This appears to be the first release."
+                "$(MINIMUM_VERSION)" | Out-File -FilePath $VersionFile
                 $CurrentVersion = "0.0.0"
               }
 
-              if ([System.Version]$CurrentVersion -lt [System.Version]$(MINIMUM_VERSION)) {
+              if ([System.Version]$CurrentVersion -lt [System.Version]"$(MINIMUM_VERSION)") {
+                Write-Host "Releasing in --release-as mode."
                 npx --yes commit-and-tag-version --release-as $(MINIMUM_VERSION)
               } else {
                 npx --yes commit-and-tag-version
@@ -95,7 +99,7 @@ stages:
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - pwsh: |
-              $MergeCommitMessage = $(PR_TITLE)
+              $MergeCommitMessage = "$(PR_TITLE)"
 
               $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
               $BaseSplat = @{
@@ -135,7 +139,7 @@ stages:
                 Method = "PATCH"
                 Body = ConvertTo-Json @{
                   lastMergeSourceCommit = @{
-                    commitId = $(LAST_MERGE_SOURCE_COMMIT_ID)
+                    commitId = "$(LAST_MERGE_SOURCE_COMMIT_ID)"
                   }
                   status = "completed"
                   completionOptions = @{
