@@ -245,9 +245,9 @@ def create_pipelines_azdo(c, answers_json):
     for entry in os.scandir(".azurepipelines"):
         if entry.name.endswith(".yml"):
             pipeline_data = {
-                "name": answers["repo_name"],
+                "name": f"{answers['repo_name']} {Path(entry.name).with_suffix('')}",
                 "repository": {
-                    "name": f"{answers['repo_name']} {Path(entry.name).with_suffix('')}",
+                    "name": answers["repo_name"],
                     "type": "TfsGit",
                 },
                 "process": {"yamlFilename": f".azurepipelines/{entry.name}", "type": 2},
