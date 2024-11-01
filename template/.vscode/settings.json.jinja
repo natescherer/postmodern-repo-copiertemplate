@@ -1,7 +1,10 @@
 {
   "editor.defaultFormatter": "trunk.io",
-{%- if is_template %}
   "files.associations": {
+    {%- if is_template or using_azdo %}
+    "**/.azurepipelines/*.yml": "azure-pipelines",
+    {%- endif %}
+    {%- if is_template %}
     "**LICENSE*.jinja": "jinja",
     "**.all-contributorsrc*.jinja": "jinja-json",
     "**.json*.jinja": "jinja-json",
@@ -13,6 +16,7 @@
     "**.y*ml[{]% endif %[}]": "yaml",
     "**.py[{]% endif %[}]": "python",
     "**.toml[{]% endif %[}]": "toml"
+    {%- endif %}
   }
-{%- endif %}
+
 }
