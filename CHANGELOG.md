@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.4...v0.3.5) (2024-11-01)
+
+
+### Features
+
+* Add copier update workflow for Azure DevOps ([b448721](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b448721e261fd165ccb09f0dec016b42e05ac928))
+
 ## [0.3.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.3...v0.3.4) (2024-11-01)
 
 
