@@ -3,3 +3,6 @@
 
 # Windows Thumbs.db files
 Thumbs.db
+
+# Python Virtual Environments
+.venv

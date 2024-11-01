@@ -1,6 +1,7 @@
 {
   "editor.defaultFormatter": "trunk.io",
   "files.associations": {
+    "**/.azurepipelines/*.yml": "azure-pipelines",
     "**LICENSE*.jinja": "jinja",
     "**.all-contributorsrc*.jinja": "jinja-json",
     "**.json*.jinja": "jinja-json",
@@ -13,4 +14,5 @@
     "**.py[{]% endif %[}]": "python",
     "**.toml[{]% endif %[}]": "toml"
   }
+
 }
