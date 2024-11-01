@@ -235,32 +235,36 @@ def initialize_repo_and_commit_files(c, answers_json):
 
 @task
 def create_pipelines_azdo(c, answers_json):
-    """Register pipeline for an Azure DevOps repo."""
+    """Register pipelines for an Azure DevOps repo."""
     print("[bold green]*** 'create-pipelines-azdo' task start ***[/bold green]")
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
 
-    pipeline_data = {
-        "name": answers["repo_name"],
-        "repository": {"name": answers["repo_name"], "type": "TfsGit"},
-        "process": {"yamlFilename": ".azurepipelines/azure-pipelines.yml", "type": 2},
-        "path": "\\",
-        "queue": {"name": "Azure Pipelines"},
-        "triggers": [{"settingsSourceType": 2, "triggerType": "continuousIntegration"}],
-        "type": "build",
-    }
-    headers = {"Content-Type": "application/json", "Accept": "application/json"}
-    encoded_project = answers["azdo_project"].replace(" ", "%20")
-    print("[cyan]Creating pipeline in Azure DevOps...[/cyan]")
-    response = requests.post(
-        f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7",
-        data=json.dumps(pipeline_data),
-        auth=("", token),
-        headers=headers,
-        timeout=10,
-    )
-    response.raise_for_status()
+    for entry in os.scandir(".azurepipelines"):
+        if entry.name.endswith(".yml"):
+            pipeline_data = {
+                "name": answers["repo_name"],
+                "repository": {"name": answers["repo_name"], "type": "TfsGit"},
+                "process": {"yamlFilename": f".azurepipelines/{entry.name}", "type": 2},
+                "path": "\\",
+                "queue": {"name": "Azure Pipelines"},
+                "triggers": [
+                    {"settingsSourceType": 2, "triggerType": "continuousIntegration"}
+                ],
+                "type": "build",
+            }
+            headers = {"Content-Type": "application/json", "Accept": "application/json"}
+            encoded_project = answers["azdo_project"].replace(" ", "%20")
+            print("[cyan]Creating pipeline in Azure DevOps...[/cyan]")
+            response = requests.post(
+                f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7",
+                data=json.dumps(pipeline_data),
+                auth=("", token),
+                headers=headers,
+                timeout=10,
+            )
+            response.raise_for_status()
     print("[bold green]*** 'create-pipelines-azdo' task end ***[/bold green]")
 
 
