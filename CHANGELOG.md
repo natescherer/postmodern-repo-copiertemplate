@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.2...v0.3.3) (2024-11-01)
+
+
+### Bug Fixes
+
+* Fix pipeline naming for azdo ([9a00ce8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9a00ce8ff7a0738b766c6c4465724b891af664a2))
+
 ## [0.3.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.1...v0.3.2) (2024-11-01)
 
 
