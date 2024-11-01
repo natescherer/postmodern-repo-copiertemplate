@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.0...v0.3.1) (2024-11-01)
+
+
+### Features
+
+* Apply parent template v0.3.0 ([f0fcc6f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f0fcc6f4089f30257266dd1bb4531e3c9fa9b050))
+* Improve azdo release pipeline ([4c75e72](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4c75e7206ad82238e46bcd162db656ad614f6817))
+
+
+### Bug Fixes
+
+* Port azdo workflow improvements from test repo ([983558d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/983558d35c163d2a841c79eb6b82ab46327c23af))
+
 ## [0.3.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.47...v0.3.0) (2024-10-23)
 
 
