@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.1...v0.3.2) (2024-11-01)
+
+
+### Features
+
+* Add vscode associations for azure pipelines ([5162a29](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5162a29a93cdba7d4d4c769e5b8095135696b5bd))
+* Allow create_pipelines_azdo task to dynamically register multiple pipelines ([0ab6b1d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0ab6b1d3904939f611a03bb23838e1e5bac71d17))
+* Copier update to parent template v0.3.1 ([0c85845](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0c8584504f07a095b7da969dfe9c98fe183d0143))
+
 ## [0.3.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.0...v0.3.1) (2024-11-01)
 
 
