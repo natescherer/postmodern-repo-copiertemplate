@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import tempfile
+from pathlib import Path
 
 import copier.vcs
 import githubkit
@@ -245,7 +246,10 @@ def create_pipelines_azdo(c, answers_json):
         if entry.name.endswith(".yml"):
             pipeline_data = {
                 "name": answers["repo_name"],
-                "repository": {"name": answers["repo_name"], "type": "TfsGit"},
+                "repository": {
+                    "name": f"{answers['repo_name']} {Path(entry.name).with_suffix('')}",
+                    "type": "TfsGit",
+                },
                 "process": {"yamlFilename": f".azurepipelines/{entry.name}", "type": 2},
                 "path": "\\",
                 "queue": {"name": "Azure Pipelines"},
