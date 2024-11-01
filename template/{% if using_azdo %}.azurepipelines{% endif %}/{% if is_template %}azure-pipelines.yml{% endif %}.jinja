@@ -5,6 +5,9 @@ trigger:
     exclude:
       - "*"
 
+variables:
+  MINIMUM_VERSION: {% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}
+
 pool:
   vmImage: ubuntu-latest
 
@@ -18,36 +21,86 @@ stages:
           - checkout: self
             fetchDepth: 0
             persistCredentials: true
+          - pwsh: |
+              git config user.email "azuredevops@microsoft.com"
+              git config user.name "Azure DevOps"
+            failOnStderr: false # Git writes to stderr normally
+            displayName: Set Git Config
           - task: UseNode@1
             inputs:
               version: ">=22.x"
             displayName: Install Node
           - pwsh: |
-              git config user.email "azuredevops@microsoft.com"
-              git config user.name "Azure DevOps"
+              $env:NODE_NO_WARNINGS = 1 # This can be removed once https://github.com/npm/cli/issues/7857 is resolved
 
-              $MinVersion = "{% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}"
               $VersionFile = ".version.txt"
+              if (Test-Path -Path $VersionFile) {
+                $CurrentVersion = Get-Content -Path $VersionFile
+              } else {
+                Write-Host "This appears to be the first release."
+                "$(MINIMUM_VERSION)" | Out-File -FilePath $VersionFile
+                $CurrentVersion = "0.0.0"
+              }
 
-              if (!(Test-Path -Path $VersionFile)) {
-                New-Item -ItemType File -Path $VersionFile | Out-Null
-                npx --yes commit-and-tag-version --release-as $MinVersion
-              } elseif ([System.Version](Get-Content -Path $VersionFile) -lt [System.Version]$MinVersion) {
-                npx --yes commit-and-tag-version --release-as $MinVersion 
+              if ([System.Version]$CurrentVersion -lt [System.Version]"$(MINIMUM_VERSION)") {
+                Write-Host "Releasing in --release-as mode."
+                npx --yes commit-and-tag-version --release-as $(MINIMUM_VERSION)
               } else {
                 npx --yes commit-and-tag-version
               }
 
               $ReleaseVersion = Get-Content -Path $VersionFile
               Write-Host "##vso[task.setvariable variable=RELEASE_VERSION;]$ReleaseVersion"
-
-              git checkout -b release-v$ReleaseVersion
-              git push --set-upstream origin release-v$ReleaseVersion
-              git push origin --tags
-            failOnStderr: false # Git writes to stderr normally
+            failOnStderr: true
             displayName: Run 'commit-and-tag-version'
           - pwsh: |
-              $OrgBaseUri = "$(System.CollectionUri)/_apis"
+              $BranchName = "release-v$(RELEASE_VERSION)"
+              Write-Host "##vso[task.setvariable variable=BRANCH_NAME;]$BranchName"
+
+              git checkout -b $BranchName
+              git push --set-upstream origin $BranchName
+              git push origin --tags
+            failOnStderr: false # Git writes to stderr normally
+            displayName: Push New Branch
+          - pwsh: |
+              $PRTitle = "chore: release v$(RELEASE_VERSION)"
+              Write-Host "##vso[task.setvariable variable=PR_TITLE;]$PRTitle"
+
+              $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
+              $BaseSplat = @{
+                ContentType = "application/json"
+                Headers = @{
+                  Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("user:$env:SYSTEM_ACCESSTOKEN")))"
+                }
+              }
+
+              $CreateSplat = $BaseSplat + @{
+                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=7.0"
+                Method = "POST"
+                Body = ConvertTo-Json @{
+                  sourceRefName = "refs/heads/$(BRANCH_NAME)"
+                  targetRefName = "$(Build.SourceBranch)"
+                  title = $PRTitle
+                  description = $PRTitle
+                }
+              }
+              Write-Host "Creating Pull Request..."
+              $CreateResponse = Invoke-RestMethod @CreateSplat
+
+              $PullRequestID = $CreateResponse.pullRequestId
+              Write-Host "Pull Request ID is '$PullRequestID'"
+              Write-Host "##vso[task.setvariable variable=PULL_REQUEST_ID;]$PullRequestID"
+
+              $LastMergeSourceCommitID = $CreateResponse.lastMergeSourceCommit.commitId
+              Write-Host "Last Merge Source Commit ID is '$LastMergeSourceCommitID'"
+              Write-Host "##vso[task.setvariable variable=LAST_MERGE_SOURCE_COMMIT_ID;]$LastMergeSourceCommitID"
+            failOnStderr: true
+            displayName: Create Pull Request
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          - pwsh: |
+              $MergeCommitMessage = "$(PR_TITLE)"
+
               $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
               $BaseSplat = @{
                 ContentType = "application/json"
@@ -57,7 +110,7 @@ stages:
               }
 
               $IDSplat = $BaseSplat + @{
-                Uri = "$OrgBaseUri/connectionData"
+                Uri = "$(System.CollectionUri)/_apis/connectionData"
                 Method = "GET"
               }
               Write-Host "Finding Reviewer ID..."
@@ -65,25 +118,10 @@ stages:
               $ReviewerID = $IDResponse.authenticatedUser.id
               Write-Host "Reviewer ID is '$ReviewerID'"
 
-              $CreateSplat = $BaseSplat + @{
-                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=7.0"
-                Method = "POST"
-                Body = ConvertTo-Json @{
-                  sourceRefName = "refs/heads/release-v$(RELEASE_VERSION)"
-                  targetRefName = "$(Build.SourceBranch)"
-                  title = "chore: release v$(RELEASE_VERSION)"
-                  description = "Release v$(RELEASE_VERSION)"
-                }
-              }
-              Write-Host "Creating Pull Requests..."
-              $CreateResponse = Invoke-RestMethod @CreateSplat
-              $PullRequestID = $CreateResponse.pullRequestId
-              Write-Host "Pull Request ID is '$PullRequestID'"
-
               Start-Sleep -Seconds 5
 
               $ApproveSplat = $BaseSplat + @{
-                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests/$PullRequestID/reviewers/$($ReviewerID)?api-version=7.0"
+                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests/$(PULL_REQUEST_ID)/reviewers/$($ReviewerID)?api-version=7.0"
                 Method = "PUT"
                 Body = ConvertTo-Json @{
                   hasDeclined = $false
@@ -97,18 +135,18 @@ stages:
               Start-Sleep -Seconds 5
 
               $MergeSplat = $BaseSplat + @{
-                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests/$($PullRequestID)?api-version=7.0"
+                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests/$(PULL_REQUEST_ID)?api-version=7.0"
                 Method = "PATCH"
                 Body = ConvertTo-Json @{
                   lastMergeSourceCommit = @{
-                    commitId = $CreateResponse.lastMergeSourceCommit.commitId
+                    commitId = "$(LAST_MERGE_SOURCE_COMMIT_ID)"
                   }
                   status = "completed"
                   completionOptions = @{
                     bypassPolicy = $true
-                    bypassReason = "Release"
+                    bypassReason = "Pipeline Automation"
                     deleteSourceBranch = $true
-                    mergeCommitMessage = "chore: release v$(RELEASE_VERSION) [skip ci]"
+                    mergeCommitMessage = $MergeCommitMessage
                     mergeStrategy = "noFastForward"
                   }
                 }
@@ -116,6 +154,6 @@ stages:
               Write-Host "Merging Pull Request..."
               Invoke-RestMethod @MergeSplat | Out-Null
             failOnStderr: true
-            displayName: Create & Merge Pull Request
+            displayName: Approve & Merge Pull Request
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)

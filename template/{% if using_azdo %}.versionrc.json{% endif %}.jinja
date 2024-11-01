@@ -3,16 +3,13 @@
     "reverse": false,
     "commitsSort": false
   },
-  "parserOpts": {
-    "headerPattern": "(?:\\(Merged PR \\d+: \\))?([a-zA-Z]+)(?:\\(([\\w$\\.\\-*\\s]*)\\))?\\!?:(.*)"
-  },
   "bumpFiles": [
     {
       "filename": ".version.txt",
       "type": "plain-text"
     }
   ],
-  "releaseCommitMessageFormat": {% raw %}"chore: release {{currentTag}} [skip ci]"{% endraw %},
+  "releaseCommitMessageFormat": {% raw %}"chore: release {{currentTag}}"{% endraw %},
   "types": [
     {
       "type": "build",
