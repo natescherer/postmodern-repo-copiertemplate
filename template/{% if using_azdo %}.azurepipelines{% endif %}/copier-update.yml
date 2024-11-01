@@ -1,0 +1,117 @@
+name: $(BuildId)
+
+trigger:
+  branches:
+    exclude:
+      - "*"
+
+schedules:
+  - cron: 0 2 * * 1
+    displayName: Run 'copier update' Every Monday at 2am
+    branches:
+      include:
+        - main
+
+variables:
+  PIP_REQUIREMENTS_FILE: copier-requirements.txt
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: copierupdate
+    displayName: Copier Update
+    jobs:
+      - job: copierupdate
+        displayName: Copier Update
+        steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
+          - pwsh: |
+              git config user.email "azuredevops@microsoft.com"
+              git config user.name "Azure DevOps"
+            failOnStderr: false # Git writes to stderr normally
+            displayName: Set Git Config
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: 3.x
+            displayName: Install Python
+          - pwsh: |
+              python -m venv .venv
+              . .venv/bin/Activate.ps1
+              pip install --upgrade pip
+              pip install copier
+              if ("$(PIP_REQUIREMENTS_FILE)") {
+                pip install -r $(PIP_REQUIREMENTS_FILE)
+              }
+            failOnStderr: true
+            displayName: Install Copier & Other Dependencies
+          - pwsh: |
+              . .venv/bin/Activate.ps1
+              $Output = copier update --skip-answered --pretend --trust 2>&1
+              $NewVersion = $Output[0].ToString().Split(" ")[-1]
+              Write-Host "##vso[task.setvariable variable=NEW_VERSION;]$NewVersion"
+            failOnStderr: true
+            displayName: Get New Template Version
+          - pwsh: |
+              . .venv/bin/Activate.ps1
+              copier update --skip-answered --trust
+            failOnStderr: false # Copier writes to stderr normally
+            displayName: Run Copier Update
+          - pwsh: |
+              git add .
+              if (!(git status --porcelain)) {
+                Write-Host "No changes detected, skipping remaining steps..."
+                Write-Host "##vso[task.setvariable variable=NO_CHANGES;]true"
+              }
+            failOnStderr: false # Git writes to stderr normally
+            displayName: Check for Changes
+          - pwsh: |
+              $BranchName = "copier-template-update-v$(NEW_VERSION)"
+              Write-Host "##vso[task.setvariable variable=BRANCH_NAME;]$BranchName"
+
+              git commit -m "feat: copier update to parent template v$(NEW_VERSION)"
+              git checkout -b $BranchName
+              git push --set-upstream origin $BranchName
+              git push origin --tags
+            failOnStderr: false # Git writes to stderr normally
+            condition: and(succeeded(), ne(variables['NO_CHANGES'], 'true'))
+            displayName: Commit & Push New Branch
+          - pwsh: |
+              $PRTitle = "feat: copier update to parent template v$(NEW_VERSION)"
+              Write-Host "##vso[task.setvariable variable=PR_TITLE;]$PRTitle"
+
+              $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
+              $BaseSplat = @{
+                ContentType = "application/json"
+                Headers = @{
+                  Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("user:$env:SYSTEM_ACCESSTOKEN")))"
+                }
+              }
+
+              $CreateSplat = $BaseSplat + @{
+                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=7.0"
+                Method = "POST"
+                Body = ConvertTo-Json @{
+                  sourceRefName = "refs/heads/$(BRANCH_NAME)"
+                  targetRefName = "$(Build.SourceBranch)"
+                  title = $PRTitle
+                  description = $PRTitle
+                }
+              }
+              Write-Host "Creating Pull Request..."
+              $CreateResponse = Invoke-RestMethod @CreateSplat
+
+              $PullRequestID = $CreateResponse.pullRequestId
+              Write-Host "Pull Request ID is '$PullRequestID'"
+              Write-Host "##vso[task.setvariable variable=PULL_REQUEST_ID;]$PullRequestID"
+
+              $LastMergeSourceCommitID = $CreateResponse.lastMergeSourceCommit.commitId
+              Write-Host "Last Merge Source Commit ID is '$LastMergeSourceCommitID'"
+              Write-Host "##vso[task.setvariable variable=LAST_MERGE_SOURCE_COMMIT_ID;]$LastMergeSourceCommitID"
+            failOnStderr: true
+            condition: and(succeeded(), ne(variables['NO_CHANGES'], 'true'))
+            displayName: Create Pull Request
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
