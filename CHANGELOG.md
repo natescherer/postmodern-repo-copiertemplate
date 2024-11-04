@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.6...v0.3.7) (2024-11-04)
+
+
+### Bug Fixes
+
+* Fix open mode for credential file ([1994441](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/19944413cfc84c78863dec33a83ad7ea2109b451))
+
 ## [0.3.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.5...v0.3.6) (2024-11-04)
 
 
