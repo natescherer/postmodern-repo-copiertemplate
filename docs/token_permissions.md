@@ -16,6 +16,7 @@ This doc details the minimum scopes/permissions needed for GitHub/Azure DevOps t
 | **Permission**       | **Reason**                                         |
 | -------------------- | -------------------------------------------------- |
 | administration:write | Needed to create repo & set its settings           |
+| contents:write       | Needed to commit code                              |
 | issues:write         | Needed to create custom labels                     |
 | workflows:write      | Needed to allow template tasks to commit workflows |
 
