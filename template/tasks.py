@@ -235,7 +235,7 @@ def initialize_repo_and_commit_files(c, answers_json):
     c.run(f"git remote add origin {remote_url}")
     if os.environ["CREATE_GIT_CREDENTIALS"] == "true":
         print("[cyan]Setting up Git credentials...[/cyan]")
-        with open("~/.git-credentials", "a") as cred_file:
+        with open("~/.git-credentials", "a+") as cred_file:
             cred_file.write(f"\n{gcm_creds}")
     print("[cyan]Pushing to remote...[/cyan]")
     c.run("git push -u origin --all")
