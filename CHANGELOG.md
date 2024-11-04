@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.5...v0.3.6) (2024-11-04)
+
+
+### Features
+
+* Add cred handling for docker ([f03b4fd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f03b4fd3ed2cbe27ea3ecd11c6a89ce2b82e8d9c))
+* Apply parent template v0.3.5 ([6dcc9eb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6dcc9eb7f314deeb11ad91d290f5476f0d332a8c))
+
+
+### Bug Fixes
+
+* Fix yaml formating on azdo cron schedule ([414a245](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/414a2455afd11a87187d1ba6176f1ba0f3b04521))
+
 ## [0.3.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.4...v0.3.5) (2024-11-01)
 
 
