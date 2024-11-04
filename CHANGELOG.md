@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.7...v0.3.8) (2024-11-04)
+
+
+### Bug Fixes
+
+* Fix git cred file path ([bc3f06a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/bc3f06a518e5fdaf64a6b23b41fdcb60004eaa1b))
+
 ## [0.3.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.6...v0.3.7) (2024-11-04)
 
 
