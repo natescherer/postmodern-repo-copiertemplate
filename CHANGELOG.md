@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.8...v0.3.9) (2024-11-04)
+
+
+### Bug Fixes
+
+* Don't use encoded git tokens ([4451416](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4451416fc31245e9ac285cc1362b99252b4ba219))
+
 ## [0.3.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.7...v0.3.8) (2024-11-04)
 
 
