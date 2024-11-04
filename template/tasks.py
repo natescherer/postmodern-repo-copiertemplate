@@ -206,7 +206,6 @@ def initialize_repo_and_commit_files(c, answers_json):
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
-    token64 = str(base64.b64encode(token.encode("utf-8")), "utf-8")
     owner = answers.get("github_org") or answers.get("github_username")
     if answers["lifecycle"] in ["Pre-Alpha", "Alpha", "Beta"]:
         first_version = "0.1.0"
@@ -224,11 +223,11 @@ def initialize_repo_and_commit_files(c, answers_json):
     c.run(commit_message)
     if answers["developer_platform"] == "GitHub":
         remote_url = f"https://github.com/{owner}/{answers['repo_name']}.git"
-        gcm_creds = f"https://{answers.get("github_username")}:{token64}@github.com"
+        gcm_creds = f"https://{answers.get("github_username")}:{token}@github.com"
     elif answers["developer_platform"] == "Azure DevOps":
         encoded_project = answers["azdo_project"].replace(" ", "%20")
         remote_url = f"https://{answers['azdo_org']}@dev.azure.com/{answers['azdo_org']}/{encoded_project}/_git/{answers['repo_name']}"
-        gcm_creds = f"https://:{token64}@dev.azure.com"
+        gcm_creds = f"https://:{token}@dev.azure.com"
         print("[cyan]Setting 'git config credential.useHttpPath true'...[/cyan]")
         c.run("git config credential.useHttpPath true")
     print(f"[cyan]Adding remote {remote_url}...[/cyan]")
