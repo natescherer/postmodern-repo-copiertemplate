@@ -14,7 +14,7 @@ rules:
       - "**/workflows/*.yml"
       {%- endif %}
       {%- if is_template or using_azdo %}
-      - "**/.azurepipelines*/*.yml"
+      - "**/*.azurepipelines*/*.yml"
       {%- endif %}
   line-length: disable
   quoted-strings:
