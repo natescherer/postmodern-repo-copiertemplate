@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.14...v0.3.15) (2024-12-31)
+
+
+### Features
+
+* Copier update to parent template v0.3.14 ([fbd41ba](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/fbd41baa94238dedea701e0e5ae415953e14c2ac))
+
+
+### Bug Fixes
+
+* Fix os.getenv ([2a6f711](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2a6f7115fb3297a1c4da7e64ab2a634510e4ed82))
+
 ## [0.3.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.13...v0.3.14) (2024-12-31)
 
 
