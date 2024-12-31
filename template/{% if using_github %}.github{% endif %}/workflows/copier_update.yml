@@ -2,7 +2,7 @@ name: Copier Source Template Update
 
 on:
   schedule:
-    - cron: 0 2 * * 1 # Every Monday at 2am
+    - cron: 0 17 * * 1 # Every Monday at 5pm UTC
   workflow_dispatch:
 
 permissions:

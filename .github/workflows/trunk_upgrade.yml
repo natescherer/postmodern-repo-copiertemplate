@@ -1,9 +1,12 @@
 name: Trunk Upgrade
+
 on:
   schedule:
-    - cron: 0 2 * * 1 # Every Monday at 2am
-  workflow_dispatch: {}
+    - cron: 0 17 * * 1 # Every Monday at 5pm UTC
+  workflow_dispatch:
+
 permissions: read-all
+
 jobs:
   trunk_upgrade:
     runs-on: ubuntu-latest
