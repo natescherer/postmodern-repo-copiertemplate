@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.13...v0.3.14) (2024-12-31)
+
+
+### Features
+
+* Add workflow for upgrading trunk ([b64ca97](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b64ca9774d35f9e9da9f9a568cb7f93fa2018f31))
+
+
+### Bug Fixes
+
+* Fix naming of trunk upgrade prs ([531e451](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/531e45130369a879aef06fae6f5d3ea2ea120023))
+* Fix repo creation credential setting ([21eae37](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/21eae37023af83ad1bd53c24ccc7e645f8477d2b))
+* Fix trunk testing for prs ([91cc9bb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/91cc9bb57e8fd354cce082cf8243ea745645c7f0))
+* Fix trunk workflows ([4ece49e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4ece49e693841c3a694b0faf3021b065603661a4))
+* Force pr tests to save trunk annotations ([217e1bb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/217e1bb20dd5c6be11057deb7065446f3bbb9acb))
+* Update trunk check workflows ([f585c7d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f585c7d8b0cbcb3817f267452b7273e91a07ccb6))
+
 ## [0.3.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.12...v0.3.13) (2024-12-31)
 
 
