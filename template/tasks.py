@@ -232,7 +232,7 @@ def initialize_repo_and_commit_files(c, answers_json):
         c.run("git config credential.useHttpPath true")
     print(f"[cyan]Adding remote {remote_url}...[/cyan]")
     c.run(f"git remote add origin {remote_url}")
-    if os.getenv["CREATE_GIT_CREDENTIALS"] == "true":
+    if os.getenv("CREATE_GIT_CREDENTIALS") == "true":
         print("[cyan]Setting up Git credentials...[/cyan]")
         with open(f"{str(Path.home())}/.git-credentials", "a+") as cred_file:
             cred_file.write(f"\n{gcm_creds}")
