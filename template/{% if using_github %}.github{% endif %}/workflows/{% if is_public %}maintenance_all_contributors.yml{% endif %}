@@ -1,4 +1,4 @@
-name: All Contributors PR Create
+name: "Maintenance: All Contributors"
 
 on:
   schedule:
@@ -12,7 +12,7 @@ permissions:
 jobs:
   allcontributors_create_pr:
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'github-actions[bot]' }}
+    if: ${{ github.actor != 'allcontributors[bot]' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

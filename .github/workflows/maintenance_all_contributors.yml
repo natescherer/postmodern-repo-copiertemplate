@@ -1,4 +1,4 @@
-name: All Contributors PR Create
+name: "Maintenance: All Contributors"
 
 on:
   schedule:

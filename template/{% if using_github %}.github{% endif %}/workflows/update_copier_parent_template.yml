@@ -1,4 +1,4 @@
-name: Copier Source Template Update
+name: "Update: Copier Parent Template"
 
 on:
   schedule:
