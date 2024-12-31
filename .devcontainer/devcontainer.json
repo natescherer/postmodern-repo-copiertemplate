@@ -13,7 +13,7 @@
       "versions": "3.12",
       "requirementsFile": "/opt/devcontainer/requirements.txt"
     },
-    "ghcr.io/trunk-io/devcontainer-feature/trunk": "latest",
+    "ghcr.io/trunk-io/devcontainer-feature/trunk:1": "latest",
     "ghcr.io/devcontainers-extra/features/renovate-cli:2": {}
   },
   "mounts": [

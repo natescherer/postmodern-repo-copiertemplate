@@ -13,7 +13,7 @@
       "versions": "3.12",
       "requirementsFile": "/opt/devcontainer/requirements.txt"
     },
-    "ghcr.io/trunk-io/devcontainer-feature/trunk": "latest",
+    "ghcr.io/trunk-io/devcontainer-feature/trunk:1": "latest",
     "ghcr.io/devcontainers-extra/features/renovate-cli:2": {}
   },
   "mounts": [
@@ -22,12 +22,8 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        {%- if is_template or (is_standard and using_github) %}
         "github.vscode-github-actions",
-        {%- endif %}
-        {%- if is_template or (is_standard and using_azdo) %}
         "ms-azure-devops.azure-pipelines",
-        {%- endif %}
         "ms-azuretools.vscode-docker",
         "ms-python.python",
         "samuelcolvin.jinjahtml",
