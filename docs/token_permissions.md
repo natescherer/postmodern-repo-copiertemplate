@@ -14,28 +14,22 @@ The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the r
 
 **Repository Access**: All Repositories
 
-#### Repository permissions
-
-| **Permission**                    | **Reason**                                         |
-| --------------------------------- | -------------------------------------------------- |
-| Administration: Read and Write    | Needed to create repo & set its settings           |
-| Contents: Read and Write          | Needed to commit code                              |
-| Issues: Read and Write            | Needed to create custom labels                     |
-| Workflows: Read and Write         | Needed to allow template tasks to commit workflows |
+| **Repository Permission**      | **Reason**                                         |
+| ------------------------------ | -------------------------------------------------- |
+| Administration: Read and Write | Needed to create repo & set its settings           |
+| Contents: Read and Write       | Needed to commit code                              |
+| Issues: Read and Write         | Needed to create custom labels                     |
+| Workflows: Read and Write      | Needed to allow template tasks to commit workflows |
 
 ### Repo Maintenance PAT (Fine-grained token)
 
 **Repository Access**: All Repositories
 
-#### Repository permissions
-
-| **Permission**                | **Reason**                                    |
-| ----------------------------- | --------------------------------------------- |
-| Contents: Read and Write      | Needed for Copier/Release Please workflows    |
-| Pull Requests: Read and Write | Needed for Copier/Release Please workflows    |
-| Workflows: Read and Write     | Needed for Copier/Release Please workflows    |
-
-
+| **Repository Permission**     | **Reason**                                 |
+| ----------------------------- | ------------------------------------------ |
+| Contents: Read and Write      | Needed for Copier/Release Please workflows |
+| Pull Requests: Read and Write | Needed for Copier/Release Please workflows |
+| Workflows: Read and Write     | Needed for Copier/Release Please workflows |
 
 ## Azure DevOps
 

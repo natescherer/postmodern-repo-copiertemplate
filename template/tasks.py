@@ -3,7 +3,6 @@
 This file is to be executed with https://www.pyinvoke.org/ in Python 3.6+.
 """
 
-import base64
 import json
 import os
 import shutil
