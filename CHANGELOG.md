@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.18...v0.3.19) (2024-12-31)
+
+
+### Features
+
+* Have release please run with pat ([4a65522](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4a655228a5ad797c794fc65416af34a67e02c892))
+
 ## [0.3.18](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.17...v0.3.18) (2024-12-31)
 
 
