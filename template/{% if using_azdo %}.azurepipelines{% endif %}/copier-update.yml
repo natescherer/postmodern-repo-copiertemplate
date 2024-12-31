@@ -33,7 +33,7 @@ stages:
               git config user.name "Azure DevOps"
             failOnStderr: false # Git writes to stderr normally
             displayName: Set Git Config
-          - task: UsePythonVersion@0
+          - task: UsePythonVersion@0.248.1
             inputs:
               versionSpec: 3.x
             displayName: Install Python
