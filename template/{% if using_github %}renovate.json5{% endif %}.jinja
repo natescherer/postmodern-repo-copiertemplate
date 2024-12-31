@@ -7,7 +7,7 @@
     "enabled": true,
     "fileMatch": [
       {%- if is_template %}
-      "(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$"
+      {% raw %}"(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$"{% endraw %}
       {%- else %}
       "(^|/)\\.azurepipelines/.+\\.ya?ml$"
       {%- endif %}
@@ -24,7 +24,7 @@
   },
   "github-actions": {
     "fileMatch": [
-      "(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"
+      {% raw %}"(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"{% endraw %}
     ]
   },
   {%- endif %}
