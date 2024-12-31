@@ -39,8 +39,8 @@ lint:
     {%- if is_template %}
     - ruff@0.7.0:
         commands: [lint, format]
-    {%- endif %}
     - taplo@0.9.3
+    {%- endif %}
     - yamllint@1.35.1
   ignore:
     - linters: [ALL]
