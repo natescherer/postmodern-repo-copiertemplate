@@ -1,7 +1,7 @@
 name: Tests for PRs
 
 on:
-  pull_request_target:
+  pull_request:
 
 jobs:
   tests:
