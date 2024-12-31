@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.3.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.9...v0.3.10) (2024-12-31)
+
+
+### Features
+
+* Copier update to parent template v0.3.9 ([3f93ecf](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3f93ecf5ecd262fced63c50073ea8078274773ab))
+* Restore devcontainer template ([a979d80](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a979d80bfaf0143bc721c7344e5625c1a061ebaa))
+* Switch to renovate from dependabot ([ba81a3e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ba81a3e3eb18e9698908d3d27aed98fdddd1ad77))
+
+
+### Bug Fixes
+
+* Fix devcontainer fileMatch ([61d17da](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/61d17daf9a8befea1b5a12b1326336ddfd16c77a))
+* Fix handling of renovate and azure pipelines version numbers ([9b2de06](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9b2de06517204be027f45f53dc9541869fe2e571))
+* Fix renovate config ([f1f3b1f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f1f3b1f5ccd5001d77947703399e0f02bf932278))
+* Fix version number for trunk ([b2de10b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b2de10bac0b7a5ba86cf088dd25d3c9e83e1a6b1))
+* Restore devcontainer json ([f2977b7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f2977b7045d6b296230bcc71562b0a36b1ffdd83))
+* Switch renovate config to json5 ([7f1a6fb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7f1a6fbff025a51764e3710c73a346ce842997b2))
+* Update devcontainer files for renovate compatability ([3ee8163](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3ee816363930e884cca0b1a3d8fac88e4916eb1c))
+
 ## [0.3.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.8...v0.3.9) (2024-11-04)
 
 
