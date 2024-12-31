@@ -10,6 +10,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Trunk Check
         uses: trunk-io/trunk-action@v1
+        with:
+          save-annotations: true
       - name: Example Tests
         run: |
           FILE=README.md
