@@ -1,0 +1,41 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  // Per-provider config below
+  {%- if is_template or (is_standard and using_azdo) %}
+  "azure-pipelines": {
+    "enabled": true,
+    "fileMatch": [
+      {%- if is_template %}
+      "(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$"
+      {%- else %}
+      "(^|/)\\.azurepipelines/.+\\.ya?ml$"
+      {%- endif %}
+    ]
+  },
+  {%- endif %}
+  "copier": {
+    // Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline
+    "enabled": false
+  },
+  {%- if is_template %}
+  "devcontainer": {
+    "fileMatch": ["(^|/)devcontainer\\.json(?:\\.jinja)?$"]
+  },
+  "github-actions": {
+    "fileMatch": [
+      "(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"
+    ]
+  },
+  {%- endif %}
+  // Package rules below
+  "packageRules": [
+    {%- if is_template or (is_standard and using_azdo) %}
+    {
+      // This sets up azure pipelines to use the standard major version numbering
+      "matchDatasources": ["azure-pipelines-tasks"],
+      "extractVersion": "^(?<version>\\d+)"
+    }
+    {%- endif %}
+  ]
+}
