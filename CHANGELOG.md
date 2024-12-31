@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.17](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.16...v0.3.17) (2024-12-31)
+
+
+### Features
+
+* Add infisical to cspell dictionary ([c9686ab](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c9686ab0e1be97d1eb80360eba0cac1b08c102e9))
+* Switch to using REPO_MAINTENANCE_PAT secret ([dedc2f7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/dedc2f758432c8a69d68580ea064e313a032c9a6))
+
 ## [0.3.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.15...v0.3.16) (2024-12-31)
 
 
