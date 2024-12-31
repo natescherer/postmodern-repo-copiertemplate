@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.18](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.17...v0.3.18) (2024-12-31)
+
+
+### Features
+
+* Copier update to parent template v0.3.17 ([9e43de8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9e43de88470df98e33c6058f2937c7929cef28b2))
+
 ## [0.3.17](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.16...v0.3.17) (2024-12-31)
 
 
