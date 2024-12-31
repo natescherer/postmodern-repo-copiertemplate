@@ -1,9 +1,9 @@
 name: All Contributors PR Create
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: 0 17 * * 1 # Every Monday at 5pm UTC
+  workflow_dispatch:
 
 permissions:
   issues: write
