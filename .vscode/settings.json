@@ -12,7 +12,7 @@
     "**.md[{]% endif %[}]": "markdown",
     "**.y*ml[{]% endif %[}]": "yaml",
     "**.py[{]% endif %[}]": "python",
-    "**.toml[{]% endif %[}]": "toml"
+    "**.toml[{]% endif %[}]": "toml",
+    "**.json5": "json"
   }
-
 }
