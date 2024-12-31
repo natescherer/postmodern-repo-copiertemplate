@@ -13,7 +13,8 @@
       "versions": "3.12",
       "requirementsFile": "/opt/devcontainer/requirements.txt"
     },
-    "ghcr.io/trunk-io/devcontainer-feature/trunk": "latest"
+    "ghcr.io/trunk-io/devcontainer-feature/trunk": "latest",
+    "ghcr.io/devcontainers-extra/features/renovate-cli:2": {}
   },
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/mnt/host-home,type=bind,consistency=cached"
