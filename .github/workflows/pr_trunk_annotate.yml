@@ -1,4 +1,4 @@
-name: Trunk Annotations for Forked PRs
+name: Trunk Annotations for PRs
 
 on:
   workflow_run:
@@ -8,6 +8,8 @@ on:
 jobs:
   trunk_check:
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
