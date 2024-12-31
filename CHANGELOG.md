@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.11...v0.3.12) (2024-12-31)
+
+
+### Bug Fixes
+
+* Disable renovate dependency dashboard ([51c941f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/51c941f5ae5efc3265e5038dae6575857b02d42b))
+* Fix bad jinja syntax ([5517bbb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5517bbbf917e6c4714e629fa063198635bf8303e))
+
 ## [0.3.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.10...v0.3.11) (2024-12-31)
 
 
