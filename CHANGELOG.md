@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.12...v0.3.13) (2024-12-31)
+
+
+### Bug Fixes
+
+* Actually fix trunk for prs ([d768c98](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d768c9877dcc557911fad61fedc69bdc0a50f3b4))
+* Fix checkout action version ([65e2300](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/65e23004a70df2f83ddd5e136976ad587bc3cc57))
+* Fix trunk testing on PRs ([75abbfb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/75abbfb27a4ec0a80d83c758fc8014e8e3a4ebc3))
+
 ## [0.3.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.11...v0.3.12) (2024-12-31)
 
 
