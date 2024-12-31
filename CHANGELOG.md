@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.10...v0.3.11) (2024-12-31)
+
+
+### Features
+
+* Add renovate config to downstream templates ([2eef993](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2eef9932ab471b84ba71f2039dbdd9e5fc572c32))
+
 ## [0.3.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.9...v0.3.10) (2024-12-31)
 
 
