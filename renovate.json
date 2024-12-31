@@ -9,7 +9,8 @@
     ]
   },
   "copier": {
-    "enabled": false // Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline
+    // Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline
+    "enabled": false
   },
   "devcontainer": {
     "fileMatch": ["^devcontainer\\.json(?:\\.jinja)?$"]
@@ -18,5 +19,13 @@
     "fileMatch": [
       "(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"
     ]
-  }
+  },
+  // Package rules below
+  "packageRules": [
+    {
+      // This sets up azure pipelines to use the standard major version numbering
+      "matchDatasources": ["azure-pipelines-tasks"],
+      "extractVersion": "^(?<version>\\d+)"
+    }
+  ]
 }
