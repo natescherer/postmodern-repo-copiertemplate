@@ -45,11 +45,7 @@ It is highly encouraged for you to take this template and make your own child te
 - Setting of repo settings & branch protection rules
 - Creation of useful non-default issue labels: `awaiting pr` and `blocked`
 - Contributor management and crediting via [All Contributors](https://allcontributors.org/)
-<<<<<<< before updating
 - Dependency updates via [Renovate](https://github.com/marketplace/renovate/)
-=======
- Dependency updates via [Renovate](https://github.com/marketplace/renovate/)
->>>>>>> after updating
 - Scheduled checks for updates from parent template
 
 ### Code Management and Formatting
