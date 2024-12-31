@@ -1,4 +1,4 @@
-name: Trunk Annotations for PRs
+name: Trunk Annotations for Forked PRs
 
 on:
   workflow_run:
