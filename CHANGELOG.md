@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.15...v0.3.16) (2024-12-31)
+
+
+### Features
+
+* Copier update to parent template v0.3.15 ([e6e1e32](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e6e1e32e4d8cf2ff2d51980562b37d933b2ce332))
+* Update cron schedules for workflows ([8c6fffc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8c6fffceadbf54bd5a52c5e4a4577814877bd02b))
+
 ## [0.3.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.14...v0.3.15) (2024-12-31)
 
 
