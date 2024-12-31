@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  // Per-provider config below
+  "azure-pipelines": {
+    "enabled": true,
+    "fileMatch": [
+      "(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$"
+    ]
+  },
+  "copier": {
+    // Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline
+    "enabled": false
+  },
+  "devcontainer": {
+    "fileMatch": ["(^|/)devcontainer\\.json(?:\\.jinja)?$"]
+  },
+  "github-actions": {
+    "fileMatch": [
+      "(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"
+    ]
+  },
+  // Package rules below
+  "packageRules": [
+    {
+      // This sets up azure pipelines to use the standard major version numbering
+      "matchDatasources": ["azure-pipelines-tasks"],
+      "extractVersion": "^(?<version>\\d+)"
+    }
+  ]
+}
