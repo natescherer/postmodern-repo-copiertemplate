@@ -1,4 +1,4 @@
-name: Trunk Upgrade
+name: "Update: Trunk Upgrade"
 
 on:
   schedule:
