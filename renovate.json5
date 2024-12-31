@@ -13,7 +13,7 @@
     "enabled": false
   },
   "devcontainer": {
-    "fileMatch": ["^devcontainer\\.json(?:\\.jinja)?$"]
+    "fileMatch": ["(^|/)devcontainer\\.json(?:\\.jinja)?$"]
   },
   "github-actions": {
     "fileMatch": [
