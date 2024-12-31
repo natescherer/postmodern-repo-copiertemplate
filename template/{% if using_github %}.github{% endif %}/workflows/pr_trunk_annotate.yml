@@ -1,4 +1,4 @@
-name: Trunk for PRs
+name: Trunk Annotations for PRs
 
 on:
   workflow_run:
