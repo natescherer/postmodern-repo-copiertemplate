@@ -24,13 +24,13 @@ lint:
     - osv-scanner
     - trufflehog
   enabled:
-    - actionlint@1.7.5
+    - actionlint@1.7.6
     - cspell@8.17.1
     - git-diff-check
     - hadolint@2.12.1-beta
     - markdownlint@0.43.0
     - prettier@3.4.2
-    - ruff@0.8.4:
+    - ruff@0.8.6:
         commands: [lint, format]
     - taplo@0.9.3
     - yamllint@1.35.1
