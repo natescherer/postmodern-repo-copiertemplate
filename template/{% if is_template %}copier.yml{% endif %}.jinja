@@ -191,6 +191,11 @@ is_public:
   default: "{% if project_visibility == 'Public' %}true{% endif %}"
   when: false
 
+is_private:
+  type: bool
+  default: "{% if project_visibility == 'Private' %}true{% endif %}"
+  when: false
+
 is_standard:
   type: bool
   default: "{% if project_type == 'Standard' %}true{% endif %}"
