@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: 3.x
       - name: Install Copier & Dependencies
-        run: pip install -r .devcontainer/library/requirements.txt
+        run: pip install -r requirements.txt
       - name: Get New Template Version
         id: get_ver
         shell: pwsh
