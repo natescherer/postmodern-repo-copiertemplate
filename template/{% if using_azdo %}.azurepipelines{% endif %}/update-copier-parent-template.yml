@@ -12,9 +12,6 @@ schedules:
       include:
         - main
 
-variables:
-  PIP_REQUIREMENTS_FILE: copier-requirements.txt
-
 pool:
   vmImage: ubuntu-latest
 
@@ -41,10 +38,7 @@ stages:
               python -m venv .venv
               . .venv/bin/Activate.ps1
               pip install --upgrade pip
-              pip install copier
-              if ("$(PIP_REQUIREMENTS_FILE)") {
-                pip install -r $(PIP_REQUIREMENTS_FILE)
-              }
+              pip install -r .azurepipelines/update-copier-parent-template_deps/requirements.txt
             failOnStderr: true
             displayName: Install Copier & Other Dependencies
           - pwsh: |
