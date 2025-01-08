@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.19...v0.3.20) (2025-01-08)
+
+
+### Features
+
+* Copier update to parent template v0.3.19 ([2e20189](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2e201894737590759b186f5c978ad76a953ef2a4))
+* Update release please config to include chores ([f48a6d5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f48a6d5066f9c464b6511a9e6543c772eba3c091))
+* Use postmodern-tools-container ([1afe85b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1afe85bc9d8191d89cb6c34153d2999056ac35e2))
+
+
+### Miscellaneous
+
+* **deps:** Pin dependencies ([63c51a4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/63c51a400648dcc3b779f2ddb4b32afe58392274))
+* Fix merge conflict ([44d0d09](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/44d0d099e9dfa3b838009ceb1040738cc77ea024))
+
 ## [0.3.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.18...v0.3.19) (2024-12-31)
 
 
