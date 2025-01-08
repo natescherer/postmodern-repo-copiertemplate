@@ -15,9 +15,6 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         with:
-<<<<<<< before updating
-=======
           token: ${{ secrets.REPO_MAINTENANCE_PAT }}
->>>>>>> after updating
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
