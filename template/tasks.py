@@ -220,7 +220,7 @@ def initialize_repo_and_commit_files(c, answers_json):
     if answers["developer_platform"] == "GitHub":
         commit_message += f" -m 'Release-As: {first_version}'"
     c.run(commit_message)
-    print(f"[cyan]Adding remote {remote_url}...[/cyan]")
+    print("[cyan]Adding remote...[/cyan]")
     if answers["developer_platform"] == "GitHub":
         remote_url = f"https://github.com/{owner}/{answers['repo_name']}.git"
         gcm_dir = f"{str(Path.home())}/.gcm/store/git/https/github.com"
