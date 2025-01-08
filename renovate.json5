@@ -13,6 +13,9 @@
     // Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline
     "enabled": false
   },
+  "docker": {
+    "pinDigests": true
+  },
   "devcontainer": {
     "fileMatch": ["(^|/)devcontainer\\.json(?:\\.jinja)?$"]
   },

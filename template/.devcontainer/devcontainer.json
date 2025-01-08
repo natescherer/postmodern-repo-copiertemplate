@@ -1,18 +1,7 @@
 {
   "name": "postmodern-tools",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".",
-    "args": {
-      "NONROOT_USER": "vscode"
-    }
-  },
-  "remoteUser": "root", // Copier (really Python shutil) can't deal with bind-mounted files being owned as root on Windows hosts
+  "image": "ghcr.io/natescherer/postmodern-tools-container:latest",
   "features": {
-    "ghcr.io/natescherer/devcontainers-custom-features/hypermodern-python:1": {
-      "versions": "3.12",
-      "requirementsFile": "/opt/devcontainer/requirements.txt"
-    },
     "ghcr.io/trunk-io/devcontainer-feature/trunk:1": "latest",
     "ghcr.io/devcontainers-extra/features/renovate-cli:2": {}
   },

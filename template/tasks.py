@@ -220,23 +220,47 @@ def initialize_repo_and_commit_files(c, answers_json):
     if answers["developer_platform"] == "GitHub":
         commit_message += f" -m 'Release-As: {first_version}'"
     c.run(commit_message)
+    print(f"[cyan]Adding remote {remote_url}...[/cyan]")
     if answers["developer_platform"] == "GitHub":
         remote_url = f"https://github.com/{owner}/{answers['repo_name']}.git"
-        gcm_creds = f"https://{answers.get("github_username")}:{token}@github.com"
+        gcm_dir = f"{str(Path.home())}/.gcm/store/git/https/github.com"
+        gcm_file = f"{answers["github_username"]}.credential"
+        gcm_service = "https://github.com"
+        gcm_account = answers["github_username"]
     elif answers["developer_platform"] == "Azure DevOps":
         encoded_project = answers["azdo_project"].replace(" ", "%20")
         remote_url = f"https://{answers['azdo_org']}@dev.azure.com/{answers['azdo_org']}/{encoded_project}/_git/{answers['repo_name']}"
-        gcm_creds = f"https://:{token}@dev.azure.com"
-        print("[cyan]Setting 'git config credential.useHttpPath true'...[/cyan]")
+        gcm_dir = f"{str(Path.home())}/.gcm/store/git/https/dev.azure.com/{answers['azdo_org']}"
+        gcm_file = "copier.credential"
+        gcm_service = f"https://dev.azure.com/{answers['azdo_org']}"
+        gcm_account = "copier"
+        print("[cyan]Temporarily setting git config options for AzDO...[/cyan]")
         c.run("git config credential.useHttpPath true")
-    print(f"[cyan]Adding remote {remote_url}...[/cyan]")
     c.run(f"git remote add origin {remote_url}")
-    if os.getenv("CREATE_GIT_CREDENTIALS") == "true":
+    if os.getenv("USE_TOKEN_FOR_GIT_AUTH") == "true":
         print("[cyan]Setting up Git credentials...[/cyan]")
-        with open(f"{str(Path.home())}/.git-credentials", "a+") as cred_file:
-            cred_file.write(f"\n{gcm_creds}")
+        print(
+            "[cyan]Temporarily enabling plaintext git credentials for first push...[/cyan]"
+        )
+        c.run("git config credential.credentialStore plaintext")
+        print(
+            "[cyan]Creating credentials file that will be cleaned up after push...[/cyan]"
+        )
+        Path(gcm_dir).mkdir(parents=True, exist_ok=True)
+        with open(f"{gcm_dir}/{gcm_file}", "w+") as cred_file:
+            cred_file.writelines(
+                [token, f"service={gcm_service}", f"account={gcm_account}"]
+            )
     print("[cyan]Pushing to remote...[/cyan]")
     c.run("git push -u origin --all")
+    if answers["developer_platform"] == "Azure DevOps":
+        print("[cyan]Unsetting git config options for AzDO...[/cyan]")
+        c.run("git config --unset credential.useHttpPath")
+    if os.getenv("CREATE_GIT_CREDS_FOR_DOCKER") == "true":
+        print("[cyan]Disabling plaintext git credentials...[/cyan]")
+        c.run("git config --unset credential.credentialStore")
+        print("[cyan]Deleting credentials file...[/cyan]")
+        os.remove(f"{gcm_dir}/{gcm_file}")
     print(
         "[bold green]*** 'initialize-repo-and-commit-files' task end ***[/bold green]"
     )
