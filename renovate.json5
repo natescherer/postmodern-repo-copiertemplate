@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": false,
   "extends": ["config:recommended"],
-  // Per-provider config below
   "azure-pipelines": {
     "enabled": true,
     "fileMatch": [
@@ -24,10 +23,14 @@
       "(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"
     ]
   },
-  // Package rules below
   "packageRules": [
     {
-      // This sets up azure pipelines to use the standard major version numbering
+      "description": "Don't pin digests in devcontainer.json because it's not supported in features",
+      "matchManagers": ["devcontainer"],
+      "pinDigests": false
+    },
+    {
+      "description": "Use standard major version numbers for Azure Pipelines",
       "matchDatasources": ["azure-pipelines-tasks"],
       "extractVersion": "^(?<version>\\d+)"
     }
