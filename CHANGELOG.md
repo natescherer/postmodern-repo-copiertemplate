@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.28](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.27...v0.3.28) (2025-01-09)
+
+
+### Bug Fixes
+
+* Fix bad extensions definition ([7f06478](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7f06478bdf62b056ece2ee856f056060312b90cc))
+
 ## [0.3.27](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.26...v0.3.27) (2025-01-09)
 
 
