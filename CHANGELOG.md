@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.21](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.20...v0.3.21) (2025-01-09)
+
+
+### Bug Fixes
+
+* Disable pinning for devcontainer features ([6825179](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/68251792e2050c95be6ff20a5a53df30618e55fd))
+* Fix copier update workflow ([#462](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/462)) ([e3fe6f6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e3fe6f6a55859eb8afbd4ec15b0fdab488ff1365))
+* Make release please config a template ([9e0b7e2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9e0b7e259dfbf5605afded37e81e8f7037581522))
+
 ## [0.3.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.19...v0.3.20) (2025-01-08)
 
 
