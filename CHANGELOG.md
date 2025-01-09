@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.26](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.25...v0.3.26) (2025-01-09)
+
+
+### Features
+
+* Move repo name question first ([d19a289](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d19a289ed4a19429810b315074a8ee8916e2b36b))
+
 ## [0.3.25](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.24...v0.3.25) (2025-01-09)
 
 
