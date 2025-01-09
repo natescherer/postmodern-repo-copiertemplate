@@ -4,6 +4,11 @@ import os
 
 from jinja2.ext import Extension
 
+try:
+    from jinja2 import pass_eval_context as eval_context
+except ImportError:
+    from jinja2 import evalcontextfilter as eval_context
+
 
 def path_exists(path):
     """Check if a path exists, and return True if it does and nothing if it doesn't."""
@@ -17,6 +22,12 @@ def path_missing(path):
         return True
 
 
+@eval_context
+def cwd_name(eval_ctx, value):
+    """Return the name of the current working directory."""
+    return os.path.basename(os.getcwd())
+
+
 class PathExtension(Extension):
     """Export for use by Jinja."""
 
@@ -25,7 +36,4 @@ class PathExtension(Extension):
         super().__init__(environment)
         environment.filters["path_exists"] = path_exists
         environment.filters["path_missing"] = path_missing
-
-    def _cwd_name(self):
-        """Return the name of the current working directory."""
-        return os.path.basename(os.getcwd())
+        environment.filters["cwd_name"] = cwd_name
