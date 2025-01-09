@@ -31,6 +31,11 @@ parent_template_url:
 {%- raw %}
 
 ## Questions
+repo_name:
+  type: str
+  help: The name of this project's Git repository. Defaults to the name of the current directory. This value should not be changed on update.
+  default: "{{ cwd_name() }}"
+
 author_name:
   type: str
   help: The name to whom this project will be credited. Autodetect attempted from Git 'user.name'.
@@ -94,34 +99,6 @@ azdo_project:
   type: str
   help: An Azure DevOps project in organization '{{ azdo_org }}'. This value should not be changed on update.
   when: "{{ developer_platform == 'Azure DevOps' }}"
-
-repo_name:
-  type: str
-  help: The name of this project's Git repository. Defaults to the name of the current directory. This value should not be changed on update.
-  default: "{{ cwd_name }}"
-  # Validator is currently disabled as it is buggy on updates
-  # validator: |
-  #   {% if repo_actions == 'Create Repo' -%}
-  #     {%- if developer_platform == 'GitHub' -%}
-  #       {%- if repo_name is not available_gh_repo_name_for_owner(github_username) -%}
-  #         GitHub Repo {{ github_username }}/{{ repo_name }} already exists
-  #       {%- endif -%}
-  #     {%- elif developer_platform == 'Azure DevOps' -%}
-  #       {%- if repo_name is not available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
-  #         Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} already exists
-  #       {%- endif -%}
-  #     {%- endif -%}
-  #   {%- else -%}
-  #     {%- if developer_platform == 'GitHub' -%}
-  #       {%- if repo_name is available_gh_repo_name_for_owner(github_username) -%}
-  #         GitHub Repo {{ github_username }}/{{ repo_name }} does not exist
-  #       {%- endif -%}
-  #     {%- elif developer_platform == 'Azure DevOps' -%}
-  #       {%- if repo_name is available_azdo_repo_name_for_token_and_org_and_project(azdo_token, azdo_org, azdo_project) -%}
-  #         Azure Devops Repo {{ azdo_org }}/{{ azdo_project }}/{{ repo_name }} does not exist
-  #       {%- endif -%}
-  #     {%- endif -%}
-  #   {%- endif %}
 
 project_type:
   type: str
