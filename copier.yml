@@ -67,7 +67,7 @@ github_token:
 
 github_username:
   type: str
-  help: "{% if is_copier_update %}github_username - DO NOT CHANGE ON COPIER UPDATE{% else %}Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'. This value should not be changed on update.{% endif %}"
+  help: "{% if is_copier_update %}github_username - DO NOT CHANGE ON COPIER UPDATE{% else %}Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.{% endif %}"
   default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
   when: "{{ developer_platform == 'GitHub' }}"
 
@@ -97,7 +97,7 @@ azdo_project:
 
 project_type:
   type: str
-  help: If you are creating another Copier template that will inherit from this one, choose Template. Otherwise, choose Standard. This value should not be changed on update.
+  help: "{% if is_copier_update %}project_type - DO NOT CHANGE ON COPIER UPDATE{% else %}If this repo will be a basic repo, choose Standard. If this repo will be a child template of this template, choose Template.{% endif %}"
   choices:
     - Standard
     - Template
@@ -126,10 +126,10 @@ project_visibility:
 
 license:
   type: str
-  help: Choose if you wish to use The MIT License for this project or provide your own.
+  help: Choose the license for this project.
   choices:
     - MIT
-    - Provide Own
+    - None
   when: "{{ project_visibility == 'Public' }}"
 
 lifecycle:
