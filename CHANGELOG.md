@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.22](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.21...v0.3.22) (2025-01-09)
+
+
+### Bug Fixes
+
+* Fix template devcontainer.json ([0ac2f81](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0ac2f8143148c2d2efdb769d802f9395090a7f69))
+
 ## [0.3.21](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.20...v0.3.21) (2025-01-09)
 
 
