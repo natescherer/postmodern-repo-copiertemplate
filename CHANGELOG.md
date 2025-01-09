@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.32](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.31...v0.3.32) (2025-01-09)
+
+
+### Bug Fixes
+
+* Fix other yaml validity issue ([3dd58f8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3dd58f8a3371756aee49e8eede3f6a25f3e96e99))
+* Fix yaml validity issue ([d6f8ed4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d6f8ed4803f88bab35843c22205d8cf913858ea2))
+
 ## [0.3.31](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.30...v0.3.31) (2025-01-09)
 
 
