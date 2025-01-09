@@ -51,12 +51,14 @@ It is highly encouraged for you to take this template and make your own child te
 ### Code Management and Formatting
 
 - Automatic code linting and formatting via [Trunk](https://trunk.io):
-  - Dockerfile linting via [hadolint](https://github.com/hadolint/hadolint)
   - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
-  - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint) and formatting via [Prettier](https://prettier.io/)
+  - Markdown link health checking via [markdown-link-check](https://github.com/tcort/markdown-link-check)
+  - Markdown formatting via [Prettier](https://prettier.io/)
+  - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
   - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
   - Spell checking via [cSpell](https://cspell.org/)
-  - YAML linting iva [yamllint](https://github.com/adrienverge/yamllint) and formatting via [Prettier](https://prettier.io/)
+  - YAML formatting via [Prettier](https://prettier.io/)
+  - YAML linting via [yamllint](https://github.com/adrienverge/yamllint)
 
 ### CI/CD
 
@@ -86,6 +88,7 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
 ## Contributors
 
 <!-- spell-checker:disable -->
+<!-- markdown-link-check-disable -->
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -101,6 +104,7 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+<!-- markdown-link-check-enable -->
 <!-- spell-checker:enable -->
 
 This project follows the [all-contributors](https://allcontributors.org) specification.

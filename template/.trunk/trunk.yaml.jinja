@@ -29,15 +29,16 @@ lint:
     - trufflehog
   enabled:
     {%- if using_github %}
-    - actionlint@1.7.5
+    - actionlint@1.7.6
     {%- endif %}
     - cspell@8.17.1
     - git-diff-check
-    - hadolint@2.12.1-beta
+    - markdown-link-check@3.13.6
     - markdownlint@0.43.0
     - prettier@3.4.2
+    - renovate@39.92.0
     {%- if is_template %}
-    - ruff@0.8.4:
+    - ruff@0.8.6:
         commands: [lint, format]
     - taplo@0.9.3
     {%- endif %}
