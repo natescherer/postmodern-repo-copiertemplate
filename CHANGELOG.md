@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.30](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.29...v0.3.30) (2025-01-09)
+
+
+### Bug Fixes
+
+* Fix path extension copies ([db5ba3c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/db5ba3c2e992623b45d1d177e7ec6795c8fbee5a))
+
 ## [0.3.29](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.28...v0.3.29) (2025-01-09)
 
 
