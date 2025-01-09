@@ -12,18 +12,19 @@ To apply this template to an existing project, follow these steps:
 {%- if is_private %}
 
    - NOTE: Because this is a private template, you will be prompted to authenticate to Git at the start of the Copier run
-{% endif %}
+{%- endif %}
+
    - Docker
 
-      ```shell
-      docker run -v .:/mnt/${PWD##*/} -w /mnt/${PWD##*/} -v ~/.gitconfig:/root/.gitconfig:ro -e USE_TOKEN_FOR_GIT_AUTH=true -it --pull always --rm ghcr.io/natescherer/postmodern-tools-container:latest copier copy --trust --overwrite {% if using_github %}gh:{{ github_username }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} .
-      ```
+     ```shell
+     docker run -v .:/mnt/${PWD##*/} -w /mnt/${PWD##*/} -v ~/.gitconfig:/root/.gitconfig:ro -e USE_TOKEN_FOR_GIT_AUTH=true -it --pull always --rm ghcr.io/natescherer/postmodern-tools-container:latest copier copy --trust --overwrite {% if using_github %}gh:{{ github_username }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} .
+     ```
 
    - Devcontainer/Manual
 
-      ```shell
-      copier copy --trust --overwrite {% if using_github %}gh:{{ github_username }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} .
-      ```
+     ```shell
+     copier copy --trust --overwrite {% if using_github %}gh:{{ github_username }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} .
+     ```
 
 1. If you are using GitHub, Make sure to choose `Set Repo Rules` in the first question
 1. Set all other settings as appropriate for your project

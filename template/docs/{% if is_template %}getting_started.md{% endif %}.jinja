@@ -7,15 +7,18 @@
 There are several tools needed on your local machine to use this template, and three main options to install them:
 
 [Prerequisites via Docker Container](prereqs/docker/prereqs_docker.md)
+
 - Recommended for most applications
 
 [Prerequisites via Devcontainer](prereqs/devcontainer/prereqs_devcontainer.md)
+
 - Recommended if you are using a template from a Git repo that requires authentication, which the Docker method doesn't support
 
 [Prerequisites via Manual Installation](prereqs/manual/prereqs_manual.md)
-- Works, but not recommended
 
+- Works, but not recommended
 {%- if using_github %}
+
 ### GitHub
 
 ### One-Time Actions Per GitHub User/Organization
@@ -29,6 +32,7 @@ There are several tools needed on your local machine to use this template, and t
    - It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.
 1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [here](https://github.com/settings/security_analysis).
 {%- endif %}
+
 ## Using this template
 
 ### Docker
@@ -38,7 +42,8 @@ There are several tools needed on your local machine to use this template, and t
 {%- if is_private %}
 
    - NOTE: Because this is a private template, you will be prompted to authenticate to Git at the start of the Copier run
-{% endif %}
+{%- endif %}
+
    - macOS/Linux
 
    ```bash
@@ -59,7 +64,8 @@ There are several tools needed on your local machine to use this template, and t
 {%- if is_private %}
 
    - NOTE: Because this is a private template, you will be prompted to authenticate to Git at the start of the Copier run if you are not already authenticated
-{% endif %}
+{%- endif %}
+
    ```bash
    copier copy --trust {% if using_github %}gh:{{ github_username }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} .
    ```
@@ -71,7 +77,8 @@ There are several tools needed on your local machine to use this template, and t
 {%- if is_private %}
 
    - NOTE: Because this is a private template, you will be prompted to authenticate to Git at the start of the Copier run if you are not already authenticated
-{% endif %}
+{%- endif %}
+
    ```bash
    copier copy --trust {% if using_github %}gh:{{ github_username }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} .
    ```
