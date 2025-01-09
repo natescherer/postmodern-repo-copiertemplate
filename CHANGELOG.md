@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.36](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.35...v0.3.36) (2025-01-09)
+
+
+### Features
+
+* Improve repo_actions help ([1e7f854](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1e7f8541acc1962b1e3c845c633fb478b5563957))
+
+
+### Bug Fixes
+
+* Fix azdo_org question ([7887895](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7887895d9dd069d3ba5d96c0db2b3f71596849b7))
+
 ## [0.3.35](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.34...v0.3.35) (2025-01-09)
 
 
