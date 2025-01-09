@@ -16,6 +16,7 @@ def path_missing(path):
     if not os.path.exists(path):
         return True
 
+
 def cwd_name():
     """Return the name of the current working directory."""
     return os.path.basename(os.getcwd())
@@ -29,4 +30,4 @@ class PathExtension(Extension):
         super().__init__(environment)
         environment.filters["path_exists"] = path_exists
         environment.filters["path_missing"] = path_missing
-        environment.globals["cwd_name"] = cwd_name
+        environment.filters["cwd_name"] = cwd_name
