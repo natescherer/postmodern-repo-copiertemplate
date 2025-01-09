@@ -292,7 +292,9 @@ def create_pipelines_azdo(c, answers_json):
             }
             headers = {"Content-Type": "application/json", "Accept": "application/json"}
             encoded_project = answers["azdo_project"].replace(" ", "%20")
-            print("[cyan]Creating pipeline in Azure DevOps...[/cyan]")
+            print(
+                f"[cyan]Creating pipeline for '.azurepipelines/{entry.name}' in Azure DevOps...[/cyan]"
+            )
             response = requests.post(
                 f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7",
                 data=json.dumps(pipeline_data),
