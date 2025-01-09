@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.31](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.30...v0.3.31) (2025-01-09)
+
+
+### Features
+
+* Improve structure of questions ([a40f7ab](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a40f7abd1db3f860708daafd52a2b29eaf74117b))
+
 ## [0.3.30](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.29...v0.3.30) (2025-01-09)
 
 
