@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.35](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.34...v0.3.35) (2025-01-09)
+
+
+### Features
+
+* Add repo_actions validators ([1736b3f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1736b3f7f97ec13617c8eadc17213aca9338a661))
+
 ## [0.3.34](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.33...v0.3.34) (2025-01-09)
 
 
