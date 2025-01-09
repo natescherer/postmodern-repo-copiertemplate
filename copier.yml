@@ -112,7 +112,7 @@ project_short_description:
 
 project_website:
   type: str
-  help: [OPTIONAL] Enter the website for your project.
+  help: "[OPTIONAL] Enter the website for your project."
 
 project_visibility:
   type: str
