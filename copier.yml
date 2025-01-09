@@ -32,7 +32,7 @@ parent_template_url:
 repo_name:
   type: str
   help: The name of this project's Git repository. Defaults to the name of the current directory. This value should not be changed on update.
-  default: "{{ '.' | cwd_name() }}"
+  default: "{{ '.' | cwd_name() }}" # This is an ugly kludge but every other way tried didn't work and there wasn't a good way to debug
 
 author_name:
   type: str
