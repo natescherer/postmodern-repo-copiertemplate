@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.34](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.33...v0.3.34) (2025-01-09)
+
+
+### Features
+
+* Copier update to parent template v0.3.33 ([ed5ed64](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ed5ed6402ed11e35816657f9c9f7b6faf96f46cc))
+
+
+### Bug Fixes
+
+* Fix credential file creation ([0bbd0f3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0bbd0f33aeaebe529a4e221311af5a8780f55752))
+
 ## [0.3.33](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.32...v0.3.33) (2025-01-09)
 
 
