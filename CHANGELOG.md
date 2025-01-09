@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.24](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.23...v0.3.24) (2025-01-09)
+
+
+### Features
+
+* Copier update to parent template v0.3.23 ([5d5c0ee](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5d5c0eebb0c5278d6cc3bb602eb24e3124538ddb))
+
+
+### Miscellaneous
+
+* **deps:** Update ghcr.io/natescherer/postmodern-tools-container:latest docker digest to f56e2b1 ([18587e1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/18587e19870503b0b7174b9734b78af413e1c559))
+
 ## [0.3.23](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.22...v0.3.23) (2025-01-09)
 
 
