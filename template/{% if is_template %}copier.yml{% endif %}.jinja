@@ -10,7 +10,7 @@ _jinja_extensions:
   - extensions/azure_devops_extension.py:AzureDevOpsExtension
   - extensions/context.py:ContextUpdater
   - extensions/github_extension.py:GitHubExtension
-  - extensions/path_tests_extension.py:PathTestsExtension
+  - extensions/path_extension.py:PathExtension
   - extensions/phase_extension.py:PhaseExtension
   - extensions/slugify_extension.py:SlugifyExtension
   - extensions/version_extension.py:VersionExtension
@@ -97,7 +97,8 @@ azdo_project:
 
 repo_name:
   type: str
-  help: The name of this project's Git repository. Will be {% if repo_actions == 'Create Repo' %}created{% else %}reused{% endif %} by this template. This value should not be changed on update.
+  help: The name of this project's Git repository. Defaults to the name of the current directory. This value should not be changed on update.
+  default: "{{ cwd_name }}"
   # Validator is currently disabled as it is buggy on updates
   # validator: |
   #   {% if repo_actions == 'Create Repo' -%}
