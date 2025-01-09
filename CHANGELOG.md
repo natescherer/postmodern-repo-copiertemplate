@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.23](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.22...v0.3.23) (2025-01-09)
+
+
+### Features
+
+* Add default for repo_name question ([29dbfa9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/29dbfa940396d167cb8570690c8703050131b84a))
+* Copier update to parent template v0.3.22 ([e70de2c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e70de2cb0aa47b232a04daf336a46f37f6994e3e))
+
 ## [0.3.22](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.21...v0.3.22) (2025-01-09)
 
 
