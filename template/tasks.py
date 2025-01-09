@@ -249,7 +249,7 @@ def initialize_repo_and_commit_files(c, answers_json):
         Path(gcm_dir).mkdir(parents=True, exist_ok=True)
         with open(f"{gcm_dir}/{gcm_file}", "w+") as cred_file:
             cred_file.writelines(
-                [token, f"service={gcm_service}", f"account={gcm_account}"]
+                [f"{token}\n", f"service={gcm_service}\n", f"account={gcm_account}"]
             )
     print("[cyan]Pushing to remote...[/cyan]")
     c.run("git push -u origin --all")
