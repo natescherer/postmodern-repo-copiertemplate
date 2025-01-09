@@ -25,7 +25,6 @@ class PathExtension(Extension):
         super().__init__(environment)
         environment.filters["path_exists"] = path_exists
         environment.filters["path_missing"] = path_missing
-        environment.filters["cwd_name"] = cwd_name
 
     def _cwd_name(self):
         """Return the name of the current working directory."""
