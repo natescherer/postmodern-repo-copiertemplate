@@ -53,8 +53,10 @@ repo_actions:
   choices:
     Create Repo:
       value: Create Repo
+      validator: "{% if is_copier_update %}Disabled on Updates{% endif %}"
     Set Repo Rules:
       value: Set Repo Rules
+      validator: "{% if is_copier_update %}Disabled on Updates{% endif %}"
     None:
       value: None
 
