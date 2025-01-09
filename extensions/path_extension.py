@@ -33,7 +33,7 @@ class PathExtension(Extension):
 
     def __init__(self, environment):
         """Export for use by Jinja."""
-        super(PathExtension).__init__(environment)
+        super().__init__(environment)
         environment.filters["path_exists"] = path_exists
         environment.filters["path_missing"] = path_missing
         environment.filters["cwd_name"] = cwd_name
