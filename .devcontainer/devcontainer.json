@@ -2,8 +2,13 @@
   "name": "postmodern-tools",
   "image": "ghcr.io/natescherer/postmodern-tools-container:latest@sha256:dc027c211e147e25b067ea8edcc17b2f4c7ee8c512c726dcf2f8260df6260e3c",
   "features": {
+<<<<<<< before updating
     "ghcr.io/trunk-io/devcontainer-feature/trunk:1": "latest",
     "ghcr.io/devcontainers-extra/features/renovate-cli:2": {}
+=======
+    "ghcr.io/trunk-io/devcontainer-feature/trunk:1@sha256:8d913c1753a4e188400da05c64c958c78caedb2c92b984988891c443c3cc1e4d": "latest",
+    "ghcr.io/devcontainers-extra/features/renovate-cli:2@sha256:4e6218477ef01389dd9e18ac66af0263200c34f787054cf2d51ececa32486d6e": {}
+>>>>>>> after updating
   },
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/mnt/host-home,type=bind,consistency=cached"
