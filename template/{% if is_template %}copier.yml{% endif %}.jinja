@@ -27,13 +27,12 @@ parent_template_url:
   type: str
   default: {% if using_github %}{% if github_org %}https://github.com/{{ github_org }}/{{ repo_name }}{% else %}https://github.com/{{ github_username }}/{{ repo_name }}{% endif %}{% endif %}{% if using_azdo %}https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %}
   when: false
-
 {%- raw %}
 
 ## Questions
 repo_name:
   type: str
-  help: The name of this project's Git repository. Defaults to the name of the current directory. This value should not be changed on update.
+  help: {% if is_copier_update %}repo_name - DO NOT CHANGE ON COPIER UPDATE{% else %}The name of this project's Git repository. Defaults to the name of the current directory.{% endif %}
   default: "{{ '.' | cwd_name() }}" # This is an ugly kludge but every other way tried didn't work and there wasn't a good way to debug
 
 author_name:
@@ -43,22 +42,19 @@ author_name:
 
 developer_platform:
   type: str
-  help: The platform where you are going to host your Git repo and CI/CD. This value should not be changed on update.
+  help: {% if is_copier_update %}developer_platform - DO NOT CHANGE ON COPIER UPDATE{% else %}The platform where you are going to host your Git repo and CI/CD.{% endif %}
   choices:
     - GitHub
     - Azure DevOps
 
-# Restore validators once https://github.com/copier-org/copier/issues/1050 is resolved
 repo_actions:
   type: str
-  help: If you are making a new project and want to have this template create the repo, choose 'Create Repo'. If you are applying this template to an existing project and want to just set repository rules, choose 'Set Repo Rules'. If this is an update run, or you want don't want the template to do any repo-related automations, choose 'None'.
+  help: New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Update run? Don't want repo settings changes? 'None'.
   choices:
     Create Repo:
       value: Create Repo
-      # validator: "{% if path_exists(_copier_conf.dst_path) %}Destination Folder Exists{% endif %}"
     Set Repo Rules:
       value: Set Repo Rules
-      # validator: "{% if path_missing(_copier_conf.dst_path) %}Destination Folder Missing{% endif %}"
     None:
       value: None
 
@@ -72,18 +68,18 @@ github_token:
 
 github_username:
   type: str
-  help: Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'. This value should not be changed on update.
+  help: {% if is_copier_update %}github_username - DO NOT CHANGE ON COPIER UPDATE{% else %}Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'. This value should not be changed on update.{% endif %}
   default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
   when: "{{ developer_platform == 'GitHub' }}"
 
 github_org:
   type: str
-  help: (OPTIONAL) If this repo {% if repo_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here. This value should not be changed on update.
+  help: {% if is_copier_update %}github_org - DO NOT CHANGE ON COPIER UPDATE{% else %}[OPTIONAL] If this repo {% if repo_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here.{% endif %}
   when: "{{ developer_platform == 'GitHub' }}"
 
 azdo_org:
   type: str
-  help: The Azure DevOps organization to use for the new project. This value should not be changed on update.
+  help: {% if is_copier_update %}azdo_org - DO NOT CHANGE ON COPIER UPDATE{% else %}The Azure DevOps organization to use for the new project.{% else %}
   when: "{{ developer_platform == 'Azure DevOps' }}"
   validator: "{% if azdo_org is not extant_azdo_org %}Azure DevOps Organization Does Not Exist{% endif %}"
 
@@ -97,7 +93,7 @@ azdo_token:
 
 azdo_project:
   type: str
-  help: An Azure DevOps project in organization '{{ azdo_org }}'. This value should not be changed on update.
+  help: {% if is_copier_update %}azdo_project - DO NOT CHANGE ON COPIER UPDATE{% else %}An Azure DevOps project in organization '{{ azdo_org }}'.{% endif %}
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
 project_type:
@@ -117,11 +113,11 @@ project_short_description:
 
 project_website:
   type: str
-  help: (OPTIONAL) Enter the website for your project.
+  help: [OPTIONAL] Enter the website for your project.
 
 project_visibility:
   type: str
-  help: Choose if you want this project to be Public or Private. This value should not be changed on update.
+  help: {% if is_copier_update %}project_visibility - DO NOT CHANGE ON COPIER UPDATE{% else %}Choose if you want this project to be Public or Private.{% endif %}
   choices:
     Public:
       value: Public
@@ -219,12 +215,11 @@ _tasks:
   - invoke delete-unneeded-template-files
 
 _message_after_update: >-
-  {% if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %}
+  {%- if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %}
   It looks like you have switched this project's lifecycle to 'Stable' for the first time. If this is true, merge the following commit to main to have Release Please bump the version number properly.
 
   git commit --allow-empty -m "chore: bump version to v1.0.0" -m "Release-As: 1.0.0"
-  {% endif %}
-
+  {%- endif %}
 {%- endraw %}
 ---
 !include copier-question-overrides.yml
