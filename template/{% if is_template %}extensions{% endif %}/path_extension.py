@@ -16,6 +16,7 @@ def path_missing(path):
     if not os.path.exists(path):
         return True
 
+
 def cwd_name():
     """Return the name of the current working directory."""
     return os.path.basename(os.getcwd())
