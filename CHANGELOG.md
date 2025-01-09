@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.27](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.26...v0.3.27) (2025-01-09)
+
+
+### Bug Fixes
+
+* Fix cwd_name ([e69bf2f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e69bf2f995a2d2c901e214fd106eacf9c8919912))
+
 ## [0.3.26](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.25...v0.3.26) (2025-01-09)
 
 
