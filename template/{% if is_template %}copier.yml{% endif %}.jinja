@@ -49,7 +49,7 @@ developer_platform:
 
 repo_actions:
   type: str
-  help: New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Update run? Don't want repo settings changes? 'None'.
+  help: "{% if is_copier_update %}repo_actions - DO NOT CHANGE ON COPIER UPDATE{% else %}New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Update run? Don't want repo settings changes? 'None'.{% endif %}"
   choices:
     Create Repo:
       value: Create Repo
