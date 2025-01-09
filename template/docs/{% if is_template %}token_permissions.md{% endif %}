@@ -14,8 +14,6 @@ The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the r
 
 **Repository Access**: All Repositories
 
-#### Repository permissions
-
 | **Permission**                    | **Reason**                                         |
 | --------------------------------- | -------------------------------------------------- |
 | Administration: Read and Write    | Needed to create repo & set its settings           |
@@ -26,8 +24,6 @@ The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the r
 ### Repo Maintenance PAT (Fine-grained token)
 
 **Repository Access**: All Repositories
-
-#### Repository permissions
 
 | **Permission**                | **Reason**                                    |
 | ----------------------------- | --------------------------------------------- |
