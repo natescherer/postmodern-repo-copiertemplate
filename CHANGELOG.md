@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.37](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.36...v0.3.37) (2025-01-09)
+
+
+### Features
+
+* Improve logging for azure pipeline creation ([f6244c4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f6244c4d893dbb97059fa40cac2730c54bcfc02e))
+* Overhaul trunk linters ([4d4f485](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4d4f4852d55c100a9f14e013db4e20304c002507))
+* Update cspell words ([6129917](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/61299171d516c1214f618969455434ee9c2a7c8e))
+
 ## [0.3.36](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.35...v0.3.36) (2025-01-09)
 
 
