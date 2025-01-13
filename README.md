@@ -57,6 +57,10 @@ It is highly encouraged for you to take this template and make your own child te
   - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
   - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
   - Spell checking via [cSpell](https://cspell.org/)
+<<<<<<< before updating
+=======
+  - TOML linting via [taplo](https://github.com/tamasfe/taplo)
+>>>>>>> after updating
   - YAML formatting via [Prettier](https://prettier.io/)
   - YAML linting via [yamllint](https://github.com/adrienverge/yamllint)
 
