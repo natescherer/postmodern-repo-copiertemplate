@@ -1,4 +1,4 @@
-copier==9.4.1
+copier==9.7.1
 copier-templates-extensions==0.3.0
 githubkit==0.12.4
 invoke==2.2.0
