@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "DavidAnson.vscode-markdownlint"
     {%- if is_template or (is_standard and using_github) %}
     "github.vscode-github-actions",
     {%- endif %}
@@ -7,12 +8,11 @@
     "ms-azure-devops.azure-pipelines",
     {%- endif %}
     {%- if is_template %}
-    "ms-azuretools.vscode-docker",
     "ms-python.python",
     "samuelcolvin.jinjahtml",
-    "tamasfe.even-better-toml",
     {%- endif %}
-    "trunk.io",
+    "streetsidesoftware.code-spell-checker"
+    "tamasfe.even-better-toml",
     "vivaxy.vscode-conventional-commits"
   ]
 }

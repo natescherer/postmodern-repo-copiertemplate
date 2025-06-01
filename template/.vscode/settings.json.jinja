@@ -1,5 +1,4 @@
 {
-  "editor.defaultFormatter": "trunk.io",
   "files.associations": {
     {%- if is_template or using_azdo %}
     "**/.azurepipelines/*.yml": "azure-pipelines",
@@ -18,5 +17,10 @@
     "**.toml[{]% endif %[}]": "toml",
     {%- endif %}
     "**.json5": "json"
-  }
+  },
+  "cSpell.import": ["${workspaceFolder}/.config/cspell.yaml"],
+  "markdownlint.configFile": ".config/.markdownlint.yaml",
+  "markdownlint.lintWorkspaceGlobs": [
+    "**/*.{md,md[{]% endif %}}",
+  ]
 }
