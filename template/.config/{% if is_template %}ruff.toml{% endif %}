@@ -8,7 +8,16 @@
 # N     = pep8-naming
 # UP    = pyupgrade
 # S     = flake8-bandit
-select = ["B", "C", "D", "DOC", "E", "F", "I", "N", "S", "UP", "W"]
 
-# Never enforce `E501` (line length violations). This should be handled by formatters.
-ignore = ["E501"]
+[lint]
+preview = true
+select = ["B", "C", "D", "DOC", "E", "F", "I", "N", "S", "UP", "W"]
+ignore = ["D203", "D213"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"

@@ -19,6 +19,12 @@ local linters = new Mapping<String, Step> {
         glob = "*.pkl"
         check = "pkl eval {{files}}"
     }
+    ["ruff"] {
+        glob = "*.{py,py[{]% endif %[}]}}"
+        stage = "*.{py,py[{]% endif %[}]}}"
+        check = "ruff check --config .config/ruff.toml {{ files }}"
+        fix = "ruff check --config .config/ruff.toml --fix {{ files }}"
+    }
     ["yamllint"]  {
         glob = "*.{yml,yaml,yml[{]% endif %[}],yaml[{]% endif %[}]}"
         check = "yamllint -c .config/.yamllint.yaml {{ files }}"

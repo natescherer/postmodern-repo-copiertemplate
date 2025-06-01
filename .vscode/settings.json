@@ -19,5 +19,6 @@
   "markdownlint.lintWorkspaceGlobs": [
     "**/*.{md,md[{]% endif %}}",
     "!{CHANGELOG.md}"
-  ]
+  ],
+  "ruff.configuration": "${workspaceFolder}/.config/ruff.toml"
 }

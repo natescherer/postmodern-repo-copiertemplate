@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "charliermarsh.ruff",
     "DavidAnson.vscode-markdownlint",
     "github.vscode-github-actions",
     "kuscamara.yamllint-fix",
@@ -8,6 +9,6 @@
     "samuelcolvin.jinjahtml",
     "streetsidesoftware.code-spell-checker"
     "tamasfe.even-better-toml",
-    "vivaxy.vscode-conventional-commits",
+    "vivaxy.vscode-conventional-commits"
   ]
 }
