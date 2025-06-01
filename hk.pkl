@@ -7,17 +7,16 @@ local linters = new Mapping<String, Step> {
         batch = true
         check = "actionlint {{ files }}"
     }
+    ["lychee"] {
+        glob = "*"
+        check = "lychee -c .config/lychee.toml --cache --max-retries 0 {{ files }}"
+    }
     ["markdownlint"] {
         glob = "*.{md,md[{]% endif %[}]}"
         stage = "*.{md,md[{]% endif %[}]}"
         check = "markdownlint-cli2 --config .config/.markdownlint.yaml {{ files }}"
         fix = "markdownlint-cli2 --config .config/.markdownlint.yaml --fix {{ files }}"
         exclude = "{CHANGELOG.md}"
-    }
-    ["markdown-link-check"] {
-        glob = "*.{md,md[{]% endif %[}]}"
-        check = "markdown-link-check {{ files }}"
-        exclude = "{CHANGELOG.md,template/**}"
     }
     ["pkl"] {
         glob = "*.pkl"
@@ -29,7 +28,12 @@ local linters = new Mapping<String, Step> {
         check = "ruff check --config .config/ruff.toml {{ files }}"
         fix = "ruff check --config .config/ruff.toml --fix {{ files }}"
     }
-    ["taplo"] = Builtins.taplo
+    ["taplo"] {
+        glob = "*.toml"
+        stage = "*.toml"
+        check = "taplo check {{ files }}"
+        fix = "taplo format {{ files }}"
+    } 
     ["typos"] {
         glob = "*"
         exclude = "{CHANGELOG.md}"

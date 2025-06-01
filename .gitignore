@@ -4,5 +4,8 @@
 # Windows Thumbs.db files
 Thumbs.db
 
+# Cache used by lychee link checker. Can be removed once https://github.com/lycheeverse/lychee/issues/1700 is resolved
+.lycheecache
+
 # Python Virtual Environments
 .venv

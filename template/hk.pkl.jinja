@@ -7,6 +7,10 @@ local linters = new Mapping<String, Step> {
         batch = true
         check = "actionlint {{ files }}"
     }
+    ["lychee"] {
+        glob = "*"
+        check = "lychee -c .config/lychee.toml --cache --max-retries 0 {{ files }}"
+    }
     ["markdownlint"] {
         glob = "*.{md{% if is_template %}{% raw %},md[{]% endif %[}]{% endraw %}{% endif %}}"
         stage = "*.{md{%- if is_template %}{% raw %},md[{]% endif %[}]{% endraw %}{% endif %}}"
@@ -14,11 +18,6 @@ local linters = new Mapping<String, Step> {
         fix = "markdownlint-cli2 --config .config/.markdownlint.yaml --fix {% raw %}{{ files }}{% endraw %}"
         exclude = "{CHANGELOG.md}"
     } 
-    ["markdown-link-check"] {
-        glob = "*.{md{% if is_template %}{% raw %},md[{]% endif %[}]{% endraw %}{% endif %}}"
-        check = "markdown-link-check {{ files }}"
-        exclude = "{CHANGELOG.md{% if is_template %},template/**{% endif %}}"
-    }
     ["pkl"] {
         glob = "*.pkl"
         check = "pkl eval {% raw %}{{files}}{% endraw %}"
@@ -33,7 +32,12 @@ local linters = new Mapping<String, Step> {
         glob = "*"
         check = "typos -c .config/typos.toml {{files}}"
     }
-    ["taplo"] = Builtins.taplo
+    ["taplo"] {
+        glob = "*.toml"
+        stage = "*.toml"
+        check = "taplo check {{ files }}"
+        fix = "taplo format {{ files }}"
+    }
     ["yamllint"] {
         glob = "*.{yml,yaml{% if is_template %}{% raw %},yml[{]% endif %[}],yaml[{]% endif %[}]}{% endraw %}{% endif %}}"
         check = "yamllint -c .config/.yamllint.yaml {% raw %}{{ files }}{% endraw %}"
