@@ -48,7 +48,7 @@ hooks {
     ["commit-msg"] {
         steps {
             ["validate-commit-msg"] {
-                check = "commitlint --config .config/.commitlintrc.yaml --edit {% raw %}{{commit_msg_file}}{% endraw %}"
+                check = "committed --config .config/committed.toml --commit-file {% raw %}{{commit_msg_file}}{% endraw %}"
             }
         }
     }

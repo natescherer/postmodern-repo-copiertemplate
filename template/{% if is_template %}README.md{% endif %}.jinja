@@ -56,14 +56,16 @@ It is highly encouraged for you to take this template and make your own child te
 
 ### Code Management and Formatting
 
-- Automatic code linting and formatting via [Trunk](https://trunk.io):
+- Automatic, repository-local dev tool installation via [mise](https://github.com/jdx/mise)
+- Automatic code linting and formatting via [hk](https://github.com/jdx/hk):
+  - Commit message linting via [committed](https://github.com/crate-ci/committed)
   - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
   - Markdown link health checking via [markdown-link-check](https://github.com/tcort/markdown-link-check)
   - Markdown formatting via [Prettier](https://prettier.io/)
-  - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
+  - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint-cli2)
   - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
   - Spell checking via [cSpell](https://cspell.org/)
-  - TOML linting via [taplo](https://github.com/tamasfe/taplo)
+  - TOML linting and formatting via [Taplo](https://github.com/tamasfe/taplo)
   - YAML formatting via [Prettier](https://prettier.io/)
   - YAML linting via [yamllint](https://github.com/adrienverge/yamllint)
 
@@ -83,7 +85,6 @@ It is highly encouraged for you to take this template and make your own child te
 ## Getting started
 
 Intersted in using this template (or just learning more about it)? Check out [Getting Started](docs/getting_started.md).
-{%- if is_public %}
 
 ## Questions/Comments
 
@@ -114,7 +115,6 @@ Contributions of any kind are welcome!
 ## License
 
 This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
-{%- endif %}
 
 ## Repository Template
 

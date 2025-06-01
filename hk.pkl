@@ -48,7 +48,7 @@ hooks {
     ["commit-msg"] {
         steps {
             ["validate-commit-msg"] {
-                check = "commitlint --config .config/.commitlintrc.yaml --edit {{commit_msg_file}}"
+                check = "committed --config .config/committed.toml --commit-file {{commit_msg_file}}"
             }
         }
     }

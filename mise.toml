@@ -9,7 +9,6 @@ postinstall = [
 
 [settings]
 experimental = true # Needed for hooks as of 2025/05/31
-npm.bun = true
 
 [tasks.set_up_git_hooks]
 run = '''
@@ -33,13 +32,12 @@ else:
 hk = "1.1.2"
 python = "3.13.3"
 # Backends
-bun = "1.2.15" # Regular NPM installs don't seem to work right on ubuntu-latest in GitHub Actions as of 2025/06/01
 java = "temurin-jre-24.0.1+9" # Used by pkl VSCode plugin; can be removed when this is resolved: https://github.com/apple/pkl-lsp/issues/60
 node = "22.16.0" # Used by cspell, markdownlint, markdown-link-check, prettier
 pkl = "0.28.2" # Used by hk
 # Linters
 actionlint = "1.7.7"
-#"npm:@commitlint/cli" = "19.8.1"
+committed = "1.1.7"
 "npm:cspell" = "9.0.2"
 "npm:markdown-link-check" = "3.13.7"
 "npm:markdownlint-cli2" = "0.18.1"
