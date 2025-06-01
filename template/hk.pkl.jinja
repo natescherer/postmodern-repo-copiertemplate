@@ -7,10 +7,6 @@ local linters = new Mapping<String, Step> {
         batch = true
         check = "actionlint {{ files }}"
     }
-    ["cspell"] {
-        glob = "*"
-        check = "cspell lint -c .config/cspell.yaml --quiet {% raw %}{{files}}{% endraw %}"
-    }
     ["markdownlint"] {
         glob = "*.{md{% if is_template %}{% raw %},md[{]% endif %[}]{% endraw %}{% endif %}}"
         stage = "*.{md{%- if is_template %}{% raw %},md[{]% endif %[}]{% endraw %}{% endif %}}"
@@ -36,8 +32,12 @@ local linters = new Mapping<String, Step> {
         check = "ruff check --config .config/ruff.toml {% raw %}{{ files }}{% endraw %}"
         fix = "ruff check --config .config/ruff.toml --fix {% raw %}{{ files }}{% endraw %}"
     }
+    ["typos"] {
+        glob = "*"
+        check = "typos -c .config/typos.toml {{files}}"
+    }
     ["taplo"] = Builtins.taplo
-    ["yamllint"]  {
+    ["yamllint"] {
         glob = "*.{yml,yaml{% if is_template %}{% raw %},yml[{]% endif %[}],yaml[{]% endif %[}]}{% endraw %}{% endif %}}"
         check = "yamllint -c .config/.yamllint.yaml {% raw %}{{ files }}{% endraw %}"
         exclude = "{.copier-answers.yml}"
@@ -49,6 +49,9 @@ hooks {
         steps {
             ["validate-commit-msg"] {
                 check = "committed --config .config/committed.toml --commit-file {% raw %}{{commit_msg_file}}{% endraw %}"
+            }
+            ["check-commit-spelling"] {
+            check = "typos -c .config/typos.toml {% raw %}{{commit_msg_file}}{% endraw %}"
             }
         }
     }

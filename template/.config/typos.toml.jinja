@@ -1,0 +1,20 @@
+[default.extend-words]
+# Author Name Components
+{%- for name_component in author_name.split(" ") %}
+{{ name_component }} = "{{ name_component }}"
+{%- endfor %}
+# Repo Name
+{{ repo_name }} = "{{ repo_name }}"
+# Project Name Components
+{%- for project_component in project_name.split(" ") %}
+{{ project_component }} = "{{ project_component }}"
+{%- endfor %}
+{%- if using_github %}
+# GitHub Username
+{{ github_username }} = "{{ github_username }}"
+{%- endif %}
+{%- if using_azdo %}
+# Azure DevOps
+{{ azdo_org }} = "{{ azdo_org }}"
+{{ azdo_project }} = "{{ azdo_project }}"
+{%- endif %}

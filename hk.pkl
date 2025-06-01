@@ -7,10 +7,6 @@ local linters = new Mapping<String, Step> {
         batch = true
         check = "actionlint {{ files }}"
     }
-    ["cspell"] {
-        glob = "*"
-        check = "cspell lint -c .config/cspell.yaml --quiet {{files}}"
-    }
     ["markdownlint"] {
         glob = "*.{md,md[{]% endif %[}]}"
         stage = "*.{md,md[{]% endif %[}]}"
@@ -37,7 +33,12 @@ local linters = new Mapping<String, Step> {
         fix = "ruff check --config .config/ruff.toml --fix {{ files }}"
     }
     ["taplo"] = Builtins.taplo
-    ["yamllint"]  {
+    ["typos"] {
+        glob = "*"
+        exclude = "{CHANGELOG.md}"
+        check = "typos -c .config/typos.toml {{files}}"
+    }
+    ["yamllint"] {
         glob = "*.{yml,yaml,yml[{]% endif %[}],yaml[{]% endif %[}]}"
         check = "yamllint -c .config/.yamllint.yaml {{ files }}"
         exclude = "{.copier-answers.yml}"
@@ -49,6 +50,9 @@ hooks {
         steps {
             ["validate-commit-msg"] {
                 check = "committed --config .config/committed.toml --commit-file {{commit_msg_file}}"
+            }
+            ["check-commit-spelling"] {
+                check = "typos -c .config/typos.toml {{commit_msg_file}}"
             }
         }
     }
