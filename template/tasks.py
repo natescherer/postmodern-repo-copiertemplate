@@ -28,11 +28,13 @@ def copy_template_files(c, answers_json):
     with tempfile.TemporaryDirectory() as tmpdir:
         if ref != "HEAD" and ref is not None:
             c.run(
-                f"cd {tmpdir}; git -c advice.detachedHead=false clone -q --depth 1 --branch {ref} {source_url} ."
+                f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
+                f"--depth 1 --branch {ref} {source_url} ."
             )
         else:
             c.run(
-                f"cd {tmpdir}; git -c advice.detachedHead=false clone -q --depth 1 {source_url} ."
+                f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
+                f"--depth 1 {source_url} ."
             )
         shutil.copytree(f"{tmpdir}/template", "template", dirs_exist_ok=True)
     print("[bold green]*** 'copy-template-files' task end ***[/bold green]")
@@ -148,7 +150,9 @@ def set_repo_settings_github(c, answers_json):
 def set_branch_protection_ruleset_github(c, answers_json):
     """Set branch protection ruleset on a GitHub repo."""
     print(
-        "[bold green]*** 'set-branch-protection-ruleset-github' task start ***[/bold green]"
+        "[bold green]"
+        "*** 'set-branch-protection-ruleset-github' task start ***"
+        "[/bold green]"
     )
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
@@ -189,10 +193,14 @@ def set_branch_protection_ruleset_github(c, answers_json):
         )
     else:
         print(
-            "[yellow]Repo ruleset 'default-branch-protection' already exists, skipping creation. Please verify this ruleset was made by this template or GitHub Actions workflows might not work correctly![/yellow]"
+            "[yellow]Repo ruleset 'default-branch-protection' already exists, "
+            "skipping creation. Please verify this ruleset was made by this "
+            "template or GitHub Actions workflows might not work correctly![/yellow]"
         )
     print(
-        "[bold green]*** 'set-branch-protection-ruleset-github' task end ***[/bold green]"
+        "[bold green]"
+        "*** 'set-branch-protection-ruleset-github' task end ***"
+        "[/bold green]"
     )
 
 
@@ -224,13 +232,14 @@ def initialize_repo_and_commit_files(c, answers_json):
     if answers["developer_platform"] == "GitHub":
         remote_url = f"https://github.com/{owner}/{answers['repo_name']}.git"
         gcm_dir = f"{str(Path.home())}/.gcm/store/git/https/github.com"
-        gcm_file = f"{answers["github_username"]}.credential"
+        gcm_file = f"{answers['github_username']}.credential"
         gcm_service = "https://github.com"
         gcm_account = answers["github_username"]
     elif answers["developer_platform"] == "Azure DevOps":
         encoded_project = answers["azdo_project"].replace(" ", "%20")
         remote_url = f"https://{answers['azdo_org']}@dev.azure.com/{answers['azdo_org']}/{encoded_project}/_git/{answers['repo_name']}"
-        gcm_dir = f"{str(Path.home())}/.gcm/store/git/https/dev.azure.com/{answers['azdo_org']}"
+        gcm_dir = (f"{str(Path.home())}/.gcm/store/git/https/dev.azure.com/"
+                   f"{answers['azdo_org']}")
         gcm_file = "copier.credential"
         gcm_service = f"https://dev.azure.com/{answers['azdo_org']}"
         gcm_account = "copier"
@@ -240,11 +249,15 @@ def initialize_repo_and_commit_files(c, answers_json):
     if os.getenv("USE_TOKEN_FOR_GIT_AUTH") == "true":
         print("[cyan]Setting up Git credentials...[/cyan]")
         print(
-            "[cyan]Temporarily enabling plaintext git credentials for first push...[/cyan]"
+            "[cyan]"
+            "Temporarily enabling plaintext git credentials for first push..."
+            "[/cyan]"
         )
         c.run("git config credential.credentialStore plaintext")
         print(
-            "[cyan]Creating credentials file that will be cleaned up after push...[/cyan]"
+            "[cyan]"
+            "Creating credentials file that will be cleaned up after push..."
+            "[/cyan]"
         )
         Path(gcm_dir).mkdir(parents=True, exist_ok=True)
         with open(f"{gcm_dir}/{gcm_file}", "w+") as cred_file:
@@ -293,7 +306,9 @@ def create_pipelines_azdo(c, answers_json):
             headers = {"Content-Type": "application/json", "Accept": "application/json"}
             encoded_project = answers["azdo_project"].replace(" ", "%20")
             print(
-                f"[cyan]Creating pipeline for '.azurepipelines/{entry.name}' in Azure DevOps...[/cyan]"
+                f"[cyan]"
+                f"Creating pipeline for '.azurepipelines/{entry.name}' in "
+                "Azure DevOps...[/cyan]"
             )
             response = requests.post(
                 f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7",
@@ -308,7 +323,7 @@ def create_pipelines_azdo(c, answers_json):
 
 @task
 def delete_unneeded_template_files(c):
-    """Delete files used only in the template build process, including this tasks.py file."""
+    """Delete files used only in the template process, including this tasks.py file."""
     print(
         "[bold green]*** 'delete-unneeded-template-files' task start ***[/bold green]"
     )
