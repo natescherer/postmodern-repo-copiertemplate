@@ -50,13 +50,15 @@ It is highly encouraged for you to take this template and make your own child te
 
 ### Code Management and Formatting
 
-- Automatic code linting and formatting via [Trunk](https://trunk.io):
+- Automatic, repository-local dev tool installation via [M\mise](https://github.com/jdx/mise)
+- Automatic code linting and formatting via [hk](https://github.com/jdx/hk):
   - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
   - Markdown link health checking via [markdown-link-check](https://github.com/tcort/markdown-link-check)
   - Markdown formatting via [Prettier](https://prettier.io/)
-  - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
+  - Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint-cli2)
   - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
   - Spell checking via [cSpell](https://cspell.org/)
+  - TOML linting and formatting via [Taplo](https://github.com/tamasfe/taplo)
   - YAML formatting via [Prettier](https://prettier.io/)
   - YAML linting via [yamllint](https://github.com/adrienverge/yamllint)
 

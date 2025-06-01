@@ -2,7 +2,6 @@
   "name": "postmodern-tools",
   "image": "ghcr.io/natescherer/postmodern-tools-container:latest@sha256:f56e2b15bc906e071d9db7ccbc51e44ff0c218adea61ce35eaf4b8049f946a3e",
   "features": {
-    "ghcr.io/trunk-io/devcontainer-feature/trunk:1": "latest",
     "ghcr.io/devcontainers-extra/features/renovate-cli:2": {}
   },
   "mounts": [
@@ -17,7 +16,6 @@
         "ms-python.python",
         "samuelcolvin.jinjahtml",
         "tamasfe.even-better-toml",
-        "trunk.io",
         "vivaxy.vscode-conventional-commits"
       ]
     }
