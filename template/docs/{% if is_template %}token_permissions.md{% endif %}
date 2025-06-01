@@ -31,8 +31,6 @@ The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the r
 | Pull Requests: Read and Write | Needed for Copier/Release Please workflows    |
 | Workflows: Read and Write     | Needed for Copier/Release Please workflows    |
 
-
-
 ## Azure DevOps
 
 | **Scope**             | **Reason**                               |

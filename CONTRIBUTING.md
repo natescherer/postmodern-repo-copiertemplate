@@ -12,7 +12,7 @@ There is one ground rule for contributions:
 
 ## How to Contribute
 
-All contributions should be submitted via a Pull Request. Never done a pull request before? There's an easy tutorial [here](http://makeapullrequest.com/).
+All contributions should be submitted via a Pull Request. Never done a pull request before? [See this tutorial!](http://makeapullrequest.com/).
 
 If your contribution is accepted, you will be added to the Authors section in the README.
 

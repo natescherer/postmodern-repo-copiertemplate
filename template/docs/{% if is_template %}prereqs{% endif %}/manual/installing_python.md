@@ -4,7 +4,7 @@ There are many, many ways to install Python on every platform, but I recommend u
 
 ## Choosing your Version
 
-Version management tools let you have multiple Python versions installed side-by-side, but you still need to decide what version to use. I recommend choosing one of the "Active Support" versions [here](https://endoflife.date/python) based on whether you prefer tried-and-true or bleeding edge.
+Version management tools let you have multiple Python versions installed side-by-side, but you still need to decide what version to use. I recommend choosing one of the "Active Support" versions [listed here](https://endoflife.date/python) based on whether you prefer tried-and-true or bleeding edge.
 
 ### Linux
 
