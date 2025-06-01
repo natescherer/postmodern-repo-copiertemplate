@@ -2,8 +2,11 @@ amends "package://github.com/jdx/hk/releases/download/v1.1.2/hk@1.1.2#/Config.pk
 import "package://github.com/jdx/hk/releases/download/v1.1.2/hk@1.1.2#/Builtins.pkl"
 
 local linters = new Mapping<String, Step> {
-    // ["prettier"] = Builtins.prettier
-
+    ["actionlint"] {
+        glob = List(".github/workflows/*.{yml,yml[{]% endif %[}]}}")
+        batch = true
+        check = "actionlint {{ files }}"
+    }
     ["cspell"] {
         glob = "*"
         check = "cspell lint -c .config/cspell.yaml --quiet {{files}}"
