@@ -4,6 +4,7 @@ githubkit==0.12.4
 jinja2-shell-extension==2.1.0
 jinja2-time==0.2.0
 pip==25.1.1
+pipx==1.7.1
 requests==2.32.3
 rich==13.9.4
 unicode-slugify==0.1.5

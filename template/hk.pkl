@@ -8,9 +8,9 @@ local linters = new Mapping<String, Step> {
         glob = "*"
         check = "cspell lint -c .config/cspell.yaml --quiet {{files}}"
     }
-    ["markdownlint-cli2"] {
-        glob = "*.{md,markdown,md[{]% endif %}}"
-        stage = "*.{md,markdown,md[{]% endif %}}"
+    ["markdownlint"] {
+        glob = "*.{md,md[{]% endif %[}]}"
+        stage = "*.{md,md[{]% endif %[}]}"
         check = "markdownlint-cli2 --config .config/.markdownlint.yaml {{ files }}"
         fix = "markdownlint-cli2 --config .config/.markdownlint.yaml --fix {{ files }}"
         exclude = "{CHANGELOG.md}"
@@ -19,6 +19,11 @@ local linters = new Mapping<String, Step> {
         glob = "*.pkl"
         check = "pkl eval {{files}} >/dev/null"
     }
+    ["yamllint"]  {
+        glob = "*.{yml,yaml}"
+        check = "yamllint -c .config/.yamllint.yaml {{ files }}"
+        exclude = "{.copier-answers.yml}"
+    } 
 }
 
 hooks {
