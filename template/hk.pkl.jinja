@@ -36,6 +36,7 @@ local linters = new Mapping<String, Step> {
         check = "ruff check --config .config/ruff.toml {% raw %}{{ files }}{% endraw %}"
         fix = "ruff check --config .config/ruff.toml --fix {% raw %}{{ files }}{% endraw %}"
     }
+    ["taplo"] = Builtins.taplo
     ["yamllint"]  {
         glob = "*.{yml,yaml{% if is_template %}{% raw %},yml[{]% endif %[}],yaml[{]% endif %[}]}{% endraw %}{% endif %}}"
         check = "yamllint -c .config/.yamllint.yaml {% raw %}{{ files }}{% endraw %}"
