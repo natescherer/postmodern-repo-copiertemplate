@@ -20,7 +20,7 @@ local linters = new Mapping<String, Step> {
         check = "pkl eval {{files}} >/dev/null"
     }
     ["yamllint"]  {
-        glob = "*.{yml,yaml}"
+        glob = "*.{yml,yaml,yml[{]% endif %[}],yaml[{]% endif %[}]}"
         check = "yamllint -c .config/.yamllint.yaml {{ files }}"
         exclude = "{.copier-answers.yml}"
     } 

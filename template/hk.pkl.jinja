@@ -6,22 +6,22 @@ local linters = new Mapping<String, Step> {
 
     ["cspell"] {
         glob = "*"
-        check = "cspell lint -c .config/cspell.yaml --quiet {{files}}"
+        check = "cspell lint -c .config/cspell.yaml --quiet {% raw %}{{files}}{% endraw %}"
     }
     ["markdownlint"] {
-        glob = "*.{md,md[{]% endif %[}]}"
-        stage = "*.{md,md[{]% endif %[}]}"
-        check = "markdownlint-cli2 --config .config/.markdownlint.yaml {{ files }}"
-        fix = "markdownlint-cli2 --config .config/.markdownlint.yaml --fix {{ files }}"
+        glob = "*.{md{% if is_template %}{% raw %},md[{]% endif %[}]{% endraw %}{% endif %}}"
+        stage = "*.{md{%- if is_template %}{% raw %},md[{]% endif %[}]{% endraw %}{% endif %}}"
+        check = "markdownlint-cli2 --config .config/.markdownlint.yaml {% raw %}{{ files }}{% endraw %}"
+        fix = "markdownlint-cli2 --config .config/.markdownlint.yaml --fix {% raw %}{{ files }}{% endraw %}"
         exclude = "{CHANGELOG.md}"
     } 
     ["pkl"] {
         glob = "*.pkl"
-        check = "pkl eval {{files}} >/dev/null"
+        check = "pkl eval {% raw %}{{files}}{% endraw %} >/dev/null"
     }
     ["yamllint"]  {
-        glob = "*.{yml,yaml}"
-        check = "yamllint -c .config/.yamllint.yaml {{ files }}"
+        glob = "*.{yml,yaml{% if is_template %}{% raw %},yml[{]% endif %[}],yaml[{]% endif %[}]}{% endraw %}{% endif %}}"
+        check = "yamllint -c .config/.yamllint.yaml {% raw %}{{ files }}{% endraw %}"
         exclude = "{.copier-answers.yml}"
     } 
 }
