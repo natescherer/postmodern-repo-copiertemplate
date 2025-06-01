@@ -41,6 +41,7 @@ words:
   - pscore
   - taplo
   - temurin
+  - versionrc
 patterns:
   - name: devcontainer-features
     pattern: "\"features\": {(.|\\n)*}"
