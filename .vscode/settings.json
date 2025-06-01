@@ -20,5 +20,6 @@
     "**/*.{md,md[{]% endif %}}",
     "!{CHANGELOG.md}"
   ],
-  "ruff.configuration": "${workspaceFolder}/.config/ruff.toml"
+  "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
+  "yamlLintFix.configFile": ".config/.yamllint.yaml"
 }
