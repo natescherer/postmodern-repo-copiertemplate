@@ -21,4 +21,4 @@ rules:
     - 2
     - always
     - [build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test]
-  # Custom/modified rules after this point
+    # Custom/modified rules after this point
