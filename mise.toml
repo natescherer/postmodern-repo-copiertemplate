@@ -3,12 +3,29 @@ _.python.venv = { path = ".venv", create = true }
 
 [hooks]
 postinstall = [
-    "hk install --mise",
+    "mise run set_up_git_hooks",
     "pip install -r .config/requirements.txt --require-virtualenv -q"
 ]
 
 [settings]
 experimental = true # Needed for hooks as of 2025/05/31
+
+[tasks.set_up_git_hooks]
+run = '''
+#!/usr/bin/env python
+
+import os
+import subprocess
+
+github_actions = os.environ.get("GITHUB_ACTIONS")
+azure_pipelines = os.environ.get("TF_BUILD")
+
+if github_actions or azure_pipelines:
+    echo("Not setting up git hooks as mise is running in CI!")
+else:
+    sp = subprocess.run(["hk", "install", "--mise"], capture_output=True)
+    echo(sp.stdout)
+'''
 
 [tools]
 # Project Tools
