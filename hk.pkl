@@ -27,6 +27,9 @@ local linters = new Mapping<String, Step> {
         glob = "*.pkl"
         check = "pkl eval {{files}}"
     }
+    ["prettier"] = (Builtins.prettier) {
+        exclude = "{.release-please-manifest.json}"
+    }
     ["ruff"] {
         glob = "*.{py,py[{]% endif %[}]}}"
         stage = "*.{py,py[{]% endif %[}]}}"

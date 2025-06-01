@@ -27,6 +27,7 @@ local linters = new Mapping<String, Step> {
         glob = "*.pkl"
         check = "pkl eval {% raw %}{{files}}{% endraw %}"
     }
+    ["prettier"] = Builtins.prettier
     ["ruff"] {
         glob = "*.{py{% if is_template %}{% raw %},py[{]% endif %[}]}{% endraw %}{% endif %}}"
         stage = "*.{py{% if is_template %}{% raw %},py[{]% endif %[}]}{% endraw %}{% endif %}}"
