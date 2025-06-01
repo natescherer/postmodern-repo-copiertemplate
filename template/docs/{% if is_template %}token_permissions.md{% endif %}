@@ -8,7 +8,7 @@ For best security, you should create two GitHub Personal Access tokens via [http
 
 The **Repo Setup PAT** can be stored in your password vault of choice, as you will only need it when you are creating a new repo via this template.
 
-The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the repository called **REPO_MAINTENACE_PAT**. This can be done manually or via Infisical.
+The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the repository called **REPO_MAINTENANCE_PAT**. This can be done manually or via Infisical.
 
 ### Repo Setup PAT (Fine-grained token)
 
