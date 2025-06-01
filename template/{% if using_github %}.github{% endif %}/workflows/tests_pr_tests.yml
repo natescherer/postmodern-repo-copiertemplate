@@ -18,6 +18,8 @@ jobs:
         with:
           experimental: true
           log_level: debug
+        env:
+          RUST_BACKTRACE: full
       - name: hk check
         run: hk check
       - name: Example Tests
