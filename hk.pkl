@@ -17,7 +17,12 @@ local linters = new Mapping<String, Step> {
         check = "markdownlint-cli2 --config .config/.markdownlint.yaml {{ files }}"
         fix = "markdownlint-cli2 --config .config/.markdownlint.yaml --fix {{ files }}"
         exclude = "{CHANGELOG.md}"
-    } 
+    }
+    ["markdown-link-check"] {
+        glob = "*.{md,md[{]% endif %[}]}"
+        check = "markdown-link-check {{ files }}"
+        exclude = "{CHANGELOG.md,template/**}"
+    }
     ["pkl"] {
         glob = "*.pkl"
         check = "pkl eval {{files}}"
@@ -32,7 +37,7 @@ local linters = new Mapping<String, Step> {
         glob = "*.{yml,yaml,yml[{]% endif %[}],yaml[{]% endif %[}]}"
         check = "yamllint -c .config/.yamllint.yaml {{ files }}"
         exclude = "{.copier-answers.yml}"
-    } 
+    }
 }
 
 hooks {

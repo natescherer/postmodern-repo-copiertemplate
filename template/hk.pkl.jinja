@@ -18,6 +18,11 @@ local linters = new Mapping<String, Step> {
         fix = "markdownlint-cli2 --config .config/.markdownlint.yaml --fix {% raw %}{{ files }}{% endraw %}"
         exclude = "{CHANGELOG.md}"
     } 
+    ["markdown-link-check"] {
+        glob = "*.{md{% if is_template %}{% raw %},md[{]% endif %[}]{% endraw %}{% endif %}}"
+        check = "markdown-link-check {{ files }}"
+        exclude = "{CHANGELOG.md{% if is_template %},template/**{% endif %}}"
+    }
     ["pkl"] {
         glob = "*.pkl"
         check = "pkl eval {% raw %}{{files}}{% endraw %}"
