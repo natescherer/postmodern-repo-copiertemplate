@@ -15,6 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+          log_level: debug
       - name: hk check
         run: hk check
       - name: Example Tests
