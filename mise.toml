@@ -21,10 +21,10 @@ github_actions = os.environ.get("GITHUB_ACTIONS")
 azure_pipelines = os.environ.get("TF_BUILD")
 
 if github_actions or azure_pipelines:
-    echo("Not setting up git hooks as mise is running in CI!")
+    print("Not setting up git hooks as mise is running in CI!")
 else:
     sp = subprocess.run(["hk", "install", "--mise"], capture_output=True)
-    echo(sp.stdout)
+    print(sp.stdout)
 '''
 
 [tools]
