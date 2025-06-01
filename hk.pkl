@@ -17,7 +17,7 @@ local linters = new Mapping<String, Step> {
     } 
     ["pkl"] {
         glob = "*.pkl"
-        check = "pkl eval {{files}} >/dev/null"
+        check = "pkl eval {{files}}"
     }
     ["yamllint"]  {
         glob = "*.{yml,yaml,yml[{]% endif %[}],yaml[{]% endif %[}]}"
