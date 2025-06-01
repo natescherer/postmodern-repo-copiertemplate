@@ -1,3 +1,5 @@
+extends: default
+
 rules:
   anchors:
     forbid-unused-anchors: true
@@ -20,3 +22,8 @@ rules:
   quoted-strings:
     required: only-when-needed
     extra-allowed: ["{|}"]
+  {%- if using_github %}
+  truthy:
+    ignore:
+      - "**/workflows/*.yml"
+  {%- endif %}

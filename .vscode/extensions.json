@@ -2,11 +2,12 @@
   "recommendations": [
     "DavidAnson.vscode-markdownlint",
     "github.vscode-github-actions",
+    "kuscamara.yamllint-fix",
     "ms-azure-devops.azure-pipelines",
     "ms-python.python",
     "samuelcolvin.jinjahtml",
     "streetsidesoftware.code-spell-checker"
     "tamasfe.even-better-toml",
-    "vivaxy.vscode-conventional-commits"
+    "vivaxy.vscode-conventional-commits",
   ]
 }

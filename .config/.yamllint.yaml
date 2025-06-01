@@ -1,6 +1,10 @@
+extends: default
+
 rules:
   anchors:
     forbid-unused-anchors: true
+  comments:
+    min-spaces-from-content: 1
   document-start: disable
   empty-values:
     ignore: "**/workflows/*.yml"
@@ -14,3 +18,6 @@ rules:
   quoted-strings:
     required: only-when-needed
     extra-allowed: ["{|}"]
+  truthy:
+    ignore:
+      - "**/workflows/*.yml"
