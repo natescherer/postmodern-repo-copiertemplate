@@ -14,11 +14,6 @@
     "**.toml[{]% endif %[}]": "toml",
     "**.json5": "json"
   },
-  "markdownlint.configFile": ".config/.markdownlint.yaml",
-  "markdownlint.lintWorkspaceGlobs": [
-    "**/*.{md,md[{]% endif %}}",
-    "!{CHANGELOG.md}"
-  ],
   "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
   "typos.config": ".config/typos.toml",
   "yamlLintFix.configFile": ".config/.yamllint.yaml"

@@ -11,11 +11,10 @@ local linters = new Mapping<String, Step> {
         glob = "*"
         check = "lychee -c .config/lychee.toml --cache --max-retries 0 {{ files }}"
     }
-    ["markdownlint"] {
+    ["mado"] {
         glob = "*.{md,md[{]% endif %[}]}"
         stage = "*.{md,md[{]% endif %[}]}"
-        check = "markdownlint-cli2 --config .config/.markdownlint.yaml {{ files }}"
-        fix = "markdownlint-cli2 --config .config/.markdownlint.yaml --fix {{ files }}"
+        check = "mado check {{ files }}"
         exclude = "{CHANGELOG.md}"
     }
     ["pkl"] {

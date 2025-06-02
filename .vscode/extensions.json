@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "charliermarsh.ruff",
-    "DavidAnson.vscode-markdownlint",
     "github.vscode-github-actions",
     "kuscamara.yamllint-fix",
     "ms-azure-devops.azure-pipelines",
