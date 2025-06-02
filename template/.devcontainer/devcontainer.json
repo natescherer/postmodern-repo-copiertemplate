@@ -1,6 +1,6 @@
 {
   "name": "postmodern-tools",
-  "image": "ghcr.io/natescherer/postmodern-tools-container:latest@sha256:f56e2b15bc906e071d9db7ccbc51e44ff0c218adea61ce35eaf4b8049f946a3e",
+  "image": "ghcr.io/natescherer/postmodern-tools-container:latest@sha256:11674fad7beb642b97614385d3190658617a8ae2d9eeb8de7bfcee88d788627c",
   "features": {
     "ghcr.io/devcontainers-extra/features/renovate-cli:2": {}
   },
