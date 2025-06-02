@@ -17,6 +17,7 @@ jobs:
       - uses: jdx/mise-action@v2
         with:
           experimental: true
+<<<<<<< before updating
       - name: Get New Template Version
         id: get_ver
         run: |
@@ -24,6 +25,8 @@ jobs:
           OUTPUT=$(copier update --skip-answered --pretend --trust 2>&1)
           NEW_VERSION=${OUTPUT##* }
           echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+=======
+>>>>>>> after updating
       - name: Run Copier Update
         run: |
           source .venv/bin/activate

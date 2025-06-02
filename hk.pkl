@@ -32,10 +32,16 @@ local linters = new Mapping<String, Step> {
         stage = "*.toml"
         check = "taplo check {{ files }}"
         fix = "taplo format {{ files }}"
+<<<<<<< before updating
     } 
     ["typos"] {
         glob = "*"
         exclude = "{CHANGELOG.md}"
+=======
+    }
+    ["typos"] {
+        glob = "*"
+>>>>>>> after updating
         check = "typos -c .config/typos.toml {{files}}"
     }
     ["yamllint"] {
@@ -62,7 +68,11 @@ hooks {
         steps {
             ...linters // add all linters defined above
         }
+<<<<<<< before updating
     }
+=======
+    }x1
+>>>>>>> after updating
     // "fix" and "check" are special steps for `hk fix` and `hk check` commands
     ["fix"] {
         fix = true
