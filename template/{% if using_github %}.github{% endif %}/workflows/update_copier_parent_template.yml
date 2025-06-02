@@ -20,11 +20,13 @@ jobs:
       - name: Get New Template Version
         id: get_ver
         run: |
+          source .venv/bin/activate
           OUTPUT=$(copier update --skip-answered --pretend --trust 2>&1)
           NEW_VERSION=${OUTPUT##* }
           echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_OUTPUT"
       - name: Run Copier Update
         run: |
+          source .venv/bin/activate
           copier update --skip-answered --trust
           git add .
       - name: Create Pull Request
