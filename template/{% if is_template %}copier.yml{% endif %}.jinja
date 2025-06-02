@@ -11,7 +11,6 @@ _jinja_extensions:
   - extensions/context.py:ContextUpdater
   - extensions/github_extension.py:GitHubExtension
   - extensions/path_extension.py:PathExtension
-  - extensions/phase_extension.py:PhaseExtension
   - extensions/slugify_extension.py:SlugifyExtension
   - extensions/version_extension.py:VersionExtension
   - extensions/yaml_quote_extension.py:YamlQuoteExtension
@@ -32,7 +31,7 @@ parent_template_url:
 ## Questions
 repo_name:
   type: str
-  help: "{% if is_copier_update %}repo_name - DO NOT CHANGE ON COPIER UPDATE{% else %}The name of this project's Git repository. Defaults to the name of the current directory.{% endif %}"
+  help: "{% if _copier_operation == 'update' %}repo_name - DO NOT CHANGE ON COPIER UPDATE{% else %}The name of this project's Git repository. Defaults to the name of the current directory.{% endif %}"
   default: "{{ '.' | cwd_name() }}" # This is an ugly kludge but every other way tried didn't work and there wasn't a good way to debug
 
 author_name:
@@ -42,21 +41,21 @@ author_name:
 
 developer_platform:
   type: str
-  help: "{% if is_copier_update %}developer_platform - DO NOT CHANGE ON COPIER UPDATE{% else %}The platform where you are going to host your Git repo and CI/CD.{% endif %}"
+  help: "{% if _copier_operation == 'update' %}developer_platform - DO NOT CHANGE ON COPIER UPDATE{% else %}The platform where you are going to host your Git repo and CI/CD.{% endif %}"
   choices:
     - GitHub
     - Azure DevOps
 
 repo_actions:
   type: str
-  help: "{% if is_copier_update %}repo_actions - DO NOT CHANGE ON COPIER UPDATE{% else %}New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Update run? Don't want repo settings changes? 'None'.{% endif %}"
+  help: "{% if _copier_operation == 'update' %}repo_actions - DO NOT CHANGE ON COPIER UPDATE{% else %}New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Update run? Don't want repo settings changes? 'None'.{% endif %}"
   choices:
     Create Repo:
       value: Create Repo
-      validator: "{% if is_copier_update %}Disabled on Updates{% endif %}"
+      validator: "{% if _copier_operation == 'update' %}Disabled on Updates{% endif %}"
     Set Repo Rules:
       value: Set Repo Rules
-      validator: "{% if is_copier_update %}Disabled on Updates{% endif %}"
+      validator: "{% if _copier_operation == 'update' %}Disabled on Updates{% endif %}"
     None:
       value: None
 
@@ -70,18 +69,18 @@ github_token:
 
 github_username:
   type: str
-  help: "{% if is_copier_update %}github_username - DO NOT CHANGE ON COPIER UPDATE{% else %}Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.{% endif %}"
+  help: "{% if _copier_operation == 'update' %}github_username - DO NOT CHANGE ON COPIER UPDATE{% else %}Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.{% endif %}"
   default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
   when: "{{ developer_platform == 'GitHub' }}"
 
 github_org:
   type: str
-  help: "{% if is_copier_update %}github_org - DO NOT CHANGE ON COPIER UPDATE{% else %}[OPTIONAL] If this repo {% if repo_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here.{% endif %}"
+  help: "{% if _copier_operation == 'update' %}github_org - DO NOT CHANGE ON COPIER UPDATE{% else %}[OPTIONAL] If this repo {% if repo_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here.{% endif %}"
   when: "{{ developer_platform == 'GitHub' }}"
 
 azdo_org:
   type: str
-  help: "{% if is_copier_update %}azdo_org - DO NOT CHANGE ON COPIER UPDATE{% else %}The Azure DevOps organization to use for the new project.{% endif %}"
+  help: "{% if _copier_operation == 'update' %}azdo_org - DO NOT CHANGE ON COPIER UPDATE{% else %}The Azure DevOps organization to use for the new project.{% endif %}"
   when: "{{ developer_platform == 'Azure DevOps' }}"
   validator: "{% if azdo_org is not extant_azdo_org %}Azure DevOps Organization Does Not Exist{% endif %}"
 
@@ -95,12 +94,12 @@ azdo_token:
 
 azdo_project:
   type: str
-  help: "{% if is_copier_update %}azdo_project - DO NOT CHANGE ON COPIER UPDATE{% else %}An Azure DevOps project in organization '{{ azdo_org }}'.{% endif %}"
+  help: "{% if _copier_operation == 'update' %}azdo_project - DO NOT CHANGE ON COPIER UPDATE{% else %}An Azure DevOps project in organization '{{ azdo_org }}'.{% endif %}"
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
 project_type:
   type: str
-  help: "{% if is_copier_update %}project_type - DO NOT CHANGE ON COPIER UPDATE{% else %}If this repo will be a basic repo, choose Standard. If this repo will be a child template of this template, choose Template.{% endif %}"
+  help: "{% if _copier_operation == 'update' %}project_type - DO NOT CHANGE ON COPIER UPDATE{% else %}If this repo will be a basic repo, choose Standard. If this repo will be a child template of this template, choose Template.{% endif %}"
   choices:
     - Standard
     - Template
@@ -119,7 +118,7 @@ project_website:
 
 project_visibility:
   type: str
-  help: "{% if is_copier_update %}project_visibility - DO NOT CHANGE ON COPIER UPDATE{% else %}Choose if you want this project to be Public or Private.{% endif %}"
+  help: "{% if _copier_operation == 'update' %}project_visibility - DO NOT CHANGE ON COPIER UPDATE{% else %}Choose if you want this project to be Public or Private.{% endif %}"
   choices:
     Public:
       value: Public
