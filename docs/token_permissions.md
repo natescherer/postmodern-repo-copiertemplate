@@ -14,7 +14,7 @@ The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the r
 
 **Repository Access**: All Repositories
 
-| **Repository Permission**      | **Reason**                                         |
+| **Permission**                 | **Reason**                                         |
 | ------------------------------ | -------------------------------------------------- |
 | Administration: Read and Write | Needed to create repo & set its settings           |
 | Contents: Read and Write       | Needed to commit code                              |
@@ -25,7 +25,7 @@ The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the r
 
 **Repository Access**: All Repositories
 
-| **Repository Permission**     | **Reason**                                 |
+| **Permission**                | **Reason**                                 |
 | ----------------------------- | ------------------------------------------ |
 | Contents: Read and Write      | Needed for Copier/Release Please workflows |
 | Pull Requests: Read and Write | Needed for Copier/Release Please workflows |
