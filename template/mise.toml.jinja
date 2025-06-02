@@ -4,7 +4,9 @@ _.python.venv = { path = ".venv", create = true }
 [hooks]
 postinstall = [
     "mise run set_up_git_hooks",
+    {%- if is_template %}
     "pip install -r .config/requirements.txt --require-virtualenv -q"
+    {%- endif %}
 ]
 
 [settings]
