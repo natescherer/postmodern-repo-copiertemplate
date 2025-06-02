@@ -1,5 +1,4 @@
 {
-  "editor.defaultFormatter": "trunk.io",
   "files.associations": {
     {%- if is_template or using_azdo %}
     "**/.azurepipelines/*.yml": "azure-pipelines",
@@ -18,5 +17,8 @@
     "**.toml[{]% endif %[}]": "toml",
     {%- endif %}
     "**.json5": "json"
-  }
+  },
+  "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
+  "typos.config": ".config/typos.toml",
+  "yamlLintFix.configFile": ".config/.yamllint.yaml"
 }

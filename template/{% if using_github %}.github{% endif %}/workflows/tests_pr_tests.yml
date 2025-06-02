@@ -14,8 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Trunk Check
-        uses: trunk-io/trunk-action@v1
+      - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+      - name: hk check
+        run: hk check
       - name: Example Tests
         run: |
           FILE=README.md

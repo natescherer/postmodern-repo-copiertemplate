@@ -4,7 +4,12 @@ from jinja2.ext import Extension
 
 
 def quote_for_yaml(string):
-    """Return a string wrapped in single-quotes if it contains YAML special characters."""
+    """Return a string wrapped in single-quotes if it contains YAML special characters.
+
+    Returns:
+        String with quotes (if needed).
+
+    """
     if any(
         x in string
         for x in (

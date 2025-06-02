@@ -5,7 +5,12 @@ from jinja2.ext import Extension
 
 
 def valid_gh_token(token):
-    """Check if GitHub token is valid."""
+    """Check if GitHub token is valid.
+
+    Returns:
+        True or False.
+
+    """
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
     try:
         github.rest.users.get_authenticated()
@@ -25,7 +30,12 @@ def valid_gh_token(token):
 
 
 def available_gh_repo_name_for_owner(repo, owner):
-    """Check if a GitHub repo name is available."""
+    """Check if a GitHub repo name is available.
+
+    Returns:
+        True or False.
+
+    """
     github = githubkit.GitHub(githubkit.UnauthAuthStrategy())
     try:
         github.rest.repos.get(owner, repo)

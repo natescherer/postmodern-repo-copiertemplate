@@ -1,0 +1,42 @@
+extends: default
+
+rules:
+  anchors:
+    forbid-unused-anchors: true
+  document-start: disable
+  {%- if using_github %}
+  empty-values:
+    ignore:
+      - "**/workflows/*.yml"
+      {%- if is_template %}
+      - "**/workflows/*.yml{% endif %}"
+      {%- endif %}
+  {%- endif %}
+  indentation:
+    spaces: 2
+    check-multi-line-strings: true
+    ignore:
+      {%- if is_template or using_github %}
+      - "**/workflows/*.yml.*"
+      {%- endif %}
+      {%- if is_template %}
+      - "**/workflows/*.yml{% endif %}"
+      {%- endif %}
+      {%- if is_template or using_azdo %}
+      - "**/*.azurepipelines*/*.yml.*"
+      {%- endif %}
+      {%- if is_template %}
+      - "**/*.azurepipelines*/*.yml{% endif %}"
+      {%- endif %}
+  line-length: disable
+  quoted-strings:
+    required: only-when-needed
+    extra-allowed: ["{|}"]
+  {%- if using_github %}
+  truthy:
+    ignore:
+      - "**/workflows/*.yml.*"
+      {%- if is_template %}
+      - "**/workflows/*.yml{% endif %}"
+      {%- endif %}
+  {%- endif %}

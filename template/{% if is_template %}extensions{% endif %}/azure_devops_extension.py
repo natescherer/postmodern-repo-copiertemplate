@@ -5,7 +5,12 @@ from jinja2.ext import Extension
 
 
 def extant_azdo_org(org):
-    """Check if Azure DevOps organization exists."""
+    """Check if Azure DevOps organization exists.
+
+    Returns:
+        True or False.
+
+    """
     r = requests.get(f"https://dev.azure.com/{org}", timeout=10)
     if r.status_code == 203:
         return True
@@ -14,15 +19,22 @@ def extant_azdo_org(org):
 
 
 def valid_azdo_token_for_org(token, org):
-    """Check if Azure DevOps token is valid."""
+    """Check if Azure DevOps token is valid.
+
+    Returns:
+    True or False.
+
+    """
     # This doesn't currently work
     return True
     # try:
-    #     headers = {
-    #         "Content-Type": "application/json",
-    #         "Accept": "application/json"
-    #     }
-    #     r = requests.get(f"https://dev.azure.com/{org}/_apis/projects?api-version=7.1-preview.1", auth=('', token), headers=headers, timeout=10)
+    #     headers = {"Content-Type": "application/json", "Accept": "application/json"}
+    #     r = requests.get(
+    #         f"https://dev.azure.com/{org}/_apis/projects?api-version=7.1-preview.1",
+    #         auth=("", token),
+    #         headers=headers,
+    #         timeout=10,
+    #     )
     #     r.raise_for_status()
     #     return True
     # except:
@@ -30,7 +42,12 @@ def valid_azdo_token_for_org(token, org):
 
 
 def available_azdo_repo_name_for_token_and_org_and_project(repo, token, org, project):
-    """Check if an Azure DevOps repo name is available."""
+    """Check if an Azure DevOps repo name is available.
+
+    Returns:
+    True or False.
+
+    """
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
     r = requests.get(
         f"https://dev.azure.com/{org}/{project}/_apis/git/repositories?api-version=7.1-preview.1",

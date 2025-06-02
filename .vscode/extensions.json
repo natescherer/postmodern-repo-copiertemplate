@@ -1,12 +1,12 @@
 {
   "recommendations": [
+    "charliermarsh.ruff",
     "github.vscode-github-actions",
+    "kuscamara.yamllint-fix",
     "ms-azure-devops.azure-pipelines",
-    "ms-azuretools.vscode-docker",
     "ms-python.python",
     "samuelcolvin.jinjahtml",
     "tamasfe.even-better-toml",
-    "trunk.io",
-    "vivaxy.vscode-conventional-commits"
+    "tekumara.typos-vscode"
   ]
 }

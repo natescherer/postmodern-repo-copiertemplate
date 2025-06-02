@@ -10,17 +10,17 @@ To apply this template to an existing project, follow these steps:
 1. Create a new branch (`copier-template-apply`, for example) from your default branch
 1. Make sure your shell is in the project root, then run the appropriate command below based on the method you are using for prerequisites:
 
-   - Docker
+    *Docker*
 
-     ```shell
-     docker run -v .:/mnt/${PWD##*/} -w /mnt/${PWD##*/} -v ~/.gitconfig:/root/.gitconfig:ro -e USE_TOKEN_FOR_GIT_AUTH=true -it --pull always --rm ghcr.io/natescherer/postmodern-tools-container:latest copier copy --trust --overwrite gh:natescherer/postmodern-repo-copiertemplate .
-     ```
+    ```shell
+    docker run -v .:/mnt/${PWD##*/} -w /mnt/${PWD##*/} -v ~/.gitconfig:/root/.gitconfig:ro -e USE_TOKEN_FOR_GIT_AUTH=true -it --pull always --rm ghcr.io/natescherer/postmodern-tools-container:latest copier copy --trust --overwrite gh:natescherer/postmodern-repo-copiertemplate .
+    ```
 
-   - Devcontainer/Manual
+    *Devcontainer/Manual*
 
-     ```shell
-     copier copy --trust --overwrite gh:natescherer/postmodern-repo-copiertemplate .
-     ```
+    ```shell
+    copier copy --trust --overwrite gh:natescherer/postmodern-repo-copiertemplate .
+    ```
 
 1. If you are using GitHub, Make sure to choose `Set Repo Rules` in the first question
 1. Set all other settings as appropriate for your project

@@ -23,28 +23,28 @@ There are several tools needed on your local machine to use this template, and t
 ### One-Time Actions Per GitHub User/Organization
 
 1. Install the [AllContributors GitHub App](https://github.com/apps/allcontributors/installations/new) for your user or organization.
-   - This app provides automatic README crediting when other people contribute to your project
-   - If you know you are only going to be making Private projects, you can skip installing this app
-   - It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.
+    - This app provides automatic README crediting when other people contribute to your project
+    - If you know you are only going to be making Private projects, you can skip installing this app
+    - It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.
 1. Install the [Renovate GitHub App](https://github.com/apps/renovate) for your user or organization.
-   - This app provides automatic dependency updates for your project
-   - It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.
-1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [here](https://github.com/settings/security_analysis).
+    - This app provides automatic dependency updates for your project
+    - It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.
+1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [in GitHub settings here](https://github.com/settings/security_analysis).
 
 ## Using this template
 
 ### Docker
 
 1. In your terminal, create a folder with the name of the repo you wish to create, and cd into it.
-2. Run the appropriate command for your OS:
+1. Run the appropriate command for your OS:
 
-   - macOS/Linux
+   *macOS/Linux*
 
    ```bash
    docker run -v .:/mnt/${PWD##*/} -w /mnt/${PWD##*/} -v ~/.gitconfig:/root/.gitconfig:ro -e USE_TOKEN_FOR_GIT_AUTH=true -it --pull always --rm ghcr.io/natescherer/postmodern-tools-container:latest copier copy --trust gh:natescherer/postmodern-repo-copiertemplate .
    ```
 
-   - Windows
+   *Windows*
 
    ```PowerShell
    coming soon

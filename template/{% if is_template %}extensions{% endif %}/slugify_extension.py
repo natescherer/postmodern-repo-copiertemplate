@@ -5,7 +5,12 @@ from slugify import slugify as unicode_slugify
 
 
 def slugify(string):
-    """Slugify given input string."""
+    """Slugify given input string.
+
+    Returns:
+        Slug version of input string.
+
+    """
     return unicode_slugify(string, only_ascii=True)
 
 

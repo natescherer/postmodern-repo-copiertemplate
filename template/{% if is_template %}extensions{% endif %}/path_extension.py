@@ -11,20 +11,35 @@ except ImportError:
 
 
 def path_exists(path):
-    """Check if a path exists, and return True if it does and nothing if it doesn't."""
+    """Check if a path exists, and return True if it does and nothing if it doesn't.
+
+    Returns:
+        True or None.
+
+    """
     if os.path.exists(path):
         return True
 
 
 def path_missing(path):
-    """Check if a path exists, and return True if it does NOT and nothing if it does."""
+    """Check if a path exists, and return True if it does NOT and nothing if it does.
+
+    Returns:
+        True or None.
+
+    """
     if not os.path.exists(path):
         return True
 
 
 @eval_context
 def cwd_name(eval_ctx, value):
-    """Return the name of the current working directory."""
+    """Return the name of the current working directory.
+
+    Returns:
+        Working directory name.
+
+    """
     return os.path.basename(os.getcwd())
 
 

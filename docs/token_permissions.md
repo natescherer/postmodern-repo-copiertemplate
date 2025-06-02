@@ -4,11 +4,11 @@ This doc details the minimum scopes/permissions needed for GitHub/Azure DevOps t
 
 ## GitHub
 
-For best security, you should create two GitHub Personal Access tokens via [https://github.com/settings/personal-access-tokens/new](this link), a **Repo Setup PAT** and a **Repo Maintenance PAT**, permissions of which are detailed below.
+For best security, you should create two GitHub Personal Access tokens via [this link](https://github.com/settings/personal-access-tokens/new), a **Repo Setup PAT** and a **Repo Maintenance PAT**, permissions of which are detailed below.
 
 The **Repo Setup PAT** can be stored in your password vault of choice, as you will only need it when you are creating a new repo via this template.
 
-The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the repository called **REPO_MAINTENACE_PAT**. This can be done manually or via Infisical.
+The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the repository called **REPO_MAINTENANCE_PAT**. This can be done manually or via Infisical.
 
 ### Repo Setup PAT (Fine-grained token)
 

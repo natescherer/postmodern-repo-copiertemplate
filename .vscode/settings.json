@@ -1,5 +1,4 @@
 {
-  "editor.defaultFormatter": "trunk.io",
   "files.associations": {
     "**/.azurepipelines/*.yml": "azure-pipelines",
     "**LICENSE*.jinja": "jinja",
@@ -14,5 +13,8 @@
     "**.py[{]% endif %[}]": "python",
     "**.toml[{]% endif %[}]": "toml",
     "**.json5": "json"
-  }
+  },
+  "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
+  "typos.config": ".config/typos.toml",
+  "yamlLintFix.configFile": ".config/.yamllint.yaml"
 }

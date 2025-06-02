@@ -1,0 +1,12 @@
+exclude = [
+    '.*%7B.*%7D.*', # Python f-strings
+    {%- if is_template %}
+    'https://img\.shields\.io/github/all-contributors/', # Part of template code
+    {%- endif %}
+]
+exclude_path = [
+    ".config/lychee.toml",
+    {%- if is_template %}
+    "template/.config/lychee.toml.jinja"
+    {%- endif %}
+]
