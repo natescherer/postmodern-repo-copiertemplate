@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.42](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.41...v0.3.42) (2025-06-02)
+
+
+### Bug Fixes
+
+* Fix template structure issues ([beae721](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/beae72174637cd8207f81927bdbe350e73f599c5))
+* Fix template structure issues ([609a61b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/609a61b28e9dbbdd91e0b092e8768cb85a2c31e9))
+
 ## [0.3.41](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.40...v0.3.41) (2025-06-02)
 
 
