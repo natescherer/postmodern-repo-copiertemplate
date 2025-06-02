@@ -2,8 +2,15 @@
 
 [![All Contributors](https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449&style=flat-square)](#contributors)
 
+<<<<<<< before updating
 | :exclamation: Notice: This project is currently in a Pre-Alpha state and is not ready for public use. |
 | ----------------------------------------------------------------------------------------------------- |
+=======
+<!-- prettier-ignore-start -->
+| :exclamation: Notice: This project is currently in a Pre-Alpha state and is not ready for public use. |
+| ------------------------------------------------------------------------------------ |
+<!-- prettier-ignore-end -->
+>>>>>>> after updating
 
 A [Copier](https://github.com/copier-org/copier) template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
 
@@ -21,7 +28,11 @@ Why Postmodern? Besides being a cheeky homage to this template's inspiration, I 
     - Creating repos under both users and orgs is supported
     - See [GitHub Org Limitations](docs/github_org_limitations.md) for details about template features excluded for Orgs
 - Azure DevOps
+<<<<<<< before updating
       - See [Azure DevOps Limitations](docs/azure_devops_limitations.md) for details about features missing for AzDO
+=======
+    - See [Azure DevOps Limitations](docs/azure_devops_limitations.md) for details about features missing for AzDO
+>>>>>>> after updating
 
 #### Support for Public (Open-Source) and Private (Closed-Source) Repositories
 

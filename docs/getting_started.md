@@ -29,7 +29,11 @@ There are several tools needed on your local machine to use this template, and t
 1. Install the [Renovate GitHub App](https://github.com/apps/renovate) for your user or organization.
     - This app provides automatic dependency updates for your project
     - It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.
+<<<<<<< before updating
 1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [in GitHub settings here](https://github.com/settings/security_analysis).
+=======
+1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [here](https://github.com/settings/security_analysis).
+>>>>>>> after updating
 
 ## Using this template
 
