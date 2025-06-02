@@ -4,11 +4,29 @@ _.python.venv = { path = ".venv", create = true }
 [hooks]
 postinstall = [
     "mise run set_up_git_hooks",
-    "pip install -r .config/requirements.txt --require-virtualenv -q"
+    "mise run pip_install"
 ]
 
 [settings]
 experimental = true # Needed for hooks as of 2025/05/31
+
+[tasks.pip_install]
+run = '''
+#!/usr/bin/env python
+
+import subprocess
+
+def prCyan(skk): print("\033[96m {}\033[00m" .format(skk))
+
+prCyan("Installing Python dependencies...")
+sp = subprocess.run(
+    ["pip", "install", "-r", ".config/requirements.txt", "--require-virtualenv"],
+    capture_output=True, text=True)
+
+for x in sp.stdout.splitlines():
+    if "Requirement already satisfied" not in x:
+        print(x)
+'''
 
 [tasks.set_up_git_hooks]
 run = '''
@@ -17,13 +35,15 @@ run = '''
 import os
 import subprocess
 
+def prYellow(skk): print("\033[93m {}\033[00m" .format(skk))
+
 github_actions = os.environ.get("GITHUB_ACTIONS")
 azure_pipelines = os.environ.get("TF_BUILD")
 
 if github_actions or azure_pipelines:
-    print("Not setting up git hooks as mise is running in CI!")
+    prYellow("Not setting up git hooks as mise is running in CI!")
 else:
-    sp = subprocess.run(["hk", "install", "--mise"], capture_output=True)
+    sp = subprocess.run(["hk", "install", "--mise"], capture_output=True, text=True)
     print(sp.stdout)
 '''
 
