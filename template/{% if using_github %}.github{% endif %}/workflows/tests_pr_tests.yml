@@ -17,10 +17,6 @@ jobs:
       - uses: jdx/mise-action@v2
         with:
           experimental: true
-          log_level: debug
-        env:
-          RUST_BACKTRACE: full
-          COLORBT_SHOW_HIDDEN: 1 # cspell: ignore COLORBT
       - name: hk check
         run: hk check
       - name: Example Tests
