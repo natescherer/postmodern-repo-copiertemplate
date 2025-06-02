@@ -41,7 +41,7 @@ There are several tools needed on your local machine to use this template, and t
    *macOS/Linux*
 
    ```bash
-   docker run -v .:/mnt/${PWD##*/} -w /mnt/${PWD##*/} -v ~/.gitconfig:/root/.gitconfig:ro -e USE_TOKEN_FOR_GIT_AUTH=true -it --pull always --rm ghcr.io/natescherer/postmodern-tools-container:latest copier copy --trust gh:natescherer/postmodern-repo-copiertemplate .
+   docker run -v .:/mnt/${PWD##*/} -w /mnt/${PWD##*/} -v ~/.gitconfig:/root/.gitconfig:ro -it --pull always --rm ghcr.io/natescherer/postmodern-tools-container:latest copier copy --trust gh:natescherer/postmodern-repo-copiertemplate .
    ```
 
    *Windows*

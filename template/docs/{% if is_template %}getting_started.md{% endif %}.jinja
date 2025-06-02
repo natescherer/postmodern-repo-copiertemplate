@@ -46,7 +46,7 @@ There are several tools needed on your local machine to use this template, and t
    *macOS/Linux*
 
    ```bash
-   docker run -v .:/mnt/${PWD##*/} -w /mnt/${PWD##*/} -v ~/.gitconfig:/root/.gitconfig:ro -e USE_TOKEN_FOR_GIT_AUTH=true -it --pull always --rm ghcr.io/natescherer/postmodern-tools-container:latest copier copy --trust {% if using_github %}gh:{{ github_username }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} .
+   docker run -v .:/mnt/${PWD##*/} -w /mnt/${PWD##*/} -v ~/.gitconfig:/root/.gitconfig:ro -it --pull always --rm ghcr.io/natescherer/postmodern-tools-container:latest copier copy --trust {% if using_github %}gh:{{ github_username }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} .
    ```
 
    *Windows*
