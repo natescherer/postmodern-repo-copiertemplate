@@ -24,5 +24,9 @@ rules:
     extra-allowed: ["{|}"]
   truthy:
     ignore:
+<<<<<<< before updating
       - "**/workflows/*.yml"
+=======
+      - "**/workflows/*.yml.*"
+>>>>>>> after updating
       - "**/workflows/*.yml{% endif %}"
