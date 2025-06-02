@@ -269,7 +269,7 @@ def initialize_repo_and_commit_files(c, answers_json):
     if answers["developer_platform"] == "Azure DevOps":
         print("[cyan]Unsetting git config options for AzDO...[/cyan]")
         c.run("git config --unset credential.useHttpPath")
-    if os.getenv("CREATE_GIT_CREDS_FOR_DOCKER") == "true":
+    if os.getenv("USE_TOKEN_FOR_GIT_AUTH") == "true":
         print("[cyan]Disabling plaintext git credentials...[/cyan]")
         c.run("git config --unset credential.credentialStore")
         print("[cyan]Deleting credentials file...[/cyan]")
