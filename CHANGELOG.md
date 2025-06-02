@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.44](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.43...v0.3.44) (2025-06-02)
+
+
+### Bug Fixes
+
+* Change to always use token for first git push ([b2f575b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b2f575b8b2c172721798b885582e47ada77ba71e))
+* Change to always use token for first git push ([a7cb007](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a7cb007063a28b9e54e8c3f4c85924328e3488af))
+* Clean up git credentials settings ([5b5220d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5b5220d7899120ca4820ce8d0d20d0d7d09425ee))
+* Clean up git credentials settings ([5d4cab0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5d4cab02405b940ea4ff6bd7218e9f427e265996))
+
 ## [0.3.43](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.42...v0.3.43) (2025-06-02)
 
 
