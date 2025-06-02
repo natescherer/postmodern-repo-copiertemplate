@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.40](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.39...v0.3.40) (2025-06-02)
+
+
+### Features
+
+* Copier update to parent template v0.3.39 ([c9b34cc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c9b34cc63a2e9e1c6c453f6408c78f857ac05453))
+* Copier update to parent template v0.3.39 ([f9e24af](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f9e24afee6c79c97770fec2f62ed93385d22ea98))
+* Update copier update workflows to use mise ([e19976d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e19976db2f01c7abc043c548f3b70d512af12936))
+* Update copier update workflows to use mise ([aa2fa33](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/aa2fa33a597398c3301638d27a572c6e57da2b88))
+
+
+### Bug Fixes
+
+* Fix errors in template ([90479ad](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/90479ad0c57d1432d5da25a673f5cc855f1c50f6))
+* Fix errors in template ([335d910](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/335d910e1fd26a1dadca9169bfbc7a4b1c298f97))
+
 ## [0.3.39](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.38...v0.3.39) (2025-06-02)
 
 
