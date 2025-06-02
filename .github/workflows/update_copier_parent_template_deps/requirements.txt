@@ -1,6 +1,6 @@
 copier==9.4.1
 copier-templates-extensions==0.3.0
-githubkit==0.12.4
+githubkit==0.12.13
 invoke==2.2.0
 jinja2-shell-extension==2.1.0
 jinja2-time==0.2.0
