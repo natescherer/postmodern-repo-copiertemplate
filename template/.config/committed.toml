@@ -1,3 +1,17 @@
+allowed_types = [
+    "build",
+    "chore",
+    "ci",
+    "docs",
+    "feat",
+    "fix",
+    "perf",
+    "refactor",
+    "revert",
+    "style",
+    "test"
+]
 ignore_author_re = "(dependabot|renovate)"
 style = "conventional"
 subject_capitalized = false
+subject_length = 72
