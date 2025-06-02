@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.47](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.46...v0.3.47) (2025-06-02)
+
+
+### Bug Fixes
+
+* Set fetch-depth to 0 to support hk ([#561](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/561)) ([1dd03c2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1dd03c294a8d061d627d6e4a64a27262c78a75ce))
+
 ## [0.3.46](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.45...v0.3.46) (2025-06-02)
 
 
