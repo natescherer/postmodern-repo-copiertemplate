@@ -9,7 +9,7 @@ rules:
     ignore:
       - "**/workflows/*.yml"
       {%- if is_template %}
-      - "**/workflows/*.yml{% endif %}"
+      - "**/workflows/*.yml{% raw %}{% endif %}{% endraw %}"
       {%- endif %}
   {%- endif %}
   indentation:
@@ -20,13 +20,13 @@ rules:
       - "**/workflows/*.yml.*"
       {%- endif %}
       {%- if is_template %}
-      - "**/workflows/*.yml{% endif %}"
+      - "**/workflows/*.yml{% raw %}{% endif %}{% endraw %}"
       {%- endif %}
       {%- if is_template or using_azdo %}
       - "**/*.azurepipelines*/*.yml.*"
       {%- endif %}
       {%- if is_template %}
-      - "**/*.azurepipelines*/*.yml{% endif %}"
+      - "**/*.azurepipelines*/*.yml{% raw %}{% endif %}{% endraw %}"
       {%- endif %}
   line-length: disable
   quoted-strings:
@@ -37,6 +37,6 @@ rules:
     ignore:
       - "**/workflows/*.yml.*"
       {%- if is_template %}
-      - "**/workflows/*.yml{% endif %}"
+      - "**/workflows/*.yml{% raw %}{% endif %}{% endraw %}"
       {%- endif %}
   {%- endif %}
