@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.41](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.40...v0.3.41) (2025-06-02)
+
+
+### Bug Fixes
+
+* Activate venvs as needed ([26fd914](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/26fd914dba1f348de682b4e93093623d951c230a))
+* Add necessary invoke dependency for copier ([7099a1a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7099a1a6f280dd4880d70253d2b2f2d819130e4d))
+* Switch copier workflows to pure bash ([3a81c49](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3a81c498c95563d2fa34c4188d234910713ac52a))
+* Switch copier workflows to pure bash ([81b4b15](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/81b4b1502d271d4bdfc045c10b142aeef455025d))
+
 ## [0.3.40](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.39...v0.3.40) (2025-06-02)
 
 
