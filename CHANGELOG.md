@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.45](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.44...v0.3.45) (2025-06-02)
+
+
+### Features
+
+* Improve logging for mise postinstall hooks ([fe2eed3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/fe2eed344153fab4319b41ab5b6be465852662d2))
+* Improve logging for mise postinstall hooks ([9a8f4ac](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9a8f4ac6f7e55d64c5f99e1b99c19aa5023fcf8c))
+
 ## [0.3.44](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.43...v0.3.44) (2025-06-02)
 
 
