@@ -1,5 +1,62 @@
 # Changelog
 
+## [0.3.38](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.37...v0.3.38) (2025-06-02)
+
+
+### Features
+
+* Improve yaml linting ([3812016](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3812016da7ddb3a7e96433d3c5ee6d5621e7b918))
+* Migrate markdownlint and cspell to mise/hk ([ceeaebc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ceeaebc8f8a8d417e13035522eb704e0db9a4fc7))
+* Migrate yamllint from trunk to hk ([532903b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/532903bdfeaa356d63fbd2a9be3fa25cc0e34b42))
+* Move actionlist from trunk to mise/hk ([14bc05a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/14bc05ac42e2ba5770a0136653ff15b7f9fbc382))
+* Move commitlint from trunk to mise/hk ([07fbf82](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/07fbf829b83aba27b2a91802ee1750d454cfd235))
+* Move markdown-link-check from trunk to mise/hk ([e977b42](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e977b42a61695ae738f7f2d755c3271cf4588e98))
+* Move prettier from trunk to mise/hk ([3d01ebf](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3d01ebfb63115f6728e355740475685f945c1e34))
+* Move ruff from trunk to mise/hk ([ad9afac](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ad9afac53bcaa1c4958ed3f7fc8f5f805eb73734))
+* Move taplo from trunk to mise/hk ([41fbb7b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/41fbb7b14020b6ecf6aa2665c380145387d7cdce))
+* Remove last pieces of trunk ([d33fcae](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d33fcaee9daba08b6fb5cc0b967e38a0b29ca26f))
+* Remove prettier ([4b57064](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4b570645c64e4dbdbd6498c52cac5d2b5ae45fbd))
+* Replace commitlint/cli with committed ([e3e7bb9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e3e7bb967b13d52d9568c0cc9f7666cbc0b9ac53))
+* Replace markdownlint-cli2 with mado ([999e42e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/999e42eea0c44d2616f43e2db55392b72f530a45))
+* Restructure yaml linting & hk config ([8603808](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/860380840f930c368f6c43e6b6b857b3a426005e))
+* Switch cspell to typos ([b279020](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b2790203c6f141f566abe7b05d8e3638199d7ae8))
+* Switch from markdown-link-checker to lychee ([e1359ae](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e1359ae6aebb251a41389db4d7e777d24b789e21))
+* Switch mise to use bun for npm ([97b4a9a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/97b4a9a5631753ed16b8cca374a4dd12162a7f1b))
+* Update committed settings ([735c445](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/735c445a0fdbb19ec66007ba16d9f99420579548))
+
+
+### Bug Fixes
+
+* Adjust pr testing ([155b0e5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/155b0e52a65abb6b58e7c23785d7159c99663aa5))
+* Cross-platform pkl linting ([41ed286](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/41ed2868cbf5e2d5f6b00c73d448f9e24c0de54f))
+* Fix git hook setup task ([c65867e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c65867efca488a26cb29ef94b23c6fdcda36544f))
+* Fix markdown linting ([f035773](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f035773c8e4aa1678321c58d98767775a9359599))
+* Fix mise in template ([a01854f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a01854f63f726c49617ca8cf494057ab24840ac6))
+* Fix prettier settings in template ([808600a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/808600a6fc25518196cb3acda0f0082a36d08701))
+* Fix vscode extensions and settings ([2b6e3b6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2b6e3b6a7697723ab6f0eee4560c49893e2a8680))
+* Fix yamllint vscode config ([b50c0a1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b50c0a163800f08388dd3956150760dcccace0e0))
+* Remove requirements from non-template children ([4b24598](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4b2459838099da9fba6a00d267cf31558dae9a24))
+* Set up mise to work properly in CI ([b2b9e43](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b2b9e43e42bef65a7a8897ae5420cfebbf11b5d0))
+
+
+### Miscellaneous
+
+* Add versionrc to dictionary ([3885196](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3885196026451fe87b6883c6adca68cbe09983a1))
+* **deps:** Update dependency copier to v9.7.1 ([f01eca7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f01eca7d5f136235fd1713a96e587706ba73e65d))
+* **deps:** Update dependency copier to v9.7.1 ([f10523a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f10523a586315aa656add2137d43c4eccedff158))
+* **deps:** Update dependency copier-templates-extensions to v0.3.1 ([2f19967](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2f19967315b924d7dd3a54ede5d8bc4188dddcad))
+* **deps:** Update dependency copier-templates-extensions to v0.3.1 ([17e2c66](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/17e2c6625ba5b998e23f82000a19666a98624a13))
+* **deps:** Update dependency githubkit to v0.12.13 ([0db47a4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0db47a48b9793781b58419dc9064b99ff1930277))
+* **deps:** Update dependency githubkit to v0.12.13 ([a8405fc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a8405fc3127cac8ba52a4a6205cd86db7c291e31))
+* **deps:** Update dependency jinja2-shell-extension to v2.1.1 ([3f1ada1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3f1ada1dd7d2f92a400e7dd6c8e792ca92ad6925))
+* **deps:** Update dependency jinja2-shell-extension to v2.1.1 ([2948f2c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2948f2c7be0ad4fe1b212b8383ac2f5fa304a38f))
+* **deps:** Update dependency pipx:yamlfix to v1.17.0 ([22505f8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/22505f8fd58d397373251062d7bf10a1fa6ac856))
+* **deps:** Update dependency pipx:yamlfix to v1.17.0 ([82d617d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/82d617dc9c084be4816bb26858e51303f59d1532))
+* **deps:** Update dependency rich to v14 ([4c9a7ef](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4c9a7efc1c602cd7ba97396e6e19571ef5c8c078))
+* **deps:** Update dependency rich to v14 ([75a5725](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/75a5725714fb4125e372892afe30e8293fabbbd6))
+* **deps:** Update yamlfix in template ([5db60ea](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5db60ea1982ace75e0704414e31184fd743e17e1))
+* Remove cruft ([ad2f03d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ad2f03dde900b1414a55d455e717a9f64595dfd2))
+
 ## [0.3.37](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.36...v0.3.37) (2025-01-09)
 
 
