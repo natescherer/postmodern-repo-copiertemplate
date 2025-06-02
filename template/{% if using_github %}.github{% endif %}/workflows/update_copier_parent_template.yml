@@ -17,6 +17,12 @@ jobs:
       - uses: jdx/mise-action@v2
         with:
           experimental: true
+      - name: Get New Template Version
+        id: get_ver
+        run: |
+          OUTPUT=$(copier update --skip-answered --pretend --trust 2>&1)
+          NEW_VERSION=${OUTPUT##* }
+          echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_OUTPUT"
       - name: Run Copier Update
         run: |
           copier update --skip-answered --trust
