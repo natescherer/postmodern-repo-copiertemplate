@@ -246,34 +246,32 @@ def initialize_repo_and_commit_files(c, answers_json):
         print("[cyan]Temporarily setting git config options for AzDO...[/cyan]")
         c.run("git config credential.useHttpPath true")
     c.run(f"git remote add origin {remote_url}")
-    if os.getenv("USE_TOKEN_FOR_GIT_AUTH") == "true":
-        print("[cyan]Setting up Git credentials...[/cyan]")
-        print(
-            "[cyan]"
-            "Temporarily enabling plaintext git credentials for first push..."
-            "[/cyan]"
+    print("[cyan]Setting up Git credentials...[/cyan]")
+    print(
+        "[cyan]"
+        "Temporarily enabling plaintext git credentials for first push..."
+        "[/cyan]"
+    )
+    c.run("git config credential.credentialStore plaintext")
+    print(
+        "[cyan]"
+        "Creating credentials file that will be cleaned up after push..."
+        "[/cyan]"
+    )
+    Path(gcm_dir).mkdir(parents=True, exist_ok=True)
+    with open(f"{gcm_dir}/{gcm_file}", "w+") as cred_file:
+        cred_file.writelines(
+            [f"{token}\n", f"service={gcm_service}\n", f"account={gcm_account}"]
         )
-        c.run("git config credential.credentialStore plaintext")
-        print(
-            "[cyan]"
-            "Creating credentials file that will be cleaned up after push..."
-            "[/cyan]"
-        )
-        Path(gcm_dir).mkdir(parents=True, exist_ok=True)
-        with open(f"{gcm_dir}/{gcm_file}", "w+") as cred_file:
-            cred_file.writelines(
-                [f"{token}\n", f"service={gcm_service}\n", f"account={gcm_account}"]
-            )
     print("[cyan]Pushing to remote...[/cyan]")
     c.run("git push -u origin --all")
     if answers["developer_platform"] == "Azure DevOps":
         print("[cyan]Unsetting git config options for AzDO...[/cyan]")
         c.run("git config --unset credential.useHttpPath")
-    if os.getenv("USE_TOKEN_FOR_GIT_AUTH") == "true":
-        print("[cyan]Disabling plaintext git credentials...[/cyan]")
-        c.run("git config --unset credential.credentialStore")
-        print("[cyan]Deleting credentials file...[/cyan]")
-        os.remove(f"{gcm_dir}/{gcm_file}")
+    print("[cyan]Disabling plaintext git credentials...[/cyan]")
+    c.run("git config --unset credential.credentialStore")
+    print("[cyan]Deleting credentials file...[/cyan]")
+    os.remove(f"{gcm_dir}/{gcm_file}")
     print(
         "[bold green]*** 'initialize-repo-and-commit-files' task end ***[/bold green]"
     )
