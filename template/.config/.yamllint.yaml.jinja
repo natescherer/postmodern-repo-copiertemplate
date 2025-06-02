@@ -40,3 +40,8 @@ rules:
       - "**/workflows/*.yml{% raw %}{% endif %}{% endraw %}"
       {%- endif %}
   {%- endif %}
+{%- if using_azdo %}
+
+ignore:
+  - .azurepipelines/*
+{%- endif %}

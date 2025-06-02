@@ -34,14 +34,17 @@ stages:
               curl https://mise.run | sh
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
-            failOnStderr: true
+            failOnStderr: false # Installer writes to stderr normally
             displayName: Install Mise
+          - bash: mise install
+            failOnStderr: false # Mise writes to stderr normally
+            displayName: Run 'mise install'
           - pwsh: |
               . .venv/bin/Activate.ps1
               $Output = copier update --skip-answered --pretend --trust 2>&1
               $NewVersion = $Output[0].ToString().Split(" ")[-1]
               Write-Host "##vso[task.setvariable variable=NEW_VERSION;]$NewVersion"
-            failOnStderr: true
+            failOnStderr: false # Copier writes to stderr normally
             displayName: Get New Template Version
           - pwsh: |
               . .venv/bin/Activate.ps1
