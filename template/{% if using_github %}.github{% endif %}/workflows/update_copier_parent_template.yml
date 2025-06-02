@@ -14,18 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: jdx/mise-action@v2
         with:
-          python-version: 3.x
-      - name: Install Copier & Dependencies
-        run: pip install -r .github/workflows/update_copier_parent_template_deps/requirements.txt
-      - name: Get New Template Version
-        id: get_ver
-        shell: pwsh
-        run: |
-          $Output = copier update --skip-answered --pretend --trust 2>&1
-          $NewVersion = $Output[0].ToString().Split(" ")[-1]
-          echo "NEW_VERSION=$NewVersion" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append
+          experimental: true
       - name: Run Copier Update
         run: |
           copier update --skip-answered --trust
