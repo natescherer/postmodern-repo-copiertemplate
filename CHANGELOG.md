@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.39](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.38...v0.3.39) (2025-06-02)
+
+
+### Bug Fixes
+
+* Fix jinja errors in template ([52060a6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/52060a646a3ad303b8e3cfcb7995a862a4bfbf7b))
+* Fix jinja errors in template ([5916961](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5916961b04c0f84897f4a755d3124d901c2a71e3))
+
 ## [0.3.38](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.37...v0.3.38) (2025-06-02)
 
 
