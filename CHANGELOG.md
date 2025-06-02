@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.46](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.45...v0.3.46) (2025-06-02)
+
+
+### Bug Fixes
+
+* Don't lint azure pipelines yaml files ([def2560](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/def256020899a6eeea6d9d280da8b85096ab9e43))
+* Fix azdo copier update pipeline ([200d952](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/200d95240c11b2994418a1a23514624a308bd397))
+* Fix azdo copier updating pipeline ([12471b0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/12471b05ca5aa5cc8f82fc67c9246fcad4a875d6))
+* Fix hk to properly run on PRs ([#559](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/559)) ([6c581a6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6c581a659ae56f2c747d2906147cf3f2cee24705))
+
 ## [0.3.45](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.44...v0.3.45) (2025-06-02)
 
 
