@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.43](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.42...v0.3.43) (2025-06-02)
+
+
+### Features
+
+* Copier update to parent template v0.3.42 ([dea71ff](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/dea71ffb6a05f053d663cd0a46141d0d9b03eda9))
+* Copier update to parent template v0.3.42 ([7b328f6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7b328f675d6f42d1c694f394cb54eb79c252f6ad))
+* Replace phase_extension.py with _copier_operation ([73519d8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/73519d8c0d58a9d0548b5ced708d9c642189b316))
+* Replace phase_extension.py with _copier_operation ([f26646d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f26646d4654fd46e0ed6874de7542cc5e39927c6))
+
 ## [0.3.42](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.41...v0.3.42) (2025-06-02)
 
 
