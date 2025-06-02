@@ -1,20 +1,10 @@
 copier==9.7.1
-<<<<<<< before updating
 copier-templates-extensions==0.3.1
 githubkit==0.12.13
 jinja2-shell-extension==2.1.1
-=======
-copier-templates-extensions==0.3.0
-githubkit==0.12.4
-jinja2-shell-extension==2.1.0
->>>>>>> after updating
 jinja2-time==0.2.0
 pip==25.1.1
 pipx==1.7.1
 requests==2.32.3
-<<<<<<< before updating
 rich==14.0.0
-=======
-rich==13.9.4
->>>>>>> after updating
 unicode-slugify==0.1.5

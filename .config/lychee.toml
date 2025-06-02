@@ -1,10 +1,7 @@
 exclude = [
     '.*%7B.*%7D.*', # Python f-strings
     'https://img\.shields\.io/github/all-contributors/', # Part of template code
-<<<<<<< before updating
     'https://github\.com/natescherer/postmodern-repo-copiertemplate/compare/v0\.0\.1\.\.\.v0\.2\.0'
-=======
->>>>>>> after updating
 ]
 exclude_path = [
     ".config/lychee.toml",

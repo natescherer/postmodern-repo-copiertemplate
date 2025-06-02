@@ -5,30 +5,18 @@ local linters = new Mapping<String, Step> {
     ["actionlint"] {
         glob = List(".github/workflows/*.{yml,yml[{]% endif %[}]}}")
         batch = true
-<<<<<<< before updating
         check = "actionlint {{ files }}"
     }
     ["lychee"] {
         glob = "*"
         check = "lychee -c .config/lychee.toml --cache --max-retries 0 {{ files }}"
-=======
-        check = "actionlint "
-    }
-    ["lychee"] {
-        glob = "*"
-        check = "lychee -c .config/lychee.toml --cache --max-retries 0 "
->>>>>>> after updating
     }
     ["mado"] {
         glob = "*.{md,md[{]% endif %[}]}"
         stage = "*.{md,md[{]% endif %[}]}"
         check = "mado check {{ files }}"
         exclude = "{CHANGELOG.md}"
-<<<<<<< before updating
     }
-=======
-    } 
->>>>>>> after updating
     ["pkl"] {
         glob = "*.pkl"
         check = "pkl eval {{files}}"
@@ -39,7 +27,6 @@ local linters = new Mapping<String, Step> {
         check = "ruff check --config .config/ruff.toml {{ files }}"
         fix = "ruff check --config .config/ruff.toml --fix {{ files }}"
     }
-<<<<<<< before updating
     ["taplo"] {
         glob = "*.toml"
         stage = "*.toml"
@@ -56,23 +43,6 @@ local linters = new Mapping<String, Step> {
         check = "yamllint -c .config/.yamllint.yaml {{ files }}"
         exclude = "{.copier-answers.yml}"
     }
-=======
-    ["typos"] {
-        glob = "*"
-        check = "typos -c .config/typos.toml "
-    }
-    ["taplo"] {
-        glob = "*.toml"
-        stage = "*.toml"
-        check = "taplo check "
-        fix = "taplo format "
-    }
-    ["yamllint"] {
-        glob = "*.{yml,yaml,yml[{]% endif %[}],yaml[{]% endif %[}]}}"
-        check = "yamllint -c .config/.yamllint.yaml {{ files }}"
-        exclude = "{.copier-answers.yml}"
-    } 
->>>>>>> after updating
 }
 
 hooks {
@@ -82,11 +52,7 @@ hooks {
                 check = "committed --config .config/committed.toml --commit-file {{commit_msg_file}}"
             }
             ["check-commit-spelling"] {
-<<<<<<< before updating
                 check = "typos -c .config/typos.toml {{commit_msg_file}}"
-=======
-            check = "typos -c .config/typos.toml {{commit_msg_file}}"
->>>>>>> after updating
             }
         }
     }
@@ -97,13 +63,6 @@ hooks {
             ...linters // add all linters defined above
         }
     }
-<<<<<<< before updating
-=======
-    // instead of pre-commit, you can instead define pre-push hooks
-    ["pre-push"] {
-        steps = linters
-    }
->>>>>>> after updating
     // "fix" and "check" are special steps for `hk fix` and `hk check` commands
     ["fix"] {
         fix = true
