@@ -1,3 +1,8 @@
+[default]
+extend-ignore-re = [
+    '\(\[.*\]\(https:\/\/github\.com\/.*\)\)' # CHANGELOG.md links
+]
+
 [default.extend-words]
 # Author Name Components
 Nate = "Nate"
