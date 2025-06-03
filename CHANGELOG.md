@@ -400,7 +400,7 @@
 * Fix version number for trunk ([b2de10b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b2de10bac0b7a5ba86cf088dd25d3c9e83e1a6b1))
 * Restore devcontainer json ([f2977b7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f2977b7045d6b296230bcc71562b0a36b1ffdd83))
 * Switch renovate config to json5 ([7f1a6fb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7f1a6fbff025a51764e3710c73a346ce842997b2))
-* Update devcontainer files for renovate compatability ([3ee8163](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3ee816363930e884cca0b1a3d8fac88e4916eb1c))
+* Update devcontainer files for renovate compatibility ([3ee8163](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3ee816363930e884cca0b1a3d8fac88e4916eb1c))
 
 ## [0.3.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.8...v0.3.9) (2024-11-04)
 
@@ -434,7 +434,7 @@
 
 ### Bug Fixes
 
-* Fix yaml formating on azdo cron schedule ([414a245](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/414a2455afd11a87187d1ba6176f1ba0f3b04521))
+* Fix yaml formatting on azdo cron schedule ([414a245](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/414a2455afd11a87187d1ba6176f1ba0f3b04521))
 
 ## [0.3.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.4...v0.3.5) (2024-11-01)
 
@@ -525,7 +525,7 @@
 
 ### Bug Fixes
 
-* Add extension defintion ([1fc1b1e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1fc1b1e1530b2ee15320c92295fa45e67e05cb68))
+* Add extension definition ([1fc1b1e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1fc1b1e1530b2ee15320c92295fa45e67e05cb68))
 
 ## [0.2.44](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.43...v0.2.44) (2024-10-18)
 
@@ -954,7 +954,7 @@
 * Ensure hidden files are processed for subtemplate rename ([e746644](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e7466446a3f796ee29daf6e5dd7ff1cebf7565ee))
 * Ensure tasks.py exists for Standard project types ([f13c9aa](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f13c9aa84e855bd3562f1ded558c6271bc3cee60))
 * Escape square bracket for pwsh ([127fdd2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/127fdd2b15f0a5e627a8bdfe8fe70195c699b514))
-* Excape azdo projects with spaces ([ef90cab](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ef90cab7f7eebf6a574e10d4e679b0ad3702da84))
+* Escape azdo projects with spaces ([ef90cab](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ef90cab7f7eebf6a574e10d4e679b0ad3702da84))
 * Fix azdo repo creation ([05de222](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/05de2225dc22b6467c96d4e27eccbb952ccfc380))
 * Fix deletion of subtemplate directory ([b88f147](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b88f14792535801105337d2fc76628d5fb4a4eea))
 * Fix formatting in README files ([9f2f70f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9f2f70f1dd10a581a1c84f8c3478b27efc74526a))
@@ -982,7 +982,7 @@
 * Project name in template README ([ad5eea2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ad5eea2d23a69aa360c6922d8d749ce4b39fc937))
 * Reformat pwsh oneliners ([11593fa](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/11593fa64dff52384472da297064e0f5a1179cd1))
 * Remove bad tarball deletion ([8b39f96](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8b39f96606a327ea6a1eb90c539095e19186015b))
-* Remove defintion of decommissioned function ([04d27df](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/04d27df53e6ed938804a84c7eed65a71a15a6e1f))
+* Remove definition of decommissioned function ([04d27df](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/04d27df53e6ed938804a84c7eed65a71a15a6e1f))
 * Remove duplicate versionrc file ([f617ac4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f617ac4926779531167ba250412fa62dc8b0112b))
 * Remove extract-changelog-release when in Keep a Changelog mode ([2801b3e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2801b3e2b3725d63e34a56727adf9842b19d6384))
 * Remove hardcoded test repo name from create-pipelines-azdo task ([e208929](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e2089292fcd42e4ce9c9044e0e83366324bf7e27))
