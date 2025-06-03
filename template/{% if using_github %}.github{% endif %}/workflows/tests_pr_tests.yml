@@ -20,7 +20,7 @@ jobs:
         with:
           experimental: true
       - name: hk check
-        run: hk check --from-ref ${{ github.base_ref }}
+        run: hk check --all
       - name: Example Tests
         run: |
           FILE=README.md
