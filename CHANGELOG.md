@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.48](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.47...v0.3.48) (2025-06-03)
+
+
+### Features
+
+* Improve templates for lychee and typos config ([#575](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/575)) ([d90b167](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d90b1674879c385c0150be741b1ab7eab287d6e9))
+
+
+### Bug Fixes
+
+* Change hk --from-ref option ([#572](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/572)) ([8ac4aba](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8ac4aba5c4b577add2272539ce3cf04fec1b4d35))
+* Make sure pipx is installed before other tools ([#570](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/570)) ([cf9eac0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cf9eac0992562bd6265e9441ab95dae531f7e2ae))
+
 ## [0.3.47](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.46...v0.3.47) (2025-06-02)
 
 
