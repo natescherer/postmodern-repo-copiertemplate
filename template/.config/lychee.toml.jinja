@@ -1,11 +1,13 @@
 exclude = [
     '.*%7B.*%7D.*', # Python f-strings
     {%- if is_template %}
+    'https://dev.azure.com', # This errors frequently, easier to just ignore
     'https://img\.shields\.io/github/all-contributors/', # Part of template code
     {%- endif %}
 ]
 exclude_path = [
     ".config/lychee.toml",
+    ".config/typos.toml",
     {%- if is_template %}
     "template/.config/lychee.toml.jinja"
     {%- endif %}
