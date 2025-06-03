@@ -2,6 +2,9 @@
 _.python.venv = { path = ".venv", create = true }
 
 [hooks]
+preinstall = [
+    "pip install -q pipx==1.7.1"
+]
 postinstall = [
     "mise run set_up_git_hooks",
     "mise run pip_install"
