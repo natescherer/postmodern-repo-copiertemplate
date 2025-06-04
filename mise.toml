@@ -53,7 +53,7 @@ else:
 [tools]
 # Project Tools
 hk = "1.1.2"
-python = "3.13.3"
+python = "3.13.4"
 # Backends
 java = "temurin-jre-24.0.1+9" # Used by pkl VSCode plugin; can be removed when this is resolved: https://github.com/apple/pkl-lsp/issues/60
 pkl = "0.28.2" # Used by hk
