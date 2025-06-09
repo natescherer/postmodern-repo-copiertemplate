@@ -20,7 +20,11 @@ jobs:
         with:
           experimental: true
       - name: hk check
+<<<<<<< before updating
         run: hk check --all
+=======
+        run: hk check --from-ref main
+>>>>>>> after updating
       - name: Example Tests
         run: |
           FILE=README.md
