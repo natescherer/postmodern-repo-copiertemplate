@@ -14,22 +14,7 @@ postinstall = [
 experimental = true # Needed for hooks as of 2025/05/31
 
 [tasks.pip_install]
-run = '''
-#!/usr/bin/env python
-
-import subprocess
-
-def prCyan(skk): print("\033[96m {}\033[00m" .format(skk))
-
-prCyan("Installing Python dependencies...")
-sp = subprocess.run(
-    ["pip", "install", "-r", ".config/requirements.txt", "--require-virtualenv"],
-    capture_output=True, text=True)
-
-for x in sp.stdout.splitlines():
-    if "Requirement already satisfied" not in x:
-        print(x)
-'''
+run = "pip install -r .config/requirements.txt --require-virtualenv --disable-pip-version-check"
 
 [tasks.set_up_git_hooks]
 run = '''
