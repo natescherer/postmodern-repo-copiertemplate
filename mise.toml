@@ -34,6 +34,6 @@ run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
 
 [tools]
 # Backends
-python = "3.13.3" # Used by copier and pre-commit
+python = "3.13.5" # Used by copier and pre-commit
 # Tools
 yamlfmt = "0.17.0" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved
