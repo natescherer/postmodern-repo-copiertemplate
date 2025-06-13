@@ -2,54 +2,38 @@
 _.python.venv = { path = ".venv", create = true }
 
 [hooks]
-preinstall = [
-    "pip install -q pipx==1.7.1"
-]
 postinstall = [
-    "mise run set_up_git_hooks",
-    "mise run pip_install"
+  "pip install -r .config/requirements.txt --require-virtualenv --disable-pip-version-check",
+  "mise run set_up_git_hooks",
 ]
 
 [settings]
-experimental = true # Needed for hooks as of 2025/05/31
-
-[tasks.pip_install]
-run = "pip install -r .config/requirements.txt --require-virtualenv --disable-pip-version-check"
+experimental = true                                     # Needed for hooks as of 2025/05/31
+windows_default_inline_shell_args = "powershell.exe /c"
 
 [tasks.set_up_git_hooks]
 run = '''
-#!/usr/bin/env python
+#!/usr/bin/env sh
 
-import os
-import subprocess
-
-def prYellow(skk): print("\033[93m {}\033[00m" .format(skk))
-
-github_actions = os.environ.get("GITHUB_ACTIONS")
-azure_pipelines = os.environ.get("TF_BUILD")
-
-if github_actions or azure_pipelines:
-    prYellow("Not setting up git hooks as mise is running in CI!")
-else:
-    sp = subprocess.run(["hk", "install", "--mise"], capture_output=True, text=True)
-    print(sp.stdout)
+if [ -n $GITHUB_ACTIONS ] || [ -n $TF_BUILD ]; then
+    echo("\033[93mNot setting up git hooks as mise is running in CI!\033[00m"
+else
+    pre-commit install -c .config/.pre-commit-config.yaml
+fi
+'''
+run_windows = '''
+if ($env:GITHUB_ACTIONS -or $env:TF_BUILD) {
+    Write-Host -ForegroundColor Yellow -Object "Not setting up git hooks as mise is running in CI!"
+} else {
+    pre-commit install -c .config\.pre-commit-config.yaml
+}
 '''
 
+[tasks.test]
+run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
+
 [tools]
-# Project Tools
-hk = "1.1.2"
-python = "3.13.3"
 # Backends
-java = "temurin-jre-24.0.1+9" # Used by pkl VSCode plugin; can be removed when this is resolved: https://github.com/apple/pkl-lsp/issues/60
-pkl = "0.28.2" # Used by hk
-# Linters
-actionlint = "1.7.7"
-committed = "1.1.7"
-lychee = "0.18.1"
-"pipx:yamlfix" = "1.17.0"
-"pipx:yamllint" = "1.37.1"
-ruff = "0.11.12"
-shellcheck = "0.10.0"
-taplo = "0.10.0"
-typos = "1.32.0"
-"ubi:akiomik/mado" = "0.3.0"
+python = "3.13.3" # Used by copier and pre-commit
+# Tools
+yamlfmt = "0.17.0" # Needed by VSCode extension bluebrown.yamlfmt
