@@ -19,9 +19,9 @@ jobs:
       - uses: jdx/mise-action@v2
         with:
           experimental: true
-      - uses: pre-commit/action@v3.0.1
-        with:
-          extra_args: -c .config/.pre-commit-config.yaml
+      - id: changed-files
+        uses: tj-actions/changed-files@v46.0.5
+      - run: pre-commit -c .config/.pre-commit-config.yaml --files ${{ steps.changed-files.outputs.all_changed_files }}
       - name: Example Tests
         run: |-
           FILE=README.md
