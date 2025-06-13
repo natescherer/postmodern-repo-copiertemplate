@@ -52,7 +52,7 @@
     "#video*"
     // END Ignore allcontributors links
   ],
-  "markdownlint.configFile": ".config/markdownlint.yaml",
+  "markdownlint.configFile": ".config/.markdownlint.yaml",
   "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
   "typos.config": ".config/typos.toml",
   "yamlfmt.args": [
