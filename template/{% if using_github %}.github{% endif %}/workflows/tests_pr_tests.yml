@@ -21,7 +21,7 @@ jobs:
           experimental: true
       - id: changed-files
         uses: tj-actions/changed-files@v46.0.5
-      - run: pre-commit -c .config/.pre-commit-config.yaml --files ${{ steps.changed-files.outputs.all_changed_files }}
+      - run: pre-commit run -c .config/.pre-commit-config.yaml --files ${{ steps.changed-files.outputs.all_changed_files }}
       - name: Example Tests
         run: |-
           FILE=README.md
