@@ -8,7 +8,7 @@ postinstall = [
 ]
 
 [settings]
-experimental = true                                     # Needed for hooks as of 2025/05/31
+experimental = true # Needed for hooks as of v2025.6.2
 windows_default_inline_shell_args = "powershell.exe /c"
 
 [tasks.set_up_git_hooks]
@@ -36,4 +36,4 @@ run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
 # Backends
 python = "3.13.3" # Used by copier and pre-commit
 # Tools
-yamlfmt = "0.17.0" # Needed by VSCode extension bluebrown.yamlfmt
+yamlfmt = "0.17.0" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved

@@ -19,7 +19,9 @@ repos:
     rev: v0.9.3
     hooks:
       - id: taplo-format
+        args: ["-c", ".config/taplo.toml"]
       - id: taplo-lint
+        args: ["--default-schema-catalogs", "-c", ".config/taplo.toml"]
   - repo: https://github.com/crate-ci/committed
     rev: v1.1.7
     hooks:
@@ -35,6 +37,7 @@ repos:
     rev: v0.17.0
     hooks:
       - id: yamlfmt
+        args: ["-conf", ".config/yamlfmt.yaml"]
   - repo: https://github.com/lycheeverse/lychee
     rev: v0.15.1
     hooks:
