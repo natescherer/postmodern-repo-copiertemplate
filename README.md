@@ -51,7 +51,7 @@ It is highly encouraged for you to take this template and make your own child te
 ### Code Management and Formatting
 
 - Automatic, repository-local dev tool installation via [mise](https://github.com/jdx/mise)
-- Automatic code linting and formatting via [hk](https://github.com/jdx/hk):
+- Automatic code linting and formatting via [pre-commit](https://github.com/pre-commit/pre-commit):
   - Commit message linting via [committed](https://github.com/crate-ci/committed)
   - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
   - Markdown linting via [mado](https://github.com/akiomik/mado)
