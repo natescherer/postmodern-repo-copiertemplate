@@ -1,10 +1,10 @@
 [default]
 extend-ignore-re = [
-    {%- if using_github %}
-    '\(\[.*\]\(https:\/\/github\.com\/.*\)\)' # CHANGELOG.md links
-    {%- elif using_azdo %}
-    '\(\[.*\]\(https:\/\/dev\.azure\.com\/.*\)\)' # CHANGELOG.md links
-    {%- endif %}
+  {%- if using_github %}
+  '\(\[.*\]\(https:\/\/github\.com\/.*\)\)', # CHANGELOG.md links
+  {%- elif using_azdo %}
+  '\(\[.*\]\(https:\/\/dev\.azure\.com\/.*\)\)', # CHANGELOG.md links
+  {%- endif %}
 ]
 
 [default.extend-words]

@@ -22,7 +22,7 @@ jobs:
       - name: hk check
         run: hk check --all
       - name: Example Tests
-        run: |
+        run: |-
           FILE=README.md
           if [ -f "$FILE" ]; then
             echo "$FILE exists."
