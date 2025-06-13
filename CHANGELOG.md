@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.48](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.47...v0.3.48) (2025-06-13)
+
+
+### Features
+
+* Improve repo_name default to be dst_path ([#577](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/577)) ([aed1ecd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/aed1ecdaf02495f8bfc3fa73c75244c87502cd3a))
+* Improve templates for lychee and typos config ([#575](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/575)) ([d90b167](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d90b1674879c385c0150be741b1ab7eab287d6e9))
+* Reactor pip installations to work better cross-platform ([#583](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/583)) ([64ea97f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/64ea97fc45d67c91e624c3ff337c9a7b7a9cbae6))
+* Replace hk with pre-commit ([#586](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/586)) ([6205a02](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6205a02494201f622f82a7a9cb86b9488f3a40de))
+
+
+### Bug Fixes
+
+* Change hk --from-ref option ([#572](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/572)) ([8ac4aba](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8ac4aba5c4b577add2272539ce3cf04fec1b4d35))
+* Make sure pipx is installed before other tools ([#570](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/570)) ([cf9eac0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cf9eac0992562bd6265e9441ab95dae531f7e2ae))
+
+
+### Miscellaneous
+
+* **deps:** Update dependency githubkit to v0.12.14 ([#584](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/584)) ([73a2c01](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/73a2c01254885002ec286c50f043793df6f4bda0))
+* **deps:** Update dependency python to v3.13.5 ([#578](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/578)) ([01cfd3a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/01cfd3a1f8863fab3499f2da613dfe634facbd83))
+* **deps:** Update dependency requests to v2.32.4 ([#580](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/580)) ([f7acfdc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f7acfdcfe96df90d74478282bcba3a1b0ee091dc))
+
 ## [0.3.47](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.46...v0.3.47) (2025-06-02)
 
 
