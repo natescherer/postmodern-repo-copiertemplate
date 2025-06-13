@@ -21,8 +21,9 @@ jobs:
           experimental: true
       - id: changed-files
         uses: tj-actions/changed-files@v46.0.5
-      - run: |
-          mise install
+      - name: Run Pre-Commit Tests
+        run: |
+          source .venv/bin/activate
           pre-commit run -c .config/.pre-commit-config.yaml --files ${{ steps.changed-files.outputs.all_changed_files }}
       - name: Example Tests
         run: |-
