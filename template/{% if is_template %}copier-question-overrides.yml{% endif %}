@@ -1,10 +1,8 @@
 # Here is where you should override questions in the parent copier.yml
 # (Using this file makes getting updates from the parent template easier)
 
-# It is recommended you override the 'else' portion below to better describe what your template does. I.E. "If this repo will deploy a website, choose Standard. If this repo will be a child template of this template, choose Template."
-project_type:
-  type: str
-  help: "{% if _copier_operation == 'update' %}project_type - DO NOT CHANGE ON COPIER UPDATE{% else %}If this repo will be a basic repo, choose Standard. If this repo will be a child template of this template, choose Template.{% endif %}"
-  choices:
-    - Standard
-    - Template
+dummy_question:
+  type: bool
+  help: This needs to be here so the template doesn't break, but you can replace it with your own questions.
+  default: true
+  when: false

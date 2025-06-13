@@ -1,10 +1,13 @@
 {
   "recommendations": [
+    "bluebrown.yamlfmt",
     "charliermarsh.ruff",
+    "DavidAnson.vscode-markdownlint",
     "github.vscode-github-actions",
-    "kuscamara.yamllint-fix",
+    "hverlin.mise-vscode",
     "ms-azure-devops.azure-pipelines",
     "ms-python.python",
+    "redhat.vscode-yaml",
     "samuelcolvin.jinjahtml",
     "tamasfe.even-better-toml",
     "tekumara.typos-vscode"

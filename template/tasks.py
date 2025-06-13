@@ -238,8 +238,10 @@ def initialize_repo_and_commit_files(c, answers_json):
     elif answers["developer_platform"] == "Azure DevOps":
         encoded_project = answers["azdo_project"].replace(" ", "%20")
         remote_url = f"https://{answers['azdo_org']}@dev.azure.com/{answers['azdo_org']}/{encoded_project}/_git/{answers['repo_name']}"
-        gcm_dir = (f"{str(Path.home())}/.gcm/store/git/https/dev.azure.com/"
-                   f"{answers['azdo_org']}")
+        gcm_dir = (
+            f"{str(Path.home())}/.gcm/store/git/https/dev.azure.com/"
+            f"{answers['azdo_org']}"
+        )
         gcm_file = "copier.credential"
         gcm_service = f"https://dev.azure.com/{answers['azdo_org']}"
         gcm_account = "copier"
@@ -248,15 +250,11 @@ def initialize_repo_and_commit_files(c, answers_json):
     c.run(f"git remote add origin {remote_url}")
     print("[cyan]Setting up Git credentials...[/cyan]")
     print(
-        "[cyan]"
-        "Temporarily enabling plaintext git credentials for first push..."
-        "[/cyan]"
+        "[cyan]Temporarily enabling plaintext git credentials for first push...[/cyan]"
     )
     c.run("git config credential.credentialStore plaintext")
     print(
-        "[cyan]"
-        "Creating credentials file that will be cleaned up after push..."
-        "[/cyan]"
+        "[cyan]Creating credentials file that will be cleaned up after push...[/cyan]"
     )
     Path(gcm_dir).mkdir(parents=True, exist_ok=True)
     with open(f"{gcm_dir}/{gcm_file}", "w+") as cred_file:

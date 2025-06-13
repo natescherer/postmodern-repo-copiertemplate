@@ -1,0 +1,59 @@
+default_install_hook_types:
+  - pre-commit
+  - commit-msg
+exclude: (\.copier\-answers\.yml|CHANGELOG\.md)
+repos:
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.18.1
+    hooks:
+      - id: markdownlint-cli2
+        args: ["--config", ".config/.markdownlint.yaml"]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.13
+    hooks:
+      - id: ruff-check
+        args: ["--config", ".config/ruff.toml", "--fix"]
+      - id: ruff-format
+        args: ["--config", ".config/ruff.toml"]
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-format
+        args: ["-c", ".config/taplo.toml"]
+      - id: taplo-lint
+        args: ["--default-schema-catalogs", "-c", ".config/taplo.toml"]
+  - repo: https://github.com/crate-ci/committed
+    rev: v1.1.7
+    hooks:
+      - id: committed
+        args: ["--config", ".config/committed.toml", "--fixup", "--wip", "--commit-file"]
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.33.1
+    hooks:
+      - id: typos
+        args: ["-c", ".config/typos.toml", "--write-changes", "--force-exclude"]
+        stages: ["pre-commit", "commit-msg"]
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.17.0
+    hooks:
+      - id: yamlfmt
+        args: ["-conf", ".config/yamlfmt.yaml"]
+  # - repo: https://github.com/lycheeverse/lychee # Currently broken, see https://github.com/lycheeverse/lychee/issues/1635
+  #   rev: v0.15.1
+  #   hooks:
+  #     - id: lychee
+  #       args: ["--no-progress", "-c", ".config/lychee.toml", "--cache", "--max-retries", "0"]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: no-commit-to-branch
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.7
+    hooks:
+      - id: actionlint
