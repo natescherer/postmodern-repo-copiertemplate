@@ -284,7 +284,7 @@ def create_pipelines_azdo(c, answers_json):
         token = json.loads(token_file.read())["token"]
 
     for entry in os.scandir(".azurepipelines"):
-        if entry.name.endswith(".yml"):
+        if entry.name.endswith(".yml") and not entry.name.startswith("template-"):
             pipeline_data = {
                 "name": f"{answers['repo_name']} {Path(entry.name).with_suffix('')}",
                 "repository": {
