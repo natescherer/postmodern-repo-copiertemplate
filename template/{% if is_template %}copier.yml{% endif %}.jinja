@@ -31,8 +31,13 @@ parent_template_url:
 ## Questions
 repo_name:
   type: str
+<<<<<<< before updating
   help: "{% if _copier_operation == 'update' %}repo_name - DO NOT CHANGE ON COPIER UPDATE{% else %}The name of this project's Git repository. Defaults to the name of the destination path.{% endif %}"
   default: "{{ _copier_conf.dst_path | basename }}"
+=======
+  help: "{% if _copier_operation == 'update' %}repo_name - DO NOT CHANGE ON COPIER UPDATE{% else %}The name of this project's Git repository. Defaults to the name of the current directory.{% endif %}"
+  default: "{{ '.' | cwd_name() }}" # This is an ugly kludge but every other way tried didn't work and there wasn't a good way to debug
+>>>>>>> after updating
 
 author_name:
   type: str

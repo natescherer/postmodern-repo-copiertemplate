@@ -3,23 +3,62 @@ _.python.venv = { path = ".venv", create = true }
 
 [hooks]
 postinstall = [
+<<<<<<< before updating
   "pip install -r .config/requirements.txt --require-virtualenv --disable-pip-version-check",
   "mise run set_up_git_hooks",
+=======
+    "mise run set_up_git_hooks",
+    "mise run pip_install"
+>>>>>>> after updating
 ]
 
 [settings]
 experimental = true # Needed for hooks as of v2025.6.2
 windows_default_inline_shell_args = "powershell.exe /c"
 
+[tasks.pip_install]
+run = '''
+#!/usr/bin/env python
+
+import subprocess
+
+def prCyan(skk): print("\033[96m {}\033[00m" .format(skk))
+
+prCyan("Installing Python dependencies...")
+sp = subprocess.run(
+    ["pip", "install", "-r", ".config/requirements.txt", "--require-virtualenv"],
+    capture_output=True, text=True)
+
+for x in sp.stdout.splitlines():
+    if "Requirement already satisfied" not in x:
+        print(x)
+'''
+
 [tasks.set_up_git_hooks]
 run = '''
 #!/usr/bin/env sh
 
+<<<<<<< before updating
 if [ -n $GITHUB_ACTIONS ] || [ -n $TF_BUILD ]; then
     echo "\033[93mNot setting up git hooks as mise is running in CI!\033[00m"
 else
     pre-commit install -c .config/.pre-commit-config.yaml
 fi
+=======
+import os
+import subprocess
+
+def prYellow(skk): print("\033[93m {}\033[00m" .format(skk))
+
+github_actions = os.environ.get("GITHUB_ACTIONS")
+azure_pipelines = os.environ.get("TF_BUILD")
+
+if github_actions or azure_pipelines:
+    prYellow("Not setting up git hooks as mise is running in CI!")
+else:
+    sp = subprocess.run(["hk", "install", "--mise"], capture_output=True, text=True)
+    print(sp.stdout)
+>>>>>>> after updating
 '''
 run_windows = '''
 if ($env:GITHUB_ACTIONS -or $env:TF_BUILD) {

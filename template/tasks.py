@@ -250,11 +250,23 @@ def initialize_repo_and_commit_files(c, answers_json):
     c.run(f"git remote add origin {remote_url}")
     print("[cyan]Setting up Git credentials...[/cyan]")
     print(
+<<<<<<< before updating
         "[cyan]Temporarily enabling plaintext git credentials for first push...[/cyan]"
     )
     c.run("git config credential.credentialStore plaintext")
     print(
         "[cyan]Creating credentials file that will be cleaned up after push...[/cyan]"
+=======
+        "[cyan]"
+        "Temporarily enabling plaintext git credentials for first push..."
+        "[/cyan]"
+    )
+    c.run("git config credential.credentialStore plaintext")
+    print(
+        "[cyan]"
+        "Creating credentials file that will be cleaned up after push..."
+        "[/cyan]"
+>>>>>>> after updating
     )
     Path(gcm_dir).mkdir(parents=True, exist_ok=True)
     with open(f"{gcm_dir}/{gcm_file}", "w+") as cred_file:

@@ -19,9 +19,15 @@ jobs:
       - uses: jdx/mise-action@v2
         with:
           experimental: true
+<<<<<<< before updating
       - id: changed-files
         uses: tj-actions/changed-files@v46.0.5
       - name: Run Pre-Commit Tests
+=======
+      - name: hk check
+        run: hk check --from-ref main
+      - name: Example Tests
+>>>>>>> after updating
         run: |
           source .venv/bin/activate
           pre-commit run -c .config/.pre-commit-config.yaml --files ${{ steps.changed-files.outputs.all_changed_files }}
