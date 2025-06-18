@@ -1,0 +1,39 @@
+name: "[Maintenance] Check for Parent Template Updates"
+
+on:
+  schedule:
+    - cron: 0 17 * * 1 # Every Monday at 5pm UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+      - name: Check for Template Updates
+        shell: pwsh
+        env:
+          APPRISE_URI: ${{ secrets.APPRISE_URI }}
+        run: |
+          mise use yq
+          $CurrentVersion = $(mise x -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
+          $Output = copier update --skip-answered --pretend --trust 2>&1
+          $NewVersion = $Output[0].ToString().Split(" ")[-1]
+          if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
+            mise x -- pip install apprise
+            mise x -- apprise -i html -t "[${{ github.repository }}"] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> Latest Version: <i>$LatestVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
+          }
+  workflow-keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: liskin/gh-workflow-keepalive@v1
