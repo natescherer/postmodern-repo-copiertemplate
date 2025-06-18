@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.4.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.47...v0.4.0) (2025-06-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove devcontainer setup in favor of mise ([#613](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/613))
+* move copier answers into .config directory ([#610](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/610))
+* move version file for azdo repos into .config
+* move release-please configuration into .config
+
+### Features
+
+* Add renovate updating for templated mise.toml ([#589](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/589)) ([142ce5f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/142ce5fedaf8254663e02f3e661f6b519d002579))
+* Improve how renovate works with mise.toml.jinja ([#596](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/596)) ([2878a68](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2878a68964e02c5ab7ef1ee3e1e84f6c2b2e3fbe))
+* Improve repo_name default to be dst_path ([#577](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/577)) ([aed1ecd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/aed1ecdaf02495f8bfc3fa73c75244c87502cd3a))
+* Improve templates for lychee and typos config ([#575](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/575)) ([d90b167](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d90b1674879c385c0150be741b1ab7eab287d6e9))
+* Move copier answers into .config directory ([#610](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/610)) ([0cd9a8a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0cd9a8a561698d67b0fd8405e42d9a8dbdfa2dcb))
+* Move release-please configuration into .config ([036b39a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/036b39ac073163997d3a4b31e95342e840c45d79))
+* Move version file for azdo repos into .config ([396244d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/396244d74f8b2fb97542494252b9d0d4fb55b25d))
+* Reactor pip installations to work better cross-platform ([#583](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/583)) ([64ea97f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/64ea97fc45d67c91e624c3ff337c9a7b7a9cbae6))
+* Remove devcontainer setup in favor of mise ([#613](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/613)) ([6dafa15](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6dafa15804c23c4d2d75b322e08c33c34292f742))
+* Replace hk with pre-commit ([#586](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/586)) ([6205a02](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6205a02494201f622f82a7a9cb86b9488f3a40de))
+* Sync renovate config between template and repo ([#602](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/602)) ([900fe5c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/900fe5c946a71f9d9e5a50e124cfe7b50358d325))
+* Update renovate versioning ([#597](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/597)) ([975d15a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/975d15a0e2360655ae238bad5f105b8f830c46bf))
+
+
+### Bug Fixes
+
+* Change hk --from-ref option ([#572](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/572)) ([8ac4aba](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8ac4aba5c4b577add2272539ce3cf04fec1b4d35))
+* Fix azure devops bugs ([#588](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/588)) ([69eccb3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/69eccb3e99b4ee1e435c47d0cef31c593154c75e))
+* Fix mise hook setup on sh systems ([#611](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/611)) ([487b63c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/487b63cbb6a7840aaf26a85a8f497fab61e04d1f))
+* Fix renovate config ([#606](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/606)) ([d0cdd53](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d0cdd53bc38180a8269100b6175487fa9a471725))
+* Fix yamlfmt renovate comment ([#592](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/592)) ([e15e00f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e15e00fd04babb5c55089aadd919239990937ad3))
+* Make sure pipx is installed before other tools ([#570](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/570)) ([cf9eac0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cf9eac0992562bd6265e9441ab95dae531f7e2ae))
+
+
+### Miscellaneous
+
+* **deps:** Update dependency commit-and-tag-version to v12.5.1 ([#595](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/595)) ([df49e17](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/df49e17dfab699c41b0f5aa1da3b8ae956f77ffd))
+* **deps:** Update dependency commit-and-tag-version to v12.5.1 ([#598](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/598)) ([8898581](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8898581f3853fdd9510508f8d39478106a212e42))
+* **deps:** Update dependency githubkit to v0.12.14 ([#584](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/584)) ([73a2c01](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/73a2c01254885002ec286c50f043793df6f4bda0))
+* **deps:** Update dependency google/yamlfmt to v0.17.0 ([#594](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/594)) ([0179212](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/017921271ea3853b49df944ea88fea1a0929aea6))
+* **deps:** Update dependency google/yamlfmt to v0.17.0 ([#600](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/600)) ([1f97c1f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1f97c1fe25b5733f3bb2f976f84c0a31c5bc0c97))
+* **deps:** Update dependency python to v3.13.5 ([#578](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/578)) ([01cfd3a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/01cfd3a1f8863fab3499f2da613dfe634facbd83))
+* **deps:** Update dependency python to v3.13.5 ([#599](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/599)) ([8884e32](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8884e3217d2baaf514ab08fb0f4046246a6b96ad))
+* **deps:** Update dependency requests to v2.32.4 ([#580](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/580)) ([f7acfdc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f7acfdcfe96df90d74478282bcba3a1b0ee091dc))
+* **deps:** Update dependency yamlfmt to v0.17.0 ([#591](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/591)) ([d0b23d9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d0b23d97cbce184c9f486c3f429ad238db8b0c3c))
+* **deps:** Update node.js to v22.16.0 ([#601](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/601)) ([f88ead3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f88ead31ec702fa290a57c25c5a3f44e2a8b6049))
+
 ## [0.3.47](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.46...v0.3.47) (2025-06-02)
 
 
