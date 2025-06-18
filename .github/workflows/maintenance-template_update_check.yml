@@ -23,14 +23,11 @@ jobs:
           APPRISE_URI: ${{ secrets.APPRISE_URI }}
         run: |
           $CurrentVersion = $(mise x yq -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
-          Write-Host "CurrentVersion '$CurrentVersion'"
           $Output = mise x -- copier update --skip-answered --pretend --trust 2>&1
-          Write-Host "Output $Output"
           $NewVersion = $Output[0].ToString().Split(" ")[-1]
-          Write-Host "NewVersion '$NewVersion'"
           if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
             mise x -- pip install apprise
-            mise x -- apprise -i html -t "[${{ github.repository }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> Latest Version: <i>$LatestVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
+            mise x -- apprise -i html -t "[${{ github.repository }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
           }
   workflow-keepalive:
     if: github.event_name == 'schedule'
