@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "bluebrown.yamlfmt",
+    "BlueGlassBlock.better-json5",
     "charliermarsh.ruff",
     "DavidAnson.vscode-markdownlint",
     "github.vscode-github-actions",
