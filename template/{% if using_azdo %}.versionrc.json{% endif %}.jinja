@@ -1,15 +1,24 @@
 {
-  "writerOpts": {
-    "reverse": false,
-    "commitsSort": false
-  },
   "bumpFiles": [
     {
       "filename": ".version.txt",
       "type": "plain-text"
     }
   ],
+  "commitAll": false,
+  "compareUrlFormat": {% raw %}"{{host}}/{{owner}}/{{repository}}/branches?baseVersion=GB{{previousTag}}&targetVersion=GB{{currentTag}}&_a=files"{% endraw %},
+  "noVerify": true,
+{%- if is_prerelease %}
+  "preMajor": true,
+{%- endif %}
   "releaseCommitMessageFormat": {% raw %}"chore: release {{currentTag}}"{% endraw %},
+  "skip": {
+    "bump": false,
+    "changelog": false,
+    "commit": false,
+    "tag": false
+  },
+  "tagPrefix": "v",
   "types": [
     {
       "type": "build",
@@ -67,16 +76,8 @@
       "hidden": false
     }
   ],
-{%- if is_prerelease %}
-  "preMajor": true,
-{%- endif %}
-  "skip": {
-    "bump": false,
-    "changelog": false,
-    "commit": false,
-    "tag": false
+  "writerOpts": {
+    "reverse": false,
+    "commitsSort": false
   },
-  "tagPrefix": "v",
-  "noVerify": true,
-  "commitAll": false
 }
