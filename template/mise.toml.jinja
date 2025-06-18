@@ -15,7 +15,7 @@ windows_default_inline_shell_args = "powershell.exe /c"
 run = '''
 #!/usr/bin/env sh
 
-if [ -n $GITHUB_ACTIONS ] || [ -n $TF_BUILD ]; then
+if [ -n "$GITHUB_ACTIONS" ] || [ -n "$TF_BUILD" ]; then
     echo "\033[93mNot setting up git hooks as mise is running in CI!\033[00m"
 else
     pre-commit install -c .config/.pre-commit-config.yaml
