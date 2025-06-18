@@ -1,5 +1,5 @@
 ## Initial Settings
-_min_copier_version: 9.3.1
+_answers_file: .config/copier-answers.yml
 
 _jinja_extensions:
   # External Dependencies
