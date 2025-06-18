@@ -24,7 +24,7 @@ jobs:
         run: |
           mise use yq
           $CurrentVersion = $(mise x -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
-          $Output = copier update --skip-answered --pretend --trust 2>&1
+          $Output = mise x -- copier update --skip-answered --pretend --trust 2>&1
           $NewVersion = $Output[0].ToString().Split(" ")[-1]
           if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
             mise x -- pip install apprise
