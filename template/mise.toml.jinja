@@ -35,15 +35,15 @@ run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
 [tools]
 # Backends
 {{%- if using_azdo %}}
-{# renovate: datasource=node-version depName=node #}
+{# renovate: datasource=node-version depName=node versioning=node #}
 node = "22.15.1" # Used by commit-and-tag-version
 {{%- endif %}}
-{# renovate: datasource=python-version depName=python #}
+{# renovate: datasource=python-version depName=python versioning=python #}
 python = "3.13.3" # Used by copier and pre-commit
 # Tools
 {{%- if using_azdo %}}
 {# renovate: datasource=npm depName=commit-and-tag-version #}
-"npm:commit-and-tag-version" = "12.5.1"
+"npm:commit-and-tag-version" = "12.5.0"
 {{%- endif %}}
 {# renovate: datasource=github-releases depName=google/yamlfmt #}
-yamlfmt = "0.17.0" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved
+yamlfmt = "0.16.0" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved

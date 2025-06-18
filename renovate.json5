@@ -2,7 +2,9 @@
   // Core config
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": false,
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   // Per-provider config
   "azure-pipelines": {
     "enabled": true,
@@ -18,7 +20,9 @@
     "pinDigests": true
   },
   "devcontainer": {
-    "fileMatch": ["(^|/)devcontainer\\.json(?:\\.jinja)?$"]
+    "fileMatch": [
+      "(^|/)devcontainer\\.json(?:\\.jinja)?$"
+    ]
   },
   "github-actions": {
     "fileMatch": [
@@ -29,12 +33,16 @@
   "packageRules": [
     {
       "description": "Don't pin digests in devcontainer.json because it's not supported in features",
-      "matchManagers": ["devcontainer"],
+      "matchManagers": [
+        "devcontainer"
+      ],
       "pinDigests": false
     },
     {
       "description": "Use standard major version numbers for Azure Pipelines",
-      "matchDatasources": ["azure-pipelines-tasks"],
+      "matchDatasources": [
+        "azure-pipelines-tasks"
+      ],
       "extractVersion": "^(?<version>\\d+)"
     }
   ],
@@ -47,7 +55,8 @@
       ],
       "matchStrings": [
         "{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"
-      ]
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ]
 }
