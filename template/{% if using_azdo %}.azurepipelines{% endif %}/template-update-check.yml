@@ -1,0 +1,48 @@
+name: $(BuildId)
+
+trigger:
+  branches:
+    exclude:
+      - "*"
+
+schedules:
+  - cron: 0 2 * * 1
+    displayName: Run 'copier update' Every Monday at 2am
+    branches:
+      include:
+        - main
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: checkfortemplateupdate
+    displayName: Check for Template Update
+    jobs:
+      - job: checkfortemplateupdate
+        displayName: Check for Template Update
+        steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
+          - bash: |
+              curl https://mise.run | sh
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
+            failOnStderr: false # Installer writes to stderr normally
+            displayName: Install Mise
+          - bash: mise install
+            failOnStderr: false # Mise writes to stderr normally
+            displayName: Run 'mise install'
+          - pwsh: |
+              $CurrentVersion = $(mise x yq -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
+              $Output = mise x -- copier update --skip-answered --pretend --trust 2>&1
+              $NewVersion = $Output[0].ToString().Split(" ")[-1]
+              if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
+                mise x -- pip install apprise
+                mise x -- apprise -i html -t "[$(Build.Repository.Uri)] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
+              }
+            env:
+              APPRISE_URI: $(APPRISE_URI)
+            failOnStderr: false # Copier writes to stderr normally
+            displayName: Check for Template Updates
