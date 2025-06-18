@@ -7,6 +7,7 @@ trigger:
 
 variables:
   MINIMUM_VERSION: {% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}
+  VERSION_FILE_PATH: .config/version.txt
 
 pool:
   vmImage: ubuntu-latest
@@ -38,12 +39,11 @@ stages:
           - pwsh: |
               $env:NODE_NO_WARNINGS = 1 # This can be removed once https://github.com/npm/cli/issues/7857 is resolved
 
-              $VersionFile = ".version.txt"
-              if (Test-Path -Path $VersionFile) {
-                $CurrentVersion = Get-Content -Path $VersionFile
+              if (Test-Path -Path $(VERSION_FILE_PATH)) {
+                $CurrentVersion = Get-Content -Path $(VERSION_FILE_PATH)
               } else {
                 Write-Host "This appears to be the first release."
-                "$(MINIMUM_VERSION)" | Out-File -FilePath $VersionFile
+                "$(MINIMUM_VERSION)" | Out-File -FilePath $(VERSION_FILE_PATH)
                 $CurrentVersion = "0.0.0"
               }
 
@@ -54,7 +54,7 @@ stages:
                 mise x -- commit-and-tag-version
               }
 
-              $ReleaseVersion = Get-Content -Path $VersionFile
+              $ReleaseVersion = Get-Content -Path $(VERSION_FILE_PATH)
               Write-Host "##vso[task.setvariable variable=RELEASE_VERSION;]$ReleaseVersion"
             failOnStderr: true
             displayName: Run 'commit-and-tag-version'
