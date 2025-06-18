@@ -34,6 +34,12 @@ run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
 
 [tools]
 # Backends
+{{%- if using_azdo %}}
+node = "22.15.1" # Used by commit-and-tag-version
+{{%- endif %}}
 python = "3.13.3" # Used by copier and pre-commit
 # Tools
+{{%- if using_azdo %}}
+"npm:commit-and-tag-version" = "12.5.0"
+{{%- endif %}}
 yamlfmt = "0.17.0" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved
