@@ -22,8 +22,7 @@ jobs:
         env:
           APPRISE_URI: ${{ secrets.APPRISE_URI }}
         run: |
-          mise use yq
-          $CurrentVersion = $(mise x -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
+          $CurrentVersion = $(mise x yq -- '._commit' .config/copier-answers.yml).TrimStart("v")
           Write-Host "CurrentVersion '$CurrentVersion'"
           $Output = mise x -- copier update --skip-answered --pretend --trust 2>&1
           Write-Host "Output $Output"
