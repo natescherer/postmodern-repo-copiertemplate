@@ -10,7 +10,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  update:
+  update-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,13 +22,12 @@ jobs:
         env:
           APPRISE_URI: ${{ secrets.APPRISE_URI }}
         run: |
-          mise use yq
-          $CurrentVersion = $(mise x -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
-          $Output = copier update --skip-answered --pretend --trust 2>&1
+          $CurrentVersion = $(mise x yq -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
+          $Output = mise x -- copier update --skip-answered --pretend --trust 2>&1
           $NewVersion = $Output[0].ToString().Split(" ")[-1]
           if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
             mise x -- pip install apprise
-            mise x -- apprise -i html -t "[${{ github.repository }}"] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> Latest Version: <i>$LatestVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
+            mise x -- apprise -i html -t "[${{ github.repository }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
           }
   workflow-keepalive:
     if: github.event_name == 'schedule'
