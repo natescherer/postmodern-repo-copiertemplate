@@ -6,7 +6,7 @@
     "config:recommended"
   ],
   // Per-provider config
-  "azure-pipelines": {
+  "azure-pipelines-tasks": {
     "enabled": true,
     "fileMatch": [
       "(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$"
