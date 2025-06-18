@@ -26,6 +26,7 @@ jobs:
           $CurrentVersion = $(mise x -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
           Write-Host "CurrentVersion '$CurrentVersion'"
           $Output = mise x -- copier update --skip-answered --pretend --trust 2>&1
+          Write-Host "Output $Output"
           $NewVersion = $Output[0].ToString().Split(" ")[-1]
           Write-Host "NewVersion '$NewVersion'"
           if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
