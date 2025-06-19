@@ -5,10 +5,9 @@
 {%- endif -%}
 {%- if is_prerelease %}
 
-<!-- prettier-ignore-start -->
+<!-- Don't edit/remove this yourself! See docs/lifecycle-managment.md' -->
 | :exclamation: Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or lifecycle == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}. |
 | ------------------------------------------------------------------------------------ |
-<!-- prettier-ignore-end -->
 {%- elif lifecycle == "Inactive" %}
 
 | :zap: Notice: This project is no longer under active development. |
@@ -16,8 +15,6 @@
 {%- endif %}
 
 Describe your template here.
-
-## Included Features
 
 ### Core
 
