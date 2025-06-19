@@ -52,7 +52,7 @@ def create_repo_github(c, answers_json):
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
     repo_data = {
         "name": answers["repo_name"],
-        "description": answers["project_short_description"],
+        "description": answers["github_repo_description"],
         "homepage": answers["project_website"],
         "private": True if answers["project_visibility"] == "Private" else False,
     }

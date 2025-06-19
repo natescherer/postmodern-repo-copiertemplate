@@ -77,6 +77,11 @@ github_org:
   help: "{% if _copier_operation == 'update' %}github_org - DO NOT CHANGE ON COPIER UPDATE{% else %}[OPTIONAL] If this repo {% if repo_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here.{% endif %}"
   when: "{{ developer_platform == 'GitHub' }}"
 
+github_repo_description:
+  type: str
+  help: Enter the repo description you want to appear in GitHub.
+  when: "{{ developer_platform == 'GitHub' }}"
+
 azdo_org:
   type: str
   help: "{% if _copier_operation == 'update' %}azdo_org - DO NOT CHANGE ON COPIER UPDATE{% else %}The Azure DevOps organization to use for the new project.{% endif %}"
@@ -106,10 +111,6 @@ project_type:
 project_name:
   type: str
   help: The friendly name of the project that will be used in documentation.
-
-project_short_description:
-  type: str
-  help: Enter a short description of your project to be used in documentation.
 
 project_website:
   type: str
