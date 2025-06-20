@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.4.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.0...v0.4.1) (2025-06-20)
+
+
+### Features
+
+* Add mise task copier-update ([#616](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/616)) ([dd3304e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/dd3304eb31470c47725d054e40b14bcd11dddbc5))
+* Centralize all dependencies into mise.toml ([#624](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/624)) ([372eda7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/372eda7ac8764f44f694f4ccff2abb354c8b42e5))
+* Clean up workflows and pipelines ([#631](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/631)) ([dba611a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/dba611a7accb547fc25e4aca12c79538cc050150))
+* Convert azdo to a notification model for copier updates ([#620](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/620)) ([0cbf09e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0cbf09e66804dc468995dc583bfe20a9aa61def5))
+* Overhaul copier update workflow ([#617](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/617)) ([d1c3c66](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d1c3c6697bef377dc8ca406530d0cb9c7dd7a552))
+* Send apprise notifcations for copier updates from github actions ([#619](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/619)) ([9f5b8dd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9f5b8ddbc4d10a4f5b43cea41fc286ca880b003e))
+
+
+### Bug Fixes
+
+* Fix bad dependency comments ([#627](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/627)) ([9d05ad5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9d05ad550e212a69aeedd8faf854d74084fe1c16))
+* Fix jinja syntax in mise.toml.jinja ([#614](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/614)) ([6d0fcb7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6d0fcb71601afec4d610f647a5a5edef7971bcdb))
+* Fix renovate pipx custom manager ([#630](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/630)) ([2808c39](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2808c39aad2b967f40d4949f0d826d4a6d82095f))
+
 ## [0.4.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.47...v0.4.0) (2025-06-18)
 
 
