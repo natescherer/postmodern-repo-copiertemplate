@@ -1,4 +1,4 @@
-name: "Tests: PR Tests"
+name: "[Test] PR Validation"
 
 on:
   pull_request:
@@ -23,9 +23,8 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
       - name: Run Pre-Commit Tests
         run: |
-          source .venv/bin/activate
-          pre-commit run -c .config/.pre-commit-config.yaml --files ${{ steps.changed-files.outputs.all_changed_files }}
-      - name: Example Tests
+          mise x -- pre-commit run -c .config/.pre-commit-config.yaml --files ${{ steps.changed-files.outputs.all_changed_files }}
+      - name: Example Test
         run: |-
           FILE=README.md
           if [ -f "$FILE" ]; then
