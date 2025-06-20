@@ -37,8 +37,6 @@ stages:
             failOnStderr: false # Mise writes to stderr normally
             displayName: Run 'mise install'
           - pwsh: |
-              $env:NODE_NO_WARNINGS = 1 # This can be removed once https://github.com/npm/cli/issues/7857 is resolved
-
               if (Test-Path -Path $(VERSION_FILE_PATH)) {
                 $CurrentVersion = Get-Content -Path $(VERSION_FILE_PATH)
               } else {

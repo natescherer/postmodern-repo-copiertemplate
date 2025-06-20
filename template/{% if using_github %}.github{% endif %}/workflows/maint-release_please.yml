@@ -1,4 +1,4 @@
-name: "Release: Release Please Action"
+name: "[Maint] Release Please"
 
 on:
   push:
