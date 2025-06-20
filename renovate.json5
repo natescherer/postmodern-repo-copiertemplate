@@ -67,7 +67,7 @@
         "mise.toml.jinja"
       ],
       "matchStrings": [
-        "\\[tools\\.\"?pipx:(?<depName>[^\"\\]]+)\"?\\]\\sversion = (?<currentValue>[^\\s]*)"
+        "\\[tools\\.\"?pipx:(?<depName>[^\"\\]]+)\"?\\]\\sversion = \"(?<currentValue>[^\\s]*)\""
       ],
       "versioningTemplate": "pep440"
     },
