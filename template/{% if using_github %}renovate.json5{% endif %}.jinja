@@ -19,7 +19,7 @@
   },
   {%- endif %}
   "copier": {
-    // Renovate's copier support requires self-hosting Renovate
+    // Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline
     "enabled": false
   },
   "docker": {
@@ -58,14 +58,39 @@
   // Custom Managers
   "customManagers": [
     {
+      // Manager for simple mise tools
       "customType": "regex",
       "fileMatch": [
-        ".*jinja$"
+        "mise.toml.jinja"
       ],
       "matchStrings": [
         "{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"
       ],
       "versioningTemplate": {% raw %}"{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"{% endraw %}
+    },
+    {
+      // Manager for pipx tools with options
+      "customType": "regex",
+      "datasourceTemplate": "pypi",
+      "fileMatch": [
+        "mise.toml.jinja"
+      ],
+      "matchStrings": [
+        "\\[tools\\.\"?pipx:(?<depName>[^\"\\]]+)\"?\\]\\sversion = \"(?<currentValue>[^\\s]*)\""
+      ],
+      "versioningTemplate": "pep440"
+    },
+    {
+      // Manager for pipx tool dependencies
+      "customType": "regex",
+      "datasourceTemplate": "pypi",
+      "fileMatch": [
+        "mise.toml.jinja"
+      ],
+      "matchStrings": [
+        ".*?(--with\\s(?<depName>[^=]+?)==(?<currentValue>[^\"\\s]*))"
+      ],
+      "versioningTemplate": "pep440"
     }
   ]
 }
