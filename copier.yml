@@ -31,7 +31,7 @@ parent_template_url:
 repo_name:
   type: str
   help: "{% if _copier_operation == 'update' %}repo_name - DO NOT CHANGE ON COPIER UPDATE{% else %}The name of this project's Git repository. Defaults to the name of the destination path.{% endif %}"
-  default: "{{ _folder_name }}"
+  default: "{{ _copier_conf.dst_path | basename }}"
 
 author_name:
   type: str

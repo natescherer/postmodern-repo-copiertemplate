@@ -1,6 +1,6 @@
 {
   "[jinja-md]": {
-      "editor.tabSize": 2
+    "editor.tabSize": 2
   },
   "[jinja-toml]": {
     "editor.tabSize": 2

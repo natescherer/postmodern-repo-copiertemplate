@@ -1,11 +1,5 @@
-[env]
-_.python.venv = { path = ".venv", create = true }
-
 [hooks]
-postinstall = [
-  "pip install -r .config/requirements.txt --require-virtualenv --disable-pip-version-check",
-  "mise run set_up_git_hooks",
-]
+postinstall = ["mise run set_up_git_hooks"]
 
 [settings]
 experimental = true # Needed for hooks as of v2025.6.2
@@ -37,6 +31,14 @@ run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
 
 [tools]
 # Backends
-python = "3.13.5" # Used by copier and pre-commit
+python = "3.13.4" # Used by copier and pre-commit
 # Tools
+"pipx:apprise" = "1.9.2"
+"pipx:pre-commit" = "4.1.0"
+uv = "0.7.12" # Used by pipx tools
 yamlfmt = "0.17.0" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved
+yq = "4.45.3" # Used by copier update check CI workflows
+
+[tools."pipx:copier"]
+version = "9.7.0"
+uvx_args = "--with copier-templates-extensions==0.3.0 --with githubkit==0.12.13 --with invoke==2.1.3 --with jinja2-shell-extension==2.1.0 --with jinja2-time==0.1.0 --with requests==2.32.3 --with rich==13.9.4 --with unicode-slugify==0.1.3"

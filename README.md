@@ -2,6 +2,7 @@
 
 [![All Contributors](https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449&style=flat-square)](#contributors)
 
+<!-- prettier-ignore-start -->
 | :exclamation: Notice: This project is currently in a Pre-Alpha state and is not ready for public use. |
 | ----------------------------------------------------------------------------------------------------- |
 

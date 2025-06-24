@@ -1,4 +1,4 @@
-name: "Maintenance: All Contributors"
+name: "[Maint] All Contributors"
 
 on:
   schedule:
