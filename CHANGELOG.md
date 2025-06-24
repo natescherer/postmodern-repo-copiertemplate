@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.1...v0.4.2) (2025-06-24)
+
+
+### Bug Fixes
+
+* Wrap double brackets in raw tag ([#636](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/636)) ([f563902](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f56390247b5fc48f1410a258121df8323029dc19))
+
 ## [0.4.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.0...v0.4.1) (2025-06-20)
 
 
