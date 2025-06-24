@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.3...v0.4.4) (2025-06-24)
+
+
+### Bug Fixes
+
+* Wrap custom manager code in raw tags ([#640](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/640)) ([5f6cd4b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5f6cd4b89ce36e573b829f600351847bdd3824e8))
+
 ## [0.4.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.2...v0.4.3) (2025-06-24)
 
 
