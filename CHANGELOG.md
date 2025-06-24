@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.2...v0.4.3) (2025-06-24)
+
+
+### Bug Fixes
+
+* Backport config changes into template ([#638](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/638)) ([fc64a6b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/fc64a6b45781de02c628ad3a389c6132ed263078))
+
 ## [0.4.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.1...v0.4.2) (2025-06-24)
 
 
