@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.4...v0.4.5) (2025-06-24)
+
+
+### Features
+
+* Update repo to template v0.4.4 ([#642](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/642)) ([762a909](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/762a9095ada4106114be9ffb36ca2c45a4447589))
+
+
+### Bug Fixes
+
+* Fix path for markdownlint config ([#644](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/644)) ([edde88f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/edde88f2fe406844008b1ccbaecc52a315d14dc0))
+
 ## [0.4.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.3...v0.4.4) (2025-06-24)
 
 
