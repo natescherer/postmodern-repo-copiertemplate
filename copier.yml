@@ -3,7 +3,7 @@ _answers_file: .config/copier-answers.yml
 
 _jinja_extensions:
   # External Dependencies
-  - copier_templates_extensions.TemplateExtensionLoader
+  - copier_template_extensions.TemplateExtensionLoader
   - jinja2_shell_extension.ShellExtension
   - jinja2_time.TimeExtension
   # Internal Dependencies

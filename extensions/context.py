@@ -1,6 +1,6 @@
 """Define ContextHook for Copier."""
 
-from copier_templates_extensions import ContextHook
+from copier_template_extensions import ContextHook
 
 
 class ContextUpdater(ContextHook):
