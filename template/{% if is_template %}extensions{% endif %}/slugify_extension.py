@@ -1,17 +1,17 @@
 """Provide extension for slugify-ing values."""
 
 from jinja2.ext import Extension
-from slugify import slugify as unicode_slugify
+from slugify import slugify
 
 
-def slugify(string):
+def slugify_function(string):
     """Slugify given input string.
 
     Returns:
         Slug version of input string.
 
     """
-    return unicode_slugify(string, only_ascii=True)
+    return slugify(string)
 
 
 class SlugifyExtension(Extension):
@@ -20,4 +20,4 @@ class SlugifyExtension(Extension):
     def __init__(self, environment):
         """Export for use by Jinja."""
         super().__init__(environment)
-        environment.filters["slugify"] = slugify
+        environment.filters["slugify"] = slugify_function
