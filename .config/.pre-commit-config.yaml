@@ -39,11 +39,6 @@ repos:
       - id: yamlfmt
         args: ["-conf", ".config/yamlfmt.yaml"]
         exclude: .copier-answers.yml
-  # - repo: https://github.com/lycheeverse/lychee # Currently broken, see https://github.com/lycheeverse/lychee/issues/1635
-  #   rev: v0.15.1
-  #   hooks:
-  #     - id: lychee
-  #       args: ["--no-progress", "-c", ".config/lychee.toml", "--cache", "--max-retries", "0"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
