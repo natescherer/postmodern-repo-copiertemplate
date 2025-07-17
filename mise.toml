@@ -40,5 +40,5 @@ yamlfmt = "0.17.2" # Needed by VSCode extension bluebrown.yamlfmt, can be remove
 yq = "4.45.3" # Used by copier update check CI workflows
 
 [tools."pipx:copier"]
-version = "9.7.0"
+version = "9.8.0"
 uvx_args = "--with copier-template-extensions==0.3.2 --with githubkit==0.12.13 --with invoke==2.1.3 --with jinja2-shell-extension==2.1.0 --with jinja2-time==0.1.0 --with python-slugify==8.0.4 --with requests==2.32.3 --with rich==13.9.4"
