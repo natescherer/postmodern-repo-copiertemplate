@@ -7,12 +7,7 @@ _jinja_extensions:
   - jinja2_shell_extension.ShellExtension
   - jinja2_time.TimeExtension
   # Internal Dependencies
-  - extensions/azure_devops_extension.py:AzureDevOpsExtension
   - extensions/context.py:ContextUpdater
-  - extensions/github_extension.py:GitHubExtension
-  - extensions/path_extension.py:PathExtension
-  - extensions/slugify_extension.py:SlugifyExtension
-  - extensions/version_extension.py:VersionExtension
   - extensions/yaml_quote_extension.py:YamlQuoteExtension
 
 _subdirectory: template
@@ -64,7 +59,6 @@ github_token:
   default: ""
   help: A GitHub Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
   when: "{{ developer_platform == 'GitHub' and repo_actions != 'None' }}"
-  validator: "{% if github_token is not valid_gh_token and (developer_platform == 'GitHub' and repo_actions != 'None') %}GitHub Token Invalid{% endif %}"
 
 github_username:
   type: str
@@ -86,7 +80,6 @@ azdo_org:
   type: str
   help: "{% if _copier_operation == 'update' %}azdo_org - DO NOT CHANGE ON COPIER UPDATE{% else %}The Azure DevOps organization to use for the new project.{% endif %}"
   when: "{{ developer_platform == 'Azure DevOps' }}"
-  validator: "{% if azdo_org is not extant_azdo_org %}Azure DevOps Organization Does Not Exist{% endif %}"
 
 azdo_token:
   type: str
@@ -94,7 +87,6 @@ azdo_token:
   default: ""
   help: An Azure DevOps Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
   when: "{{ developer_platform == 'Azure DevOps' and repo_actions != 'None' }}"
-  validator: "{% if azdo_token is not valid_azdo_token_for_org(azdo_org) and (developer_platform == 'Azure DevOps' and repo_actions != 'None') %}Azure DevOps Token Invalid{% endif %}"
 
 azdo_project:
   type: str
