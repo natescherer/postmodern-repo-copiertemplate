@@ -47,7 +47,6 @@ repos:
       - id: fix-byte-order-marker
       - id: mixed-line-ending
       - id: no-commit-to-branch
-      - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.7
