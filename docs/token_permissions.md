@@ -21,15 +21,13 @@ The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the r
 | Issues: Read and Write         | Needed to create custom labels                     |
 | Workflows: Read and Write      | Needed to allow template tasks to commit workflows |
 
-### Repo Maintenance PAT (Fine-grained token)
+### Repo Maintenance PAT (Classic token)
 
-**Repository Access**: All Repositories
+NOTE: The newer Fine-Grained Tokens can't make PRs inside GitHub Organizations, classic tokens will be recommended until this functionality is added. See [https://github.com/orgs/community/discussions/106661](https://github.com/orgs/community/discussions/106661)
 
-| **Permission**                | **Reason**                                 |
+| **Scope**                     | **Reason**                                 |
 | ----------------------------- | ------------------------------------------ |
-| Contents: Read and Write      | Needed for Copier/Release Please workflows |
-| Pull Requests: Read and Write | Needed for Copier/Release Please workflows |
-| Workflows: Read and Write     | Needed for Copier/Release Please workflows |
+| repo                          | Needed for Release Please workflow        |
 
 ## Azure DevOps
 
