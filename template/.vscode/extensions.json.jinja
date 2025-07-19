@@ -4,12 +4,12 @@
     "BlueGlassBlock.better-json5",
     "charliermarsh.ruff",
     "DavidAnson.vscode-markdownlint",
-    {% if is_template or (is_standard and using_github) %}"github.vscode-github-actions",{% endif %}
+{%- if is_template or (is_standard and using_github) %}    "github.vscode-github-actions",{% endif %}
     "hverlin.mise-vscode",
-    {% if is_template or (is_standard and using_azdo) %}"ms-azure-devops.azure-pipelines",{% endif %}
-    {% if is_template %}"ms-python.python",{% endif %}
+{%- if is_template or (is_standard and using_azdo) %}    "ms-azure-devops.azure-pipelines",{% endif %}
+{%- if is_template %}    "ms-python.python",{% endif %}
     "redhat.vscode-yaml",
-    {% if is_template %}"samuelcolvin.jinjahtml",{% endif %}
+{%- if is_template %}    "samuelcolvin.jinjahtml",{% endif %}
     "tamasfe.even-better-toml",
     "tekumara.typos-vscode"
   ]
