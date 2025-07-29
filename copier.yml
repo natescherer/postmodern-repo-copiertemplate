@@ -143,6 +143,11 @@ using_github:
   default: "{% if developer_platform == 'GitHub' %}true{% endif %}"
   when: false
 
+github_repo_owner:
+  type: str
+  default: "{% if github_org %}{{ github_org }}{% else %}{{ github_username }}{% endif %}"
+  when: false
+
 using_azdo:
   type: bool
   default: "{% if developer_platform == 'Azure DevOps' %}true{% endif %}"

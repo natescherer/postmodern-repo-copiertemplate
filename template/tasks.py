@@ -96,7 +96,7 @@ def set_repo_settings_github(c, answers_json):
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
-    owner = answers.get("github_org") or answers.get("github_username")
+    owner = answers.get("github_repo_owner")
 
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
@@ -157,7 +157,7 @@ def set_branch_protection_ruleset_github(c, answers_json):
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
-    owner = answers.get("github_org") or answers.get("github_username")
+    owner = answers.get("github_repo_owner")
 
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
@@ -213,7 +213,7 @@ def initialize_repo_and_commit_files(c, answers_json):
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
-    owner = answers.get("github_org") or answers.get("github_username")
+    owner = answers.get("github_repo_owner")
     if answers["lifecycle"] in ["Pre-Alpha", "Alpha", "Beta"]:
         first_version = "0.1.0"
     else:

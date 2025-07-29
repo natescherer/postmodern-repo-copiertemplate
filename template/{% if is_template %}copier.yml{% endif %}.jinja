@@ -19,7 +19,7 @@ parent_template_name:
   when: false
 parent_template_url:
   type: str
-  default: {% if using_github %}{% if github_org %}https://github.com/{{ github_org }}/{{ repo_name }}{% else %}https://github.com/{{ github_username }}/{{ repo_name }}{% endif %}{% endif %}{% if using_azdo %}https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %}
+  default: {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %}
   when: false
 {%- raw %}
 
@@ -142,6 +142,11 @@ lifecycle:
 using_github:
   type: bool
   default: "{% if developer_platform == 'GitHub' %}true{% endif %}"
+  when: false
+
+github_repo_owner:
+  type: str
+  default: "{% if github_org %}{{ github_org }}{% else %}{{ github_username }}{% endif %}"
   when: false
 
 using_azdo:
