@@ -195,8 +195,7 @@ should_set_repo_settings:
 _tasks:
   - command: invoke copy-template-files --src-path '{{ _copier_conf.src_path }}' --vcs-ref '{{ _copier_conf.vcs_ref }}'
     when: "{% if is_template %}true{% endif %}"
-  - command: invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
-    when: "{% if should_create_repo and using_github %}true{% endif %}"
+  - command: invoke create-repo-github --repo-name '{{ repo_name }}' --github-repo-description '{{ github_repo_description }}' --github-repo-owner '{{ github_repo_owner }}' --repo-name '{{ repo_name }}' --is-public '{{ is_public }}' --github-org '{{ github_org }}'
   - command: invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
     when: "{% if should_create_repo and using_azdo %}true{% endif %}"
   - command: invoke set-repo-settings-github --answers-json '{{ _copier_answers | to_json }}'

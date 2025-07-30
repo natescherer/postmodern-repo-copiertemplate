@@ -36,26 +36,27 @@ def copy_template_files(c, src_path, vcs_ref):
 
 
 @task
-def create_repo_github(c, answers_json):
+def create_repo_github(
+    c, repo_name, github_repo_description, github_repo_owner, is_public, github_org
+):
     """Create a GitHub repo."""
     print("[bold green]*** 'create-repo-github' task start ***[/bold green]")
-    answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
 
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
     repo_data = {
-        "name": answers["repo_name"],
-        "description": answers["github_repo_description"],
-        "homepage": f"https://{answers['github_repo_owner']}.github.io/{answers['repo_name']}"
-        if answers["project_visibility"] == "Public"
+        "name": repo_name,
+        "description": github_repo_description,
+        "homepage": f"https://{github_repo_owner}.github.io/{repo_name}"
+        if is_public
         else "",
-        "private": True if answers["project_visibility"] == "Private" else False,
+        "private": True if not is_public else False,
     }
-    if answers["github_org"]:
+    if github_org:
         print("[cyan]Creating repo in GitHub organization...[/cyan]")
-        github.rest.repos.create_in_org(answers["github_org"], data=repo_data)
+        github.rest.repos.create_in_org(github_org, data=repo_data)
     else:
         repo_data.update({"allow_auto_merge": True, "delete_branch_on_merge": True})
         print("[cyan]Creating repo in GitHub user account...[/cyan]")
