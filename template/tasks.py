@@ -35,9 +35,9 @@ def copy_template_files(c, src_path, vcs_ref):
     print("[bold green]*** 'copy-template-files' task end ***[/bold green]")
 
 
-@task
+@task(optional=["github_org"])
 def create_repo_github(
-    c, repo_name, github_repo_description, github_repo_owner, is_public, github_org
+    c, repo_name, github_repo_description, github_repo_owner, is_public, github_org=None
 ):
     """Create a GitHub repo."""
     print("[bold green]*** 'create-repo-github' task start ***[/bold green]")
