@@ -6,7 +6,9 @@ trigger:
       - "*"
 
 variables:
+  CI: true
   MINIMUM_VERSION: {% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}
+  MISE_ENV: ci
   VERSION_FILE_PATH: .config/version.txt
 
 pool:
