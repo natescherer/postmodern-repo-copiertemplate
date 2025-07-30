@@ -31,17 +31,9 @@ run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
 
 [tools]
 # Backends
-{%- if using_azdo %}
-{#- renovate: datasource=node-version depName=node versioning=node #}
-node = "22.17.1" # Used by commit-and-tag-version
-{%- endif %}
 {#- renovate: datasource=python-version depName=python versioning=python #}
 python = "3.13.5" # Used by copier and pre-commit
 # Tools
-{%- if using_azdo %}
-{#- renovate: datasource=npm depName=commit-and-tag-version #}
-"npm:commit-and-tag-version" = "12.5.1"
-{%- endif %}
 {#- renovate: datasource=pypi depName=apprise versioning=pep440 #}
 "pipx:apprise" = "1.9.3"
 {#- renovate: datasource=pypi depName=pre-commit versioning=pep440 #}
@@ -50,13 +42,11 @@ python = "3.13.5" # Used by copier and pre-commit
 uv = "0.8.0" # Used by pipx tools
 {#- renovate: datasource=github-releases depName=google/yamlfmt #}
 yamlfmt = "0.17.2" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved
-{#- renovate: datasource=github-releases depName=mikefarah/yq #}
-yq = "4.46.1" # Used by copier update check CI workflows
-
-[tools."pipx:invoke"]
-version = "2.2.0"
-uvx_args = "--with copier==9.8.0 --with githubkit==0.12.16 --with requests==2.32.4 --with rich==14.0.0"
 
 [tools."pipx:copier"]
 version = "9.8.0"
 uvx_args = "--with copier-template-extensions==0.3.3 --with jinja2-shell-extension==2.1.1 --with jinja2-time==0.2.0"
+
+[tools."pipx:invoke"]
+version = "2.2.0"
+uvx_args = "--with copier==9.8.0 --with githubkit==0.12.16 --with requests==2.32.4 --with rich==14.0.0"
