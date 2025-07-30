@@ -15,8 +15,6 @@ markdown_extensions:
   - def_list
   - footnotes
   - md_in_html
-  - offline:
-      enabled: !ENV [MKDOCS_OFFLINE, false]
   - privacy:
       enabled: !ENV [CI, false]
   - pymdownx.blocks.caption
@@ -58,7 +56,11 @@ plugins:
   - mike:
       enabled: !ENV [MKDOCS_OFFLINE, false]
       canonical_version: latest
+{%- endif %}
+  - offline:
+      enabled: !ENV [MKDOCS_OFFLINE, false]
   - search
+{%- if is_public and using_github %}
   - social:
       enabled: !ENV [CI, false]
 {%- endif %}
