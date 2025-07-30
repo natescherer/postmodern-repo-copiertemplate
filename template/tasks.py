@@ -49,7 +49,7 @@ def create_repo_github(c, answers_json):
         "name": answers["repo_name"],
         "description": answers["github_repo_description"],
         "homepage": f"https://{answers['github_repo_owner']}.github.io/{answers['repo_name']}"
-        if answers["is_public"]
+        if answers["project_visibility"] == "Public"
         else "",
         "private": True if answers["project_visibility"] == "Private" else False,
     }
