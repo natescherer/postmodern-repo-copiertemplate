@@ -6,13 +6,26 @@
 | :exclamation: Notice: This project is currently in a Pre-Alpha state and is not ready for public use. |
 | ----------------------------------------------------------------------------------------------------- |
 
-A [Copier](https://github.com/copier-org/copier) template for creating a basic repository with full, all-the-bells-and-whistles CI/CD. (And for creating other templates!)
+A [Copier](https://github.com/copier-org/copier) template to create a repo with the Hard/Boring stuff automated, so you can get back to coding.
 
-This template is heavily inspired by the [Hypermodern Python Cookiecutter](https://cookiecutter-hypermodern-python.readthedocs.io).
+## What kind of repo does it make?
 
-Why Postmodern? Besides being a cheeky homage to this template's inspiration, I think that Postmodern philosophy's idea of the relativity of truth applies very well to software. There's no objectively best way to do CI/CD, this is just one way that works, and it might work for you too!
+A basic one, by intention. And in either GitHub or Azure DevOps!
 
-## Included Features
+This is the root template for a whole family of templates that do more specific tasks. If you want a simple repository that releases static files at a point-in-time, you're in the right place. Otherwise, you might want to look at the Other Postmodern Templates.
+
+## What sorts of Hard/Boring stuff does it automate?
+
+- Versioning and Releasing
+- Security and Dependency Updating
+- Linting, Styling, and Testing for every Commit and Pull Request
+- Publishing Documentation
+- License and Policies
+- Contribution Guide and Automatic Contributor Crediting
+
+## How do I use it?
+
+Check out The Introduction!
 
 ### Core
 
