@@ -87,26 +87,26 @@ def create_repo_azdo(c, answers_json):
     print("[bold green]*** 'create-repo-azdo' task end ***[/bold green]")
 
 
-@task
-def set_repo_settings_github(c, answers_json):
+@task(optional=["github_org"])
+def set_repo_settings_github(c, github_repo_owner, repo_name, github_org=None):
     """Set settings on a GitHub repo."""
     print("[bold green]*** 'set-repo-settings-github' task start ***[/bold green]")
-    answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
-    owner = answers.get("github_repo_owner")
 
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
 
     # Auto-merge and delete branch on merge
-    if not answers["github_org"]:
+    if not github_org:
         repo_data = {"allow_auto_merge": True, "delete_branch_on_merge": True}
-        github.rest.repos.update(owner=owner, repo=answers["repo_name"], data=repo_data)
+        github.rest.repos.update(
+            owner=github_repo_owner, repo=repo_name, data=repo_data
+        )
 
     # Labels
     current_label_content = github.rest.issues.list_labels_for_repo(
-        owner=owner, repo=answers["repo_name"]
+        owner=github_repo_owner, repo=repo_name
     )
     current_labels = [x.name for x in current_label_content.parsed_data]
 
@@ -118,7 +118,7 @@ def set_repo_settings_github(c, answers_json):
         }
         print("[cyan]Creating 'awaiting pr' label...[/cyan]")
         github.rest.issues.create_label(
-            owner=owner, repo=answers["repo_name"], data=awaiting_pr_label_data
+            owner=github_repo_owner, repo=repo_name, data=awaiting_pr_label_data
         )
     else:
         print("[yellow]Label 'awaiting pr' already exists, skipping creation.[/yellow]")
@@ -130,7 +130,7 @@ def set_repo_settings_github(c, answers_json):
         }
         print("[cyan]Creating 'blocked' label...[/cyan]")
         github.rest.issues.create_label(
-            owner=owner, repo=answers["repo_name"], data=blocked_label_data
+            owner=github_repo_owner, repo=repo_name, data=blocked_label_data
         )
     else:
         print("[yellow]Label 'blocked' already exists, skipping creation.[/yellow]")
@@ -139,28 +139,26 @@ def set_repo_settings_github(c, answers_json):
     workflow_perm_data = {"can_approve_pull_request_reviews": True}
     print("[cyan]Setting Actions workflow settings...[/cyan]")
     github.rest.actions.set_github_actions_default_workflow_permissions_repository(
-        owner=owner, repo=answers["repo_name"], data=workflow_perm_data
+        owner=github_repo_owner, repo=repo_name, data=workflow_perm_data
     )
     print("[bold green]*** 'set-repo-settings-github' task end ***[/bold green]")
 
 
 @task
-def set_branch_protection_ruleset_github(c, answers_json):
+def set_branch_protection_ruleset_github(c, github_repo_owner, repo_name):
     """Set branch protection ruleset on a GitHub repo."""
     print(
         "[bold green]"
         "*** 'set-branch-protection-ruleset-github' task start ***"
         "[/bold green]"
     )
-    answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
-    owner = answers.get("github_repo_owner")
 
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
     rulesets_content = github.rest.repos.get_repo_rulesets(
-        owner=owner, repo=answers["repo_name"]
+        owner=github_repo_owner, repo=repo_name
     )
     rulesets = [x.name for x in rulesets_content.parsed_data]
     if "default-branch-protection" not in rulesets:
@@ -187,7 +185,7 @@ def set_branch_protection_ruleset_github(c, answers_json):
         }
         print("[cyan]Creating branch protection ruleset...[/cyan]")
         github.rest.repos.create_repo_ruleset(
-            owner=owner, repo=answers["repo_name"], data=ruleset_data
+            owner=github_repo_owner, repo=repo_name, data=ruleset_data
         )
     else:
         print(
@@ -202,8 +200,8 @@ def set_branch_protection_ruleset_github(c, answers_json):
     )
 
 
-@task
-def initialize_repo_and_commit_files(c, answers_json):
+@task(optional=["github_repo_owner"])
+def initialize_repo_and_commit_files(c, answers_json, github_repo_owner=None):
     """Create an initial branch and commit files."""
     print(
         "[bold green]*** 'initialize-repo-and-commit-files' task start ***[/bold green]"
@@ -211,7 +209,6 @@ def initialize_repo_and_commit_files(c, answers_json):
     answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
-    owner = answers.get("github_repo_owner")
     if answers["lifecycle"] in ["Pre-Alpha", "Alpha", "Beta"]:
         first_version = "0.1.0"
     else:
@@ -228,7 +225,9 @@ def initialize_repo_and_commit_files(c, answers_json):
     c.run(commit_message)
     print("[cyan]Adding remote...[/cyan]")
     if answers["developer_platform"] == "GitHub":
-        remote_url = f"https://github.com/{owner}/{answers['repo_name']}.git"
+        remote_url = (
+            f"https://github.com/{github_repo_owner}/{answers['repo_name']}.git"
+        )
         gcm_dir = f"{str(Path.home())}/.gcm/store/git/https/github.com"
         gcm_file = f"{answers['github_username']}.credential"
         gcm_service = "https://github.com"
