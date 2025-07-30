@@ -193,7 +193,7 @@ should_set_repo_settings:
 ## Tasks
 
 _tasks:
-  - command: invoke copy-template-files --answers-json '{{ _copier_answers | to_json }}'
+  - command: invoke copy-template-files --src-path '{{ _copier_conf.src_path }}' --vcs-ref '{{ _copier_conf.vcs_ref }}'
     when: "{% if is_template %}true{% endif %}"
   - command: invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
     when: "{% if should_create_repo and using_github %}true{% endif %}"

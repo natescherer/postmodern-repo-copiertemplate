@@ -9,7 +9,6 @@ import shutil
 import tempfile
 from pathlib import Path
 
-import copier.vcs
 import githubkit
 import requests
 from invoke import task
@@ -17,24 +16,20 @@ from rich import print
 
 
 @task
-def copy_template_files(c, answers_json):
+def copy_template_files(c, src_path, vcs_ref):
     """Pull down an additional copy of template files."""
     print("[bold green]*** 'copy-template-files' task start ***[/bold green]")
-    answers = json.loads(answers_json)
-    source = answers["_src_path"]
-    ref = answers["_commit"]
-    source_url = copier.vcs.get_repo(source)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        if ref != "HEAD" and ref is not None:
+        if vcs_ref != "HEAD" and vcs_ref is not None:
             c.run(
                 f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
-                f"--depth 1 --branch {ref} {source_url} ."
+                f"--depth 1 --branch {vcs_ref} {src_path} ."
             )
         else:
             c.run(
                 f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
-                f"--depth 1 {source_url} ."
+                f"--depth 1 {src_path} ."
             )
         shutil.copytree(f"{tmpdir}/template", "template", dirs_exist_ok=True)
     print("[bold green]*** 'copy-template-files' task end ***[/bold green]")
