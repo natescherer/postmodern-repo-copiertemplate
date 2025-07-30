@@ -88,7 +88,9 @@ def create_repo_azdo(c, answers_json):
 
 
 @task(optional=["github_org"])
-def set_repo_settings_github(c, github_repo_owner, repo_name, github_org=None):
+def set_repo_settings_github(
+    c, github_repo_owner, repo_name, is_public, github_org=None
+):
     """Set settings on a GitHub repo."""
     print("[bold green]*** 'set-repo-settings-github' task start ***[/bold green]")
     with open("token.json") as token_file:
@@ -141,6 +143,12 @@ def set_repo_settings_github(c, github_repo_owner, repo_name, github_org=None):
     github.rest.actions.set_github_actions_default_workflow_permissions_repository(
         owner=github_repo_owner, repo=repo_name, data=workflow_perm_data
     )
+
+    if is_public:
+        # Enable Pages
+        github.rest.repos.create_pages_site(
+            owner=github_repo_owner, repo=repo_name, data={"build_type": "workflow"}
+        )
     print("[bold green]*** 'set-repo-settings-github' task end ***[/bold green]")
 
 
