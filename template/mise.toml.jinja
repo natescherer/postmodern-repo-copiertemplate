@@ -26,6 +26,9 @@ if ($env:GITHUB_ACTIONS -or $env:TF_BUILD) {
 [tasks.copier-update]
 run = "copier update --skip-answered --trust"
 
+[tasks.docs-server]
+run = "mkdocs serve -f .config/mkdocs/mkdocs.yml"
+
 [tasks.test]
 run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
 
@@ -50,3 +53,8 @@ uvx_args = "--with copier-template-extensions==0.3.3 --with jinja2-shell-extensi
 [tools."pipx:invoke"]
 version = "2.2.0"
 uvx_args = "--with copier==9.8.0 --with githubkit==0.12.16 --with requests==2.32.4 --with rich==14.0.0"
+
+[tools."pipx:mkdocs"]
+version = "1.6.1"
+uvx_args = "--with mkdocs-material==9.6.15 --with mkdocs-static-i18n==1.3.0 --with mike==2.1.3"
+mise

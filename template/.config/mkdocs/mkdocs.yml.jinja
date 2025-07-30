@@ -1,0 +1,105 @@
+site_name: {{ project_name }}
+docs_dir: ../../docs
+{%- if is_public and using_github %}
+site_url: https://{{ github_repo_owner }}.github.io/{{ repo_name }}/
+repo_url: https://github.com/{{ github_repo_owner }}/{{ repo_name }}
+repo_name: {{ github_repo_owner }}/{{ repo_name }}
+extra:
+  version:
+    alias: true
+    provider: mike
+{%- endif %}
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - offline
+      enabled: !ENV [MKDOCS_OFFLINE, false]
+  - privacy:
+      enabled: !ENV [CI, false]
+  - pymdownx.blocks.caption
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - tables
+plugins:
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+      reconfigure_material: true
+{%- if is_public and using_github %}
+  - mike:
+      enabled: !ENV [MKDOCS_OFFLINE, false]
+      canonical_version: latest
+  - search
+  - social:
+      enabled: !ENV [CI, false]
+{%- endif %}
+theme:
+  name: material
+  custom_dir: overrides
+  features:
+    - content.code.copy
+    - navigation.indexes
+    - navigation.footer
+    - navigation.sections
+    - navigation.tracking
+    - search.highlight
+    - toc.follow
+  font:
+    text: Lato
+    code: Cascadia Mono
+  icon:
+    logo: {% if is_template %}octicons/repo-template-24{% else %}material/library{% endif %}
+    {%- if using_github %}
+    repo: fontawesome/brands/github
+    {%- endif %}
+  palette:
+    # System Color Scheme
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material-lightbulb-auto
+        name: System Theme (Click to Switch to Light Theme)
+    # Light Color Scheme
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      accent: purple
+      primary: deep purple
+      toggle:
+        icon: material/lightbulb
+        name: Light Theme (Click to Switch to Dark Theme)
+    # Dark Color Scheme
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      accent: purple
+      primary: deep purple
+      toggle:
+        icon: material/lightbulb-outline
+        name: Dark Theme (Click to Switch to System Theme)

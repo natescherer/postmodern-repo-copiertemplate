@@ -104,10 +104,6 @@ project_name:
   type: str
   help: The friendly name of the project that will be used in documentation.
 
-project_website:
-  type: str
-  help: "[OPTIONAL] Enter the website for your project."
-
 project_visibility:
   type: str
   help: "{% if _copier_operation == 'update' %}project_visibility - DO NOT CHANGE ON COPIER UPDATE{% else %}Choose if you want this project to be Public or Private.{% endif %}"

@@ -1,0 +1,67 @@
+name: "[Maint] MkDocs Publish to GitHub Pages"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .config/mkdocs/**
+      - docs/**
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+
+env:
+  MISE_ENV: ci
+
+jobs:
+  build-mkdocs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
+      - uses: actions/cache@v4
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: ~/.cache
+          restore-keys: |
+            mkdocs-material-
+      - run: pip install mike mkdocs-material[imaging] mkdocs-static-i18n
+      - run: mike deploy -F .config/mkdocs/mkdocs.yml --push --update-aliases dev
+        if: ${{ github.event_name == 'push' }}
+      - run: |
+          mike deploy -F .config/mkdocs/mkdocs.yml --push --update-aliases ${{ github.event.release.tag_name }} latest
+          mike set-default -F .config/mkdocs/mkdocs.yml --push latest
+        if: ${{ github.event_name == 'release' }}
+  deploy-mkdocs:
+    needs: build-mkdocs
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
