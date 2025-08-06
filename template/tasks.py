@@ -344,7 +344,7 @@ def setup_mkdocs(c, github_repo_owner, repo_name):
     c.run("mise install")
     c.run(
         "mise x -- mike set-default "
-        "-F .config/mkdocs/mkdocs.yml --push --allow-empty dev"
+        "-F .config/mkdocs/mkdocs.yml --push --allow-undefined dev"
     )
     print("[bold green]*** 'setup-mkdocs' task end ***[/bold green]")
 
