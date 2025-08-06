@@ -323,14 +323,27 @@ def create_pipelines_azdo(c, answers_json):
 
 
 @task
-def initialize_mike(c):
-    """Set default mike alias to 'dev' so docs work immediately."""
-    print("[bold green]*** 'initialize_mike' task start ***[/bold green]")
+def setup_mkdocs(c, github_repo_owner, repo_name):
+    """Perform initial setup for mkdocs on GitHub."""
+    print("[bold green]*** 'setup-mkdocs' task start ***[/bold green]")
+
+    with open("token.json") as token_file:
+        token = json.loads(token_file.read())["token"]
+
+    print("[cyan]Authenticating to GitHub...[/cyan]")
+    github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
+
+    github.rest.repos.create_or_update_environment(
+        owner=github_repo_owner,
+        repo=repo_name,
+        environment_name="github-pages",
+        data={"protected_branches": None},
+    )
     os.environ["MISE_ENV"] = "init"
     c.run("mise trust -a -y")
     c.run("mise install")
     c.run("mise x -- mike set-default -F .config/mkdocs/mkdocs.yml --push dev")
-    print("[bold green]*** 'initialize_mike' task end ***[/bold green]")
+    print("[bold green]*** 'setup-mkdocs' task end ***[/bold green]")
 
 
 @task
