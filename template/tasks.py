@@ -327,6 +327,7 @@ def initialize_mike(c):
     """Set default mike alias to 'dev' so docs work immediately."""
     print("[bold green]*** 'initialize_mike' task start ***[/bold green]")
     os.environ["MISE_ENV"] = "init"
+    c.run("mise trust -a -y")
     c.run("mise install")
     c.run("mise x -- mike set-default -F .config/mkdocs/mkdocs.yml --push dev")
     print("[bold green]*** 'initialize_mike' task end ***[/bold green]")
