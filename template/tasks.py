@@ -337,7 +337,7 @@ def setup_mkdocs(c, github_repo_owner, repo_name):
         owner=github_repo_owner,
         repo=repo_name,
         environment_name="github-pages",
-        data={"protected_branches": "null"},
+        data={"deployment_branch_policy": None},
     )
     os.environ["MISE_ENV"] = "init"
     c.run("mise trust -a -y")
