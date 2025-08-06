@@ -206,6 +206,8 @@ _tasks:
     when: "{% if should_set_repo_settings and using_github %}true{% endif %}"
   - command: invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
     when: "{% if should_set_repo_settings and using_azdo %}true{% endif %}"
+  - command: invoke initialize-mike
+    when: "{% if is_public and using_github %}true{% endif %}"
   - invoke delete-unneeded-template-files
 
 _message_after_update: |-

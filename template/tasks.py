@@ -323,11 +323,22 @@ def create_pipelines_azdo(c, answers_json):
 
 
 @task
+def initialize_mike(c):
+    """Set default mike alias to 'dev' so docs work immediately."""
+    print("[bold green]*** 'initialize_mike' task start ***[/bold green]")
+    os.environ["MISE_ENV"] = "init"
+    c.run("mise install")
+    c.run("mise x -- mike set-default -F .config/mkdocs/mkdocs.yml --push dev")
+    print("[bold green]*** 'initialize_mike' task end ***[/bold green]")
+
+
+@task
 def delete_unneeded_template_files(c):
     """Delete files used only in the template process, including this tasks.py file."""
     print(
         "[bold green]*** 'delete-unneeded-template-files' task start ***[/bold green]"
     )
     os.remove("token.json")
+    os.remove("mise.init.toml")
     os.remove(__file__)
     print("[bold green]*** 'delete-unneeded-template-files' task end ***[/bold green]")

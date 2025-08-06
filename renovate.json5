@@ -52,7 +52,7 @@
       // Manager for simple mise tools
       "customType": "regex",
       "fileMatch": [
-        "mise.toml.jinja"
+        "mise\\..*toml\\.jinja"
       ],
       "matchStrings": [
         "{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"
@@ -64,7 +64,7 @@
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "fileMatch": [
-        "mise.toml.jinja"
+        "mise\\..*toml\\.jinja"
       ],
       "matchStrings": [
         "\\[tools\\.\"?pipx:(?<depName>[^\"\\]]+)\"?\\]\\sversion = \"(?<currentValue>[^\\s]*)\""
@@ -76,8 +76,7 @@
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "fileMatch": [
-        "mise.toml.jinja",
-        "mise.ci.toml.jinja"
+        "mise\\..*toml\\.jinja"
       ],
       "matchStrings": [
         ".*?(--with\\s(?<depName>[^=]+?)==(?<currentValue>[^\"\\s]*))"
