@@ -197,7 +197,7 @@ should_set_repo_settings:
   default: "{% if repo_actions == 'Create Repo' or repo_actions == 'Set Repo Rules' %}true{% endif %}"
   when: false
 
-mkdocs_pages:
+mkdocs_ghpages:
   type: bool
   default: "{% if github_mkdocs == 'GitHub Pages' %}true{% endif %}"
   when: false
@@ -224,8 +224,8 @@ _tasks:
     when: "{% if should_set_repo_settings and using_github %}true{% endif %}"
   - command: invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
     when: "{% if should_set_repo_settings and using_azdo %}true{% endif %}"
-  - command: invoke setup-mkdocs --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
-    when: "{% if is_public and using_github %}true{% endif %}"
+  - command: invoke setup-mkdocs-ghpages --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
+    when: "{% if mkdocs_ghpages %}true{% endif %}"
   - invoke delete-unneeded-template-files
 
 _message_after_update: |-
