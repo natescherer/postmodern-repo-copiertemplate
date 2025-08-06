@@ -323,7 +323,7 @@ def create_pipelines_azdo(c, answers_json):
 
 
 @task
-def setup_mkdocs(c, github_repo_owner, repo_name):
+def setup_mkdocs_ghpages(c, github_repo_owner, repo_name):
     """Perform initial setup for mkdocs on GitHub."""
     print("[bold green]*** 'setup-mkdocs' task start ***[/bold green]")
 
