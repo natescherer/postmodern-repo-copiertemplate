@@ -76,6 +76,13 @@ github_repo_description:
   help: Enter the repo description you want to appear in GitHub.
   when: "{{ developer_platform == 'GitHub' }}"
 
+github_mkdocs:
+  type: str
+  help: Choose how you want to publish your documentation on GitHub
+  choices:
+    - GitHub Pages
+    - docs/site Directory in Repo
+
 azdo_org:
   type: str
   help: "{% if _copier_operation == 'update' %}azdo_org - DO NOT CHANGE ON COPIER UPDATE{% else %}The Azure DevOps organization to use for the new project.{% endif %}"
@@ -187,6 +194,16 @@ should_create_repo:
 should_set_repo_settings:
   type: bool
   default: "{% if repo_actions == 'Create Repo' or repo_actions == 'Set Repo Rules' %}true{% endif %}"
+  when: false
+
+mkdocs_pages:
+  type: bool
+  default: "{% if github_mkdocs == 'GitHub Pages' %}true{% endif %}"
+  when: false
+
+mkdocs_local:
+  type: bool
+  default: "{% if github_mkdocs == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
   when: false
 
 ## Tasks
