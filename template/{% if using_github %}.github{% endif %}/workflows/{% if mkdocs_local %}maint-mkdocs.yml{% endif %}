@@ -32,12 +32,16 @@ jobs:
       - uses: jdx/mise-action@v2
         with:
           experimental: true
-      - run: mkdocs build -f .config/mkdocs/mkdocs.yml -d docs/site
+      - run: mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs/site
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.REPO_MAINTENANCE_PAT }}
+          commit-message: "docs: build mkdocs"
+          branch: mkdocs-build
+          delete-branch: true
+          title: "docs: build mkdocs"
       - name: Enable Pull Request Automerge
         if: steps.cpr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v3
