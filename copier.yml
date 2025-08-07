@@ -76,6 +76,13 @@ github_repo_description:
   help: Enter the repo description you want to appear in GitHub.
   when: "{{ developer_platform == 'GitHub' }}"
 
+github_mkdocs:
+  type: str
+  help: Choose how you want to publish your documentation on GitHub
+  choices:
+    - GitHub Pages
+    - docs/site Directory in Repo
+
 azdo_org:
   type: str
   help: "{% if _copier_operation == 'update' %}azdo_org - DO NOT CHANGE ON COPIER UPDATE{% else %}The Azure DevOps organization to use for the new project.{% endif %}"
@@ -103,10 +110,6 @@ project_type:
 project_name:
   type: str
   help: The friendly name of the project that will be used in documentation.
-
-project_website:
-  type: str
-  help: "[OPTIONAL] Enter the website for your project."
 
 project_visibility:
   type: str
@@ -193,23 +196,35 @@ should_set_repo_settings:
   default: "{% if repo_actions == 'Create Repo' or repo_actions == 'Set Repo Rules' %}true{% endif %}"
   when: false
 
+mkdocs_ghpages:
+  type: bool
+  default: "{% if github_mkdocs == 'GitHub Pages' %}true{% endif %}"
+  when: false
+
+mkdocs_repo:
+  type: bool
+  default: "{% if github_mkdocs == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
+  when: false
+
 ## Tasks
 
 _tasks:
-  - command: invoke copy-template-files --answers-json '{{ _copier_answers | to_json }}'
+  - command: invoke copy-template-files --src-path '{{ _copier_conf.src_path }}' --vcs-ref '{{ _copier_conf.vcs_ref }}'
     when: "{% if is_template %}true{% endif %}"
-  - command: invoke create-repo-github --answers-json '{{ _copier_answers | to_json }}'
+  - command: invoke create-repo-github --repo-name {{ repo_name }} --github-repo-description "{{ github_repo_description }}" --github-repo-owner {{ github_repo_owner }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
     when: "{% if should_create_repo and using_github %}true{% endif %}"
   - command: invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
     when: "{% if should_create_repo and using_azdo %}true{% endif %}"
-  - command: invoke set-repo-settings-github --answers-json '{{ _copier_answers | to_json }}'
+  - command: invoke set-repo-settings-github --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
     when: "{% if should_set_repo_settings and using_github %}true{% endif %}"
-  - command: invoke initialize-repo-and-commit-files --answers-json '{{ _copier_answers | to_json }}'
+  - command: invoke initialize-repo-and-commit-files --answers-json '{{ _copier_answers | to_json }}'{% if github_repo_owner %} --github-repo-owner {{ github_repo_owner }}{% endif %}
     when: "{% if should_create_repo %}true{% endif %}"
-  - command: invoke set-branch-protection-ruleset-github --answers-json '{{ _copier_answers | to_json }}'
+  - command: invoke set-branch-protection-ruleset-github --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
     when: "{% if should_set_repo_settings and using_github %}true{% endif %}"
   - command: invoke create-pipelines-azdo --answers-json '{{ _copier_answers | to_json }}'
     when: "{% if should_set_repo_settings and using_azdo %}true{% endif %}"
+  - command: invoke setup-mkdocs-ghpages --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
+    when: "{% if mkdocs_ghpages %}true{% endif %}"
   - invoke delete-unneeded-template-files
 
 _message_after_update: |-

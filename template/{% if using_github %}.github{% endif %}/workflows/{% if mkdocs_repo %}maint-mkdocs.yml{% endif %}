@@ -1,0 +1,48 @@
+name: "[Maint] MkDocs Build & Commit"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .config/mkdocs/**
+      - docs/**
+
+permissions:
+  contents: write
+
+env:
+  MISE_ENV: ci
+  MKDOCS_OFFLINE: true
+
+jobs:
+  mkdocs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+      - run: mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs_site
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.REPO_MAINTENANCE_PAT }}
+          commit-message: "docs: build mkdocs"
+          branch: mkdocs-build
+          delete-branch: true
+          title: "docs: build mkdocs"
+      - name: Enable Pull Request Automerge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.REPO_MAINTENANCE_PAT }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash
