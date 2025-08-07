@@ -32,7 +32,7 @@ jobs:
       - run: mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs_site
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.REPO_MAINTENANCE_PAT }}
           commit-message: "docs: build mkdocs"
