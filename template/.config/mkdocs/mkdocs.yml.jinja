@@ -1,6 +1,6 @@
 site_name: {{ project_name }}
 docs_dir: ../../docs
-{%- if is_public and using_github %}
+{%- if mkdocs_ghpages %}
 site_url: https://{{ github_repo_owner }}.github.io/{{ repo_name }}/
 repo_url: https://github.com/{{ github_repo_owner }}/{{ repo_name }}
 repo_name: {{ github_repo_owner }}/{{ repo_name }}
@@ -50,7 +50,7 @@ plugins:
           name: English
           build: true
       reconfigure_material: true
-{%- if is_public and using_github %}
+{%- if mkdocs_ghpages %}
   - mike:
       enabled: !ENV [MKDOCS_OFFLINE, false]
       canonical_version: latest
@@ -60,7 +60,7 @@ plugins:
   - privacy:
       enabled: !ENV [CI, false]
   - search
-{%- if is_public and using_github %}
+{%- if mkdocs_ghpages %}
   - social:
       enabled: !ENV [CI, false]
 {%- endif %}
@@ -80,7 +80,7 @@ theme:
     code: Cascadia Mono
   icon:
     logo: {% if is_template %}octicons/repo-template-24{% else %}material/library{% endif %}
-    {%- if using_github %}
+    {%- if mkdocs_ghpages %}
     repo: fontawesome/brands/github
     {%- endif %}
   palette:
