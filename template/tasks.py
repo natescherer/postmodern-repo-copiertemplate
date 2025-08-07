@@ -225,7 +225,7 @@ def initialize_repo_and_commit_files(c, answers_json, github_repo_owner=None):
     print("[cyan]Initializing git repo with 'main' branch...[/cyan]")
     c.run("git init -b main")
     print("[cyan]Adding files to commit...[/cyan]")
-    c.run("git add --all -- ':!tasks.py' ':!token.json' ':!template_copy.tar.gz'")
+    c.run("git add --all -- ':!tasks.py' ':!token.json' ':!mise.init.toml'")
     print("[cyan]Committing...[/cyan]")
     commit_message = "git commit -m 'feat: initialize project'"
     if answers["developer_platform"] == "GitHub":
