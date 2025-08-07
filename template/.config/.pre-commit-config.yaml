@@ -1,7 +1,7 @@
 default_install_hook_types:
   - pre-commit
   - commit-msg
-exclude: (\.copier\-answers\.yml|CHANGELOG\.md)
+exclude: (\.copier\-answers\.yml|CHANGELOG\.md|docs_site/.*)
 repos:
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.18.1
