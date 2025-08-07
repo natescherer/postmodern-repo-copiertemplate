@@ -31,7 +31,7 @@ run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
 
 [tools]
 # Backends
-python = "3.13.5" # Used by copier and pre-commit
+python = "3.13.6" # Used by copier and pre-commit
 # Tools
 "pipx:apprise" = "1.9.4"
 "pipx:pre-commit" = "4.2.0"
