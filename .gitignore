@@ -9,3 +9,6 @@ Thumbs.db
 
 # Python Virtual Environments
 .venv
+
+# Tool caches
+.cache
