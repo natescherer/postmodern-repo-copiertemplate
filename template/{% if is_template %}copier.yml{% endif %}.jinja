@@ -202,7 +202,7 @@ mkdocs_ghpages:
   default: "{% if github_mkdocs == 'GitHub Pages' %}true{% endif %}"
   when: false
 
-mkdocs_local:
+mkdocs_repo:
   type: bool
   default: "{% if github_mkdocs == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
   when: false
