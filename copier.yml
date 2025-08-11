@@ -76,13 +76,6 @@ github_repo_description:
   help: Enter the repo description you want to appear in GitHub.
   when: "{{ developer_platform == 'GitHub' }}"
 
-github_mkdocs:
-  type: str
-  help: Choose how you want to publish your documentation on GitHub
-  choices:
-    - GitHub Pages
-    - docs/site Directory in Repo
-
 azdo_org:
   type: str
   help: "{% if _copier_operation == 'update' %}azdo_org - DO NOT CHANGE ON COPIER UPDATE{% else %}The Azure DevOps organization to use for the new project.{% endif %}"
@@ -128,6 +121,16 @@ license:
     - MIT
     - None
   when: "{{ project_visibility == 'Public' }}"
+
+mkdocs_target:
+  type: str
+  help: Choose how you want to publish your documentation
+  choices:
+    GitHub Pages:
+      value: GitHub Pages
+      validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
+    docs_site Directory in Repo:
+      value: docs_site Directory in Repo
 
 lifecycle:
   type: str
@@ -198,12 +201,12 @@ should_set_repo_settings:
 
 mkdocs_ghpages:
   type: bool
-  default: "{% if github_mkdocs == 'GitHub Pages' %}true{% endif %}"
+  default: "{% if mkdocs_target == 'GitHub Pages' %}true{% endif %}"
   when: false
 
 mkdocs_repo:
   type: bool
-  default: "{% if github_mkdocs == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
+  default: "{% if mkdocs_target == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
   when: false
 
 ## Tasks
