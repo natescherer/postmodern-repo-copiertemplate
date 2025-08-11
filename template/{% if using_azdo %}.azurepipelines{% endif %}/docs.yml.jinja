@@ -1,0 +1,149 @@
+name: $(BuildId)-docs
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - .config/mkdocs/**
+      - docs/**
+
+variables:
+  CI: true
+  MISE_ENV: ci
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: release
+    displayName: Release
+    jobs:
+      - job: release
+        displayName: Release Template
+        steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
+          - pwsh: |
+              git config user.email "azuredevops@microsoft.com"
+              git config user.name "Azure DevOps"
+            failOnStderr: false # Git writes to stderr normally
+            displayName: Set Git Config
+          - bash: |
+              curl https://mise.run | sh
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
+            failOnStderr: false # Installer writes to stderr normally
+            displayName: Install Mise
+          - bash: mise install
+            failOnStderr: false # Mise writes to stderr normally
+            displayName: Run 'mise install'
+          - pwsh: mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs_site
+            failOnStderr: true
+            displayName: Run 'mkdocs build'
+          - pwsh: |
+              $BranchName = "mkdocs-build"
+              Write-Host "##vso[task.setvariable variable=BRANCH_NAME;]$BranchName"
+
+              git checkout -b $BranchName
+              git push --set-upstream origin $BranchName
+              git push origin --tags
+            failOnStderr: false # Git writes to stderr normally
+            displayName: Push New Branch
+          - pwsh: |
+              $PRTitle = "docs: build mkdocs"
+              Write-Host "##vso[task.setvariable variable=PR_TITLE;]$PRTitle"
+
+              $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
+              $BaseSplat = @{
+                ContentType = "application/json"
+                Headers = @{
+                  Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("user:$env:SYSTEM_ACCESSTOKEN")))"
+                }
+              }
+
+              $CreateSplat = $BaseSplat + @{
+                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=7.0"
+                Method = "POST"
+                Body = ConvertTo-Json @{
+                  sourceRefName = "refs/heads/$(BRANCH_NAME)"
+                  targetRefName = "$(Build.SourceBranch)"
+                  title = $PRTitle
+                  description = $PRTitle
+                }
+              }
+              Write-Host "Creating Pull Request..."
+              $CreateResponse = Invoke-RestMethod @CreateSplat
+
+              $PullRequestID = $CreateResponse.pullRequestId
+              Write-Host "Pull Request ID is '$PullRequestID'"
+              Write-Host "##vso[task.setvariable variable=PULL_REQUEST_ID;]$PullRequestID"
+
+              $LastMergeSourceCommitID = $CreateResponse.lastMergeSourceCommit.commitId
+              Write-Host "Last Merge Source Commit ID is '$LastMergeSourceCommitID'"
+              Write-Host "##vso[task.setvariable variable=LAST_MERGE_SOURCE_COMMIT_ID;]$LastMergeSourceCommitID"
+            failOnStderr: true
+            displayName: Create Pull Request
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          - pwsh: |
+              $MergeCommitMessage = "$(PR_TITLE)"
+
+              $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
+              $BaseSplat = @{
+                ContentType = "application/json"
+                Headers = @{
+                  Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("user:$env:SYSTEM_ACCESSTOKEN")))"
+                }
+              }
+
+              $IDSplat = $BaseSplat + @{
+                Uri = "$(System.CollectionUri)/_apis/connectionData"
+                Method = "GET"
+              }
+              Write-Host "Finding Reviewer ID..."
+              $IDResponse = Invoke-RestMethod @IDSplat
+              $ReviewerID = $IDResponse.authenticatedUser.id
+              Write-Host "Reviewer ID is '$ReviewerID'"
+
+              Start-Sleep -Seconds 5
+
+              $ApproveSplat = $BaseSplat + @{
+                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests/$(PULL_REQUEST_ID)/reviewers/$($ReviewerID)?api-version=7.0"
+                Method = "PUT"
+                Body = ConvertTo-Json @{
+                  hasDeclined = $false
+                  id = $ReviewerID
+                  vote = 10
+                }
+              }
+              Write-Host "Approving Pull Request..."
+              Invoke-RestMethod @ApproveSplat | Out-Null
+
+              Start-Sleep -Seconds 5
+
+              $MergeSplat = $BaseSplat + @{
+                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests/$(PULL_REQUEST_ID)?api-version=7.0"
+                Method = "PATCH"
+                Body = ConvertTo-Json @{
+                  lastMergeSourceCommit = @{
+                    commitId = "$(LAST_MERGE_SOURCE_COMMIT_ID)"
+                  }
+                  status = "completed"
+                  completionOptions = @{
+                    bypassPolicy = $true
+                    bypassReason = "Pipeline Automation"
+                    deleteSourceBranch = $true
+                    mergeCommitMessage = $MergeCommitMessage
+                    mergeStrategy = "noFastForward"
+                  }
+                }
+              }
+              Write-Host "Merging Pull Request..."
+              Invoke-RestMethod @MergeSplat | Out-Null
+            failOnStderr: true
+            displayName: Approve & Merge Pull Request
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
