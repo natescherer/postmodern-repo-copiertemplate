@@ -5,6 +5,9 @@
   "extends": [
     "config:recommended"
   ],
+  "schedule": [
+    "* * 1 * *"
+  ],
   // Per-provider config
   "azure-pipelines": {
     "enabled": true,
