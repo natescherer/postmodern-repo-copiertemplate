@@ -37,7 +37,10 @@ stages:
             displayName: Install Mise
           - bash: mise install
             displayName: Run 'mise install'
-          - pwsh: mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs_site
+          - bash: |
+              mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs_site
+              git add --all
+              git commit -m "docs: build mkdocs"
             displayName: Run 'mkdocs build'
           - pwsh: |
               $BranchName = "mkdocs-build"
