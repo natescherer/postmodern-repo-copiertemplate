@@ -5,6 +5,9 @@
   "extends": [
     "config:recommended"
   ],
+  "schedule": [
+    "* * 1 * *"
+  ],
   // Per-provider config
   {%- if is_template or (is_standard and using_azdo) %}
   "azure-pipelines": {
