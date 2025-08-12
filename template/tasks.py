@@ -144,11 +144,6 @@ def set_repo_settings_github(
         owner=github_repo_owner, repo=repo_name, data=workflow_perm_data
     )
 
-    if is_public:
-        # Enable Pages
-        github.rest.repos.create_pages_site(
-            owner=github_repo_owner, repo=repo_name, data={"build_type": "workflow"}
-        )
     print("[bold green]*** 'set-repo-settings-github' task end ***[/bold green]")
 
 
@@ -332,6 +327,11 @@ def setup_mkdocs_ghpages(c, github_repo_owner, repo_name):
 
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
+
+    # Enable Pages
+    github.rest.repos.create_pages_site(
+        owner=github_repo_owner, repo=repo_name, data={"build_type": "workflow"}
+    )
 
     github.rest.repos.create_or_update_environment(
         owner=github_repo_owner,
