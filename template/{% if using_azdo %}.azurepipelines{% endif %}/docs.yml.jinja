@@ -1,15 +1,18 @@
-name: $(BuildId)
+name: $(BuildId)-docs
 
 trigger:
   branches:
-    exclude:
-      - "*"
+    include:
+      - main
+  paths:
+    include:
+      - .config/mkdocs/**
+      - docs/**
 
 variables:
   CI: true
-  MINIMUM_VERSION: {% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}
   MISE_ENV: ci
-  VERSION_FILE_PATH: .config/version.txt
+  MKDOCS_OFFLINE: true
 
 pool:
   vmImage: ubuntu-latest
@@ -35,27 +38,13 @@ stages:
             displayName: Install Mise
           - bash: mise install
             displayName: Run 'mise install'
+          - bash: |
+              mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs_site
+              git add --all
+              git commit -m "docs: build mkdocs"
+            displayName: Run 'mkdocs build'
           - pwsh: |
-              if (Test-Path -Path $(VERSION_FILE_PATH)) {
-                $CurrentVersion = Get-Content -Path $(VERSION_FILE_PATH)
-              } else {
-                Write-Host "This appears to be the first release."
-                "$(MINIMUM_VERSION)" | Out-File -FilePath $(VERSION_FILE_PATH)
-                $CurrentVersion = "0.0.0"
-              }
-
-              if ([System.Version]$CurrentVersion -lt [System.Version]"$(MINIMUM_VERSION)") {
-                Write-Host "Releasing in --release-as mode."
-                mise x -- commit-and-tag-version --release-as $(MINIMUM_VERSION)
-              } else {
-                mise x -- commit-and-tag-version
-              }
-
-              $ReleaseVersion = Get-Content -Path $(VERSION_FILE_PATH)
-              Write-Host "##vso[task.setvariable variable=RELEASE_VERSION;]$ReleaseVersion"
-            displayName: Run 'commit-and-tag-version'
-          - pwsh: |
-              $BranchName = "release-v$(RELEASE_VERSION)"
+              $BranchName = "mkdocs-build"
               Write-Host "##vso[task.setvariable variable=BRANCH_NAME;]$BranchName"
 
               git checkout -b $BranchName
@@ -63,7 +52,7 @@ stages:
               git push origin --tags
             displayName: Push New Branch
           - pwsh: |
-              $PRTitle = "chore: release v$(RELEASE_VERSION)"
+              $PRTitle = "docs: build mkdocs"
               Write-Host "##vso[task.setvariable variable=PR_TITLE;]$PRTitle"
 
               $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"

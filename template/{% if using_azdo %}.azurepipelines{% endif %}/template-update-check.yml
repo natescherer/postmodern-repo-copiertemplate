@@ -33,10 +33,8 @@ stages:
               curl https://mise.run | sh
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
-            failOnStderr: false # Installer writes to stderr normally
             displayName: Install Mise
           - bash: mise install
-            failOnStderr: false # Mise writes to stderr normally
             displayName: Run 'mise install'
           - pwsh: |
               $CurrentVersion = $(mise x -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
@@ -47,5 +45,4 @@ stages:
               }
             env:
               APPRISE_URI: $(APPRISE_URI)
-            failOnStderr: false # Copier writes to stderr normally
             displayName: Check for Template Updates
