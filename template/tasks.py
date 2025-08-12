@@ -24,12 +24,11 @@ def copy_template_files(c, src_path, vcs_ref):
         if vcs_ref != "HEAD" and vcs_ref is not None:
             c.run(
                 f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
-                f"--depth 1 --branch {vcs_ref} {src_path} ."
+                f"--branch {vcs_ref} {src_path} ."
             )
         else:
             c.run(
-                f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
-                f"--depth 1 {src_path} ."
+                f"cd {tmpdir}; git -c advice.detachedHead=false clone -q {src_path} ."
             )
         shutil.copytree(f"{tmpdir}/template", "template", dirs_exist_ok=True)
     print("[bold green]*** 'copy-template-files' task end ***[/bold green]")
