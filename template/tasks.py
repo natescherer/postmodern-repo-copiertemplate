@@ -20,6 +20,10 @@ def copy_template_files(c, src_path, vcs_ref):
     """Pull down an additional copy of template files."""
     print("[bold green]*** 'copy-template-files' task start ***[/bold green]")
 
+    # This fixes paths on Windows, as Copier's
+    # _copier_conf.src_path escapes backslashes
+    src_path = src_path.replace("\\\\", "\\")
+
     with tempfile.TemporaryDirectory() as tmpdir:
         if vcs_ref != "HEAD" and vcs_ref is not None:
             c.run(
