@@ -229,10 +229,10 @@ def initialize_repo_and_commit_files(
     print("[cyan]Adding files to commit...[/cyan]")
     c.run('git add --all -- ":!tasks.py" ":!token.json" ":!mise.init.toml"')
     print("[cyan]Committing...[/cyan]")
-    commit_message = "git commit -m 'feat: initialize project'"
+    commit_cmd = 'git commit -m "feat: initialize project"'
     if developer_platform == "GitHub":
-        commit_message += f" -m 'Release-As: {first_version}'"
-    c.run(commit_message)
+        commit_cmd += f' -m "Release-As: {first_version}"'
+    c.run(commit_cmd)
     print("[cyan]Adding remote...[/cyan]")
     if developer_platform == "GitHub":
         remote_url = f"https://github.com/{github_repo_owner}/{repo_name}.git"
