@@ -1,5 +1,5 @@
 [hooks]
-postinstall = ["{% set is_in_ci = get_env(name='CI', default='') %}{% if is_in_ci %}echo 'Not setting up git hooks as mise is running in CI!'{% else %}pre-commit install -c .config/.pre-commit-config.yaml{% endif %}"]
+{% raw %}postinstall = ["{% set is_in_ci = get_env(name='CI', default='') %}{% if is_in_ci %}echo 'Not setting up git hooks as mise is running in CI!'{% else %}pre-commit install -c .config/.pre-commit-config.yaml{% endif %}"]{% endraw %}
 
 [settings]
 experimental = true # Needed for hooks as of v2025.6.2
@@ -17,12 +17,12 @@ run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
 {%- if is_template %}
 [tasks.integration-test-gh]
 run = '''
-copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'developer_platform=GitHub' -d 'github_repo_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'lifecycle=Pre-Alpha' {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} {{option(name="path")}}
+copier copy --trust --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} -d 'developer_platform=GitHub' -d 'github_repo_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'lifecycle=Pre-Alpha' {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} {% raw %}{{option(name="path")}}{% endraw %}
 '''
 
 [tasks.integration-test-azdo]
 run = '''
-copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'developer_platform=Azure DevOps' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Private' -d 'license=None' -d 'lifecycle=Pre-Alpha' {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} {{option(name="path")}}
+copier copy --trust --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} -d 'developer_platform=Azure DevOps' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Private' -d 'license=None' -d 'lifecycle=Pre-Alpha' {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} {% raw %}{{option(name="path")}}{% endraw %}
 '''
 {%- endif %}
 
