@@ -27,7 +27,10 @@ if ($env:GITHUB_ACTIONS -or $env:TF_BUILD) {
 run = "copier update --skip-answered --trust"
 
 [tasks.test]
-run = "pre-commit run -c .config/.pre-commit-config.yaml --all-files"
+run = '''
+pre-commit run -c .config/.pre-commit-config.yaml --all-files
+copier copy --trust --vcs-ref=HEAD --pretend -d 'repo_name=render-test' -d 'author_name=Name' -d 'repo_actions=None' -d 'developer_platform=GitHub' -d 'github_username=username' -d 'github_org=' -d 'github_repo_description=Rendering Test' -d 'project_type=Template' -d 'project_name=Rendering Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'mkdocs_target=docs_site Directory in Repo' -d 'lifecycle=Pre-Alpha' . fake-path
+'''
 
 [tasks.integration-test-gh]
 run = '''
