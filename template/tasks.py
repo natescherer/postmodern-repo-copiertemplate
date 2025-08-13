@@ -64,19 +64,18 @@ def create_repo_github(
 
 
 @task
-def create_repo_azdo(c, answers_json):
+def create_repo_azdo(c, repo_name, azdo_project, azdo_org):
     """Create an Azure DevOps repo."""
     print("[bold green]*** 'create-repo-azdo' task start ***[/bold green]")
-    answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
 
-    repo_data = {"name": answers["repo_name"]}
+    repo_data = {"name": repo_name}
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
-    encoded_project = answers["azdo_project"].replace(" ", "%20")
+    encoded_project = azdo_project.replace(" ", "%20")
     print("[cyan]Creating repo in Azure DevOps...[/cyan]")
     response = requests.post(
-        f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/git/repositories?api-version=7.2-preview.1",
+        f"https://dev.azure.com/{azdo_org}/{encoded_project}/_apis/git/repositories?api-version=7.2-preview.1",
         data=json.dumps(repo_data),
         auth=("", token),
         headers=headers,

@@ -217,7 +217,7 @@ _tasks:
     when: "{% if is_template %}true{% endif %}"
   - command: invoke create-repo-github --repo-name {{ repo_name }} --github-repo-description "{{ github_repo_description }}" --github-repo-owner {{ github_repo_owner }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
     when: "{% if should_create_repo and using_github %}true{% endif %}"
-  - command: invoke create-repo-azdo --answers-json '{{ _copier_answers | to_json }}'
+  - command: invoke create-repo-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project }} --azdo-org {{ azdo_org }}
     when: "{% if should_create_repo and using_azdo %}true{% endif %}"
   - command: invoke set-repo-settings-github --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
     when: "{% if should_set_repo_settings and using_github %}true{% endif %}"
