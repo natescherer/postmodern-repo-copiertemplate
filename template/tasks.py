@@ -33,14 +33,14 @@ def copy_template_files(c, src_path, vcs_ref):
             print(f"src_path: {src_path}")
             time.sleep(5)
             c.run(
-                f"git -c advice.detachedHead=false clone --quiet --local "
-                f"--branch {vcs_ref} {src_path} {tmpdir}"
+                f"git -c advice.detachedHead=false clone --quiet "
+                f'--branch {vcs_ref} "{src_path}" {tmpdir}'
             )
         else:
             print("Checkpoint 2")
             c.run(
                 f"git -c advice.detachedHead=false clone --quiet --local "
-                f"{src_path} {tmpdir}"
+                f'"{src_path}" {tmpdir}'
             )
         print("Checkpoint 3")
         shutil.copytree(f"{tmpdir}/template", "template", dirs_exist_ok=True)
