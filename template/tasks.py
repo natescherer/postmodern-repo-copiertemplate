@@ -31,7 +31,7 @@ def copy_template_files(c, src_path, vcs_ref):
             print(f"tmpdir: {tmpdir}")
             print(f"vcs_ref: {vcs_ref}")
             print(f"src_path: {src_path}")
-            time.sleep(1000)
+            time.sleep(5)
             c.run(
                 f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
                 f"--branch {vcs_ref} {src_path} ."
