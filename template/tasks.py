@@ -27,6 +27,9 @@ def copy_template_files(c, src_path, vcs_ref):
     with tempfile.TemporaryDirectory() as tmpdir:
         if vcs_ref != "HEAD" and vcs_ref is not None:
             print("Checkpoint 1")
+            print(f"tmpdir: {tmpdir}")
+            print(f"vcs_ref: {vcs_ref}")
+            print(f"src_path: {src_path}")
             c.run(
                 f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
                 f"--branch {vcs_ref} {src_path} ."
