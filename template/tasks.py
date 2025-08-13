@@ -26,14 +26,17 @@ def copy_template_files(c, src_path, vcs_ref):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         if vcs_ref != "HEAD" and vcs_ref is not None:
+            print("Checkpoint 1")
             c.run(
                 f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
                 f"--branch {vcs_ref} {src_path} ."
             )
         else:
+            print("Checkpoint 2")
             c.run(
                 f"cd {tmpdir}; git -c advice.detachedHead=false clone -q {src_path} ."
             )
+        print("Checkpoint 3")
         shutil.copytree(f"{tmpdir}/template", "template", dirs_exist_ok=True)
     print("[bold green]*** 'copy-template-files' task end ***[/bold green]")
 
