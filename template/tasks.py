@@ -277,19 +277,18 @@ def initialize_repo_and_commit_files(
 
 
 @task
-def create_pipelines_azdo(c, answers_json):
+def create_pipelines_azdo(c, repo_name, azdo_project, azdo_org):
     """Register pipelines for an Azure DevOps repo."""
     print("[bold green]*** 'create-pipelines-azdo' task start ***[/bold green]")
-    answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
 
     for entry in os.scandir(".azurepipelines"):
         if entry.name.endswith(".yml") and not entry.name.startswith("template-"):
             pipeline_data = {
-                "name": f"[{answers['repo_name']}] {Path(entry.name).with_suffix('')}",
+                "name": f"[{repo_name}] {Path(entry.name).with_suffix('')}",
                 "repository": {
-                    "name": answers["repo_name"],
+                    "name": repo_name,
                     "type": "TfsGit",
                 },
                 "process": {"yamlFilename": f".azurepipelines/{entry.name}", "type": 2},
@@ -301,14 +300,14 @@ def create_pipelines_azdo(c, answers_json):
                 "type": "build",
             }
             headers = {"Content-Type": "application/json", "Accept": "application/json"}
-            encoded_project = answers["azdo_project"].replace(" ", "%20")
+            encoded_project = azdo_project.replace(" ", "%20")
             print(
                 f"[cyan]"
                 f"Creating pipeline for '.azurepipelines/{entry.name}' in "
                 "Azure DevOps...[/cyan]"
             )
             response = requests.post(
-                f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7",
+                f"https://dev.azure.com/{azdo_org}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7",
                 data=json.dumps(pipeline_data),
                 auth=("", token),
                 headers=headers,
