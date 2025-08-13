@@ -341,13 +341,6 @@ def setup_mkdocs_ghpages(c, github_repo_owner, repo_name):
         environment_name="github-pages",
         data={"deployment_branch_policy": None},
     )
-    os.environ["MISE_ENV"] = "init"
-    c.run("mise trust -a -y")
-    c.run("mise install")
-    c.run(
-        "mise x -- mike set-default "
-        "-F .config/mkdocs/mkdocs.yml --push --allow-undefined dev"
-    )
     print("[bold green]*** 'setup-mkdocs' task end ***[/bold green]")
 
 
