@@ -16,6 +16,17 @@ jobs:
   update-check:
     runs-on: ubuntu-latest
     steps:
+      - name: Validate Secrets Exist
+        shell: pwsh
+        env:
+          APPRISE_URI: ${{ secrets.APPRISE_URI }}
+        run: |
+          $Secrets = @("APPRISE_URI")
+          for $Secret in $Secrets {
+            if (!$(Get-Variable "env:$Secret" -ValueOnly)) {
+              Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Secret' is not set! Please add it in repo/org settings."
+            }
+          }
       - uses: actions/checkout@v5
       - uses: jdx/mise-action@v2
         with:
@@ -26,7 +37,7 @@ jobs:
           APPRISE_URI: ${{ secrets.APPRISE_URI }}
         run: |
           $CurrentVersion = $(mise x -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
-          $Output = mise x -- copier update --skip-answered --pretend --trust 2>&1
+          $Output = mise x -- copier --answers-file .config/copier-answers.yml update --skip-answered --pretend --trust 2>&1
           $NewVersion = $Output[0].ToString().Split(" ")[-1]
           if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
             mise x -- apprise -i html -t "[${{ github.repository }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
