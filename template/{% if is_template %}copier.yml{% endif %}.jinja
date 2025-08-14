@@ -221,7 +221,7 @@ _tasks:
     when: "{% if should_create_repo and using_azdo %}true{% endif %}"
   - command: invoke set-repo-settings-github --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
     when: "{% if should_set_repo_settings and using_github %}true{% endif %}"
-  - command: invoke initialize-repo-and-commit-files --lifecycle {{ lifecycle }} --developer-platform {{ developer_platform }} --repo-name {{ repo_name }}{% if using_github %} --github-username {{ github_username }}{% if github_repo_owner %} --github-repo-owner {{ github_repo_owner }}{% endif %}{% endif %}{% if using_azdo %} --azdo-org {{ azdo_org }} --azdo-project {{ azdo-project }}{% endif %}
+  - command: invoke initialize-repo-and-commit-files --lifecycle {{ lifecycle }} --developer-platform {{ developer_platform }} --repo-name {{ repo_name }}{% if using_github %} --github-username {{ github_username }}{% if github_repo_owner %} --github-repo-owner {{ github_repo_owner }}{% endif %}{% endif %}{% if using_azdo %} --azdo-org {{ azdo_org }} --azdo-project {{ azdo_project }}{% endif %}
     when: "{% if should_create_repo %}true{% endif %}"
   - command: invoke set-branch-protection-ruleset-github --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
     when: "{% if should_set_repo_settings and using_github %}true{% endif %}"
