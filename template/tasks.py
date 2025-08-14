@@ -349,6 +349,5 @@ def delete_unneeded_template_files(c):
         "[bold green]*** 'delete-unneeded-template-files' task start ***[/bold green]"
     )
     os.remove("token.json")
-    os.remove("mise.init.toml")
     os.remove(__file__)
     print("[bold green]*** 'delete-unneeded-template-files' task end ***[/bold green]")
