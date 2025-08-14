@@ -22,10 +22,15 @@ jobs:
           APPRISE_URI: ${{ secrets.APPRISE_URI }}
         run: |
           $Secrets = @("APPRISE_URI")
+          $MissingSecret = $False
           foreach ($Secret in $Secrets) {
             if (!([Environment]::GetEnvironmentVariable($Secret))) {
               Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Secret' is not set! Please add it in repo/org settings."
+              $MissingSecret = $True
             }
+          }
+          if ($MissingSecret) {
+            throw "Erroring as one or more required secrets are missing!"
           }
       - uses: actions/checkout@v5
       - uses: jdx/mise-action@v2
