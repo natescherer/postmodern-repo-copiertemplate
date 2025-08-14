@@ -23,7 +23,7 @@ jobs:
         run: |
           $Secrets = @("APPRISE_URI")
           foreach ($Secret in $Secrets) {
-            if (!$(Get-Variable "env:$Secret" -ValueOnly)) {
+            if (!([Environment]::GetEnvironmentVariable($Secret))) {
               Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Secret' is not set! Please add it in repo/org settings."
             }
           }
