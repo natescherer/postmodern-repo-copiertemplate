@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import tempfile
+import time
 from pathlib import Path
 
 import githubkit
@@ -22,14 +23,13 @@ def copy_template_files(c, src_path, vcs_ref):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         if vcs_ref != "HEAD" and vcs_ref is not None:
+            time.sleep(5)
             c.run(
-                f"cd {tmpdir}; git -c advice.detachedHead=false clone -q "
-                f"--branch {vcs_ref} {src_path} ."
+                f"git -c advice.detachedHead=false clone --quiet "
+                f"--branch {vcs_ref} {src_path} {tmpdir}"
             )
         else:
-            c.run(
-                f"cd {tmpdir}; git -c advice.detachedHead=false clone -q {src_path} ."
-            )
+            c.run(f"git -c advice.detachedHead=false clone --quiet {src_path} {tmpdir}")
         shutil.copytree(f"{tmpdir}/template", "template", dirs_exist_ok=True)
     print("[bold green]*** 'copy-template-files' task end ***[/bold green]")
 
@@ -64,19 +64,18 @@ def create_repo_github(
 
 
 @task
-def create_repo_azdo(c, answers_json):
+def create_repo_azdo(c, repo_name, azdo_project, azdo_org):
     """Create an Azure DevOps repo."""
     print("[bold green]*** 'create-repo-azdo' task start ***[/bold green]")
-    answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
 
-    repo_data = {"name": answers["repo_name"]}
+    repo_data = {"name": repo_name}
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
-    encoded_project = answers["azdo_project"].replace(" ", "%20")
+    encoded_project = azdo_project.replace(" ", "%20")
     print("[cyan]Creating repo in Azure DevOps...[/cyan]")
     response = requests.post(
-        f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/git/repositories?api-version=7.2-preview.1",
+        f"https://dev.azure.com/{azdo_org}/{encoded_project}/_apis/git/repositories?api-version=7.2-preview.1",
         data=json.dumps(repo_data),
         auth=("", token),
         headers=headers,
@@ -202,16 +201,24 @@ def set_branch_protection_ruleset_github(c, github_repo_owner, repo_name):
     )
 
 
-@task(optional=["github_repo_owner"])
-def initialize_repo_and_commit_files(c, answers_json, github_repo_owner=None):
+@task(optional=["github_username", "github_repo_owner", "azdo_org", "azdo_project"])
+def initialize_repo_and_commit_files(
+    c,
+    lifecycle,
+    developer_platform,
+    repo_name,
+    github_username=None,
+    github_repo_owner=None,
+    azdo_org=None,
+    azdo_project=None,
+):
     """Create an initial branch and commit files."""
     print(
         "[bold green]*** 'initialize-repo-and-commit-files' task start ***[/bold green]"
     )
-    answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
-    if answers["lifecycle"] in ["Pre-Alpha", "Alpha", "Beta"]:
+    if lifecycle in ["Pre-Alpha", "Alpha", "Beta"]:
         first_version = "0.1.0"
     else:
         first_version = "1.0.0"
@@ -219,30 +226,25 @@ def initialize_repo_and_commit_files(c, answers_json, github_repo_owner=None):
     print("[cyan]Initializing git repo with 'main' branch...[/cyan]")
     c.run("git init -b main")
     print("[cyan]Adding files to commit...[/cyan]")
-    c.run("git add --all -- ':!tasks.py' ':!token.json' ':!mise.init.toml'")
+    c.run('git add --all -- ":!tasks.py" ":!token.json" ":!mise.init.toml"')
     print("[cyan]Committing...[/cyan]")
-    commit_message = "git commit -m 'feat: initialize project'"
-    if answers["developer_platform"] == "GitHub":
-        commit_message += f" -m 'Release-As: {first_version}'"
-    c.run(commit_message)
+    commit_cmd = 'git commit -m "feat: initialize project"'
+    if developer_platform == "GitHub":
+        commit_cmd += f' -m "Release-As: {first_version}"'
+    c.run(commit_cmd)
     print("[cyan]Adding remote...[/cyan]")
-    if answers["developer_platform"] == "GitHub":
-        remote_url = (
-            f"https://github.com/{github_repo_owner}/{answers['repo_name']}.git"
-        )
+    if developer_platform == "GitHub":
+        remote_url = f"https://github.com/{github_repo_owner}/{repo_name}.git"
         gcm_dir = f"{str(Path.home())}/.gcm/store/git/https/github.com"
-        gcm_file = f"{answers['github_username']}.credential"
+        gcm_file = f"{github_username}.credential"
         gcm_service = "https://github.com"
-        gcm_account = answers["github_username"]
-    elif answers["developer_platform"] == "Azure DevOps":
-        encoded_project = answers["azdo_project"].replace(" ", "%20")
-        remote_url = f"https://{answers['azdo_org']}@dev.azure.com/{answers['azdo_org']}/{encoded_project}/_git/{answers['repo_name']}"
-        gcm_dir = (
-            f"{str(Path.home())}/.gcm/store/git/https/dev.azure.com/"
-            f"{answers['azdo_org']}"
-        )
+        gcm_account = github_username
+    elif developer_platform == "Azure DevOps":
+        encoded_project = azdo_project.replace(" ", "%20")
+        remote_url = f"https://{azdo_org}@dev.azure.com/{azdo_org}/{encoded_project}/_git/{repo_name}"
+        gcm_dir = f"{str(Path.home())}/.gcm/store/git/https/dev.azure.com/{azdo_org}"
         gcm_file = "copier.credential"
-        gcm_service = f"https://dev.azure.com/{answers['azdo_org']}"
+        gcm_service = f"https://dev.azure.com/{azdo_org}"
         gcm_account = "copier"
         print("[cyan]Temporarily setting git config options for AzDO...[/cyan]")
         c.run("git config credential.useHttpPath true")
@@ -262,7 +264,7 @@ def initialize_repo_and_commit_files(c, answers_json, github_repo_owner=None):
         )
     print("[cyan]Pushing to remote...[/cyan]")
     c.run("git push -u origin --all")
-    if answers["developer_platform"] == "Azure DevOps":
+    if developer_platform == "Azure DevOps":
         print("[cyan]Unsetting git config options for AzDO...[/cyan]")
         c.run("git config --unset credential.useHttpPath")
     print("[cyan]Disabling plaintext git credentials...[/cyan]")
@@ -275,19 +277,18 @@ def initialize_repo_and_commit_files(c, answers_json, github_repo_owner=None):
 
 
 @task
-def create_pipelines_azdo(c, answers_json):
+def create_pipelines_azdo(c, repo_name, azdo_project, azdo_org):
     """Register pipelines for an Azure DevOps repo."""
     print("[bold green]*** 'create-pipelines-azdo' task start ***[/bold green]")
-    answers = json.loads(answers_json)
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
 
     for entry in os.scandir(".azurepipelines"):
         if entry.name.endswith(".yml") and not entry.name.startswith("template-"):
             pipeline_data = {
-                "name": f"[{answers['repo_name']}] {Path(entry.name).with_suffix('')}",
+                "name": f"[{repo_name}] {Path(entry.name).with_suffix('')}",
                 "repository": {
-                    "name": answers["repo_name"],
+                    "name": repo_name,
                     "type": "TfsGit",
                 },
                 "process": {"yamlFilename": f".azurepipelines/{entry.name}", "type": 2},
@@ -299,14 +300,14 @@ def create_pipelines_azdo(c, answers_json):
                 "type": "build",
             }
             headers = {"Content-Type": "application/json", "Accept": "application/json"}
-            encoded_project = answers["azdo_project"].replace(" ", "%20")
+            encoded_project = azdo_project.replace(" ", "%20")
             print(
                 f"[cyan]"
                 f"Creating pipeline for '.azurepipelines/{entry.name}' in "
                 "Azure DevOps...[/cyan]"
             )
             response = requests.post(
-                f"https://dev.azure.com/{answers['azdo_org']}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7",
+                f"https://dev.azure.com/{azdo_org}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7",
                 data=json.dumps(pipeline_data),
                 auth=("", token),
                 headers=headers,
@@ -337,13 +338,6 @@ def setup_mkdocs_ghpages(c, github_repo_owner, repo_name):
         repo=repo_name,
         environment_name="github-pages",
         data={"deployment_branch_policy": None},
-    )
-    os.environ["MISE_ENV"] = "init"
-    c.run("mise trust -a -y")
-    c.run("mise install")
-    c.run(
-        "mise x -- mike set-default "
-        "-F .config/mkdocs/mkdocs.yml --push --allow-undefined dev"
     )
     print("[bold green]*** 'setup-mkdocs' task end ***[/bold green]")
 

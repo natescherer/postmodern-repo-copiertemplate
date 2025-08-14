@@ -41,6 +41,13 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mike mkdocs-material[imaging] mkdocs-static-i18n
+      - uses: jiangxin/file-exists-action@v1
+        id: index-check
+        with:
+          path: index.html
+          ref: gh-pages
+      - run: mike set-default -F .config/mkdocs/mkdocs.yml --push --allow-undefined dev
+        if: ${{ steps.index-check.outputs.exists == 'false' }}
       - run: mike deploy -F .config/mkdocs/mkdocs.yml --push --update-aliases dev
         if: ${{ github.event_name == 'push' }}
       - run: |
