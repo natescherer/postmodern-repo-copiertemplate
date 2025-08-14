@@ -20,7 +20,7 @@ jobs:
           FAKE_SECRET: ${{ secrets.FAKE_SECRET }}
         run: |
           $Secrets = @("APPRISE_URI","FAKE_SECRET","FAKE_SECRET2")
-          for $Secret in $Secrets {
+          for ($Secret in $Secrets) {
             if (!$(Get-Variable "env:$Secret" -ValueOnly)) {
               Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Secret' is not set! Please add it in repo/org settings."
             }

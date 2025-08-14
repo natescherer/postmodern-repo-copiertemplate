@@ -22,7 +22,7 @@ jobs:
           APPRISE_URI: ${{ secrets.APPRISE_URI }}
         run: |
           $Secrets = @("APPRISE_URI")
-          for $Secret in $Secrets {
+          for ($Secret in $Secrets) {
             if (!$(Get-Variable "env:$Secret" -ValueOnly)) {
               Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Secret' is not set! Please add it in repo/org settings."
             }
