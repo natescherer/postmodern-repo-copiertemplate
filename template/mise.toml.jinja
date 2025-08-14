@@ -6,7 +6,7 @@ experimental = true # Needed for hooks as of v2025.6.2
 windows_default_inline_shell_args = "powershell.exe /c"
 
 [tasks.copier-update]
-run = "copier update --skip-answered --trust"
+run = "copier --answers-file .config/copier-answers.yml update --skip-answered --trust"
 
 [tasks.docs-server]
 run = "mkdocs serve -f .config/mkdocs/mkdocs.yml"
