@@ -24,7 +24,7 @@ if ($env:GITHUB_ACTIONS -or $env:TF_BUILD) {
 '''
 
 [tasks.copier-update]
-run = "copier --answers-file .config/copier-answers.yml update --skip-answered --trust"
+run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust"
 
 [tasks.test]
 run = '''

@@ -41,11 +41,11 @@ jobs:
         env:
           APPRISE_URI: ${{ secrets.APPRISE_URI }}
         run: |
-          $CurrentVersion = $(Invoke-Expression "yq '._commit' .config/copier-answers.yml").TrimStart("v")
-          $Output = Invoke-Expression "copier --answers-file .config/copier-answers.yml update --skip-answered --pretend --trust 2>&1"
+          $CurrentVersion = $(yq '._commit' .config/copier-answers.yml).TrimStart("v")
+          $Output = copier update --answers-file .config/copier-answers.yml --skip-answered --pretend --trust 2>&1
           $NewVersion = $Output[0].ToString().Split(" ")[-1]
           if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
-            Invoke-Expression "apprise -i html -t '[${{ github.repository }}] Template Update Available' -b 'Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update.' $env:APPRISE_URI"
+            apprise -i html -t '[${{ github.repository }}] Template Update Available' -b 'Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update.' $env:APPRISE_URI
           }
   workflow-keepalive:
     if: github.event_name == 'schedule'
