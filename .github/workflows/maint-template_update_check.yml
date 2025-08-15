@@ -13,6 +13,23 @@ jobs:
   update-check:
     runs-on: ubuntu-latest
     steps:
+      - name: Validate Secrets Exist
+        shell: pwsh
+        env:
+          APPRISE_URI: ${{ secrets.APPRISE_URI }}
+          FAKE_SECRET: ${{ secrets.FAKE_SECRET }}
+        run: |
+          $Secrets = @("APPRISE_URI")
+          $MissingSecret = $False
+          foreach ($Secret in $Secrets) {
+            if (!([Environment]::GetEnvironmentVariable($Secret))) {
+              Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Secret' is not set! Please add it in repo/org settings."
+              $MissingSecret = $True
+            }
+          }
+          if ($MissingSecret) {
+            throw "Erroring as one or more required secrets are missing!"
+          }
       - uses: actions/checkout@v5
       - uses: jdx/mise-action@v2
         with:
@@ -22,11 +39,11 @@ jobs:
         env:
           APPRISE_URI: ${{ secrets.APPRISE_URI }}
         run: |
-          $CurrentVersion = $(mise x -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
-          $Output = mise x -- copier update --skip-answered --pretend --trust 2>&1
+          $CurrentVersion = $(yq '._commit' .config/copier-answers.yml).TrimStart("v")
+          $Output = copier update --answers-file .config/copier-answers.yml --skip-answered --pretend --trust 2>&1
           $NewVersion = $Output[0].ToString().Split(" ")[-1]
           if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
-            mise x -- apprise -i html -t "[${{ github.repository }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
+            apprise -i html -t "[${{ github.repository }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
           }
   workflow-keepalive:
     if: github.event_name == 'schedule'
