@@ -5,7 +5,6 @@ _jinja_extensions:
   # External Dependencies
   - copier_template_extensions.TemplateExtensionLoader
   - jinja2_shell_extension.ShellExtension
-  - jinja2_time.TimeExtension
   # Internal Dependencies
   - extensions/context.py:ContextUpdater
   - extensions/yaml_quote_extension.py:YamlQuoteExtension
@@ -207,6 +206,13 @@ mkdocs_ghpages:
 mkdocs_repo:
   type: bool
   default: "{% if mkdocs_target == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
+  when: false
+
+## Locked Computed Values
+
+copyright_year:
+  type: str
+  default: "{{ copyright_year | default('%Y' | strftime) }}"
   when: false
 
 ## Tasks
