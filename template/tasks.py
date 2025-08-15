@@ -16,8 +16,8 @@ from invoke import task
 from rich import print
 
 
-@task
-def copy_template_files(c, src_path, vcs_ref):
+@task(optional=["vcs_ref"])
+def copy_template_files(c, src_path, vcs_ref=None):
     """Pull down an additional copy of template files."""
     print("[bold green]*** 'copy-template-files' task start ***[/bold green]")
 
