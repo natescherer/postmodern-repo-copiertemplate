@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.1...v0.5.2) (2025-08-15)
+
+
+### Bug Fixes
+
+* Properly make vcs_ref optional for copy_template_files ([#730](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/730)) ([6dcfcf4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6dcfcf4c57585a7d61a5f621ae5b67240f4484c5))
+
 ## [0.5.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.0...v0.5.1) (2025-08-15)
 
 
