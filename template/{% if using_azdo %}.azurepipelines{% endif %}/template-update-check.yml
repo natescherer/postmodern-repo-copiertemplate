@@ -26,6 +26,21 @@ stages:
       - job: checkfortemplateupdate
         displayName: Check for Template Update
         steps:
+          - pwsh: |
+              $Secrets = @("APPRISE_URI")
+              $MissingSecret = $False
+              foreach ($Secret in $Secrets) {
+                if (!([Environment]::GetEnvironmentVariable($Secret))) {
+                  Write-Host -Object "[error]Required Actions secret '$Secret' is not set! Please add it in Pipelines settings."
+                  $MissingSecret = $True
+                }
+              }
+              if ($MissingSecret) {
+                throw "Erroring as one or more required secrets are missing!"
+              }
+            env:
+              APPRISE_URI: $(APPRISE_URI)
+            displayName: Check for Template Updates
           - checkout: self
             fetchDepth: 0
             persistCredentials: true
@@ -37,11 +52,11 @@ stages:
           - bash: mise install
             displayName: Run 'mise install'
           - pwsh: |
-              $CurrentVersion = $(mise x -- yq '._commit' .config/copier-answers.yml).TrimStart("v")
-              $Output = mise x -- copier update --skip-answered --pretend --trust 2>&1
+              $CurrentVersion = $(yq '._commit' .config/copier-answers.yml).TrimStart("v")
+              $Output = copier update --answers-file .config/copier-answers.yml --skip-answered --pretend --trust 2>&1
               $NewVersion = $Output[0].ToString().Split(" ")[-1]
               if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
-                mise x -- apprise -i html -t "[$(Build.Repository.Uri)] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
+                apprise -i html -t "[${{ github.repository }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
               }
             env:
               APPRISE_URI: $(APPRISE_URI)
