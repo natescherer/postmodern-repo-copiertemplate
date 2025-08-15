@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.0...v0.5.1) (2025-08-15)
+
+
+### Features
+
+* Add checks for secret existence to all workflows ([#727](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/727)) ([a89cddb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a89cddb31bc900f5088acb4bd07d57f3ee13d99e))
+
+
+### Bug Fixes
+
+* Fix copier-update mise task ([#724](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/724)) ([65c61da](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/65c61da528de566f602a06471e4744414408a68d))
+* Fix template update github workflow ([#726](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/726)) ([b2c233a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b2c233a3d557a70d5634de771a3c5bf578259816))
+* Fix template-update-check azdo pipeline ([#728](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/728)) ([dbc7d9a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/dbc7d9ad706d4fdf462de66baf00af68aa81fab8))
+* Rename to copier-update-check ([#729](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/729)) ([4a066ef](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4a066ef9ef1feb7ced6f33f27ab1c5a82289b872))
+
 ## [0.5.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.4...v0.5.0) (2025-08-14)
 
 
