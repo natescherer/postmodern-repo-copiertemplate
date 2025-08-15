@@ -1,4 +1,4 @@
-name: "[Maint] Check for Parent Template Updates"
+name: "[Maint] Copier Update Check"
 
 on:
   schedule:
