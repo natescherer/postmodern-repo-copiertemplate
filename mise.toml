@@ -58,4 +58,4 @@ uvx_args = "--with copier==9.8.0 --with githubkit==0.12.16 --with requests==2.32
 
 [tools."pipx:copier"]
 version = "9.9.0"
-uvx_args = "--with copier-template-extensions==0.3.3 --with jinja2-shell-extension==2.1.1 --with jinja2-time==0.2.0"
+uvx_args = "--with copier-template-extensions==0.3.3 --with jinja2-shell-extension==2.1.1"
