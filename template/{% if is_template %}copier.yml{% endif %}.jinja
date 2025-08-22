@@ -5,9 +5,10 @@ _jinja_extensions:
   # External Dependencies
   - copier_template_extensions.TemplateExtensionLoader
   - jinja2_shell_extension.ShellExtension
-  - jinja2_time.TimeExtension
   # Internal Dependencies
   - extensions/yaml_quote_extension.py:YamlQuoteExtension
+
+_message_before_copy: Thanks for using this template! Please consult the 'Template Questions' page in documentation for deeper explanation of each question.
 
 _subdirectory: template
 
@@ -25,8 +26,9 @@ parent_template_url:
 ## Questions
 repo_name:
   type: str
-  help: "{% if _copier_operation == 'update' %}repo_name - DO NOT CHANGE ON COPIER UPDATE{% else %}The name of this project's Git repository. Defaults to the name of the destination path.{% endif %}"
-  default: "{{ _copier_conf.dst_path | basename }}"
+  help: The name of this project's Git repository. Defaults to the name of the destination folder.
+  default: "{{ repo_name | default(_copier_conf.dst_path | basename) }}"
+  when: "{{ repo_name is undefined }}"
 
 author_name:
   type: str
@@ -35,41 +37,40 @@ author_name:
 
 developer_platform:
   type: str
-  help: "{% if _copier_operation == 'update' %}developer_platform - DO NOT CHANGE ON COPIER UPDATE{% else %}The platform where you are going to host your Git repo and CI/CD.{% endif %}"
+  help: The platform where you are going to host your Git repo and CI/CD.
   choices:
     - GitHub
     - Azure DevOps
+  default: "{{ developer_platform | default('GitHub') }}"
+  when: "{{ developer_platform is undefined }}"
 
-repo_actions:
+repo_setup_actions:
   type: str
-  help: "{% if _copier_operation == 'update' %}repo_actions - DO NOT CHANGE ON COPIER UPDATE{% else %}New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Update run? Don't want repo settings changes? 'None'.{% endif %}"
+  help: New project? 'Create Repo'. Existing project? 'Set Repo Rules'.
   choices:
-    Create Repo:
-      value: Create Repo
-      validator: "{% if _copier_operation == 'update' %}Disabled on Updates{% endif %}"
-    Set Repo Rules:
-      value: Set Repo Rules
-      validator: "{% if _copier_operation == 'update' %}Disabled on Updates{% endif %}"
-    None:
-      value: None
+    - Create Repo
+    - Set Repo Rules
+  default: "{{ repo_setup_actions | default('Create Repo') }}"
+  when: "{{ repo_setup_actions is undefined }}"
 
 github_token:
   type: str
   secret: true
   default: ""
-  help: A GitHub Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
-  when: "{{ developer_platform == 'GitHub' and repo_actions != 'None' }}"
+  help: A GitHub Personal Access Token which will be used to set up your repo. Value is not saved.
+  when: "{{ developer_platform == 'GitHub' and not project_initialized }}"
 
 github_username:
   type: str
-  help: "{% if _copier_operation == 'update' %}github_username - DO NOT CHANGE ON COPIER UPDATE{% else %}Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.{% endif %}"
-  default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
-  when: "{{ developer_platform == 'GitHub' }}"
+  help: Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.
+  default: "{{ github_username | default((('git config --global user.email' | shell()).split('+') | last).split('@') | first) }}"
+  when: "{{ github_username is undefined and developer_platform == 'GitHub' }}"
 
 github_org:
   type: str
-  help: "{% if _copier_operation == 'update' %}github_org - DO NOT CHANGE ON COPIER UPDATE{% else %}[OPTIONAL] If this repo {% if repo_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here.{% endif %}"
-  when: "{{ developer_platform == 'GitHub' }}"
+  help: "[OPTIONAL] If this repo {% if repo_setup_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here."
+  default: "{{ github_org | default('') }}"
+  when: "{{ github_org is undefined and developer_platform == 'GitHub' }}"
 
 github_repo_description:
   type: str
@@ -78,27 +79,31 @@ github_repo_description:
 
 azdo_org:
   type: str
-  help: "{% if _copier_operation == 'update' %}azdo_org - DO NOT CHANGE ON COPIER UPDATE{% else %}The Azure DevOps organization to use for the new project.{% endif %}"
-  when: "{{ developer_platform == 'Azure DevOps' }}"
+  help: The Azure DevOps organization for this project.
+  default: "{{ azdo_org | default('') }}"
+  when: "{{ azdo_org is undefined and developer_platform == 'Azure DevOps' }}"
 
 azdo_token:
   type: str
   secret: true
   default: ""
-  help: An Azure DevOps Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
-  when: "{{ developer_platform == 'Azure DevOps' and repo_actions != 'None' }}"
+  help: An Azure DevOps Personal Access Token which will be used to {% if repo_setup_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
+  when: "{{ developer_platform == 'Azure DevOps' and not project_initialized }}"
 
 azdo_project:
   type: str
-  help: "{% if _copier_operation == 'update' %}azdo_project - DO NOT CHANGE ON COPIER UPDATE{% else %}An Azure DevOps project in organization '{{ azdo_org }}'.{% endif %}"
-  when: "{{ developer_platform == 'Azure DevOps' }}"
+  help: "The Azure DevOps project where your repo {% if repo_setup_actions == 'Create Repo' %}will be created.{% else %}exists.{% endif %}"
+  default: "{{ azdo_project | default('') }}"
+  when: "{{ azdo_project is undefined and developer_platform == 'Azure DevOps' }}"
 
 project_type:
   type: str
-  help: "{% if _copier_operation == 'update' %}project_type - DO NOT CHANGE ON COPIER UPDATE{% else %}If this repo will be a basic repo, choose Standard. If this repo will be a child template of this template, choose Template.{% endif %}"
+  help: If you are creating a basic repo, choose Standard. If you are creating a child template, choose Template.
   choices:
     - Standard
     - Template
+  default: "{{ project_type | default('Standard') }}"
+  when: "{{ project_type is undefined }}"
 
 project_name:
   type: str
@@ -106,13 +111,15 @@ project_name:
 
 project_visibility:
   type: str
-  help: "{% if _copier_operation == 'update' %}project_visibility - DO NOT CHANGE ON COPIER UPDATE{% else %}Choose if you want this project to be Public or Private.{% endif %}"
+  help: Choose if you want this project to be Public or Private.
   choices:
     Public:
       value: Public
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     Private:
       value: Private
+  default: "{{ project_visibility | default('Public') }}"
+  when: "{{ project_visibility is undefined }}"
 
 license:
   type: str
@@ -131,6 +138,8 @@ mkdocs_target:
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     docs_site Directory in Repo:
       value: docs_site Directory in Repo
+  default: "{% if developer_platform == 'GitHub' %}{% set mkdocs_default = 'GitHub Pages' %}{% else %}{% set mkdocs_default = 'docs_site Directory in Repo' %}{% endif %}{{ mkdocs_target | default(mkdocs_default) }}"
+  when: "{{ mkdocs_target is undefined }}"
 
 lifecycle:
   type: str
@@ -191,12 +200,12 @@ is_prerelease:
 
 should_create_repo:
   type: bool
-  default: "{% if repo_actions == 'Create Repo' %}true{% endif %}"
+  default: "{% if repo_setup_actions == 'Create Repo' %}true{% endif %}"
   when: false
 
 should_set_repo_settings:
   type: bool
-  default: "{% if repo_actions == 'Create Repo' or repo_actions == 'Set Repo Rules' %}true{% endif %}"
+  default: "{% if repo_setup_actions == 'Create Repo' or repo_setup_actions == 'Set Repo Rules' %}true{% endif %}"
   when: false
 
 mkdocs_ghpages:
@@ -207,6 +216,13 @@ mkdocs_ghpages:
 mkdocs_repo:
   type: bool
   default: "{% if mkdocs_target == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
+  when: false
+
+## Locked Computed Values
+
+copyright_year:
+  type: str
+  default: "{{ copyright_year | default('%Y' | strftime) }}"
   when: false
 
 ## Tasks
