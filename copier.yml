@@ -41,7 +41,7 @@ developer_platform:
   choices:
     - GitHub
     - Azure DevOps
-  default: "{{ developer_platform | default('') }}"
+  default: "{{ developer_platform | default('GitHub') }}"
   when: "{{ developer_platform is undefined }}"
 
 repo_actions:
@@ -50,7 +50,7 @@ repo_actions:
   choices:
     - Create Repo
     - Set Repo Rules
-  default: "{{ repo_actions | default('') }}"
+  default: "{{ repo_actions | default('Create Repo') }}"
   when: "{{ repo_actions is undefined }}"
 
 github_token:
@@ -102,7 +102,7 @@ project_type:
   choices:
     - Standard
     - Template
-  default: "{{ project_type | default('') }}"
+  default: "{{ project_type | default('Standard') }}"
   when: "{{ project_type is undefined }}"
 
 project_name:
@@ -118,7 +118,7 @@ project_visibility:
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     Private:
       value: Private
-  default: "{{ project_visibility | default('') }}"
+  default: "{{ project_visibility | default('Public') }}"
   when: "{{ project_visibility is undefined }}"
 
 license:
@@ -138,7 +138,7 @@ mkdocs_target:
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     docs_site Directory in Repo:
       value: docs_site Directory in Repo
-  default: "{{ mkdocs_target | default('') }}"
+  default: "{% if developer_platform == 'GitHub' %}{% set mkdocs_default = 'GitHub Pages' %}{% else %}{% set mkdocs_default = 'docs_site Directory in Repo' %}{% endif %}{{ mkdocs_target | default(mkdocs_default) }}"
   when: "{{ mkdocs_target is undefined }}"
 
 lifecycle:
