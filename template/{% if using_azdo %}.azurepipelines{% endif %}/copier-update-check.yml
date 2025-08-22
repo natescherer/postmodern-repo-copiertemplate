@@ -30,7 +30,7 @@ stages:
               $Secrets = @("APPRISE_URI")
               $MissingSecret = $False
               foreach ($Secret in $Secrets) {
-                if (!([Environment]::GetEnvironmentVariable($Secret))) {
+                if (!([Environment]::GetEnvironmentVariable($Secret)) -or ([Environment]::GetEnvironmentVariable($Secret) -eq "`$($Secret)")) {
                   Write-Host -Object "[error]Required Actions secret '$Secret' is not set! Please add it in Pipelines settings."
                   $MissingSecret = $True
                 }
@@ -40,7 +40,7 @@ stages:
               }
             env:
               APPRISE_URI: $(APPRISE_URI)
-            displayName: Check for Template Updates
+            displayName: Validate Secrets Exist
           - checkout: self
             fetchDepth: 0
             persistCredentials: true
@@ -56,7 +56,7 @@ stages:
               $Output = copier update --answers-file .config/copier-answers.yml --skip-answered --pretend --trust 2>&1
               $NewVersion = $Output[0].ToString().Split(" ")[-1]
               if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
-                apprise -i html -t "[${{ Build.Repository.Name }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
+                apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
               }
             env:
               APPRISE_URI: $(APPRISE_URI)
