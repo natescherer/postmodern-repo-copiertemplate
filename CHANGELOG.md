@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.4...v0.5.5) (2025-08-22)
+
+
+### Features
+
+* Refactor license question ([#740](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/740)) ([5895839](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5895839b424f9c8012ae96d7eb0a66fbf5ca5d0a))
+
 ## [0.5.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.3...v0.5.4) (2025-08-22)
 
 
