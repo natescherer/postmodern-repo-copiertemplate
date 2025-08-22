@@ -123,9 +123,11 @@ license:
   type: str
   help: Choose the license for this project.
   choices:
-    - MIT
-    - None
-  when: "{{ project_visibility == 'Public' }}"
+    MIT:
+      value: MIT
+      validator: "{% if project_visibility == 'Private' %}Not Supported on Private repos{% endif %}"
+    None:
+      value: None
 
 mkdocs_target:
   type: str
