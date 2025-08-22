@@ -1,6 +1,12 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
 {%- if developer_platform == 'GitHub' %}
-{{ dict(_copier_answers, repo_name=repo_name, developer_platform=developer_platform, repo_actions=repo_actions, github_username=github_username, github_org=github_org, project_type=project_type, project_visibility=project_visibility, mkdocs_target=mkdocs_target, copyright_year=copyright_year) | to_nice_yaml -}}
+{{ dict(_copier_answers, repo_name=repo_name, developer_platform=developer_platform,
+repo_setup_actions=repo_setup_actions, github_username=github_username, github_org=github_org,
+project_type=project_type, project_visibility=project_visibility, mkdocs_target=mkdocs_target,
+copyright_year=copyright_year, project_initialized=True) | to_nice_yaml -}}
 {%- else %}
-{{ dict(_copier_answers, repo_name=repo_name, developer_platform=developer_platform, repo_actions=repo_actions, azdo_org=azdo_org, azdo_project=azdo_project, project_type=project_type, project_visibility=project_visibility, mkdocs_target=mkdocs_target, copyright_year=copyright_year) | to_nice_yaml -}}
+{{ dict(_copier_answers, repo_name=repo_name, developer_platform=developer_platform,
+repo_setup_actions=repo_setup_actions, azdo_org=azdo_org, azdo_project=azdo_project, project_type=project_type,
+project_visibility=project_visibility, mkdocs_target=mkdocs_target, copyright_year=copyright_year,
+project_initialized=True) | to_nice_yaml -}}
 {%- endif %}

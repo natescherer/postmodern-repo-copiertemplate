@@ -6,7 +6,6 @@ _jinja_extensions:
   - copier_template_extensions.TemplateExtensionLoader
   - jinja2_shell_extension.ShellExtension
   # Internal Dependencies
-  - extensions/context.py:ContextUpdater
   - extensions/yaml_quote_extension.py:YamlQuoteExtension
 
 _message_before_copy: Thanks for using this template! Please consult the 'Template Questions' page in documentation for deeper explanation of each question.
@@ -45,21 +44,21 @@ developer_platform:
   default: "{{ developer_platform | default('GitHub') }}"
   when: "{{ developer_platform is undefined }}"
 
-repo_actions:
+repo_setup_actions:
   type: str
   help: New project? 'Create Repo'. Existing project? 'Set Repo Rules'.
   choices:
     - Create Repo
     - Set Repo Rules
-  default: "{{ repo_actions | default('Create Repo') }}"
-  when: "{{ repo_actions is undefined }}"
+  default: "{{ repo_setup_actions | default('Create Repo') }}"
+  when: "{{ repo_setup_actions is undefined }}"
 
 github_token:
   type: str
   secret: true
   default: ""
   help: A GitHub Personal Access Token which will be used to set up your repo. Value is not saved.
-  when: "{{ developer_platform == 'GitHub' and repo_actions != 'None' }}"
+  when: "{{ developer_platform == 'GitHub' and not project_initialized }}"
 
 github_username:
   type: str
@@ -69,7 +68,7 @@ github_username:
 
 github_org:
   type: str
-  help: "[OPTIONAL] If this repo {% if repo_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here."
+  help: "[OPTIONAL] If this repo {% if repo_setup_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here."
   default: "{{ github_org | default('') }}"
   when: "{{ github_org is undefined and developer_platform == 'GitHub' }}"
 
@@ -88,12 +87,12 @@ azdo_token:
   type: str
   secret: true
   default: ""
-  help: An Azure DevOps Personal Access Token which will be used to {% if repo_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
-  when: "{{ developer_platform == 'Azure DevOps' and repo_actions != 'None' }}"
+  help: An Azure DevOps Personal Access Token which will be used to {% if repo_setup_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
+  when: "{{ developer_platform == 'Azure DevOps' and not project_initialized }}"
 
 azdo_project:
   type: str
-  help: "The Azure DevOps project where your repo {% if repo_actions == 'Create Repo' %}will be created.{% else %}exists.{% endif %}"
+  help: "The Azure DevOps project where your repo {% if repo_setup_actions == 'Create Repo' %}will be created.{% else %}exists.{% endif %}"
   default: "{{ azdo_project | default('') }}"
   when: "{{ azdo_project is undefined and developer_platform == 'Azure DevOps' }}"
 
@@ -201,12 +200,12 @@ is_prerelease:
 
 should_create_repo:
   type: bool
-  default: "{% if repo_actions == 'Create Repo' %}true{% endif %}"
+  default: "{% if repo_setup_actions == 'Create Repo' %}true{% endif %}"
   when: false
 
 should_set_repo_settings:
   type: bool
-  default: "{% if repo_actions == 'Create Repo' or repo_actions == 'Set Repo Rules' %}true{% endif %}"
+  default: "{% if repo_setup_actions == 'Create Repo' or repo_setup_actions == 'Set Repo Rules' %}true{% endif %}"
   when: false
 
 mkdocs_ghpages:
