@@ -56,7 +56,7 @@ stages:
               $Output = copier update --answers-file .config/copier-answers.yml --skip-answered --pretend --trust 2>&1
               $NewVersion = $Output[0].ToString().Split(" ")[-1]
               if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
-                apprise -i html -t "[${{ github.repository }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
+                apprise -i html -t "[${{ Build.Repository.Name }}] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
               }
             env:
               APPRISE_URI: $(APPRISE_URI)
