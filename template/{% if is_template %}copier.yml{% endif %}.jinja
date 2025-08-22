@@ -72,11 +72,6 @@ github_org:
   default: "{{ github_org | default('') }}"
   when: "{{ github_org is undefined and developer_platform == 'GitHub' }}"
 
-project_description:
-  type: str
-  help: Enter the repo description you want to appear in GitHub.
-  when: "{{ developer_platform == 'GitHub' }}"
-
 azdo_org:
   type: str
   help: The Azure DevOps organization for this project.
@@ -107,7 +102,11 @@ project_type:
 
 project_name:
   type: str
-  help: The friendly name of the project that will be used in documentation.
+  help: The friendly name of this project, which can include captitals, spaces, etc.
+
+project_description:
+  type: str
+  help: Enter a short description for this project.
 
 project_visibility:
   type: str
@@ -125,9 +124,11 @@ license:
   type: str
   help: Choose the license for this project.
   choices:
-    - MIT
-    - None
-  when: "{{ project_visibility == 'Public' }}"
+    MIT:
+      value: MIT
+      validator: "{% if project_visibility == 'Private' %}Not Supported on Private repos{% endif %}"
+    None:
+      value: None
 
 mkdocs_target:
   type: str
