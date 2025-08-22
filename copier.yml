@@ -71,11 +71,6 @@ github_org:
   default: "{{ github_org | default('') }}"
   when: "{{ github_org is undefined and developer_platform == 'GitHub' }}"
 
-github_repo_description:
-  type: str
-  help: Enter the repo description you want to appear in GitHub.
-  when: "{{ developer_platform == 'GitHub' }}"
-
 azdo_org:
   type: str
   help: The Azure DevOps organization for this project.
@@ -106,7 +101,11 @@ project_type:
 
 project_name:
   type: str
-  help: The friendly name of the project that will be used in documentation.
+  help: The friendly name of this project, which can include captitals, spaces, etc.
+
+project_description:
+  type: str
+  help: Enter a short description for this project.
 
 project_visibility:
   type: str
@@ -229,7 +228,7 @@ copyright_year:
 _tasks:
   - command: invoke copy-template-files --src-path {{ _copier_conf.src_path }}{% if _copier_conf.vcs_ref %} --vcs-ref {{ _copier_conf.vcs_ref }}{% endif %}
     when: "{% if is_template %}true{% endif %}"
-  - command: invoke create-repo-github --repo-name {{ repo_name }} --github-repo-description "{{ github_repo_description }}" --github-repo-owner {{ github_repo_owner }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
+  - command: invoke create-repo-github --repo-name {{ repo_name }} --github-repo-description "{{ project_description }}" --github-repo-owner {{ github_repo_owner }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_github %}true{% endif %}"
   - command: invoke create-repo-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project }} --azdo-org {{ azdo_org }}
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_azdo %}true{% endif %}"
