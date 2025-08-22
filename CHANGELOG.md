@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.3...v0.5.4) (2025-08-22)
+
+
+### Features
+
+* Refactor github_repo_description to project_description ([#738](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/738)) ([ff8a9f3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ff8a9f3195d0bf88de57fdd28786cd07bfcc59b7))
+
 ## [0.5.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.2...v0.5.3) (2025-08-22)
 
 
