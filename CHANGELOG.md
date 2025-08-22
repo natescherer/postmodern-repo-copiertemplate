@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.2...v0.5.3) (2025-08-22)
+
+
+### Features
+
+* Ask setup questions once ([#736](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/736)) ([1f93115](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1f93115fd1c9cede407c058f067a0fd12aecbfeb))
+* Implement copyright_year computed value ([#732](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/732)) ([c08a7ab](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c08a7ab7d824be48e90167fb5071871c44a909a2))
+* Remove context.py in favor of _copier_operation ([#734](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/734)) ([4d02a22](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4d02a22aed21b5093de56b45b93567358782ed1b))
+
 ## [0.5.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.1...v0.5.2) (2025-08-15)
 
 
