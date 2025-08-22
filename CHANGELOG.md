@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.5...v0.5.6) (2025-08-22)
+
+
+### Bug Fixes
+
+* Fix azdo update check ([#742](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/742)) ([535ff77](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/535ff7749079ac222b4f5a2c64af4f6794d6ac24))
+
 ## [0.5.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.4...v0.5.5) (2025-08-22)
 
 
