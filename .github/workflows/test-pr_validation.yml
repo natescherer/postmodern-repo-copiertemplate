@@ -9,6 +9,9 @@ concurrency:
 
 permissions: read-all
 
+env:
+  MISE_ENV: ci
+
 jobs:
   tests:
     runs-on: ubuntu-latest

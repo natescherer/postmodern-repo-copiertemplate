@@ -1,0 +1,99 @@
+site_name: Postmodern Repo Copier Template
+docs_dir: ../../docs
+site_url: https://natescherer.github.io/postmodern-repo-copiertemplate/
+repo_url: https://github.com/natescherer/postmodern-repo-copiertemplate
+repo_name: natescherer/postmodern-repo-copiertemplate
+extra:
+  version:
+    alias: true
+    provider: mike
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - pymdownx.blocks.caption
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - tables
+plugins:
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+      reconfigure_material: true
+  - mike:
+      enabled: !ENV [MKDOCS_OFFLINE, false]
+      canonical_version: latest
+  - offline:
+      enabled: !ENV [MKDOCS_OFFLINE, false]
+  - privacy:
+      enabled: !ENV [CI, false]
+  - search
+  - social:
+      enabled: !ENV [CI, false]
+theme:
+  name: material
+  custom_dir: overrides
+  features:
+    - content.code.copy
+    - navigation.indexes
+    - navigation.footer
+    - navigation.sections
+    - navigation.tracking
+    - search.highlight
+    - toc.follow
+  font:
+    text: Lato
+    code: Cascadia Mono
+  icon:
+    logo: octicons/repo-template-24
+    repo: fontawesome/brands/github
+  palette:
+    # System Color Scheme
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/lightbulb-auto
+        name: System Theme (Click to Switch to Light Theme)
+    # Light Color Scheme
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      accent: purple
+      primary: deep purple
+      toggle:
+        icon: material/lightbulb
+        name: Light Theme (Click to Switch to Dark Theme)
+    # Dark Color Scheme
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      accent: purple
+      primary: deep purple
+      toggle:
+        icon: material/lightbulb-outline
+        name: Dark Theme (Click to Switch to System Theme)

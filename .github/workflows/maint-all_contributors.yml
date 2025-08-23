@@ -10,7 +10,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  allcontributors_create_pr:
+  allcontributors-create-pr:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'allcontributors[bot]' }}
     steps:

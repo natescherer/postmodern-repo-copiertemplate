@@ -1,30 +1,17 @@
 [hooks]
-postinstall = ["mise run set_up_git_hooks"]
+postinstall = [
+  "{% set is_in_ci = get_env(name='CI', default='') %}{% if is_in_ci %}echo 'Not setting up git hooks as mise is running in CI!'{% else %}pre-commit install -c .config/.pre-commit-config.yaml{% endif %}",
+]
 
 [settings]
 experimental = true # Needed for hooks as of v2025.6.2
 windows_default_inline_shell_args = "powershell.exe /c"
 
-[tasks.set_up_git_hooks]
-run = '''
-#!/usr/bin/env sh
-
-if [ -n "$GITHUB_ACTIONS" ] || [ -n "$TF_BUILD" ]; then
-    echo "\033[93mNot setting up git hooks as mise is running in CI!\033[00m"
-else
-    pre-commit install -c .config/.pre-commit-config.yaml
-fi
-'''
-run_windows = '''
-if ($env:GITHUB_ACTIONS -or $env:TF_BUILD) {
-    Write-Host -ForegroundColor Yellow -Object "Not setting up git hooks as mise is running in CI!"
-} else {
-    pre-commit install -c .config\.pre-commit-config.yaml
-}
-'''
-
 [tasks.copier-update]
 run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust"
+
+[tasks.docs-server]
+run = "mkdocs serve -f .config/mkdocs/mkdocs.yml"
 
 [tasks.test]
 run = '''
@@ -39,23 +26,25 @@ copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'devel
 
 [tasks.integration-test-azdo]
 run = '''
-copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'developer_platform=Azure DevOps' -d 'azdo_org=natescherer' -d 'azdo_project=natescherer' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Private' -d 'license=None' -d 'lifecycle=Pre-Alpha' https://github.com/natescherer/postmodern-repo-copiertemplate {{option(name="path")}}
+copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'developer_platform=Azure DevOps' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Private' -d 'license=None' -d 'lifecycle=Pre-Alpha' https://github.com/natescherer/postmodern-repo-copiertemplate {{option(name="path")}}
 '''
 
 [tools]
 # Backends
 python = "3.13.6" # Used by copier and pre-commit
 # Tools
-"pipx:apprise" = "1.9.4"
 "pipx:pre-commit" = "4.3.0"
 uv = "0.8.9" # Used by pipx tools
 yamlfmt = "0.17.2" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved
-yq = "4.47.1" # Used by copier update check CI workflows
-
-[tools."pipx:invoke"]
-version = "2.2.0"
-uvx_args = "--with copier==9.8.0 --with githubkit==0.12.16 --with requests==2.32.4 --with rich==14.0.0"
 
 [tools."pipx:copier"]
 version = "9.9.0"
-uvx_args = "--with copier-template-extensions==0.3.3 --with jinja2-shell-extension==2.1.1"
+uvx_args = "--with copier-template-extensions==0.3.3 --with jinja2-shell-extension==2.1.1 --with jinja2-time==0.2.0"
+
+[tools."pipx:invoke"]
+version = "2.2.0"
+uvx_args = "--with copier==9.9.0 --with githubkit==0.13.1 --with requests==2.32.4 --with rich==14.1.0"
+
+[tools."pipx:mkdocs"]
+version = "1.6.1"
+uvx_args = "--with mkdocs-material==9.6.16 --with mkdocs-static-i18n==1.3.0 --with mike==2.1.3"
