@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.8...v0.5.9) (2025-08-23)
+
+
+### Bug Fixes
+
+* Fix bad token criteria ([#748](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/748)) ([3bf92df](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3bf92df1e930edaf8905f3d008abe77e8a69bf8f))
+
 ## [0.5.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.7...v0.5.8) (2025-08-23)
 
 
