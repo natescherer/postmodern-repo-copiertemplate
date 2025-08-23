@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.10...v0.5.11) (2025-08-23)
+
+
+### Bug Fixes
+
+* Adjust conditions for setup-mkdocs-ghpages ([#752](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/752)) ([848ff3e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/848ff3e55f33784e6dcd66f55aed0be222f2b5ea))
+
 ## [0.5.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.9...v0.5.10) (2025-08-23)
 
 
