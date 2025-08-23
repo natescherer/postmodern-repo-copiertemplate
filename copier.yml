@@ -45,10 +45,11 @@ developer_platform:
 
 repo_setup_actions:
   type: str
-  help: New project? 'Create Repo'. Existing project? 'Set Repo Rules'.
+  help: New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Don't want to do anything? 'None'
   choices:
     - Create Repo
     - Set Repo Rules
+    - None
   default: "{{ repo_setup_actions | default('Create Repo') }}"
   when: "{{ repo_setup_actions is undefined }}"
 
