@@ -244,7 +244,7 @@ _tasks:
   - command: invoke create-pipelines-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project }} --azdo-org {{ azdo_org }}
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
   - command: invoke setup-mkdocs-ghpages --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
-    when: "{% if _copier_operation == 'copy' and mkdocs_ghpages %}true{% endif %}"
+    when: "{% if _copier_operation == 'copy' and mkdocs_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
   - invoke delete-unneeded-template-files
 
 _message_after_update: |-
