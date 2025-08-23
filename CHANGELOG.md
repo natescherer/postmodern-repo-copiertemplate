@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.9...v0.5.10) (2025-08-23)
+
+
+### Bug Fixes
+
+* Fix azdo_token question ([#750](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/750)) ([1a2f424](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1a2f42452d70a62ebff4cffdbb4a7e687c3ca4b9))
+
 ## [0.5.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.8...v0.5.9) (2025-08-23)
 
 
