@@ -1,0 +1,7 @@
+[tools]
+# Tools
+"pipx:apprise" = "1.9.4"
+yq = "4.47.1" # Used by copier update check CI workflows
+[tools."pipx:mike"]
+version = "2.1.3"
+uvx_args = "--with mkdocs-material[imaging]==9.6.15 --with mkdocs-static-i18n==1.3.0"

@@ -1,6 +1,5 @@
 # Prerequisites
 
-{%- if using_github %}
 ## GitHub
 
 ### One-Time Actions Per GitHub User/Organization
@@ -13,4 +12,3 @@
     - This app provides automatic dependency updates for your project
     - It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.
 1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [in the repo settings](https://github.com/settings/security_analysis).
-{%- endif %}
