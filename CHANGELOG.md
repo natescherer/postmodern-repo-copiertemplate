@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.6...v0.5.7) (2025-08-23)
+
+
+### Bug Fixes
+
+* Restore the None option for repo_setup_actions ([#744](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/744)) ([042edef](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/042edef78c1170179d510b5bc5da7d16493c7833))
+
 ## [0.5.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.5...v0.5.6) (2025-08-22)
 
 
