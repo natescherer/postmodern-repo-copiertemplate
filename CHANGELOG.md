@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.11...v0.5.12) (2025-08-23)
+
+
+### Features
+
+* Apply template v0.5.11 ([#755](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/755)) ([eeab295](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/eeab295fb9541616eb7af64c43157b38d1461bd9))
+* Switch to using mise for ghpages mkdocs workflow ([#757](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/757)) ([f9c0801](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f9c0801e180c10a11d9aa0abe0bbd408595b21a8))
+
 ## [0.5.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.10...v0.5.11) (2025-08-23)
 
 
