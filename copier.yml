@@ -97,7 +97,7 @@ project_type:
   choices:
     - Standard
     - Template
-  default: "{{ project_type | default('Standard') }}"
+  default: "{{ project_type }}"
   when: "{{ project_type is undefined }}"
 
 project_name:
