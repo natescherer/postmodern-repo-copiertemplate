@@ -229,6 +229,7 @@ copyright_year:
 ## Tasks
 
 _tasks:
+  - echo run starting
   - command: invoke copy-template-files --src-path {{ _copier_conf.src_path }}{% if _copier_conf.vcs_ref %} --vcs-ref {{ _copier_conf.vcs_ref }}{% endif %}
     when: "{% if is_template %}true{% endif %}"
   - command: invoke create-repo-github --repo-name {{ repo_name }} --github-repo-description "{{ project_description }}" --github-repo-owner {{ github_repo_owner }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
@@ -246,6 +247,7 @@ _tasks:
   - command: invoke setup-mkdocs-ghpages --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
     when: "{% if _copier_operation == 'copy' and mkdocs_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
   - invoke delete-unneeded-template-files
+  - echo run ending
 
 _message_after_update: |-
   {% if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %} It looks like you have switched this project's lifecycle to 'Stable' for the first time. If this is true, merge the following commit to main to have Release Please bump the version number properly.
