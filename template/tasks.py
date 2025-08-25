@@ -31,7 +31,7 @@ def copy_template_files(c, src_path, vcs_ref=None):
         else:
             c.run(f"git -c advice.detachedHead=false clone --quiet {src_path} {tmpdir}")
         shutil.copytree(f"{tmpdir}/template", "template", dirs_exist_ok=True)
-        c.run("ls -R")
+        c.run("dir /S")
     print("[bold green]*** 'copy-template-files' task end ***[/bold green]")
 
 
