@@ -230,6 +230,8 @@ copyright_year:
 
 _tasks:
   - echo run starting
+  - echo operation is {{ _copier_operation }}
+  - echo project is {{ project_type }}
   - command: invoke copy-template-files --src-path {{ _copier_conf.src_path }}{% if _copier_conf.vcs_ref %} --vcs-ref {{ _copier_conf.vcs_ref }}{% endif %}
     when: "{% if is_template %}true{% endif %}"
   - command: invoke create-repo-github --repo-name {{ repo_name }} --github-repo-description "{{ project_description }}" --github-repo-owner {{ github_repo_owner }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
