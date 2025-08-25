@@ -230,7 +230,7 @@ copyright_year:
 
 _tasks:
   - echo tasks starting
-  - echo github_username (str without choices) is {{ github_username }}
+  - echo github_org (str without choices) is {{ github_org }}
   - echo project_type (str with choices) is {{ project_type }}
   - command: invoke copy-template-files --src-path {{ _copier_conf.src_path }}{% if _copier_conf.vcs_ref %} --vcs-ref {{ _copier_conf.vcs_ref }}{% endif %}
     when: "{% if is_template %}true{% endif %}"
