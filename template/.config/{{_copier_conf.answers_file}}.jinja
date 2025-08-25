@@ -1,8 +1,2 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-{%- if developer_platform == 'GitHub' %}
-{{ dict(_copier_answers, repo_name=repo_name, github_username=github_username, github_org=github_org,
-copyright_year=copyright_year, project_initialized=True) | to_nice_yaml -}}
-{%- else %}
-{{ dict(_copier_answers, repo_name=repo_name, azdo_org=azdo_org, azdo_project=azdo_project, copyright_year=copyright_year,
-project_initialized=True) | to_nice_yaml -}}
-{%- endif %}
+{{ dict(_copier_answers, copyright_year=copyright_year, project_initialized=True) | to_nice_yaml -}}
