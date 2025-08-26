@@ -25,9 +25,10 @@ parent_template_url:
 ## Questions
 repo_name:
   type: str
-  help: The name of this project's Git repository. Defaults to the name of the destination folder.
-  default: "{{ repo_name | default(_copier_conf.dst_path | basename) }}"
-  when: "{{ repo_name is undefined }}"
+  help: |
+    The name of this project's Git repository. Defaults to the name of the destination folder.
+    DO NOT CHANGE ON UPDATE!
+  default: "{{ _copier_conf.dst_path | basename }}"
 
 author_name:
   type: str
@@ -36,22 +37,22 @@ author_name:
 
 developer_platform:
   type: str
-  help: The platform where you are going to host your Git repo and CI/CD.
+  help: |
+    The platform where you are going to host your Git repo and CI/CD.
+    DO NOT CHANGE ON UPDATE!
   choices:
     - GitHub
     - Azure DevOps
-  default: "{{ developer_platform | default('GitHub') }}"
-  when: "{{ developer_platform is undefined }}"
 
 repo_setup_actions:
   type: str
-  help: New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Don't want to do anything? 'None'
+  help: |
+    New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Don't want to do anything? 'None'.
+    DO NOT CHANGE ON UPDATE!
   choices:
     - Create Repo
     - Set Repo Rules
     - None
-  default: "{{ repo_setup_actions | default('Create Repo') }}"
-  when: "{{ repo_setup_actions is undefined }}"
 
 github_token:
   type: str
@@ -62,43 +63,48 @@ github_token:
 
 github_username:
   type: str
-  help: Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.
-  default: "{{ github_username | default((('git config --global user.email' | shell()).split('+') | last).split('@') | first) }}"
-  when: "{{ github_username is undefined and developer_platform == 'GitHub' }}"
+  help: |
+    Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.
+    DO NOT CHANGE ON UPDATE!
+  default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
+  when: "{{ developer_platform == 'GitHub' }}"
 
 github_org:
   type: str
-  help: "[OPTIONAL] If this repo {% if repo_setup_actions == 'Create Repo' %}should be created under{% else %}is part of{% endif %} a GitHub organization, supply its name here."
-  default: "{{ github_org | default('') }}"
-  when: "{{ github_org is undefined and developer_platform == 'GitHub' }}"
+  help: |
+    [OPTIONAL] If this repo is part of a GitHub organization, supply its name here.
+    DO NOT CHANGE ON UPDATE!
+  when: "{{ developer_platform == 'GitHub' }}"
 
 azdo_org:
   type: str
-  help: The Azure DevOps organization for this project.
-  default: "{{ azdo_org | default('') }}"
-  when: "{{ azdo_org is undefined and developer_platform == 'Azure DevOps' }}"
+  help: |
+    The Azure DevOps organization for this project.
+    DO NOT CHANGE ON UPDATE!
+  when: "{{ developer_platform == 'Azure DevOps' }}"
 
 azdo_token:
   type: str
   secret: true
   default: ""
-  help: An Azure DevOps Personal Access Token which will be used to {% if repo_setup_actions == 'Create Repo' %}initialize your new repository and apply rules.{% else %}apply rules to your existing repo.{% endif %} Value is not saved.
+  help: An Azure DevOps Personal Access Token which will be used to set up your repo. Value is not saved.
   when: "{{ developer_platform == 'Azure DevOps' and not project_initialized and repo_setup_actions != 'None' }}"
 
 azdo_project:
   type: str
-  help: "The Azure DevOps project where your repo {% if repo_setup_actions == 'Create Repo' %}will be created.{% else %}exists.{% endif %}"
-  default: "{{ azdo_project | default('') }}"
-  when: "{{ azdo_project is undefined and developer_platform == 'Azure DevOps' }}"
+  help: |
+    The Azure DevOps project for your repo.
+    DO NOT CHANGE ON UPDATE!
+  when: "{{ developer_platform == 'Azure DevOps' }}"
 
 project_type:
   type: str
-  help: If you are creating a basic repo, choose Standard. If you are creating a child template, choose Template.
+  help: |
+    If you are creating a basic repo, choose Standard. If you are creating a child template, choose Template.
+    DO NOT CHANGE ON UPDATE!
   choices:
     - Standard
     - Template
-  default: "{{ project_type | default('Standard') }}"
-  when: "{{ project_type is undefined }}"
 
 project_name:
   type: str
@@ -106,19 +112,19 @@ project_name:
 
 project_description:
   type: str
-  help: Enter a short description for this project.
+  help: A short (two-ish sentence) description for this project, to be used in documentation and packaging.
 
 project_visibility:
   type: str
-  help: Choose if you want this project to be Public or Private.
+  help: |
+    Choose if you want this project to be Public or Private.
+    DO NOT CHANGE ON UPDATE!
   choices:
     Public:
       value: Public
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     Private:
       value: Private
-  default: "{{ project_visibility | default('Public') }}"
-  when: "{{ project_visibility is undefined }}"
 
 license:
   type: str
@@ -132,15 +138,15 @@ license:
 
 mkdocs_target:
   type: str
-  help: Choose how you want to publish your documentation
+  help: |
+    Choose how you want to publish your documentation
+    DO NOT CHANGE ON UPDATE!
   choices:
     GitHub Pages:
       value: GitHub Pages
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     docs_site Directory in Repo:
       value: docs_site Directory in Repo
-  default: "{% if developer_platform == 'GitHub' %}{% set mkdocs_default = 'GitHub Pages' %}{% else %}{% set mkdocs_default = 'docs_site Directory in Repo' %}{% endif %}{{ mkdocs_target | default(mkdocs_default) }}"
-  when: "{{ mkdocs_target is undefined }}"
 
 lifecycle:
   type: str
