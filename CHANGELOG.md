@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.12...v0.5.13) (2025-08-26)
+
+
+### Bug Fixes
+
+* Adjust question structure to unbreak updating ([#758](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/758)) ([bf4ad0a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/bf4ad0a488058aebc14a493a8d4b749755e99fc7))
+
 ## [0.5.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.11...v0.5.12) (2025-08-23)
 
 
