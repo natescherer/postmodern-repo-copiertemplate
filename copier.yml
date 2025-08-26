@@ -57,6 +57,7 @@ repo_setup_actions:
 github_token:
   type: str
   secret: true
+  default: ""
   help: A GitHub Personal Access Token which will be used to set up your repo. Value is not saved.
   when: "{{ developer_platform == 'GitHub' and not project_initialized and repo_setup_actions != 'None' }}"
 
@@ -85,6 +86,7 @@ azdo_org:
 azdo_token:
   type: str
   secret: true
+  default: ""
   help: An Azure DevOps Personal Access Token which will be used to set up your repo. Value is not saved.
   when: "{{ developer_platform == 'Azure DevOps' and not project_initialized and repo_setup_actions != 'None' }}"
 
