@@ -25,12 +25,6 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/public_vs_private_repos/"/>
     </url>
     <url>
-        <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/test/</loc>
-        <lastmod>2025-08-27</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/test/"/>
-    </url>
-    <url>
         <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/token_permissions/</loc>
         <lastmod>2025-08-27</lastmod>
         <changefreq>daily</changefreq>
