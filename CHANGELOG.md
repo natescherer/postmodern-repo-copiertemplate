@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.13...v0.5.14) (2025-08-27)
+
+
+### Bug Fixes
+
+* Fix doc building attempt 1 ([2162c9f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2162c9f21b8ec3522642c4fc981dff9b6532903a))
+* Fix doc building attempt 2 ([4fbc8d0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4fbc8d0d7647254428bd04cefb479012a27c6c28))
+* Fix docs building ([#763](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/763)) ([73cd9d3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/73cd9d32dc634d837a17bb48fad5c33e23613925))
+
+
+### Miscellaneous
+
+* Apply template v0.5.13 ([#760](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/760)) ([26cec3e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/26cec3e5d768cc481d2546a95f7bc31c7dcea86d))
+
 ## [0.5.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.12...v0.5.13) (2025-08-26)
 
 
