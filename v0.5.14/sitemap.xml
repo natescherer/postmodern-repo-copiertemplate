@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/applying_to_existing_projects/</loc>
+        <lastmod>2025-08-27</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/applying_to_existing_projects/"/>
+    </url>
+    <url>
+        <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/</loc>
+        <lastmod>2025-08-27</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/"/>
+    </url>
+    <url>
+        <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/prerequisites/</loc>
+        <lastmod>2025-08-27</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/prerequisites/"/>
+    </url>
+    <url>
+        <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/public_vs_private_repos/</loc>
+        <lastmod>2025-08-27</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/public_vs_private_repos/"/>
+    </url>
+    <url>
+        <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/token_permissions/</loc>
+        <lastmod>2025-08-27</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/token_permissions/"/>
+    </url>
+    <url>
+        <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/components/template_engine/</loc>
+        <lastmod>2025-08-27</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/components/template_engine/"/>
+    </url>
+    <url>
+        <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/platform_notes/azure_devops/</loc>
+        <lastmod>2025-08-27</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/platform_notes/azure_devops/"/>
+    </url>
+    <url>
+        <loc>https://natescherer.github.io/postmodern-repo-copiertemplate/platform_notes/github_org/</loc>
+        <lastmod>2025-08-27</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://natescherer.github.io/postmodern-repo-copiertemplate/platform_notes/github_org/"/>
+    </url>
+</urlset>
