@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.14...v0.5.15) (2025-08-27)
+
+
+### Bug Fixes
+
+* Adjust copier dependencies ([#764](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/764)) ([27e5e66](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/27e5e6605ba816b1b4032d8e2713c105763e4e56))
+
 ## [0.5.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.13...v0.5.14) (2025-08-27)
 
 
