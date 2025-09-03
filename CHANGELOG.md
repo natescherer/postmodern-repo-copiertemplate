@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.15...v0.5.16) (2025-09-03)
+
+
+### Bug Fixes
+
+* Fix support for azure devops projects with spaces ([#769](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/769)) ([3bb001d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3bb001d578831607396a25c59ff022c8780864e4))
+
 ## [0.5.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.14...v0.5.15) (2025-08-27)
 
 
