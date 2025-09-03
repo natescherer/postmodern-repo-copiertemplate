@@ -72,10 +72,9 @@ def create_repo_azdo(c, repo_name, azdo_project, azdo_org):
 
     repo_data = {"name": repo_name}
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
-    encoded_project = azdo_project.replace(" ", "%20")
     print("[cyan]Creating repo in Azure DevOps...[/cyan]")
     response = requests.post(
-        f"https://dev.azure.com/{azdo_org}/{encoded_project}/_apis/git/repositories?api-version=7.2-preview.1",
+        f"https://dev.azure.com/{azdo_org}/{azdo_project}/_apis/git/repositories?api-version=7.2-preview.1",
         data=json.dumps(repo_data),
         auth=("", token),
         headers=headers,
@@ -240,8 +239,7 @@ def initialize_repo_and_commit_files(
         gcm_service = "https://github.com"
         gcm_account = github_username
     elif developer_platform == "Azure DevOps":
-        encoded_project = azdo_project.replace(" ", "%20")
-        remote_url = f"https://{azdo_org}@dev.azure.com/{azdo_org}/{encoded_project}/_git/{repo_name}"
+        remote_url = f"https://{azdo_org}@dev.azure.com/{azdo_org}/{azdo_project}/_git/{repo_name}"
         gcm_dir = f"{str(Path.home())}/.gcm/store/git/https/dev.azure.com/{azdo_org}"
         gcm_file = "copier.credential"
         gcm_service = f"https://dev.azure.com/{azdo_org}"
@@ -300,14 +298,13 @@ def create_pipelines_azdo(c, repo_name, azdo_project, azdo_org):
                 "type": "build",
             }
             headers = {"Content-Type": "application/json", "Accept": "application/json"}
-            encoded_project = azdo_project.replace(" ", "%20")
             print(
                 f"[cyan]"
                 f"Creating pipeline for '.azurepipelines/{entry.name}' in "
                 "Azure DevOps...[/cyan]"
             )
             response = requests.post(
-                f"https://dev.azure.com/{azdo_org}/{encoded_project}/_apis/build/definitions?api-version=7.1-preview.7",
+                f"https://dev.azure.com/{azdo_org}/{azdo_project}/_apis/build/definitions?api-version=7.1-preview.7",
                 data=json.dumps(pipeline_data),
                 auth=("", token),
                 headers=headers,

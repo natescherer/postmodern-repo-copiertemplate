@@ -14,7 +14,7 @@ mise install
 1. Run the following to create the template, making sure set the path at the end as appropriate
 
 ```bash
-mise x -- copier copy --trust {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} ~/local-repo-path-here
+mise x -- copier copy --trust {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} ~/local-repo-path-here
 ```
 
 ## Stuff from old README
