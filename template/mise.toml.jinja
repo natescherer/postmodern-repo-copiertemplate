@@ -20,12 +20,12 @@ copier copy --trust --vcs-ref=HEAD --pretend -d 'repo_name=render-test' -d 'auth
 {%- if is_template %}
 [tasks.integration-test-gh]
 run = '''
-copier copy --trust --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} -d 'developer_platform=GitHub' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'lifecycle=Pre-Alpha' {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} {% raw %}{{option(name="path")}}{% endraw %}
+copier copy --trust --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} -d 'developer_platform=GitHub' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'lifecycle=Pre-Alpha' {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} {% raw %}{{option(name="path")}}{% endraw %}
 '''
 
 [tasks.integration-test-azdo]
 run = '''
-copier copy --trust --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} -d 'developer_platform=Azure DevOps' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Private' -d 'license=None' -d 'lifecycle=Pre-Alpha' {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %} {% raw %}{{option(name="path")}}{% endraw %}
+copier copy --trust --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} -d 'developer_platform=Azure DevOps' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Private' -d 'license=None' -d 'lifecycle=Pre-Alpha' {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} {% raw %}{{option(name="path")}}{% endraw %}
 '''
 {%- endif %}
 

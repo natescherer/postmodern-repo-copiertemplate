@@ -19,7 +19,7 @@ parent_template_name:
   when: false
 parent_template_url:
   type: str
-  default: {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}https://dev.azure.com/{{ azdo_org }}/{{ azdo_project | replace(" ","%20") }}/_git/{{ repo_name }}{% endif %}
+  default: {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %}
   when: false
 {%- raw %}
 
@@ -176,6 +176,10 @@ using_azdo:
   default: "{% if developer_platform == 'Azure DevOps' %}true{% endif %}"
   when: false
 
+azdo_project_encoded:
+  type: str
+  default: "{{ azdo_project | replace(' ','%20') }}"
+
 using_mit:
   type: bool
   default: "{% if license == 'MIT' %}true{% endif %}"
@@ -240,15 +244,15 @@ _tasks:
     when: "{% if is_template %}true{% endif %}"
   - command: invoke create-repo-github --repo-name {{ repo_name }} --github-repo-description "{{ project_description }}" --github-repo-owner {{ github_repo_owner }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_github %}true{% endif %}"
-  - command: invoke create-repo-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project }} --azdo-org {{ azdo_org }}
+  - command: invoke create-repo-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project_encoded }} --azdo-org {{ azdo_org }}
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_azdo %}true{% endif %}"
   - command: invoke set-repo-settings-github --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }} --is-public {{ is_public }}{% if github_org %} --github-org {{ github_org }}{% endif %}
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_github %}true{% endif %}"
-  - command: invoke initialize-repo-and-commit-files --lifecycle {{ lifecycle }} --developer-platform "{{ developer_platform }}" --repo-name {{ repo_name }}{% if using_github %} --github-username {{ github_username }}{% if github_repo_owner %} --github-repo-owner {{ github_repo_owner }}{% endif %}{% endif %}{% if using_azdo %} --azdo-org {{ azdo_org }} --azdo-project {{ azdo_project }}{% endif %}
+  - command: invoke initialize-repo-and-commit-files --lifecycle {{ lifecycle }} --developer-platform "{{ developer_platform }}" --repo-name {{ repo_name }}{% if using_github %} --github-username {{ github_username }}{% if github_repo_owner %} --github-repo-owner {{ github_repo_owner }}{% endif %}{% endif %}{% if using_azdo %} --azdo-org {{ azdo_org }} --azdo-project {{ azdo_project_encoded }}{% endif %}
     when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
   - command: invoke set-branch-protection-ruleset-github --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_github %}true{% endif %}"
-  - command: invoke create-pipelines-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project }} --azdo-org {{ azdo_org }}
+  - command: invoke create-pipelines-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project_encoded }} --azdo-org {{ azdo_org }}
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
   - command: invoke setup-mkdocs-ghpages --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
     when: "{% if _copier_operation == 'copy' and mkdocs_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
