@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.19...v0.5.20) (2025-09-08)
+
+
+### Bug Fixes
+
+* Fix changelog path ([#799](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/799)) ([7f3d5d8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7f3d5d8ae23aebde5e985d2d06496d403acc3c6d))
+* Fix changelog path to be absolute ([#800](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/800)) ([1e37fda](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1e37fda3cf673c9d377ec5b030592fcb5332f6ac))
+
 ## [0.5.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.18...v0.5.19) (2025-09-08)
 
 
