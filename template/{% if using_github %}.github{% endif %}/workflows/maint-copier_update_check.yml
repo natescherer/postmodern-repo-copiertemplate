@@ -34,7 +34,7 @@ jobs:
             throw "Erroring as one or more required secrets are missing!"
           }
       - uses: actions/checkout@v5
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v3
         with:
           experimental: true
       - name: Check for Template Updates
