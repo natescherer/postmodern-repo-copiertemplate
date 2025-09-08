@@ -18,11 +18,12 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-  - stage: release
-    displayName: Release
+  - stage: mkdocs_build
+    displayName: Build Mkdocs
     jobs:
-      - job: release
-        displayName: Release Template
+      - job: mkdocs_build
+        timeoutInMinutes: 60
+        displayName: Build Mkdocs
         steps:
           - checkout: self
             fetchDepth: 0
