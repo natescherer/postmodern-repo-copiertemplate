@@ -91,7 +91,7 @@
         "mise\\..*toml\\.jinja"
       ],
       "matchStrings": [
-        ".*?(--with\\s(?<depName>[^=]+?)==(?<currentValue>[^\"\\s]*))"
+        ".*?(--with\\s(?<depName>.+?)(\\[\\S+])*==(?<currentValue>[^\"\\s]*))"
       ],
       "versioningTemplate": "pep440"
     }
