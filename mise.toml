@@ -37,7 +37,7 @@ uv = "0.8.15" # Used by pipx tools
 yamlfmt = "0.17.2" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved
 
 [tools."pipx:copier"]
-version = "9.10.0"
+version = "9.10.1"
 uvx_args = "--with copier-template-extensions==0.3.3 --with jinja2-shell-extension==2.1.1 --with jinja2-time==0.2.0 --with prompt-toolkit<=3.0.51"
 # prompt-toolkit is pinned here because of https://github.com/tmbo/questionary/issues/454
 
