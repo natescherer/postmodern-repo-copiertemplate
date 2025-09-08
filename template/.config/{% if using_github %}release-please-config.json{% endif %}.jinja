@@ -3,6 +3,9 @@
   "bump-patch-for-minor-pre-major": true,
   "extra-label": "release-please",
   "include-v-in-tag": true,
+  {%- if is_template %}
+  "path": "template",
+  {%- endif %}
   "plugins": ["sentence-case"],
   "packages": {
     ".": {
