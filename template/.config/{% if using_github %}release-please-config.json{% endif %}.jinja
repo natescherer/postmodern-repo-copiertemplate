@@ -7,7 +7,7 @@
   "packages": {
     "{% if is_template %}template{% else %}.{% endif %}": {
       "release-type": "simple",
-      "changelog-path": "CHANGELOG.md"
+      "changelog-path": "{% if is_template %}../{% endif %}CHANGELOG.md"
     }
   },
   {%- if is_template %}
