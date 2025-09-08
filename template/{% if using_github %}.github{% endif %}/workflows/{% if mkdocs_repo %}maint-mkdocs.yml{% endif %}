@@ -18,6 +18,7 @@ env:
 jobs:
   mkdocs:
     runs-on: ubuntu-latest
+    timeout-minutes: 360
     steps:
       - name: Validate Secrets Exist
         shell: pwsh

@@ -19,7 +19,8 @@ stages:
     displayName: Release
     jobs:
       - job: release
-        displayName: Release Template
+        timeoutInMinutes: 60
+        displayName: Release
         steps:
           - checkout: self
             fetchDepth: 0
