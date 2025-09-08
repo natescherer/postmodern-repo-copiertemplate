@@ -3,10 +3,9 @@
   "bump-patch-for-minor-pre-major": true,
   "extra-label": "release-please",
   "include-v-in-tag": true,
-  "path": "template",
   "plugins": ["sentence-case"],
   "packages": {
-    ".": {
+    "template": {
       "release-type": "simple",
       "changelog-path": "CHANGELOG.md"
     }
