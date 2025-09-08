@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.21](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.20...v0.5.21) (2025-09-08)
+
+
+### Features
+
+* Use src directory for standard repos ([#804](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/804)) ([48ac808](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/48ac808535fe199dda3735deb330e60088e131b4))
+
 ## [0.5.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.19...v0.5.20) (2025-09-08)
 
 
