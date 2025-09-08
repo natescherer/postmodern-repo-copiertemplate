@@ -30,7 +30,7 @@ copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'devel
 
 [tools]
 # Backends
-python = "3.13.6" # Used by copier and pre-commit
+python = "3.13.7" # Used by copier and pre-commit
 # Tools
 "pipx:pre-commit" = "4.3.0"
 uv = "0.8.15" # Used by pipx tools
