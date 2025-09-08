@@ -3,19 +3,18 @@
   "bump-patch-for-minor-pre-major": true,
   "extra-label": "release-please",
   "include-v-in-tag": true,
-  {%- if is_template %}
-  "path": "template",
-  {%- endif %}
   "plugins": ["sentence-case"],
   "packages": {
-    ".": {
+    "{% if is_template %}template{% else %}.{% endif %}": {
       "release-type": "simple",
       "changelog-path": "CHANGELOG.md"
     }
-  }{% if is_template %},
+  },
+  {%- if is_template %}
   "changelog-sections": [
     { "type": "feat", "section": "Features", "hidden": false },
     { "type": "fix", "section": "Bug Fixes", "hidden": false },
     { "type": "chore", "section": "Miscellaneous", "hidden": false }
-  ]{% endif %}
+  ]
+  {%- endif %}
 }
