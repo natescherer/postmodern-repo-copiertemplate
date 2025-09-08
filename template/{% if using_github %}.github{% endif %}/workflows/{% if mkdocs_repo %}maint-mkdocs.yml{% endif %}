@@ -43,7 +43,7 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v3
         with:
           experimental: true
       - run: mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs_site
