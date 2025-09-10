@@ -47,9 +47,9 @@ stages:
 
               if ([System.Version]$CurrentVersion -lt [System.Version]"$(MINIMUM_VERSION)") {
                 Write-Host "Releasing in --release-as mode."
-                mise x -- commit-and-tag-version --release-as $(MINIMUM_VERSION) --config .config/.versionrc.json
+                mise x -- commit-and-tag-version --release-as $(MINIMUM_VERSION)
               } else {
-                mise x -- commit-and-tag-version --config .config/.versionrc.json
+                mise x -- commit-and-tag-version
               }
 
               $ReleaseVersion = Get-Content -Path $(VERSION_FILE_PATH)
