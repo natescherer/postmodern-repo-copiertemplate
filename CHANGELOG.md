@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.25](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.24...v0.5.25) (2025-09-10)
+
+
+### Features
+
+* Switch to squash merges for azdo pipelines ([#817](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/817)) ([9acddad](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9acddadb70eaab304576ff2727c851acc1709ae2))
+
 ## [0.5.24](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.23...v0.5.24) (2025-09-10)
 
 
