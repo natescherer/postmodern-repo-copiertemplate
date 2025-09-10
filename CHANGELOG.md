@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.24](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.23...v0.5.24) (2025-09-10)
+
+
+### Bug Fixes
+
+* Move .versionrc.json back to root ([#814](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/814)) ([ad33980](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ad33980efd7e96c150fd6541af82423b1267b88d))
+
 ## [0.5.23](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.22...v0.5.23) (2025-09-10)
 
 
