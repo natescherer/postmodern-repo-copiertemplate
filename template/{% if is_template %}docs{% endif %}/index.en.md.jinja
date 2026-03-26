@@ -63,7 +63,7 @@ It is highly encouraged for you to take this template and make your own child te
   - Markdown linting via [mado](https://github.com/akiomik/mado)
   - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
   - Spell checking via [typos](https://github.com/crate-ci/typos)
-  - TOML linting and formatting via [Taplo](https://github.com/tamasfe/taplo)
+  - TOML linting and formatting via [Tombi](https://github.com/tombi-toml/tombi)
   - YAML linting via [yamllint](https://github.com/adrienverge/yamllint)
 
 ### CI/CD

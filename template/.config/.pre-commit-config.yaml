@@ -15,13 +15,11 @@ repos:
         args: ["--config", ".config/ruff.toml", "--fix"]
       - id: ruff-format
         args: ["--config", ".config/ruff.toml"]
-  - repo: https://github.com/ComPWA/taplo-pre-commit
-    rev: v0.9.3
+  - repo: https://github.com/tombi-toml/tombi-pre-commit
+    rev: v0.9.9
     hooks:
-      - id: taplo-format
-        args: ["-c", ".config/taplo.toml"]
-      - id: taplo-lint
-        args: ["--default-schema-catalogs", "-c", ".config/taplo.toml"]
+      - id: tombi-format
+      - id: tombi-lint
   - repo: https://github.com/crate-ci/committed
     rev: v1.1.7
     hooks:
