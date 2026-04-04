@@ -1,5 +1,5 @@
 [hooks]
-{% raw %}postinstall = ["{% set is_in_ci = get_env(name='CI', default='') %}{% if is_in_ci %}echo 'Not setting up git hooks as mise is running in CI!'{% else %}pre-commit install -c .config/.pre-commit-config.yaml{% endif %}"]{% endraw %}
+{% raw %}postinstall = ["{% set is_in_ci = get_env(name='CI', default='') %}{% if is_in_ci %}echo 'Not setting up git hooks as mise is running in CI!'{% else %}prek install -f -c .config/prek.toml{% endif %}"]{% endraw %}
 
 [settings]
 experimental = true # Needed for hooks as of v2025.6.2

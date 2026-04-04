@@ -1,7 +1,7 @@
 {
   // Core config
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "dependencyDashboard": false,
+  "dependencyDashboard": {%- if using_github %}true{% else %}false{% endif %},
   "extends": [
     "config:recommended"
   ],
