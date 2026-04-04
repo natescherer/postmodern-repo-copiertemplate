@@ -27,7 +27,7 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
       - name: Run Pre-Commit Tests
         run: |
-          mise x -- prek run -c .config/.pre-commit-config.yaml --files ${{ steps.changed-files.outputs.all_changed_files }}
+          mise x -- prek run -c .config/prek.toml --files ${{ steps.changed-files.outputs.all_changed_files }}
       - name: Example Test
         run: |-
           FILE=README.md
