@@ -13,8 +13,8 @@ node = "22.19.0" # Used by commit-and-tag-version
 {%- endif %}
 {#- renovate: datasource=github-releases depName=mikefarah/yq #}
 yq = "4.52.4" # Used by copier update check CI workflows
-
 {%- if mkdocs_ghpages %}
+
 [tools."pipx:mike"]
 version = "2.1.3"
 uvx_args = "--with mkdocs-material[imaging]==9.7.4 --with mkdocs-static-i18n==1.3.0"
