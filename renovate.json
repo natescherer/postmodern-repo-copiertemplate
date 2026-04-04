@@ -39,6 +39,22 @@
       "pinDigests": false
     },
     {
+      "description": "Group mike in different files together",
+      "matchPackageNames": [
+        "mike",
+        "pipx:mike"
+      ],
+      "groupName": "mike"
+    },
+    {
+      "description": "Group apprise in different files together",
+      "matchPackageNames": [
+        "apprise",
+        "pipx:apprise"
+      ],
+      "groupName": "apprise"
+    },
+    {
       "description": "Use standard major version numbers for Azure Pipelines",
       "matchDatasources": [
         "azure-pipelines-tasks"
