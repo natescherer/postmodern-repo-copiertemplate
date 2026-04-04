@@ -32,27 +32,20 @@
   },
   "packageRules": [
     {
-      "description": "Don't pin digests in devcontainer.json because it's not supported in features",
-      "matchManagers": [
-        "devcontainer"
-      ],
-      "pinDigests": false
-    },
-    {
-      "description": "Group mike in different files together",
-      "matchPackageNames": [
-        "mike",
-        "pipx:mike"
-      ],
-      "groupName": "mike"
-    },
-    {
-      "description": "Group apprise in different files together",
+      "description": "Group apprise",
       "matchPackageNames": [
         "apprise",
         "pipx:apprise"
       ],
       "groupName": "apprise"
+    },
+    {
+      "description": "Group mike",
+      "matchPackageNames": [
+        "mike",
+        "pipx:mike"
+      ],
+      "groupName": "mike"
     },
     {
       "description": "Use standard major version numbers for Azure Pipelines",

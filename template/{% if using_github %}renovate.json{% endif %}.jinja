@@ -40,21 +40,14 @@
   {%- endif %}
   "packageRules": [
     {
-      "description": "Don't pin digests in devcontainer.json because it's not supported in features",
-      "matchManagers": [
-        "devcontainer"
-      ],
-      "pinDigests": false
-    },
-    {
-      "description": "Group mike in different files together",
-      "matchPackageNames": ["mike", "pipx:mike"],
-      "groupName": "mike"
-    },
-    {
-      "description": "Group apprise in different files together",
+      "description": "Group apprise",
       "matchPackageNames": ["apprise", "pipx:apprise"],
       "groupName": "apprise"
+    },
+    {
+      "description": "Group mike",
+      "matchPackageNames": ["mike", "pipx:mike"],
+      "groupName": "mike"
     }{% if is_template or (is_standard and using_azdo) %},
     {
       "description": "Use standard major version numbers for Azure Pipelines",
@@ -66,8 +59,9 @@
     {%- endif %}
   ],
   "customManagers": [
+    {%- if is_template %}
     {
-      "description": "Manager for simple mise tools",
+      "description": "Manager for mise tools in mise*.toml.jinja",
       "customType": "regex",
       "fileMatch": [
         "mise\\..*toml\\.jinja"
@@ -78,7 +72,7 @@
       "versioningTemplate": {% raw %}"{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"{% endraw %}
     },
     {
-      "description": "Manager for pipx tools with options",
+      "description": "Manager for pipx tools with options in mise*.toml.jinja",
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "fileMatch": [
@@ -89,12 +83,13 @@
       ],
       "versioningTemplate": "pep440"
     },
+    {%- endif %}
     {
-      "description": "Manager for pipx tool dependencies",
+      "description": "Manager for pipx tool dependencies in mise*.toml{% if is_template %} and mise*.toml.jinja{% endif %}",
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "fileMatch": [
-        "mise\\..*toml(?:\\.jinja)?"
+        "mise\\..*toml{% if is_template %}(?:\\.jinja)?{% endif %}"
       ],
       "matchStrings": [
         ".*?(--with\\s(?<depName>.+?)(\\[\\S+])*==(?<currentValue>[^\"\\s]*))"
