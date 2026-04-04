@@ -1,5 +1,4 @@
 {
-  // Core config
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": {%- if using_github %}true{% else %}false{% endif %},
   "extends": [
@@ -8,7 +7,6 @@
   "schedule": [
     "* * 1 * *"
   ],
-  // Per-provider config
   {%- if is_template or (is_standard and using_azdo) %}
   "azure-pipelines": {
     "enabled": true,
@@ -22,7 +20,7 @@
   },
   {%- endif %}
   "copier": {
-    // Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline
+    "description": "Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline",
     "enabled": false
   },
   "docker": {
@@ -40,7 +38,6 @@
     ]
   },
   {%- endif %}
-  // Package rules
   "packageRules": [
     {
       "description": "Don't pin digests in devcontainer.json because it's not supported in features",
@@ -48,6 +45,16 @@
         "devcontainer"
       ],
       "pinDigests": false
+    },
+    {
+      "description": "Group mike in different files together",
+      "matchPackageNames": ["mike", "pipx:mike"],
+      "groupName": "mike"
+    },
+    {
+      "description": "Group apprise in different files together",
+      "matchPackageNames": ["apprise", "pipx:apprise"],
+      "groupName": "apprise"
     }{% if is_template or (is_standard and using_azdo) %},
     {
       "description": "Use standard major version numbers for Azure Pipelines",
@@ -58,10 +65,9 @@
     }
     {%- endif %}
   ],
-  // Custom Managers
   "customManagers": [
     {
-      // Manager for simple mise tools
+      "description": "Manager for simple mise tools",
       "customType": "regex",
       "fileMatch": [
         "mise\\..*toml\\.jinja"
@@ -72,7 +78,7 @@
       "versioningTemplate": {% raw %}"{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"{% endraw %}
     },
     {
-      // Manager for pipx tools with options
+      "description": "Manager for pipx tools with options",
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "fileMatch": [
@@ -84,7 +90,7 @@
       "versioningTemplate": "pep440"
     },
     {
-      // Manager for pipx tool dependencies
+      "description": "Manager for pipx tool dependencies",
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "fileMatch": [

@@ -1,5 +1,4 @@
 {
-  // Core config
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
   "extends": [
@@ -8,7 +7,6 @@
   "schedule": [
     "* * 1 * *"
   ],
-  // Per-provider config
   "azure-pipelines": {
     "enabled": true,
     "fileMatch": [
@@ -16,7 +14,7 @@
     ]
   },
   "copier": {
-    // Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline
+    "description": "Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline",
     "enabled": false
   },
   "docker": {
@@ -32,7 +30,6 @@
       "(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"
     ]
   },
-  // Package rules
   "packageRules": [
     {
       "description": "Don't pin digests in devcontainer.json because it's not supported in features",
@@ -49,10 +46,9 @@
       "extractVersion": "^(?<version>\\d+)"
     }
   ],
-  // Custom Managers
   "customManagers": [
     {
-      // Manager for simple mise tools
+      "description": "Manager for simple mise tools",
       "customType": "regex",
       "fileMatch": [
         "mise\\..*toml\\.jinja"
@@ -63,7 +59,7 @@
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
     },
     {
-      // Manager for pipx tools with options
+      "description": "Manager for pipx tools with options",
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "fileMatch": [
@@ -75,7 +71,7 @@
       "versioningTemplate": "pep440"
     },
     {
-      // Manager for pipx tool dependencies
+      "description": "Manager for pipx tool dependencies",
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "fileMatch": [

@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "bluebrown.yamlfmt",
-    "BlueGlassBlock.better-json5",
     "charliermarsh.ruff",
     "DavidAnson.vscode-markdownlint",    "github.vscode-github-actions",
     "hverlin.mise-vscode",    "ms-azure-devops.azure-pipelines",    "ms-python.python",
