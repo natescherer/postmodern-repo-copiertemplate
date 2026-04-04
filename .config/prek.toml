@@ -1,0 +1,88 @@
+# Configuration file for `prek`, a git hook framework written in Rust.
+# See https://prek.j178.dev for more information.
+#:schema https://www.schemastore.org/prek.json
+
+default_install_hook_types = ["pre-commit", "commit-msg"]
+exclude = '(\.copier\-answers\.yml|CHANGELOG\.md|docs_site/.*)'
+
+[[repos]]
+repo = "https://github.com/DavidAnson/markdownlint-cli2"
+rev = "v0.22.0"
+hooks = [
+  {
+    id = "markdownlint-cli2",
+    args = ["--config", ".config/.markdownlint.yaml"]
+  }
+]
+
+[[repos]]
+repo = "https://github.com/astral-sh/ruff-pre-commit"
+rev = "v0.15.9"
+hooks = [
+  { id = "ruff-check", args = ["--config", ".config/ruff.toml", "--fix"] },
+  { id = "ruff-format", args = ["--config", ".config/ruff.toml"] }
+]
+
+[[repos]]
+repo = "https://github.com/tombi-toml/tombi-pre-commit"
+rev = "v0.9.14"
+hooks = [{ id = "tombi-format" }, { id = "tombi-lint" }]
+
+[[repos]]
+repo = "https://github.com/crate-ci/committed"
+rev = "v1.1.11"
+hooks = [
+  {
+    id = "committed",
+    args = [
+      "--config",
+      ".config/committed.toml",
+      "--fixup",
+      "--wip",
+      "--commit-file"
+    ]
+  }
+]
+
+[[repos]]
+repo = "https://github.com/crate-ci/typos"
+rev = "v1.45.0"
+hooks = [
+  {
+    id = "typos",
+    args = ["-c", ".config/typos.toml", "--write-changes", "--force-exclude"],
+    stages = ["pre-commit", "commit-msg"]
+  }
+]
+
+# [[repos]]
+# repo = "https://github.com/google/yamlfmt"
+# rev = "v0.21.0"
+# hooks = [
+#   {
+#     id = "yamlfmt",
+#     args = [
+#       "-conf",
+#       ".config/yamlfmt.yaml"
+#     ],
+#     exclude = ".copier-answers.yml"
+#   }
+# ]
+
+[[repos]]
+repo = "builtin"
+hooks = [
+  { id = "check-merge-conflict" },
+  { id = "end-of-file-fixer" },
+  { id = "fix-byte-order-marker" },
+  { id = "mixed-line-ending" },
+  { id = "trailing-whitespace" },
+  { id = "check-case-conflict" }
+]
+
+# [[repos]]
+# repo = "https://github.com/rhysd/actionlint"
+# rev = "v1.7.12"
+# hooks = [
+#   { id = "actionlint" }
+# ]
