@@ -28,7 +28,7 @@ stages:
         displayName: Check for Template Update
         steps:
           - pwsh: |
-              $Secrets = @("APPRISE_URI")
+              $Secrets = @("APPRISE_URL")
               $MissingSecret = $False
               foreach ($Secret in $Secrets) {
                 if (!([Environment]::GetEnvironmentVariable($Secret)) -or ([Environment]::GetEnvironmentVariable($Secret) -eq "`$($Secret)")) {
@@ -40,7 +40,7 @@ stages:
                 throw "Erroring as one or more required secrets are missing!"
               }
             env:
-              APPRISE_URI: $(APPRISE_URI)
+              APPRISE_URI: $(APPRISE_URL)
             displayName: Validate Secrets Exist
           - checkout: self
             fetchDepth: 0
@@ -53,11 +53,10 @@ stages:
           - bash: mise install
             displayName: Run 'mise install'
           - pwsh: |
-              $CurrentVersion = $(yq '._commit' .config/copier-answers.yml).TrimStart("v")
-              $Output = copier update --answers-file .config/copier-answers.yml --skip-answered --pretend --trust 2>&1
-              $NewVersion = $Output[0].ToString().Split(" ")[-1]
-              if ([System.Version]$CurrentVersion -lt [System.Version]$NewVersion) {
-                apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Template Update Available" -b "Current Version: <i>$CurrentVersion</i> New Version: <i>$NewVersion</i><br><br>Run <b>mise run copier-update</b> to update." $env:APPRISE_URI
+              $CheckUpdateOutput = copier check-update --output-format json --answers-file .config/copier-answers.yml
+              $UpdateData = ConvertFrom-Json -InputObject $CheckUpdateOutput
+              if ($UpdateData.update_available) {
+                apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Template Update Available" -b "Repository $env:BUILD_REPOSITORY_NAME has a new template update available.<br><br>Current version is $($UpdateData.current_version), latest version is $($UpdateData.latest_version)." $env:APPRISE_URL
               }
             env:
               APPRISE_URI: $(APPRISE_URI)
