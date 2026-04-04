@@ -1,6 +1,6 @@
 [hooks]
 postinstall = [
-  "{% set is_in_ci = get_env(name='CI', default='') %}{% if is_in_ci %}echo 'Not setting up git hooks as mise is running in CI!'{% else %}pre-commit install -c .config/.pre-commit-config.yaml{% endif %}",
+  "{% set is_in_ci = get_env(name='CI', default='') %}{% if is_in_ci %}echo 'Not setting up git hooks as mise is running in CI!'{% else %}prek install -f -c .config/.pre-commit-config.yaml{% endif %}",
 ]
 
 [settings]
@@ -18,6 +18,7 @@ run = '''
 pre-commit run -c .config/.pre-commit-config.yaml --all-files
 copier copy --trust --vcs-ref=HEAD --pretend -d 'repo_name=render-test' -d 'author_name=Name' -d 'repo_setup_actions=None' -d 'developer_platform=GitHub' -d 'github_username=username' -d 'github_org=' -d 'project_description=Rendering Test' -d 'project_type=Template' -d 'project_name=Rendering Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'mkdocs_target=docs_site Directory in Repo' -d 'lifecycle=Pre-Alpha' . fake-path
 '''
+
 [tasks.integration-test-gh]
 run = '''
 copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'developer_platform=GitHub' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'lifecycle=Pre-Alpha' https://github.com/natescherer/postmodern-repo-copiertemplate {{option(name="path")}}
@@ -32,7 +33,7 @@ copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'devel
 # Backends
 python = "3.13.7" # Used by copier and pre-commit
 # Tools
-"pipx:pre-commit" = "4.3.0"
+prek = "0.3.8"
 uv = "0.8.15" # Used by pipx tools
 yamlfmt = "0.17.2" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved
 

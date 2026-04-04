@@ -76,6 +76,5 @@
     "tag:yaml.org,2002:python/name:material.extensions.emoji.twemoji",
     "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format",
     "tag:yaml.org,2002:python/object/apply:pymdownx.slugs.slugify mapping"
-  ],
-  "python.defaultInterpreterPath": "C:\\Users\\n8n8n8\\.local\\share\\mise\\installs\\python\\3.13.7\\python.exe"
+  ]
 }
