@@ -24,7 +24,7 @@ jobs:
         with:
           experimental: true
       - id: changed-files
-        uses: tj-actions/changed-files@v46.0.5
+        uses: tj-actions/changed-files@v47.0.5
       - name: Run Pre-Commit Tests
         run: |
           mise x -- prek run -c .config/prek.toml --files ${{ steps.changed-files.outputs.all_changed_files }}
