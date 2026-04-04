@@ -36,7 +36,7 @@ jobs:
           if ($MissingSecret) {
             throw "Erroring as one or more required secrets are missing!"
           }
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Configure Git Credentials
