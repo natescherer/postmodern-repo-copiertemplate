@@ -1,5 +1,19 @@
 # Prerequisites
 
+{% if using_azdo -%}
+## Azure DevOps
+
+### One-Time Actions per Azure DevOps Project
+
+In order to support the proper parsing of Conventional Commits, the following must be set:
+
+- `Project settings`
+- `Repo` > `Repositories`
+- `Settings` tab
+- `All Repositories` section
+- Ensure `Include PR ID in the completion commit message title by default` is set to `Off`
+
+
 {% if using_github -%}
 ## GitHub
 
