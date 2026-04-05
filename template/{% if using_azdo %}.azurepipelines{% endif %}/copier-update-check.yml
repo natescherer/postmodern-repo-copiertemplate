@@ -32,7 +32,7 @@ stages:
               $MissingSecret = $False
               foreach ($Secret in $Secrets) {
                 if (!([Environment]::GetEnvironmentVariable($Secret)) -or ([Environment]::GetEnvironmentVariable($Secret) -eq "`$($Secret)")) {
-                  Write-Host -Object "[error]Required Actions secret '$Secret' is not set! Please add it in Pipelines settings."
+                  Write-Host -Object "[error]Required Pipeline variable '$Secret' is not set! Please add it in Pipelines settings."
                   $MissingSecret = $True
                 }
               }
@@ -40,7 +40,7 @@ stages:
                 throw "Erroring as one or more required secrets are missing!"
               }
             env:
-              APPRISE_URI: $(APPRISE_URL)
+              APPRISE_URL: $(APPRISE_URL)
             displayName: Validate Secrets Exist
           - checkout: self
             fetchDepth: 0
@@ -53,10 +53,13 @@ stages:
           - bash: mise install
             displayName: Run 'mise install'
           - pwsh: |
-              $CheckUpdateOutput = copier check-update --output-format json --answers-file .config/copier-answers.yml
+              [string]$CheckUpdateOutput = mise x -- copier check-update --output-format json --answers-file .config/copier-answers.yml
               $UpdateData = ConvertFrom-Json -InputObject $CheckUpdateOutput
               if ($UpdateData.update_available) {
+                Write-Host -Object "Update available! Current version is $($UpdateData.current_version), latest version is $($UpdateData.latest_version)."
                 apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Template Update Available" -b "Repository $env:BUILD_REPOSITORY_NAME has a new template update available.<br><br>Current version is $($UpdateData.current_version), latest version is $($UpdateData.latest_version)." $env:APPRISE_URL
+              } else {
+                Write-Host -Object "No update available."
               }
             env:
               APPRISE_URI: $(APPRISE_URI)
