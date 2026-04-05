@@ -14,7 +14,7 @@ mise install
 1. Run the following to create the template, making sure set the path at the end as appropriate
 
 ```bash
-mise x -- copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/local-repo-path-here
+mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/local-repo-path-here
 ```
 
 ## Stuff from old README
