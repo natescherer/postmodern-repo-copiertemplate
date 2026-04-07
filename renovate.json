@@ -48,6 +48,22 @@
       "groupName": "mike"
     },
     {
+      "description": "Group mkdocs",
+      "matchPackageNames": [
+        "mkdocs",
+        "pipx:mkdocs"
+      ],
+      "groupName": "mkdocs"
+    },
+    {
+      "description": "Group yamlfmt",
+      "matchPackageNames": [
+        "yamlfmt",
+        "google/yamlfmt"
+      ],
+      "groupName": "yamlfmt"
+    },
+    {
       "description": "Use standard major version numbers for Azure Pipelines",
       "matchDatasources": [
         "azure-pipelines-tasks"
@@ -63,7 +79,7 @@
         "mise\\..*toml\\.jinja"
       ],
       "matchStrings": [
-        "{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"
+        "{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':/]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
     },

@@ -41,14 +41,44 @@
   "packageRules": [
     {
       "description": "Group apprise",
-      "matchPackageNames": ["apprise", "pipx:apprise"],
+      "matchPackageNames": [
+        "apprise",
+        "pipx:apprise"
+      ],
       "groupName": "apprise"
     },
     {
+      "description": "Group invoke",
+      "matchPackageNames": [
+        "invoke",
+        "pipx:invoke"
+      ],
+      "groupName": "invoke"
+    },
+    {
       "description": "Group mike",
-      "matchPackageNames": ["mike", "pipx:mike"],
+      "matchPackageNames": [
+        "mike",
+        "pipx:mike"
+      ],
       "groupName": "mike"
-    }{% if is_template or (is_standard and using_azdo) %},
+    },
+    {
+      "description": "Group mkdocs",
+      "matchPackageNames": [
+        "mkdocs",
+        "pipx:mkdocs"
+      ],
+      "groupName": "mkdocs"
+    },
+    {
+      "description": "Group yamlfmt",
+      "matchPackageNames": [
+        "yamlfmt",
+        "google/yamlfmt"
+      ],
+      "groupName": "yamlfmt"
+    },{% if is_template or (is_standard and using_azdo) %},
     {
       "description": "Use standard major version numbers for Azure Pipelines",
       "matchDatasources": [
@@ -67,7 +97,7 @@
         "mise\\..*toml\\.jinja"
       ],
       "matchStrings": [
-        {% raw %}"{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"{% endraw %}
+        {% raw %}"{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':/]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"{% endraw %}
       ],
       "versioningTemplate": {% raw %}"{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"{% endraw %}
     },
