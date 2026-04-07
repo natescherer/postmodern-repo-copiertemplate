@@ -1,15 +1,10 @@
 [tools]
-{%- if using_azdo %}
-# Backends
-{#- renovate: datasource=node-version depName=node versioning=node #}
-node = "22.19.0" # Used by commit-and-tag-version
-{%- endif %}
 # Tools
 {#- renovate: datasource=pypi depName=apprise versioning=pep440 #}
 "pipx:apprise" = "1.9.4"
 {%- if using_azdo %}
-{#- renovate: datasource=npm depName=commit-and-tag-version #}
-"npm:commit-and-tag-version" = "12.7.1"
+{#- renovate: datasource=pypi depName=commitizen versioning=pep440 #}
+"pipx:commitizen" = "4.13.8"
 {%- endif %}
 {%- if mkdocs_ghpages %}
 
