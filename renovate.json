@@ -32,6 +32,14 @@
   },
   "packageRules": [
     {
+      "description": "Group actionlint",
+      "matchPackageNames": [
+        "actionlint",
+        "rhysd/actionlint"
+      ],
+      "groupName": "actionlint"
+    },
+    {
       "description": "Group apprise",
       "matchPackageNames": [
         "apprise",
@@ -86,6 +94,22 @@
         "aqua:j178/prek"
       ],
       "groupName": "prek"
+    },
+    {
+      "description": "Group shellcheck",
+      "matchPackageNames": [
+        "shellcheck",
+        "koalaman/shellcheck"
+      ],
+      "groupName": "shellcheck"
+    },
+    {
+      "description": "Group tombi",
+      "matchPackageNames": [
+        "tombi-toml/tombi",
+        "aqua:tombi-toml/tombi"
+      ],
+      "groupName": "tombi"
     },
     {
       "description": "Group uv",

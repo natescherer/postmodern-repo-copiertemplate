@@ -64,7 +64,7 @@ It is highly encouraged for you to take this template and make your own child te
   - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
   - Spell checking via [typos](https://github.com/crate-ci/typos)
   - TOML linting and formatting via [Tombi](https://github.com/tombi-toml/tombi)
-  - YAML linting via [yamllint](https://github.com/adrienverge/yamllint)
+  - YAML formatting via [yamlfmt](https://github.com/google/yamlfmt)
 
 ### CI/CD
 

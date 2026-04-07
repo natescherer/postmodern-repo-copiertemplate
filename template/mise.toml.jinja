@@ -34,12 +34,18 @@ copier copy --trust --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{
 {#- renovate: datasource=python-version depName=python versioning=python #}
 python = "3.14.3" # Used by copier
 # Tools
+{#- renovate: datasource=github-releases depName=rhysd/actionlint #}
+actionlint = "1.7.11"
 {#- renovate: datasource=github-releases depName=j178/prek #}
 "aqua:j178/prek" = "0.3.8"
+{#- renovate: datasource=github-releases depName=tombi-toml/tombi #}
+"aqua:tombi-toml/tombi" = "0.9.14"
+{#- renovate: datasource=github-releases depName=koalaman/shellcheck #}
+shellcheck = "0.10.0"
 {#- renovate: datasource=github-releases depName=astral-sh/uv #}
 uv = "0.11.3" # Used by pipx tools
 {#- renovate: datasource=github-releases depName=google/yamlfmt #}
-yamlfmt = "0.21.0" # Needed by VSCode extension bluebrown.yamlfmt, can be removed when https://github.com/bluebrown/vscode-extension-yamlfmt/issues/2 is resolved
+yamlfmt = "0.20.0"
 
 [tools."pipx:copier"]
 version = "9.14.1"

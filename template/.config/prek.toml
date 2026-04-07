@@ -6,6 +6,45 @@ default_install_hook_types = ["pre-commit", "commit-msg"]
 exclude = '(\.copier\-answers\.yml|CHANGELOG\.md|docs_site/.*)'
 
 [[repos]]
+repo = "local"
+hooks = [
+  {
+    id = "actionlint",
+    name = "actionlint",
+    description = "Runs actionlint to lint GitHub Actions workflow files",
+    language = "system",
+    types = ["yaml"],
+    files = "^\\.github/workflows/",
+    entry = "actionlint"
+  },
+  {
+    id = "tombi-format",
+    name = "tombi-format",
+    entry = "tombi format",
+    language = "system",
+    types = ["toml"],
+    require_serial = true
+  },
+  {
+    id = "tombi-lint",
+    name = "tombi-lint",
+    entry = "tombi lint",
+    language = "system",
+    types = ["toml"],
+    require_serial = true
+  },
+  {
+    id = "yamlfmt",
+    name = "yamlfmt",
+    description = "This hook uses github.com/google/yamlfmt to format yaml files. Requires Go >1.18 to be installed.",
+    entry = "yamlfmt -conf .config/yamlfmt.yaml",
+    language = "system",
+    types = ["yaml"],
+    exclude = "copier-answers.yml"
+  }
+]
+
+[[repos]]
 repo = "https://github.com/DavidAnson/markdownlint-cli2"
 rev = "v0.22.0"
 hooks = [
@@ -22,11 +61,6 @@ hooks = [
   { id = "ruff-check", args = ["--config", ".config/ruff.toml", "--fix"] },
   { id = "ruff-format", args = ["--config", ".config/ruff.toml"] }
 ]
-
-[[repos]]
-repo = "https://github.com/tombi-toml/tombi-pre-commit"
-rev = "v0.9.14"
-hooks = [{ id = "tombi-format" }, { id = "tombi-lint" }]
 
 [[repos]]
 repo = "https://github.com/crate-ci/committed"
@@ -55,20 +89,6 @@ hooks = [
   }
 ]
 
-# [[repos]]
-# repo = "https://github.com/google/yamlfmt"
-# rev = "v0.21.0"
-# hooks = [
-#   {
-#     id = "yamlfmt",
-#     args = [
-#       "-conf",
-#       ".config/yamlfmt.yaml"
-#     ],
-#     exclude = ".copier-answers.yml"
-#   }
-# ]
-
 [[repos]]
 repo = "builtin"
 hooks = [
@@ -79,10 +99,3 @@ hooks = [
   { id = "trailing-whitespace" },
   { id = "check-case-conflict" }
 ]
-
-# [[repos]]
-# repo = "https://github.com/rhysd/actionlint"
-# rev = "v1.7.12"
-# hooks = [
-#   { id = "actionlint" }
-# ]
