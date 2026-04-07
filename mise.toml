@@ -31,7 +31,7 @@ copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'devel
 
 [tools]
 # Backends
-python = "3.13.7" # Used by copier
+python = "3.14.3" # Used by copier
 # Tools
 "aqua:j178/prek" = "0.3.6"
 uv = "0.8.15" # Used by pipx tools
