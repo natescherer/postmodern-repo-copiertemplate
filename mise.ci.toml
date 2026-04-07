@@ -1,7 +1,7 @@
 [tools]
 # Tools
 "pipx:apprise" = "1.9.9"
-"pipx:commitizen" = "4.13.8"
+"pipx:commitizen" = "4.13.9"
 
 [tools."pipx:mike"]
 version = "2.1.4"
