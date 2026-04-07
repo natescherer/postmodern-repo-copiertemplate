@@ -1,9 +1,7 @@
 [tools]
-# Backends
-node = "22.19.0" # Used by commit-and-tag-version
 # Tools
 "pipx:apprise" = "1.9.4"
-"npm:commit-and-tag-version" = "12.7.1"
+"pipx:commitizen" = "4.13.8"
 
 [tools."pipx:mike"]
 version = "2.1.3"

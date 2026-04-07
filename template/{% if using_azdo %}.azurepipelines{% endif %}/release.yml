@@ -7,9 +7,7 @@ trigger:
 
 variables:
   CI: true
-  MINIMUM_VERSION: {% if is_prerelease %}0.1.0{% else %}1.0.0{% endif %}
   MISE_ENV: ci
-  VERSION_FILE_PATH: .config/version.txt
 
 pool:
   vmImage: ubuntu-latest
@@ -37,24 +35,11 @@ stages:
           - bash: mise install
             displayName: Run 'mise install'
           - pwsh: |
-              if (Test-Path -Path $(VERSION_FILE_PATH)) {
-                $CurrentVersion = Get-Content -Path $(VERSION_FILE_PATH)
-              } else {
-                Write-Host "This appears to be the first release."
-                "$(MINIMUM_VERSION)" | Out-File -FilePath $(VERSION_FILE_PATH)
-                $CurrentVersion = "0.0.0"
-              }
+              mise x -- cz bump
 
-              if ([System.Version]$CurrentVersion -lt [System.Version]"$(MINIMUM_VERSION)") {
-                Write-Host "Releasing in --release-as mode."
-                mise x -- commit-and-tag-version --release-as $(MINIMUM_VERSION)
-              } else {
-                mise x -- commit-and-tag-version
-              }
-
-              $ReleaseVersion = Get-Content -Path $(VERSION_FILE_PATH)
+              $ReleaseVersion = mise x -- cz version -p
               Write-Host "##vso[task.setvariable variable=RELEASE_VERSION;]$ReleaseVersion"
-            displayName: Run 'commit-and-tag-version'
+            displayName: Run 'cz bump'
           - pwsh: |
               $BranchName = "release-v$(RELEASE_VERSION)"
               Write-Host "##vso[task.setvariable variable=BRANCH_NAME;]$BranchName"
