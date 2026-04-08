@@ -34,6 +34,7 @@ copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'devel
 python = "3.14.3" # Used by copier
 # Tools
 actionlint = "1.7.11"
+"aqua:crate-ci/typos" = "1.44.0"
 "aqua:j178/prek" = "0.3.8"
 "aqua:tombi-toml/tombi" = "0.9.14"
 shellcheck = "0.10.0"

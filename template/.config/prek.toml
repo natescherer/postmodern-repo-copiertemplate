@@ -34,10 +34,21 @@ hooks = [
     require_serial = true
   },
   {
+    id = "typos",
+    name = "typos",
+    description = "Source code spell checker, binary install",
+    language = "system",
+    entry = "typos",
+    args = ["-c", ".config/typos.toml", "--write-changes", "--force-exclude"],
+    types = ["text"],
+    stages = ["pre-commit", "commit-msg"]
+  },
+  {
     id = "yamlfmt",
     name = "yamlfmt",
     description = "This hook uses github.com/google/yamlfmt to format yaml files. Requires Go >1.18 to be installed.",
-    entry = "yamlfmt -conf .config/yamlfmt.yaml",
+    entry = "yamlfmt",
+    args = ["-conf", ".config/yamlfmt.yaml"],
     language = "system",
     types = ["yaml"],
     exclude = "copier-answers.yml"
@@ -75,17 +86,6 @@ hooks = [
       "--wip",
       "--commit-file"
     ]
-  }
-]
-
-[[repos]]
-repo = "https://github.com/crate-ci/typos"
-rev = "v1.45.0"
-hooks = [
-  {
-    id = "typos",
-    args = ["-c", ".config/typos.toml", "--write-changes", "--force-exclude"],
-    stages = ["pre-commit", "commit-msg"]
   }
 ]
 

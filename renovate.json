@@ -112,6 +112,14 @@
       "groupName": "tombi"
     },
     {
+      "description": "Group typos",
+      "matchPackageNames": [
+        "crate-ci/typos",
+        "aqua:crate-ci/typos"
+      ],
+      "groupName": "typos"
+    },
+    {
       "description": "Group uv",
       "matchPackageNames": [
         "uv",
