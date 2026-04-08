@@ -6,6 +6,7 @@
 {%- if is_prerelease %}
 
 <!-- Don't edit/remove this yourself! See docs/lifecycle-managment.md' -->
+
 | :exclamation: Notice: This project is currently in a {{ lifecycle }} state and {% if lifecycle == "Pre-Alpha" or lifecycle == "Alpha" %}is not ready for public use{% else %}should be used with caution{% endif %}. |
 | ------------------------------------------------------------------------------------ |
 {%- elif lifecycle == "Inactive" %}
@@ -26,6 +27,7 @@ For detailed documentation, clone this repo and open `docs_site/index.html`.
 {%- endif %}
 
 {%- if is_public %}
+
 ## Questions/Comments
 
 If you have questions, comments, etc, please enter a GitHub Issue with the "question" tag.

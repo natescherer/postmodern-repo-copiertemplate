@@ -3,6 +3,7 @@
 [![All Contributors](https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449&style=flat-square)](#contributors)
 
 <!-- Don't edit/remove this yourself! See docs/lifecycle-managment.md' -->
+
 | :exclamation: Notice: This project is currently in a Pre-Alpha state and is not ready for public use. |
 | ------------------------------------------------------------------------------------ |
 
