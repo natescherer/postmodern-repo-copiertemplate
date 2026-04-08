@@ -2,9 +2,10 @@
   "recommendations": [
     "bluebrown.yamlfmt",
     "charliermarsh.ruff",
-    "DavidAnson.vscode-markdownlint",    "github.vscode-github-actions",
+    "github.vscode-github-actions",
     "hverlin.mise-vscode",    "ms-azure-devops.azure-pipelines",    "ms-python.python",
-    "redhat.vscode-yaml",    "samuelcolvin.jinjahtml",
+    "redhat.vscode-yaml",
+    "rvben.rumdl",    "samuelcolvin.jinjahtml",
     "tekumara.typos-vscode",
     "tombi-toml.tombi",
   ]

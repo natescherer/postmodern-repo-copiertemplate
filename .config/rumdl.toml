@@ -1,0 +1,5 @@
+[global]
+disable = [
+  "MD013", # MD013: line length
+  "MD046", # MD046: code block style (mkdocs-material)
+]

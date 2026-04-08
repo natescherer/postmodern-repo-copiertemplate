@@ -112,6 +112,14 @@
       "groupName": "ruff"
     },
     {
+      "description": "Group rumdl",
+      "matchPackageNames": [
+        "rumdl",
+        "rvben/rumdl"
+      ],
+      "groupName": "rumdl"
+    },
+    {
       "description": "Group shellcheck",
       "matchPackageNames": [
         "shellcheck",

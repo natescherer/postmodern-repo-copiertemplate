@@ -13,9 +13,9 @@ hooks = [
     name = "actionlint",
     description = "Runs actionlint to lint GitHub Actions workflow files",
     language = "system",
+    entry = "mise x -- actionlint",
     types = ["yaml"],
-    files = "^\\.github/workflows/",
-    entry = "mise x -- actionlint"
+    files = "^\\.github/workflows/"
   },
   {
     id = "committed",
@@ -36,35 +36,43 @@ hooks = [
     id = "ruff-check",
     name = "ruff check",
     description = "Run 'ruff check' for extremely fast Python linting",
-    entry = "ruff check --force-exclude",
     language = "system",
-    types_or = ["python", "pyi", "jupyter"],
+    entry = "mise x -- ruff check --force-exclude",
     args = ["--config", ".config/ruff.toml", "--fix"],
+    types_or = ["python", "pyi", "jupyter"],
     require_serial = true
   },
   {
     id = "ruff-format",
     name = "ruff format",
     description = "Run 'ruff format' for extremely fast Python formatting",
-    entry = "ruff format --force-exclude",
     language = "python",
-    types_or = ["python", "pyi", "jupyter"],
+    entry = "mise x -- ruff format --force-exclude",
     args = ["--config", ".config/ruff.toml"],
+    types_or = ["python", "pyi", "jupyter"],
+    require_serial = true
+  },
+  {
+    id = "rumdl",
+    name = "rumdl",
+    language = "system",
+    entry = "mise x -- rumdl check --fix",
+    types = ["markdown"],
     require_serial = true
   },
   {
     id = "tombi-format",
     name = "tombi-format",
-    entry = "mise x -- tombi format",
     language = "system",
+    entry = "mise x -- tombi format",
     types = ["toml"],
     require_serial = true
   },
   {
     id = "tombi-lint",
     name = "tombi-lint",
-    entry = "mise x -- tombi lint",
     language = "system",
+    entry = "mise x -- tombi lint",
     types = ["toml"],
     require_serial = true
   },
@@ -82,21 +90,11 @@ hooks = [
     id = "yamlfmt",
     name = "yamlfmt",
     description = "This hook uses github.com/google/yamlfmt to format yaml files. Requires Go >1.18 to be installed.",
+    language = "system",
     entry = "mise x -- yamlfmt",
     args = ["-conf", ".config/yamlfmt.yaml"],
-    language = "system",
     types = ["yaml"],
     exclude = "copier-answers.yml"
-  }
-]
-
-[[repos]]
-repo = "https://github.com/DavidAnson/markdownlint-cli2"
-rev = "v0.22.0"
-hooks = [
-  {
-    id = "markdownlint-cli2",
-    args = ["--config", ".config/.markdownlint.yaml"]
   }
 ]
 
