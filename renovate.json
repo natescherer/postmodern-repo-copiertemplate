@@ -56,6 +56,14 @@
       "groupName": "commitizen"
     },
     {
+      "description": "Group committed",
+      "matchPackageNames": [
+        "committed",
+        "crate-ci/committed"
+      ],
+      "groupName": "committed"
+    },
+    {
       "description": "Group copier",
       "matchPackageNames": [
         "copier",

@@ -37,6 +37,7 @@ actionlint = "1.7.11"
 "aqua:crate-ci/typos" = "1.44.0"
 "aqua:j178/prek" = "0.3.8"
 "aqua:tombi-toml/tombi" = "0.9.14"
+committed = "1.1.10"
 shellcheck = "0.10.0"
 uv = "0.11.3" # Used by pipx tools
 yamlfmt = "0.20.0"
