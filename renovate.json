@@ -104,6 +104,14 @@
       "groupName": "prek"
     },
     {
+      "description": "Group ruff",
+      "matchPackageNames": [
+        "ruff",
+        "astral-sh/ruff"
+      ],
+      "groupName": "ruff"
+    },
+    {
       "description": "Group shellcheck",
       "matchPackageNames": [
         "shellcheck",

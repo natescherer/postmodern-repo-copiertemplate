@@ -33,6 +33,28 @@ hooks = [
     stages = ["commit-msg"]
   },
   {
+    id = "ruff-check",
+    name = "ruff check",
+    description = "Run 'ruff check' for extremely fast Python linting",
+    entry = "mise x -- ruff check --force-exclude",
+    language = "system",
+    types_or = ["python", "pyi", "jupyter"],
+    args = ["--config", ".config/ruff.toml", "--fix"],
+    require_serial = true,
+    additional_dependencies = [],
+    minimum_pre_commit_version = "2.9.2"
+  },
+  {
+    id = "ruff-format",
+    name = "ruff format",
+    description = "Run 'ruff format' for extremely fast Python formatting",
+    entry = "mise x -- ruff format --force-exclude",
+    language = "python",
+    types_or = ["python", "pyi", "jupyter"],
+    args = ["--config", ".config/ruff.toml"],
+    require_serial = true
+  },
+  {
     id = "tombi-format",
     name = "tombi-format",
     entry = "mise x -- tombi format",
@@ -78,14 +100,6 @@ hooks = [
     id = "markdownlint-cli2",
     args = ["--config", ".config/.markdownlint.yaml"]
   }
-]
-
-[[repos]]
-repo = "https://github.com/astral-sh/ruff-pre-commit"
-rev = "v0.15.9"
-hooks = [
-  { id = "ruff-check", args = ["--config", ".config/ruff.toml", "--fix"] },
-  { id = "ruff-format", args = ["--config", ".config/ruff.toml"] }
 ]
 
 [[repos]]
