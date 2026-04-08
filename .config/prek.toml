@@ -15,7 +15,7 @@ hooks = [
     language = "system",
     types = ["yaml"],
     files = "^\\.github/workflows/",
-    entry = "actionlint"
+    entry = "mise x -- actionlint"
   },
   {
     id = "tombi-format",
@@ -28,7 +28,7 @@ hooks = [
   {
     id = "tombi-lint",
     name = "tombi-lint",
-    entry = "tombi lint",
+    entry = "mise x -- tombi lint",
     language = "system",
     types = ["toml"],
     require_serial = true
@@ -38,7 +38,7 @@ hooks = [
     name = "typos",
     description = "Source code spell checker, binary install",
     language = "system",
-    entry = "typos",
+    entry = "mise x -- typos",
     args = ["-c", ".config/typos.toml", "--write-changes", "--force-exclude"],
     types = ["text"],
     stages = ["pre-commit", "commit-msg"]
@@ -47,7 +47,7 @@ hooks = [
     id = "yamlfmt",
     name = "yamlfmt",
     description = "This hook uses github.com/google/yamlfmt to format yaml files. Requires Go >1.18 to be installed.",
-    entry = "yamlfmt",
+    entry = "mise x -- yamlfmt",
     args = ["-conf", ".config/yamlfmt.yaml"],
     language = "system",
     types = ["yaml"],
