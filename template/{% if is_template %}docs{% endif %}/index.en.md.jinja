@@ -60,7 +60,7 @@ It is highly encouraged for you to take this template and make your own child te
 - Automatic code linting and formatting via [prek](https://prek.j178.dev/):
   - Commit message linting via [committed](https://github.com/crate-ci/committed)
   - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
-  - Markdown linting via [mado](https://github.com/akiomik/mado)
+  - Markdown linting via [rumdl](https://github.com/rvben/rumdl)
   - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
   - Spell checking via [typos](https://github.com/crate-ci/typos)
   - TOML linting and formatting via [Tombi](https://github.com/tombi-toml/tombi)
