@@ -53,5 +53,5 @@ version = "3.0.2"
 uvx_args = "--with copier==9.14.1 --with githubkit==0.15.2 --with requests==2.33.1 --with rich==14.3.3"
 
 [tools."pipx:zensical"]
-version = "0.0.31"
+version = "0.0.32"
 uvx_args = "--with git+https://github.com/squidfunk/mike.git@2.2.0+zensical-0.1.0"
