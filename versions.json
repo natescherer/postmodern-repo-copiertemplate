@@ -2,78 +2,93 @@
   {
     "version": "dev",
     "title": "dev",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.6.0",
     "title": "v0.6.0",
     "aliases": [
       "latest"
-    ]
+    ],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.25",
     "title": "v0.5.25",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.24",
     "title": "v0.5.24",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.23",
     "title": "v0.5.23",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.22",
     "title": "v0.5.22",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.21",
     "title": "v0.5.21",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.20",
     "title": "v0.5.20",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.19",
     "title": "v0.5.19",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.18",
     "title": "v0.5.18",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.17",
     "title": "v0.5.17",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.16",
     "title": "v0.5.16",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.15",
     "title": "v0.5.15",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.14",
     "title": "v0.5.14",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   },
   {
     "version": "v0.5.13",
     "title": "v0.5.13",
-    "aliases": []
+    "aliases": [],
+    "alias_type": "symlink"
   }
 ]
