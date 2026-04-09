@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - zensical.toml
+      - .github/workflows/maint-zensical.yml
       - docs/**
   release:
     types:
