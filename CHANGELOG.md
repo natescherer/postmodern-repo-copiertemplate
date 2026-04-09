@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.7.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.0...v0.7.1) (2026-04-09)
+
+
+### Features
+
+* Update copier questions to only ask once ([#907](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/907)) ([06a0de8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/06a0de8f69bc703a7446a61654e4608abbbfd183))
+
+
+### Bug Fixes
+
+* Add renovate support for zensical's mike fork ([44a26cc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/44a26cc3ef1f20ffbc2d4af64df5ea894c55e6bc))
+* Adjust renovate regex ([770c361](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/770c36145b2b2d6457dbe5f9570915bb104377d2))
+* Fix template syntax ([e9dfb05](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e9dfb0574cac7d6474422faa414237bfdc4405ba))
+* Fix zensical github in-repo builds ([c4a346d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c4a346d5c54b6a65593c7a616fc5fcf621adb338))
+* Fix zensical_repo computed value for template ([0b2fdb5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0b2fdb59c02d7af87e66141bded31b60c6eb1759))
+* Remove ambiguity in renovate parsing ([4c6a5ef](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4c6a5ef1f454b7c18c040e8c21fa0027f868644c))
+
 ## [0.7.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.6.0...v0.7.0) (2026-04-09)
 
 
