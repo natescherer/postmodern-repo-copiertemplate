@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.3...v0.7.4) (2026-04-09)
+
+
+### Bug Fixes
+
+* Ensure there are defaults for all questions with choices ([020c253](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/020c2536330226007e0a581fb465360726624d0a))
+
 ## [0.7.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.2...v0.7.3) (2026-04-09)
 
 
