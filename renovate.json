@@ -88,14 +88,6 @@
       "groupName": "mike"
     },
     {
-      "description": "Group mkdocs",
-      "matchPackageNames": [
-        "mkdocs",
-        "pipx:mkdocs"
-      ],
-      "groupName": "mkdocs"
-    },
-    {
       "description": "Group prek",
       "matchPackageNames": [
         "j178/prek",
@@ -158,6 +150,14 @@
         "google/yamlfmt"
       ],
       "groupName": "yamlfmt"
+    },
+    {
+      "description": "Group zensical",
+      "matchPackageNames": [
+        "zensical",
+        "pipx:zensical"
+      ],
+      "groupName": "zensical"
     },
     {
       "description": "Use standard major version numbers for Azure Pipelines",

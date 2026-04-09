@@ -1,6 +1,6 @@
 [global]
 disable = [
   "MD013", # disable line length checking
-  "MD046", # disable code block style (mkdocs-material)
+  "MD046", # disable code block style (zensical)
   "MD057", # disable link checking in favor of lychee
 ]

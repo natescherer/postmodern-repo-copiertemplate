@@ -315,9 +315,9 @@ def create_pipelines_azdo(c, repo_name, azdo_project, azdo_org):
 
 
 @task
-def setup_mkdocs_ghpages(c, github_repo_owner, repo_name):
-    """Perform initial setup for mkdocs on GitHub."""
-    print("[bold green]*** 'setup-mkdocs' task start ***[/bold green]")
+def setup_zensical_ghpages(c, github_repo_owner, repo_name):
+    """Perform initial setup for zensical on GitHub."""
+    print("[bold green]*** 'setup-zensical' task start ***[/bold green]")
 
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
@@ -336,7 +336,7 @@ def setup_mkdocs_ghpages(c, github_repo_owner, repo_name):
         environment_name="github-pages",
         data={"deployment_branch_policy": None},
     )
-    print("[bold green]*** 'setup-mkdocs' task end ***[/bold green]")
+    print("[bold green]*** 'setup-zensical' task end ***[/bold green]")
 
 
 @task

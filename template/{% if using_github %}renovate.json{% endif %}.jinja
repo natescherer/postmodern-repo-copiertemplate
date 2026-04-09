@@ -96,14 +96,6 @@
       "groupName": "mike"
     },
     {
-      "description": "Group mkdocs",
-      "matchPackageNames": [
-        "mkdocs",
-        "pipx:mkdocs"
-      ],
-      "groupName": "mkdocs"
-    },
-    {
       "description": "Group prek",
       "matchPackageNames": [
         "j178/prek",
@@ -166,7 +158,15 @@
         "google/yamlfmt"
       ],
       "groupName": "yamlfmt"
-    },{% if is_template or (is_standard and using_azdo) %},
+    },
+    {
+      "description": "Group zensical",
+      "matchPackageNames": [
+        "zensical",
+        "pipx:zensical"
+      ],
+      "groupName": "zensical"
+    }{% if is_template or (is_standard and using_azdo) %},
     {
       "description": "Use standard major version numbers for Azure Pipelines",
       "matchDatasources": [
