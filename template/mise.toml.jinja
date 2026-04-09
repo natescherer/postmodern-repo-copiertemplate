@@ -33,6 +33,8 @@ copier copy --trust --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{
 # Backends
 {#- renovate: datasource=python-version depName=python versioning=python #}
 python = "3.14.3" # Used by copier
+{#- renovate: datasource=github-releases depName=astral-sh/uv #}
+uv = "0.11.3" # Used by pipx tools
 # Tools
 {#- renovate: datasource=github-releases depName=rhysd/actionlint #}
 actionlint = "1.7.11"
@@ -50,8 +52,6 @@ ruff = "0.15.8"
 rumdl = "0.1.66"
 {#- renovate: datasource=github-releases depName=koalaman/shellcheck #}
 shellcheck = "0.10.0"
-{#- renovate: datasource=github-releases depName=astral-sh/uv #}
-uv = "0.11.3" # Used by pipx tools
 {#- renovate: datasource=github-releases depName=google/yamlfmt #}
 yamlfmt = "0.20.0"
 
