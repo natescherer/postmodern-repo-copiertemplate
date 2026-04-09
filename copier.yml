@@ -42,7 +42,7 @@ developer_platform:
   choices:
     - GitHub
     - Azure DevOps
-  default: "{{ _copier_answers.get('developer_platform', '') }}"
+  default: "{{ _copier_answers.get('developer_platform', 'GitHub') }}"
   when: "{{ not _copier_answers.get('developer_platform') }}"
 
 repo_setup_actions:
@@ -53,7 +53,7 @@ repo_setup_actions:
     - Create Repo
     - Set Repo Rules
     - None
-  default: "{{ _copier_answers.get('repo_setup_actions', '') }}"
+  default: "{{ _copier_answers.get('repo_setup_actions', 'Create Repo') }}"
   when: "{{ not _copier_answers.get('repo_setup_actions') }}"
 
 github_token:
