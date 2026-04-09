@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.1...v0.7.2) (2026-04-09)
+
+
+### Bug Fixes
+
+* Fix handling of github_org question ([d645e28](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d645e2852c999ec1d213914da33ad67075b35d15))
+
 ## [0.7.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.0...v0.7.1) (2026-04-09)
 
 
