@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.7.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.6.0...v0.7.0) (2026-04-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* replace mkdocs with zensical ([#893](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/893))
+
+### Features
+
+* Execute prek hooks directly with mise ([cb16de9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cb16de94daecf2519e3307a9b2c8e0e8fbbf0b07))
+* Move from markdownlint-cli2 to rumdl ([3d0b2af](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3d0b2af2e72e5aa4816c3d8d1504135aca768ca5))
+* Move prek dependencies into mise ([3de4d84](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3de4d841dcffac5035c05f25cf9a66ec9d9d9426))
+* Move ruff from prek to mise ([de382e0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/de382e0b6df5f75e6a713725d300e694bccdf86b))
+* Move typos from prek to mise ([7921b8b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7921b8bc04c46c136a7e6e94243c41bc8a84d770))
+* Move typos from prek to mise ([4352f62](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4352f62be604ff1bf2cf00b031d9d3146b29981b))
+* Replace mkdocs with zensical ([#893](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/893)) ([c3e8b07](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c3e8b07d1c8ea219ce21e58b0472385891f17272))
+
 ## [0.6.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.25...v0.6.0) (2026-04-07)
 
 
