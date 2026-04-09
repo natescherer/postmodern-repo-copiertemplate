@@ -9,28 +9,31 @@
   ],
   "azure-pipelines": {
     "enabled": true,
-    "fileMatch": [
-      "(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$"
+    "managerFilePatterns": [
+      "/(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"
     ]
   },
   "copier": {
     "description": "Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline",
     "enabled": false
   },
-  "docker": {
-    "pinDigests": true
-  },
   "devcontainer": {
-    "fileMatch": [
-      "(^|/)devcontainer\\.json(?:\\.jinja)?$"
+    "managerFilePatterns": [
+      "/(^|/)devcontainer\\.json(?:\\.jinja)?$/"
     ]
   },
   "github-actions": {
-    "fileMatch": [
-      "(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"
+    "managerFilePatterns": [
+      "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$/"
     ]
   },
   "packageRules": [
+    {
+      "matchCategories": [
+        "docker"
+      ],
+      "pinDigests": true
+    },
     {
       "description": "Group actionlint",
       "matchPackageNames": [
@@ -161,9 +164,7 @@
     },
     {
       "description": "Use standard major version numbers for Azure Pipelines",
-      "matchDatasources": [
-        "azure-pipelines-tasks"
-      ],
+      "matchDatasources": ["azure-pipelines-tasks"],
       "extractVersion": "^(?<version>\\d+)"
     }
   ],
@@ -171,8 +172,8 @@
     {
       "description": "Manager for simple mise tools",
       "customType": "regex",
-      "fileMatch": [
-        "mise\\..*toml\\.jinja"
+      "managerFilePatterns": [
+        "/mise\\..*toml\\.jinja/"
       ],
       "matchStrings": [
         "{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':/]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"
@@ -182,8 +183,8 @@
     {
       "description": "Manager for pipx git-sourced tools",
       "customType": "regex",
-      "fileMatch": [
-        "(^|/)mise(\\.\\w+)*\\.toml(\\.jinja)?$"
+      "managerFilePatterns": [
+        "/(^|/)mise(\\.\\w+)*\\.toml(\\.jinja)?$/"
       ],
       "matchStrings": [
         "\\[tools\\.\"pipx:git\\+https://github\\.com/(?<packageName>[^/]+/[^\"]+)\\.git\"\\]\\s+version = \"(?<currentValue>[^+\"]*)"
@@ -195,8 +196,8 @@
       "description": "Manager for pipx tools with options",
       "customType": "regex",
       "datasourceTemplate": "pypi",
-      "fileMatch": [
-        "mise\\..*toml\\.jinja"
+      "managerFilePatterns": [
+        "/mise\\..*toml\\.jinja/"
       ],
       "matchStrings": [
         "\\[tools\\.\"?pipx:(?<depName>[A-Za-z0-9_.-]+)\"?\\]\\sversion = \"(?<currentValue>[^\\s]*)\""
@@ -207,8 +208,8 @@
       "description": "Manager for pipx tool dependencies",
       "customType": "regex",
       "datasourceTemplate": "pypi",
-      "fileMatch": [
-        "mise\\..*toml(?:\\.jinja)?"
+      "managerFilePatterns": [
+        "/mise\\..*toml(?:\\.jinja)?/"
       ],
       "matchStrings": [
         ".*?(--with\\s(?<depName>.+?)(\\[\\S+])*==(?<currentValue>[^\"\\s]*))"
