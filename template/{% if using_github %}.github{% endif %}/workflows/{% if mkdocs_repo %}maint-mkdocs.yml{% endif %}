@@ -1,11 +1,11 @@
-name: "[Maint] MkDocs Build & Commit"
+name: "[Maint] Zensical Build & Commit"
 
 on:
   push:
     branches:
       - main
     paths:
-      - .config/mkdocs/**
+      - zensical.toml
       - docs/**
 
 permissions:
@@ -13,10 +13,9 @@ permissions:
 
 env:
   MISE_ENV: ci
-  MKDOCS_OFFLINE: true
 
 jobs:
-  mkdocs:
+  zensical:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
@@ -46,16 +45,16 @@ jobs:
       - uses: jdx/mise-action@v4
         with:
           experimental: true
-      - run: mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs_site
+      - run: zensical build
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.REPO_MAINTENANCE_PAT }}
-          commit-message: "docs: build mkdocs"
-          branch: mkdocs-build
+          commit-message: "docs: build zensical"
+          branch: zensical-build
           delete-branch: true
-          title: "docs: build mkdocs"
+          title: "docs: build zensical"
       - name: Enable Pull Request Automerge
         if: steps.cpr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v3

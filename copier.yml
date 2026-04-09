@@ -136,7 +136,7 @@ license:
     None:
       value: None
 
-mkdocs_target:
+zensical_target:
   type: str
   help: |
     Choose how you want to publish your documentation
@@ -220,14 +220,14 @@ should_set_repo_settings:
   default: "{% if repo_setup_actions == 'Create Repo' or repo_setup_actions == 'Set Repo Rules' %}true{% endif %}"
   when: false
 
-mkdocs_ghpages:
+zensical_ghpages:
   type: bool
-  default: "{% if mkdocs_target == 'GitHub Pages' %}true{% endif %}"
+  default: "{% if zensical_target == 'GitHub Pages' %}true{% endif %}"
   when: false
 
-mkdocs_repo:
+zensical_repo:
   type: bool
-  default: "{% if mkdocs_target == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
+  default: "{% if zensical_target == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
   when: false
 
 ## Locked Computed Values
@@ -254,8 +254,8 @@ _tasks:
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_github %}true{% endif %}"
   - command: invoke create-pipelines-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project_encoded }} --azdo-org {{ azdo_org }}
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
-  - command: invoke setup-mkdocs-ghpages --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
-    when: "{% if _copier_operation == 'copy' and mkdocs_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
+  - command: invoke setup-zensical-ghpages --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
+    when: "{% if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
   - invoke delete-unneeded-template-files
 
 _message_after_update: |-

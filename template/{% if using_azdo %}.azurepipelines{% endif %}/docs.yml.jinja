@@ -6,24 +6,23 @@ trigger:
       - main
   paths:
     include:
-      - .config/mkdocs/**
+      - zensical.toml
       - docs/**
 
 variables:
   CI: true
   MISE_ENV: ci
-  MKDOCS_OFFLINE: true
 
 pool:
   vmImage: ubuntu-latest
 
 stages:
-  - stage: mkdocs_build
-    displayName: Build Mkdocs
+  - stage: zensical_build
+    displayName: Build Zensical
     jobs:
-      - job: mkdocs_build
+      - job: zensical_build
         timeoutInMinutes: 60
-        displayName: Build Mkdocs
+        displayName: Build Zensical
         steps:
           - checkout: self
             fetchDepth: 0
@@ -40,12 +39,12 @@ stages:
           - bash: mise install
             displayName: Run 'mise install'
           - bash: |
-              mkdocs build -f .config/mkdocs/mkdocs.yml -d ../../docs_site
+              zensical build
               git add --all
-              git commit -m "docs: build mkdocs"
-            displayName: Run 'mkdocs build'
+              git commit -m "docs: build zensical"
+            displayName: Run 'zensical build'
           - pwsh: |
-              $BranchName = "mkdocs-build"
+              $BranchName = "zensical-build"
               Write-Host "##vso[task.setvariable variable=BRANCH_NAME;]$BranchName"
 
               git checkout -b $BranchName
@@ -53,7 +52,7 @@ stages:
               git push origin --tags
             displayName: Push New Branch
           - pwsh: |
-              $PRTitle = "docs: build mkdocs"
+              $PRTitle = "docs: build zensical"
               Write-Host "##vso[task.setvariable variable=PR_TITLE;]$PRTitle"
 
               $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
