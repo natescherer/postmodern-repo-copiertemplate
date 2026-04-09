@@ -31,7 +31,7 @@ copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'repo_
 
 [tools]
 # Backends
-python = "3.14.3" # Used by copier
+python = "3.14.4" # Used by copier
 uv = "0.11.5" # Used by pipx tools
 # Tools
 actionlint = "1.7.11"
