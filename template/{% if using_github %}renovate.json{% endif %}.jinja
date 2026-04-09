@@ -10,7 +10,7 @@
   {%- if is_template or (is_standard and using_azdo) %}
   "azure-pipelines": {
     "enabled": true,
-    "fileMatch": [
+    "managerFilePatterns": [
       {%- if is_template %}
       {% raw %}"(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$"{% endraw %}
       {%- else %}
@@ -23,22 +23,25 @@
     "description": "Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline",
     "enabled": false
   },
-  "docker": {
-    "pinDigests": true
-  },
   {%- if is_template %}
   "devcontainer": {
-    "fileMatch": [
+    "managerFilePatterns": [
       "(^|/)devcontainer\\.json(?:\\.jinja)?$"
     ]
   },
   "github-actions": {
-    "fileMatch": [
+    "managerFilePatterns": [
       {% raw %}"(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"{% endraw %}
     ]
   },
   {%- endif %}
   "packageRules": [
+    {
+      "matchCategories": [
+        "docker"
+      ],
+      "pinDigests": true
+    },
     {
       "description": "Group actionlint",
       "matchPackageNames": [
@@ -169,9 +172,7 @@
     }{% if is_template or (is_standard and using_azdo) %},
     {
       "description": "Use standard major version numbers for Azure Pipelines",
-      "matchDatasources": [
-        "azure-pipelines-tasks"
-      ],
+      "matchDatasources": ["azure-pipelines-tasks"],
       "extractVersion": "^(?<version>\\d+)"
     }
     {%- endif %}
@@ -181,7 +182,7 @@
     {
       "description": "Manager for mise tools in mise*.toml.jinja",
       "customType": "regex",
-      "fileMatch": [
+      "managerFilePatterns": [
         "mise\\..*toml\\.jinja"
       ],
       "matchStrings": [
@@ -192,7 +193,7 @@
     {
       "description": "Manager for pipx git-sourced tools",
       "customType": "regex",
-      "fileMatch": [
+      "managerFilePatterns": [
         "(^|/)mise(\\.\\w+)*\\.toml(\\.jinja)?$"
       ],
       "matchStrings": [
@@ -205,7 +206,7 @@
       "description": "Manager for pipx tools with options in mise*.toml.jinja",
       "customType": "regex",
       "datasourceTemplate": "pypi",
-      "fileMatch": [
+      "managerFilePatterns": [
         "mise\\..*toml\\.jinja"
       ],
       "matchStrings": [
@@ -218,7 +219,7 @@
       "description": "Manager for pipx tool dependencies in mise*.toml{% if is_template %} and mise*.toml.jinja{% endif %}",
       "customType": "regex",
       "datasourceTemplate": "pypi",
-      "fileMatch": [
+      "managerFilePatterns": [
         "mise\\..*toml{% if is_template %}(?:\\.jinja)?{% endif %}"
       ],
       "matchStrings": [
