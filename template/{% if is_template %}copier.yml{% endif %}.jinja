@@ -104,7 +104,7 @@ project_type:
   choices:
     - Standard
     - Template
-  default: "{{ _copier_answers.get('project_type', '') }}"
+  default: "{{ _copier_answers.get('project_type', 'Standard') }}"
   when: "{{ not _copier_answers.get('project_type') }}"
 
 project_name:
@@ -125,7 +125,7 @@ project_visibility:
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     Private:
       value: Private
-  default: "{{ _copier_answers.get('project_visibility', '') }}"
+  default: "{{ _copier_answers.get('project_visibility', 'Private') }}"
   when: "{{ not _copier_answers.get('project_visibility') }}"
 
 license:
@@ -148,7 +148,7 @@ zensical_target:
       validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
     docs_site Directory in Repo:
       value: docs_site Directory in Repo
-  default: "{{ _copier_answers.get('zensical_target', '') }}"
+  default: "{{ _copier_answers.get('zensical_target', 'docs_site Directory in Repo') }}"
   when: "{{ not _copier_answers.get('zensical_target') }}"
 
 lifecycle:
