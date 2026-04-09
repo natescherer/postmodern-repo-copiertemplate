@@ -227,7 +227,7 @@ zensical_ghpages:
 
 zensical_repo:
   type: bool
-  default: "{% if zensical_target == 'docs/site Directory in Repo' or using_azdo %}true{% endif %}"
+  default: "{% if zensical_target == 'docs_site Directory in Repo' or using_azdo %}true{% endif %}"
   when: false
 
 ## Locked Computed Values

@@ -21,12 +21,12 @@ copier copy --trust --vcs-ref=HEAD --pretend -d 'repo_name=render-test' -d 'auth
 
 [tasks.integration-test-gh]
 run = '''
-copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'developer_platform=GitHub' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'lifecycle=Pre-Alpha' https://github.com/natescherer/postmodern-repo-copiertemplate {{option(name="path")}}
+copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'repo_setup_actions=Create Repo' -d 'developer_platform=GitHub' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'lifecycle=Pre-Alpha' https://github.com/natescherer/postmodern-repo-copiertemplate {{option(name="path")}}
 '''
 
 [tasks.integration-test-azdo]
 run = '''
-copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'developer_platform=Azure DevOps' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Private' -d 'license=None' -d 'lifecycle=Pre-Alpha' https://github.com/natescherer/postmodern-repo-copiertemplate {{option(name="path")}}
+copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'repo_setup_actions=Create Repo' -d 'developer_platform=Azure DevOps' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Private' -d 'license=None' -d 'lifecycle=Pre-Alpha' https://github.com/natescherer/postmodern-repo-copiertemplate {{option(name="path")}}
 '''
 
 [tools]
