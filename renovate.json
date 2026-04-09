@@ -180,6 +180,18 @@
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
     },
     {
+      "description": "Manager for pipx git-sourced tools",
+      "customType": "regex",
+      "fileMatch": [
+        "(^|/)mise(\\.\\w+)*\\.toml(\\.jinja)?$"
+      ],
+      "matchStrings": [
+        "\\[tools\\.\"pipx:git\\+https://github\\.com/(?<packageName>[^/]+/[^\"]+)\\.git\"\\]\\s+version = \"(?<currentValue>[^+\"]*)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    },
+    {
       "description": "Manager for pipx tools with options",
       "customType": "regex",
       "datasourceTemplate": "pypi",
