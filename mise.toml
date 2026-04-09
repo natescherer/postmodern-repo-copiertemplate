@@ -42,7 +42,7 @@ committed = "1.1.10"
 ruff = "0.15.8"
 rumdl = "0.1.66"
 shellcheck = "0.10.0"
-yamlfmt = "0.20.0"
+yamlfmt = "0.21.0"
 
 [tools."pipx:copier"]
 version = "9.14.1"
