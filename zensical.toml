@@ -66,6 +66,8 @@ toggle.name = "Switch to system preference"
 
 [project.plugins.mike]
 canonical_version = "latest"
+deploy_prefix = ""
+redirect_template = ""
 
 # These are all Markdown/Markdown Extensions extensions officially supported by Zensical as of 2026/04/07
 # (Excluding Arithmatex, which requires external configuration files)
