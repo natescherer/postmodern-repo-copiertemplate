@@ -14,7 +14,7 @@ run = "zensical serve"
 [tasks.test]
 run = '''
 prek run -c .config/prek.toml --all-files
-copier copy --trust --vcs-ref=HEAD --pretend -d 'repo_name=render-test' -d 'author_name=Name' -d 'repo_setup_actions=None' -d 'developer_platform=GitHub' -d 'github_username=username' -d 'github_org=' -d 'project_description=Rendering Test' -d 'project_type=Template' -d 'project_name=Rendering Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'zensical_target=docs_site Directory in Repo' -d 'lifecycle=Pre-Alpha' . fake-path
+copier copy --trust --vcs-ref=HEAD --pretend -d 'repo_name=render-test' -d 'author_name=Name' -d 'repo_setup_actions=None' -d 'developer_platform=GitHub' -d 'github_username=username' -d 'github_org=' -d 'project_description=Rendering Test' -d 'project_type=Template' -d 'project_name=Rendering Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'zensical_target=docs_site Directory in Repo' -d 'lifecycle=Pre-Alpha' . {% raw %}{{option(name="path")}}{% endraw %}
 '''
 
 {%- if is_template %}
