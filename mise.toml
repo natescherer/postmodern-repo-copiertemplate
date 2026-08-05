@@ -11,7 +11,7 @@ windows_default_inline_shell_args = "powershell.exe /c"
 run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust"
 
 [tasks.docs-server]
-run = "zensical serve -f .config/zensical.toml"
+run = "zensical serve"
 
 [tasks.test]
 run = '''

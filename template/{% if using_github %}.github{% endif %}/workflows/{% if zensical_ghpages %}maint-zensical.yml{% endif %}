@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - zensical.toml
+      - .github/workflows/maint-zensical.yml
       - docs/**
   release:
     types:
@@ -48,11 +49,11 @@ jobs:
           ref: gh-pages
       - run: mike set-default --push --allow-undefined dev
         if: ${{ steps.index-check.outputs.exists == 'false' }}
-      - run: mike deploy -F --push --update-aliases dev
+      - run: mike deploy --push --update-aliases dev
         if: ${{ github.event_name == 'push' }}
       - run: |
           mike deploy --push --update-aliases ${{ github.event.release.tag_name }} latest
-          mike set-default -F --push latest
+          mike set-default --push latest
         if: ${{ github.event_name == 'release' }}
   deploy-zensical:
     runs-on: ubuntu-latest

@@ -1,7 +1,6 @@
 [tools]
 # Tools
 "pipx:apprise" = "1.12.0"
-"pipx:commitizen" = "4.17.0"
 
 [tools."pipx:git+https://github.com/squidfunk/mike.git"]
 version = "2.2.0+zensical-0.1.0"

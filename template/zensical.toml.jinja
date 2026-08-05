@@ -31,7 +31,7 @@ language = "en"
 
 [project.theme.icon]
 logo = "{% if is_template %}octicons/repo-template-24{% else %}material/library{% endif %}"
-{%- if zensical_ghpages %}repo = "fontawesome/brands/github"{% endif %}
+{% if zensical_ghpages %}repo = "fontawesome/brands/github"{% endif -%}
 
 # ── Color palette (system → light → dark toggle) ───────────────────────────────
 # Docs: https://zensical.org/docs/setup/colors/#automatic-light-dark-mode
@@ -67,6 +67,9 @@ toggle.name = "Switch to system preference"
 {%- if zensical_ghpages %}
 [project.plugins.mike]
 canonical_version = "latest"
+deploy_prefix = ""
+redirect_template = ""
+alias_type = "symlink"
 {%- endif %}
 
 {%- if zensical_repo %}[project.plugins.offline]{%- endif %}
