@@ -45,12 +45,12 @@ shellcheck = "0.11.0"
 yamlfmt = "0.21.0"
 
 [tools."pipx:copier"]
-version = "9.14.1"
+version = "9.17.1"
 uvx_args = "--with copier-template-extensions==0.3.3 --with jinja2-shell-extension==2.1.1"
 
 [tools."pipx:invoke"]
 version = "3.0.3"
-uvx_args = "--with copier==9.14.1 --with githubkit==0.15.2 --with requests==2.33.1 --with rich==15.0.0"
+uvx_args = "--with copier==9.17.1 --with githubkit==0.15.2 --with requests==2.33.1 --with rich==15.0.0"
 
 [tools."pipx:zensical"]
 version = "0.0.32"
