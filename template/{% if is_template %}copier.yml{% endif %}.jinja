@@ -222,6 +222,18 @@ zensical_repo:
   default: "{% if zensical_target == 'docs_site Directory in Repo' or using_azdo %}true{% endif %}"
   when: false
 
+# Reads the version Release Please last committed to .config/release-please-manifest.json, via `git show`
+# so it works regardless of shell.
+current_release_please_version:
+  type: str
+  default: "{% if _copier_operation == 'update' and using_github %}{% set _rp_manifest = ('git show HEAD:.config/release-please-manifest.json' | shell()) | from_json %}{{ _rp_manifest.values() | first }}{% endif %}"
+  when: false
+
+current_release_please_version_is_pre_1:
+  type: bool
+  default: "{% if current_release_please_version.split('.')[0] == '0' %}true{% endif %}"
+  when: false
+
 ## Locked Computed Values
 
 copyright_year:
@@ -251,7 +263,7 @@ _tasks:
   - invoke delete-unneeded-template-files
 
 _message_after_update: |-
-  {% if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %} It looks like you have switched this project's lifecycle to 'Stable' for the first time. If this is true, merge the following commit to main to have Release Please bump the version number properly.
+  {% if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %} This project's lifecycle is 'Stable' but Release Please hasn't bumped the version to 1.0.0 yet. Merge the following commit to main to have it do so.
 
   git commit --allow-empty -m "chore: bump version to v1.0.0" -m "Release-As: 1.0.0"{% endif %}
 {%- endraw %}
