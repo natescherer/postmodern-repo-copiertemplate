@@ -84,7 +84,7 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 
 - `.gitignore`, set to ignore macOS `.DS_Store` files and Windows `Thumbs.db` files
 - `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant](https://www.contributor-covenant.org/)
-- `CONTRIBUTING.md`, designed help novices to make their first contribution
+- `CONTRIBUTING.md`, designed to help novices make their first contribution
 - `LICENSE`, a copy of the [MIT License](https://choosealicense.com/licenses/mit/)
 - `README.md`, designed for general products
 
