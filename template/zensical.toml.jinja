@@ -73,8 +73,10 @@ deploy_prefix = ""
 redirect_template = ""
 alias_type = "symlink"
 {%- endif %}
+{%- if zensical_repo %}
 
-{%- if zensical_repo %}[project.plugins.offline]{%- endif %}
+[project.plugins.offline]
+{%- endif %}
 
 # ── Extensions ──────────────────────────────────────────────────────────────────
 
