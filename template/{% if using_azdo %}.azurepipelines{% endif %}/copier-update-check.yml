@@ -62,5 +62,5 @@ stages:
                 Write-Host -Object "No update available."
               }
             env:
-              APPRISE_URI: $(APPRISE_URI)
+              APPRISE_URL: $(APPRISE_URL)
             displayName: Check for Template Updates
