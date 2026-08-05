@@ -10,7 +10,7 @@ The **Repo Setup PAT** can be stored in your password vault of choice, as you wi
 
 The **Repo Maintenance PAT** should be saved as a GitHub Actions secret on the repository called **REPO_MAINTENANCE_PAT**.
 
-NOTE: Fine-grained tokens are specific NOT used, as they cannot open pull requests. This can be changed once [this issue](https://github.com/github/roadmap/issues/600) is implemented by GitHub.
+NOTE: Fine-grained tokens are specifically **not** used, as they cannot open pull requests. This can be changed once [this issue](https://github.com/github/roadmap/issues/600) is implemented by GitHub.
 
 ### Repo Setup PAT (Classic Token)
 
