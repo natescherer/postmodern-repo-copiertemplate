@@ -1,12 +1,16 @@
+{%- macro double_quote_for_yaml_if_needed(value) -%}
+  {%- set _auto = value | to_yaml -%}
+  {%- if _auto.startswith("'") -%}
+    {{- value | to_yaml(default_style='"') | trim -}}
+  {%- else -%}
+    {{- value -}}
+  {%- endif -%}
+{%- endmacro -%}
 ## Initial Settings
 _answers_file: .config/copier-answers.yml
 
 _jinja_extensions:
-  # External Dependencies
-  - copier_template_extensions.TemplateExtensionLoader
   - jinja2_shell_extension.ShellExtension
-  # Internal Dependencies
-  - extensions/yaml_quote_extension.py:YamlQuoteExtension
 
 _message_before_copy: Thanks for using this template! Please consult the 'Template Questions' page in documentation for deeper explanation of each question.
 
@@ -15,7 +19,7 @@ _subdirectory: template
 ## The below variables are used to track parent/child template relationships and should not be manually adjusted.
 parent_template_name:
   type: str
-  default: {{ project_name | quote_for_yaml }}
+  default: {{ double_quote_for_yaml_if_needed(project_name) }}
   when: false
 parent_template_url:
   type: str

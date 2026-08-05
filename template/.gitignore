@@ -12,3 +12,4 @@ Thumbs.db
 
 # Tool caches
 .cache
+__pycache__
