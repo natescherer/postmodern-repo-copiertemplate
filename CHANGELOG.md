@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.7...v0.7.8) (2026-08-05)
+
+
+### Features
+
+* Apply parent template 0.7.7 and refactor between levels ([#942](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/942)) ([3f22c53](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3f22c53a49e599b65e76837c5c4ade0baf601673))
+
 ## [0.7.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.6...v0.7.7) (2026-08-05)
 
 
