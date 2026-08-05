@@ -1,6 +1,6 @@
 [tools]
 # Tools
-"pipx:apprise" = "1.9.9"
+"pipx:apprise" = "1.12.0"
 "pipx:commitizen" = "4.13.9"
 
 [tools."pipx:git+https://github.com/squidfunk/mike.git"]
