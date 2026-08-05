@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.7.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.4...v0.7.5) (2026-08-05)
+
+
+### Features
+
+* Improve help text on update ([#925](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/925)) ([f8722b8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f8722b8b39bcc74712529653cb952c2c2f2a7012))
+
+
+### Bug Fixes
+
+* Undo failed ask once conversion ([#924](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/924)) ([9bdb2c4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9bdb2c42154f0ec356a70dbfe1bbf73253be4220))
+
+
+### Miscellaneous
+
+* **deps:** Update actions/cache action to v6 ([#932](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/932)) ([76d8e65](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/76d8e6501b4bc4f40aa273d0d0cf8cd557345b6d))
+* **deps:** Update actions/checkout action to v7 ([#933](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/933)) ([6339405](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6339405b73a57c01185670af2eec71e95d6515e2))
+* **deps:** Update actions/upload-pages-artifact action to v5 ([#934](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/934)) ([81ee43f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/81ee43fa1e7bf9022157c3f39ea7ae87f844fb2b))
+* **deps:** Update apprise to v1.12.0 ([#927](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/927)) ([23b016e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/23b016e267e3f68b7f06a6fadf96c147764b9bde))
+* **deps:** Update commitizen to v4.17.0 ([#914](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/914)) ([3d77408](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3d774081edd34fc8d4fb61f40b64ca1cba445507))
+* **deps:** Update copier to v9.17.1 ([#928](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/928)) ([f353146](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f3531466e0c8a54e20d8879cd46fbda8991cd095))
+* **deps:** Update dependency githubkit to v0.16.0 ([#915](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/915)) ([f144271](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f144271f33faf60eea0201b418d87bc0398030ea))
+* **deps:** Update dependency python to v3.14.6 ([#921](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/921)) ([1f33adb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1f33adbc71396b8f89f3641a7738da7ad6f19aa3))
+* **deps:** Update dependency requests to v2.34.2 ([#929](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/929)) ([ad37959](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ad3795922d0c739a0fa3714f0dcca2c0106083b9))
+* **deps:** Update dependency rich to v15 ([#935](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/935)) ([d6ade25](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d6ade256e7ddb4bb1ebf54cd610bf7fa1368bb50))
+* **deps:** Update googleapis/release-please-action action to v5 ([#936](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/936)) ([0e588da](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0e588da96f7c2fa6847355ad8757b8da9314fe3a))
+* **deps:** Update joshuakgoldberg/all-contributors-auto-action action to v0.6.1 ([#926](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/926)) ([8402b35](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8402b352bcd59555d092d40553113bfa90b77991))
+* **deps:** Update prek to v0.4.12 ([#917](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/917)) ([047aa9f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/047aa9f81f42ee03cadbe277bb624824b563ce65))
+* **deps:** Update ruff to v0.16.1 ([#918](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/918)) ([f82a8eb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f82a8ebf580bd815690a84658e3cf5d071d80868))
+* **deps:** Update rumdl to v0.2.50 ([#919](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/919)) ([59f11c4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/59f11c4700658f2ac8e29ca7e0792a8cdaf31223))
+* **deps:** Update tj-actions/changed-files action to v47.0.6 ([#920](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/920)) ([8b4989e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8b4989edd5e09977bc49bb34ea433d4ddd0579fb))
+* **deps:** Update tombi to v1 ([#937](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/937)) ([ab9cb9f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ab9cb9fbd7a9c7e5f0c18dcb154a36a00ec1939d))
+* **deps:** Update typos to v1.49.0 ([#931](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/931)) ([46f31e1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/46f31e16fb70f195b0d7d322a9caf4c9a2ea9d0e))
+* **deps:** Update uv to v0.12.1 ([#922](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/922)) ([57f8f35](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/57f8f350a2bd025a0d9a71d646ef8503aa7186c3))
+* **deps:** Update zensical to v0.0.53 ([#923](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/923)) ([7bd606d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7bd606d70c6ba69c98bbeeba5cd8cd19825286fc))
+
 ## [0.7.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.3...v0.7.4) (2026-04-09)
 
 
