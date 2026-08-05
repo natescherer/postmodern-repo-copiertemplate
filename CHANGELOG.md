@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.5...v0.7.6) (2026-08-05)
+
+
+### Bug Fixes
+
+* Restore missing endraw ([#938](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/938)) ([b061476](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b06147644c9385cd3880579b982f594d0996a77f))
+
 ## [0.7.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.4...v0.7.5) (2026-08-05)
 
 
