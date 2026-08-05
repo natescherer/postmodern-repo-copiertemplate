@@ -31,7 +31,9 @@ language = "en"
 
 [project.theme.icon]
 logo = "{% if is_template %}octicons/repo-template-24{% else %}material/library{% endif %}"
-{% if zensical_ghpages %}repo = "fontawesome/brands/github"{% endif -%}
+{%- if zensical_ghpages %}
+repo = "fontawesome/brands/github"
+{%- endif %}
 
 # ── Color palette (system → light → dark toggle) ───────────────────────────────
 # Docs: https://zensical.org/docs/setup/colors/#automatic-light-dark-mode
