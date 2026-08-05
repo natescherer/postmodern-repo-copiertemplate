@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.8...v0.7.9) (2026-08-05)
+
+
+### Features
+
+* Apply 0.7.8 and correct drift from inner template ([#944](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/944)) ([9dc6d04](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9dc6d04ca64326f16ac05127086a5a80d8c68a1a))
+
 ## [0.7.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.7...v0.7.8) (2026-08-05)
 
 
