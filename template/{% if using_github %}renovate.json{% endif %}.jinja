@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "dependencyDashboard": {%- if using_github %}true{% else %}false{% endif %},
+  "dependencyDashboard": {% if using_github %}true{% else %}false{% endif %},
   "extends": [
     "config:recommended"
   ],
@@ -12,7 +12,7 @@
     "enabled": true,
     "managerFilePatterns": [
       {%- if is_template %}
-      {% raw %}"(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$"{% endraw %}
+      {% raw %}"/(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"{% endraw %}
       {%- else %}
       "(^|/)\\.azurepipelines/.+\\.ya?ml$"
       {%- endif %}
@@ -26,7 +26,7 @@
   {%- if is_template %}
   "devcontainer": {
     "managerFilePatterns": [
-      "(^|/)devcontainer\\.json(?:\\.jinja)?$"
+      "/(^|/)devcontainer\\.json(?:\\.jinja)?$/"
     ]
   },
   "github-actions": {
@@ -106,7 +106,7 @@
       ],
       "groupName": "prek"
     },
-      {
+    {
       "description": "Group ruff",
       "matchPackageNames": [
         "ruff",
@@ -180,10 +180,10 @@
   "customManagers": [
     {%- if is_template %}
     {
-      "description": "Manager for mise tools in mise*.toml.jinja",
+      "description": "Manager for simple mise tools",
       "customType": "regex",
       "managerFilePatterns": [
-        "mise\\..*toml\\.jinja"
+        "/mise\\..*toml\\.jinja/"
       ],
       "matchStrings": [
         {% raw %}"{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':/]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"{% endraw %}
@@ -194,7 +194,7 @@
       "description": "Manager for pipx git-sourced tools",
       "customType": "regex",
       "managerFilePatterns": [
-        "(^|/)mise(\\.\\w+)*\\.toml(\\.jinja)?$"
+        "/(^|/)mise(\\.\\w+)*\\.toml(\\.jinja)?$/"
       ],
       "matchStrings": [
         "\\[tools\\.\"pipx:git\\+https://github\\.com/(?<packageName>[^/]+/[^\"]+)\\.git\"\\]\\s+version = \"(?<currentValue>[^+\"]*)"
@@ -203,11 +203,11 @@
       "versioningTemplate": "semver"
     },
     {
-      "description": "Manager for pipx tools with options in mise*.toml.jinja",
+      "description": "Manager for pipx tools with options",
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "managerFilePatterns": [
-        "mise\\..*toml\\.jinja"
+        "/mise\\..*toml\\.jinja/"
       ],
       "matchStrings": [
         "\\[tools\\.\"?pipx:(?<depName>[A-Za-z0-9_.-]+)\"?\\]\\sversion = \"(?<currentValue>[^\\s]*)\""
@@ -216,11 +216,11 @@
     },
     {%- endif %}
     {
-      "description": "Manager for pipx tool dependencies in mise*.toml{% if is_template %} and mise*.toml.jinja{% endif %}",
+      "description": "Manager for pipx tool dependencies",
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "managerFilePatterns": [
-        "mise\\..*toml{% if is_template %}(?:\\.jinja)?{% endif %}"
+        "/mise\\..*toml(?:\\.jinja)?/"
       ],
       "matchStrings": [
         ".*?(--with\\s(?<depName>.+?)(\\[\\S+])*==(?<currentValue>[^\"\\s]*))"

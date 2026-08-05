@@ -10,9 +10,9 @@ To apply this template to an existing project, follow these steps:
 1. Create a new branch (`copier-template-apply`, for example) from your default branch
 1. Make sure your shell is in the project root, then run the command below:
 
-    ```bash
-    mise x "--" copier copy --trust --overwrite https://github.com/natescherer/postmodern-repo-copiertemplate ~/local-repo-path-here
-    ```
+   ```bash
+   mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/local-repo-path-here
+   ```
 
 1. If you are using GitHub, Make sure to choose `Set Repo Rules` in the first question
 1. Set all other settings as appropriate for your project

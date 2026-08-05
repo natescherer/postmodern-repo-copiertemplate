@@ -2,11 +2,9 @@
 site_name = "Postmodern Repo Copier Template"
 docs_dir = "docs"
 site_dir = ".cache/zensical_serve"
-site_url = "https://natescherer.github.io/postmodern-repo-copiertemplate/"
+site_url = "https://natescherer.github.io/postmodern-repo-copiertemplate"
 repo_url = "https://github.com/natescherer/postmodern-repo-copiertemplate"
 
-# ── Versioning (mike) ──────────────────────────────────────────────────────────
-# Docs: https://zensical.org/docs/setup/versioning/
 [project.extra.version]
 provider = "mike"
 alias = true
