@@ -15,7 +15,7 @@ extend-ignore-re = [
 {%- if using_github %}
 # GitHub Username
 {{ github_username }} = "{{ github_username }}"
-{%- if github_org %}
+{%- if github_org and github_org != 'None' %}
 # GitHub Organization
 {{ github_org }} = "{{ github_org }}"
 {%- endif %}
