@@ -40,7 +40,7 @@ actionlint = "1.7.12"
 "aqua:tombi-toml/tombi" = "0.9.16"
 committed = "1.1.11"
 ruff = "0.15.9"
-rumdl = "0.1.68"
+rumdl = "0.2.50"
 shellcheck = "0.11.0"
 yamlfmt = "0.21.0"
 
