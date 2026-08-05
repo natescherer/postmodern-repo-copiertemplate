@@ -30,7 +30,7 @@ jobs:
             throw "Erroring as one or more required secrets are missing!"
           }
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Ensures tags are checked out
       - name: Check for Copier Template Updates
