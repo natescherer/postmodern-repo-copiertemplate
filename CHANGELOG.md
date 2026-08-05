@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.6...v0.7.7) (2026-08-05)
+
+
+### Bug Fixes
+
+* Fix github_repo_owner calculation ([#940](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/940)) ([21afc2c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/21afc2c2ac9d50953f92d7fa972b9d7494298b46))
+
 ## [0.7.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.5...v0.7.6) (2026-08-05)
 
 
