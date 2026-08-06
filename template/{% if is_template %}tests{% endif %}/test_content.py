@@ -6,6 +6,7 @@ repo-specific piece, which a child template should edit alongside its own copier
 changes.
 """
 
+import re
 from pathlib import Path
 
 import pytest
@@ -103,5 +104,70 @@ def test_nav_completeness(template_source, tmp_path, answers):
     dest = tmp_path / "out"
     _render(template_source, dest, answers)
     errors = _check_nav_completeness(dest) + _check_docs_in_nav(dest)
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert not errors, "\n\n".join(errors)  # noqa: S101
+
+
+def _entry_tool(entry: str) -> str | None:
+    """Extract the tool name from a `mise x -- <tool> ...` prek hook entry.
+
+    Returns:
+        The tool name, or None if the entry doesn't follow that pattern (e.g. a hook
+        that isn't backed by a mise-managed CLI at all).
+
+    """
+    prefix = "mise x -- "
+    if not entry.startswith(prefix):
+        return None
+    return entry[len(prefix) :].split()[0]
+
+
+def _check_hook_tools_available(prek_toml: Path, mise_toml: Path) -> list[str]:
+    """Verify every local prek hook's tool is installed in mise.toml.
+
+    prek.toml.jinja gates each hook behind the same conditions as its tool's entry in
+    mise.toml.jinja (e.g. ruff-check/ruff-format and `is_template`, actionlint and
+    `is_template or using_github`) specifically so this holds unconditionally for every
+    hook that's actually present in a given render -- no need to guess whether a hook
+    would find a matching file first. This is exactly the shape of bug that once let
+    `actionlint` go missing from mise.toml for an Azure DevOps-hosted Template project.
+
+    Returns:
+        One error string per hook whose tool isn't installed.
+
+    """
+    if not prek_toml.is_file() or not mise_toml.is_file():
+        return []
+    prek_config = tomllib.load(prek_toml.open("rb"))
+    mise_config = tomllib.load(mise_toml.open("rb"))
+
+    # "aqua:owner/repo" / "pipx:name" / a plain tool name -> the leaf tool identifier,
+    # matching what `mise x -- <tool>` actually invokes.
+    installed_tools = {
+        re.split(r"[:/]", name)[-1] for name in mise_config.get("tools", {})
+    }
+
+    errors = []
+    for repo in prek_config.get("repos", []):
+        if repo.get("repo") != "local":
+            continue
+        for hook in repo.get("hooks", []):
+            tool = _entry_tool(hook.get("entry", ""))
+            if tool is not None and tool not in installed_tools:
+                errors.append(
+                    f"hook {hook['id']!r} needs {tool!r}, which isn't in "
+                    "mise.toml's [tools]"
+                )
+    return errors
+
+
+@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+def test_hook_tools_available(template_source, tmp_path, answers):
+    """Verify every prek hook in the render has its tool installed."""
+    dest = tmp_path / "out"
+    _render(template_source, dest, answers)
+    errors = _check_hook_tools_available(
+        dest / ".config" / "prek.toml", dest / "mise.toml"
+    )
     # S101: `assert` is the normal, expected way to fail a pytest test.
     assert not errors, "\n\n".join(errors)  # noqa: S101

@@ -7,6 +7,7 @@ exclude = '(\.copier\-answers\.yml|CHANGELOG\.md|docs_site/.*)'
 
 [[repos]]
 repo = "local"
+{%- if is_template or using_github %}
 
 [[repos.hooks]]
 id = "actionlint"
@@ -19,6 +20,7 @@ types = ["yaml"]
 # unrendered copy of template/ (via copy-template-files) for its own children to use,
 # regardless of *this* project's own developer_platform.
 files = "(^\\.github/workflows/|^template/.*workflows/)"
+{%- endif %}
 
 [[repos.hooks]]
 id = "committed"
@@ -43,6 +45,7 @@ language = "system"
 entry = "mise x -- lychee --no-progress --cache"
 types = ["text"]
 require_serial = true
+{%- if is_template %}
 
 [[repos.hooks]]
 id = "ruff-check"
@@ -63,6 +66,7 @@ entry = "mise x -- ruff format --force-exclude"
 args = ["--config", ".config/ruff.toml"]
 types_or = ["python", "pyi", "jupyter"]
 require_serial = true
+{%- endif %}
 
 [[repos.hooks]]
 id = "rumdl"
