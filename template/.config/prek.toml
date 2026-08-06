@@ -7,113 +7,121 @@ exclude = '(\.copier\-answers\.yml|CHANGELOG\.md|docs_site/.*)'
 
 [[repos]]
 repo = "local"
-hooks = [
-  {
-    id = "actionlint",
-    name = "actionlint",
-    description = "Runs actionlint to lint GitHub Actions workflow files",
-    language = "system",
-    entry = "mise x -- actionlint",
-    types = ["yaml"],
-    files = "^\\.github/workflows/"
-  },
-  {
-    id = "committed",
-    name = "committed",
-    description = "Nitpicking commit history since beabf39",
-    language = "system",
-    entry = "mise x -- committed",
-    args = [
-      "--config",
-      ".config/committed.toml",
-      "--fixup",
-      "--wip",
-      "--commit-file"
-    ],
-    stages = ["commit-msg"]
-  },
-  {
-    id = "lychee",
-    name = "lychee",
-    description = "Checks files for broken links",
-    language = "system",
-    entry = "mise x -- lychee --no-progress --cache",
-    types = ["text"],
-    require_serial = true
-  },
-  {
-    id = "ruff-check",
-    name = "ruff check",
-    description = "Run 'ruff check' for extremely fast Python linting",
-    language = "system",
-    entry = "mise x -- ruff check --force-exclude",
-    args = ["--config", ".config/ruff.toml", "--fix"],
-    types_or = ["python", "pyi", "jupyter"],
-    require_serial = true
-  },
-  {
-    id = "ruff-format",
-    name = "ruff format",
-    description = "Run 'ruff format' for extremely fast Python formatting",
-    language = "python",
-    entry = "mise x -- ruff format --force-exclude",
-    args = ["--config", ".config/ruff.toml"],
-    types_or = ["python", "pyi", "jupyter"],
-    require_serial = true
-  },
-  {
-    id = "rumdl",
-    name = "rumdl",
-    language = "system",
-    entry = "mise x -- rumdl check --fix",
-    types = ["markdown"],
-    require_serial = true
-  },
-  {
-    id = "tombi-format",
-    name = "tombi-format",
-    language = "system",
-    entry = "mise x -- tombi format",
-    types = ["toml"],
-    require_serial = true
-  },
-  {
-    id = "tombi-lint",
-    name = "tombi-lint",
-    language = "system",
-    entry = "mise x -- tombi lint",
-    types = ["toml"],
-    require_serial = true
-  },
-  {
-    id = "typos",
-    name = "typos",
-    description = "Source code spell checker, binary install",
-    language = "system",
-    entry = "mise x -- typos",
-    args = ["-c", ".config/typos.toml", "--write-changes", "--force-exclude"],
-    types = ["text"],
-    stages = ["pre-commit", "commit-msg"]
-  },
-  {
-    id = "yamlfmt",
-    name = "yamlfmt",
-    description = "This hook uses github.com/google/yamlfmt to format yaml files. Requires Go >1.18 to be installed.",
-    language = "system",
-    entry = "mise x -- yamlfmt",
-    args = ["-conf", ".config/yamlfmt.yaml"],
-    types = ["yaml"],
-    exclude = "copier-answers.yml"
-  }
+
+[[repos.hooks]]
+id = "actionlint"
+name = "actionlint"
+description = "Runs actionlint to lint GitHub Actions workflow files"
+language = "system"
+entry = "mise x -- actionlint"
+types = ["yaml"]
+files = "^\\.github/workflows/"
+
+[[repos.hooks]]
+id = "committed"
+name = "committed"
+description = "Nitpicking commit history since beabf39"
+language = "system"
+entry = "mise x -- committed"
+args = [
+  "--config",
+  ".config/committed.toml",
+  "--fixup",
+  "--wip",
+  "--commit-file"
 ]
+stages = ["commit-msg"]
+
+[[repos.hooks]]
+id = "lychee"
+name = "lychee"
+description = "Checks files for broken links"
+language = "system"
+entry = "mise x -- lychee --no-progress --cache"
+types = ["text"]
+require_serial = true
+
+[[repos.hooks]]
+id = "ruff-check"
+name = "ruff check"
+description = "Run 'ruff check' for extremely fast Python linting"
+language = "system"
+entry = "mise x -- ruff check --force-exclude"
+args = ["--config", ".config/ruff.toml", "--fix"]
+types_or = ["python", "pyi", "jupyter"]
+require_serial = true
+
+[[repos.hooks]]
+id = "ruff-format"
+name = "ruff format"
+description = "Run 'ruff format' for extremely fast Python formatting"
+language = "python"
+entry = "mise x -- ruff format --force-exclude"
+args = ["--config", ".config/ruff.toml"]
+types_or = ["python", "pyi", "jupyter"]
+require_serial = true
+
+[[repos.hooks]]
+id = "rumdl"
+name = "rumdl"
+language = "system"
+entry = "mise x -- rumdl check --fix"
+types = ["markdown"]
+require_serial = true
+
+[[repos.hooks]]
+id = "tombi-format"
+name = "tombi-format"
+language = "system"
+entry = "mise x -- tombi format"
+types = ["toml"]
+require_serial = true
+
+[[repos.hooks]]
+id = "tombi-lint"
+name = "tombi-lint"
+language = "system"
+entry = "mise x -- tombi lint"
+types = ["toml"]
+require_serial = true
+
+[[repos.hooks]]
+id = "typos"
+name = "typos"
+description = "Source code spell checker, binary install"
+language = "system"
+entry = "mise x -- typos"
+args = ["-c", ".config/typos.toml", "--write-changes", "--force-exclude"]
+types = ["text"]
+stages = ["pre-commit", "commit-msg"]
+
+[[repos.hooks]]
+id = "yamlfmt"
+name = "yamlfmt"
+description = "This hook uses github.com/google/yamlfmt to format yaml files. Requires Go >1.18 to be installed."
+language = "system"
+entry = "mise x -- yamlfmt"
+args = ["-conf", ".config/yamlfmt.yaml"]
+types = ["yaml"]
+exclude = "copier-answers.yml"
 
 [[repos]]
 repo = "builtin"
-hooks = [
-  { id = "check-merge-conflict" },
-  { id = "end-of-file-fixer" },
-  { id = "fix-byte-order-marker" },
-  { id = "mixed-line-ending" },
-  { id = "trailing-whitespace" },
-  { id = "check-case-conflict" }
-]
+
+[[repos.hooks]]
+id = "check-merge-conflict"
+
+[[repos.hooks]]
+id = "end-of-file-fixer"
+
+[[repos.hooks]]
+id = "fix-byte-order-marker"
+
+[[repos.hooks]]
+id = "mixed-line-ending"
+
+[[repos.hooks]]
+id = "trailing-whitespace"
+
+[[repos.hooks]]
+id = "check-case-conflict"
