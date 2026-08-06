@@ -67,6 +67,8 @@ github_username:
   type: str
   help: |
     {% if not project_initialized %}Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.{% else %}Locked value on update, press Enter.{% endif %}
+  # Assumes GitHub's noreply-email pattern (12345+username@users.noreply.github.com); for any
+  # other "+"-tagged email (e.g. user+tag@gmail.com) this will incorrectly default to the tag.
   default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
   when: "{{ developer_platform == 'GitHub' }}"
 
