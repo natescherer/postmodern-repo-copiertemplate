@@ -12,26 +12,15 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Validate Secrets Exist
-        shell: pwsh
-        env:
-          APPRISE_URL: ${{ secrets.APPRISE_URL }}
-        run: |
-          $Secrets = @("APPRISE_URL")
-          $MissingSecret = $False
-          foreach ($Secret in $Secrets) {
-            if (!([Environment]::GetEnvironmentVariable($Secret))) {
-              Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Secret' is not set! Please add it in repo/org settings."
-              $MissingSecret = $True
-            }
-          }
-          if ($MissingSecret) {
-            throw "Erroring as one or more required secrets are missing!"
-          }
       - name: Checkout Repository
         uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Ensures tags are checked out
+      - name: Validate Secrets Exist
+        uses: ./.github/actions/require-secrets
+        with:
+          secrets: |
+            APPRISE_URL=${{ secrets.APPRISE_URL }}
       - name: Check for Copier Template Updates
         id: copier
         uses: natescherer/copier-action@b1ee418e5ee2e4334fc26094b9e84be3b93112ac # v0

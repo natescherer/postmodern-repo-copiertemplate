@@ -19,25 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Validate Secrets Exist
-        shell: pwsh
-        env:
-          REPO_MAINTENANCE_PAT: ${{ secrets.REPO_MAINTENANCE_PAT }}
-        run: |
-          $Secrets = @("REPO_MAINTENANCE_PAT")
-          $MissingSecret = $False
-          foreach ($Secret in $Secrets) {
-            if (!([Environment]::GetEnvironmentVariable($Secret))) {
-              Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Secret' is not set! Please add it in repo/org settings."
-              $MissingSecret = $True
-            }
-          }
-          if ($MissingSecret) {
-            throw "Erroring as one or more required secrets are missing!"
-          }
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - name: Validate Secrets Exist
+        uses: ./.github/actions/require-secrets
+        with:
+          secrets: |
+            REPO_MAINTENANCE_PAT=${{ secrets.REPO_MAINTENANCE_PAT }}
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
