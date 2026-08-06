@@ -5,14 +5,12 @@ on:
     - cron: 0 17 * * 1 # Every Monday at 5pm UTC
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   copier-check-update:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - name: Validate Secrets Exist
         shell: pwsh

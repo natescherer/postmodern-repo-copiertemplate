@@ -16,11 +16,6 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-
 env:
   MISE_ENV: ci
 
@@ -28,6 +23,8 @@ jobs:
   build-zensical:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7
         with:
@@ -63,6 +60,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: build-zensical
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
