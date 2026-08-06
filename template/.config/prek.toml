@@ -70,6 +70,15 @@ types = ["markdown"]
 require_serial = true
 
 [[repos.hooks]]
+id = "shellcheck"
+name = "shellcheck"
+description = "Lints shell scripts for common bugs"
+language = "system"
+entry = "mise x -- shellcheck"
+types = ["shell"]
+require_serial = true
+
+[[repos.hooks]]
 id = "tombi-format"
 name = "tombi-format"
 language = "system"
