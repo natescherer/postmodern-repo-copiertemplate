@@ -173,7 +173,7 @@ using_azdo:
 
 azdo_project_encoded:
   type: str
-  default: "{{ azdo_project | replace(' ','%20') }}"
+  default: "{{ azdo_project | urlencode }}"
   when: false
 
 using_mit:
