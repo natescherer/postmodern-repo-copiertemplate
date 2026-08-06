@@ -35,12 +35,12 @@ jobs:
           fetch-depth: 0 # Ensures tags are checked out
       - name: Check for Copier Template Updates
         id: copier
-        uses: natescherer/copier-action@v0
+        uses: natescherer/copier-action@b1ee418e5ee2e4334fc26094b9e84be3b93112ac # v0
         with:
           subcommand: check-update
       - name: Notify if Update is Available
         if: steps.copier.outputs.check-update_update_available == 'true'
-        uses: cstuder/apprise-ga@v3.1.0
+        uses: cstuder/apprise-ga@6eeb31014014413a118d716eacf7cabf67cc8430 # v3.1.0
         with:
           title: ${{ github.repository }} Template Update Available
           message: |
@@ -55,4 +55,4 @@ jobs:
     permissions:
       actions: write
     steps:
-      - uses: liskin/gh-workflow-keepalive@v1
+      - uses: liskin/gh-workflow-keepalive@581532d619d4390ec4ec5c34376cee42462fd1d6 # v1

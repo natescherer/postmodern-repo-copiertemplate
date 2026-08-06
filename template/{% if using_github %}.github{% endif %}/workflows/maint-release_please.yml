@@ -30,7 +30,7 @@ jobs:
           if ($MissingSecret) {
             throw "Erroring as one or more required secrets are missing!"
           }
-      - uses: googleapis/release-please-action@v5
+      - uses: googleapis/release-please-action@0dfd8538845b8e92600d271a895a5372865d4062 # v5
         with:
           token: ${{ secrets.REPO_MAINTENANCE_PAT }}
           config-file: .config/release-please-config.json
