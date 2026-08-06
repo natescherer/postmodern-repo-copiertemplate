@@ -76,3 +76,45 @@ ANSWER_MATRIX = [
         "lifecycle": "Alpha",
     },
 ]
+
+# Combinations copier.yml.jinja's `validator:` blocks are supposed to reject, used by
+# test_validators.py to confirm those guardrails actually work, not just that valid
+# combinations render. Each entry's `expected_error` is the substring Copier's
+# "Invalid choice for '<question>': <validator message>" is expected to contain.
+INVALID_ANSWER_MATRIX = [
+    {
+        "id": "azdo-public-visibility-rejected",
+        **COMMON,
+        "developer_platform": "Azure DevOps",
+        "azdo_org": "test-org",
+        "azdo_project": "Test Project",
+        "project_visibility": "Public",
+        "license": "None",
+        "zensical_target": "docs_site Directory in Repo",
+        "lifecycle": "Pre-Alpha",
+        "expected_error": "Not Supported on Azure DevOps",
+    },
+    {
+        "id": "private-mit-license-rejected",
+        **COMMON,
+        "developer_platform": "GitHub",
+        "github_username": "octocat",
+        "project_visibility": "Private",
+        "license": "MIT",
+        "zensical_target": "GitHub Pages",
+        "lifecycle": "Pre-Alpha",
+        "expected_error": "Not Supported on Private repos",
+    },
+    {
+        "id": "azdo-ghpages-target-rejected",
+        **COMMON,
+        "developer_platform": "Azure DevOps",
+        "azdo_org": "test-org",
+        "azdo_project": "Test Project",
+        "project_visibility": "Private",
+        "license": "None",
+        "zensical_target": "GitHub Pages",
+        "lifecycle": "Pre-Alpha",
+        "expected_error": "Not Supported on Azure DevOps",
+    },
+]
