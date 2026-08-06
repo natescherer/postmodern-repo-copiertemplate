@@ -15,7 +15,10 @@ description = "Runs actionlint to lint GitHub Actions workflow files"
 language = "system"
 entry = "mise x -- actionlint"
 types = ["yaml"]
-files = "^\\.github/workflows/"
+# Also matches template/.../workflows/ -- a Template-type project embeds a full,
+# unrendered copy of template/ (via copy-template-files) for its own children to use,
+# regardless of *this* project's own developer_platform.
+files = "(^\\.github/workflows/|^template/.*workflows/)"
 
 [[repos.hooks]]
 id = "committed"

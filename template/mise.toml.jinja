@@ -34,8 +34,13 @@ python = "3.14.6" # Used by copier
 {#- renovate: datasource=github-releases depName=astral-sh/uv #}
 uv = "0.12.1" # Used by pipx tools
 # Tools
+{%- if is_template or using_github %}
+{#- is_template needs this even on Azure DevOps: copy-template-files embeds a full,
+   unrendered copy of template/ (including its .github/workflows/*.yml) for any child
+   template to use, regardless of *this* project's own developer_platform. #}
 {#- renovate: datasource=github-releases depName=rhysd/actionlint #}
 actionlint = "1.7.12"
+{%- endif %}
 {#- renovate: datasource=github-releases depName=crate-ci/typos #}
 "aqua:crate-ci/typos" = "1.49.0"
 {#- renovate: datasource=github-releases depName=j178/prek #}
@@ -46,8 +51,10 @@ actionlint = "1.7.12"
 committed = "1.1.11"
 {#- renovate: datasource=github-releases depName=lycheeverse/lychee #}
 lychee = "0.15.1"
+{%- if is_template %}
 {#- renovate: datasource=github-releases depName=astral-sh/ruff #}
 ruff = "0.16.1"
+{%- endif %}
 {#- renovate: datasource=github-releases depName=rvben/rumdl #}
 rumdl = "0.2.50"
 {#- renovate: datasource=github-releases depName=koalaman/shellcheck #}

@@ -1,7 +1,8 @@
 {
   "recommendations": [
     "bluebrown.yamlfmt",
-    "charliermarsh.ruff",
+{%- if is_template %}
+    "charliermarsh.ruff",{% endif %}
 {%- if is_template or (is_standard and using_github) %}
     "github.vscode-github-actions",{% endif %}
     "hverlin.mise-vscode",
