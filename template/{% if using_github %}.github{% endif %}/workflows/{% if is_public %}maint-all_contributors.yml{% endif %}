@@ -5,6 +5,10 @@ on:
     - cron: 0 17 * * 1 # Every Monday at 5pm UTC
   workflow_dispatch:
 
+concurrency:
+  group: all-contributors
+  cancel-in-progress: false
+
 permissions:
   issues: write
   pull-requests: write

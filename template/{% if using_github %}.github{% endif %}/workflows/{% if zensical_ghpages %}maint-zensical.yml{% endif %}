@@ -12,6 +12,10 @@ on:
     types:
       - published
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pages: write
