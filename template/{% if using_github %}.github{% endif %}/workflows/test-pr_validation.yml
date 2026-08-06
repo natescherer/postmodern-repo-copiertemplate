@@ -25,13 +25,7 @@ jobs:
       - name: Run Prek Tests
         run: |
           mise x -- prek run -c .config/prek.toml --files ${{ steps.changed-files.outputs.all_changed_files }}
-      - name: Example Test
+      - name: Run Template Render Tests
+        if: ${{ hashFiles('copier.yml') != '' }}
         run: |-
-          FILE=README.md
-          if [ -f "$FILE" ]; then
-            echo "$FILE exists."
-            echo "Also you should probably put one or more real checks relevant to your project here."
-          else
-            echo "$FILE missing!"
-            exit 1
-          fi
+          mise x -- pytest "tests/test_template_render.py"
