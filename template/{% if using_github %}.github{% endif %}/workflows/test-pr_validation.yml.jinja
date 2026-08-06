@@ -4,7 +4,7 @@ on:
   pull_request:
 
 concurrency:
-  group: ${{ github.head_ref || github.run_id }}
+  group: {% raw %}${{ github.head_ref || github.run_id }}{% endraw %}
   cancel-in-progress: true
 
 permissions: read-all
@@ -24,8 +24,9 @@ jobs:
         uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
       - name: Run Prek Tests
         run: |
-          mise x -- prek run -c .config/prek.toml --files ${{ steps.changed-files.outputs.all_changed_files }}
+          mise x -- prek run -c .config/prek.toml --files {% raw %}${{ steps.changed-files.outputs.all_changed_files }}{% endraw %}
+{%- if is_template %}
       - name: Run Template Render Tests
-        if: ${{ hashFiles('copier.yml') != '' }}
         run: |-
           mise x -- pytest "tests/test_template_render.py"
+{%- endif %}
