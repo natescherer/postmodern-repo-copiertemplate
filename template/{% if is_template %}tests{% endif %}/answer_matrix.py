@@ -118,3 +118,13 @@ INVALID_ANSWER_MATRIX = [
         "expected_error": "Not Supported on Azure DevOps",
     },
 ]
+
+# Questions test_answer_matrix_coverage.py's choices-completeness check should skip,
+# with the reason it's a deliberate gap rather than an oversight.
+COVERAGE_EXEMPT_QUESTIONS = {
+    # "Create Repo"/"Set Repo Rules" only gate which _tasks run (real GitHub/Azure
+    # DevOps API calls via should_create_repo/should_set_repo_settings) -- they never
+    # affect rendered file content, and this suite always renders with --skip-tasks.
+    # COMMON pins this to "None" everywhere specifically to keep tests offline.
+    "repo_setup_actions",
+}
