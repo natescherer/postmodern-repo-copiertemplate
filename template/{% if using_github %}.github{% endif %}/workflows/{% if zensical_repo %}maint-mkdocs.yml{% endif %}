@@ -17,7 +17,7 @@ env:
 jobs:
   zensical:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 15
     steps:
       - name: Validate Secrets Exist
         shell: pwsh

@@ -15,7 +15,7 @@ env:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
         with:

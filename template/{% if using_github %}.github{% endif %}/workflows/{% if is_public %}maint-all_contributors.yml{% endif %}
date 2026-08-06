@@ -12,7 +12,7 @@ permissions:
 jobs:
   allcontributors-create-pr:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 15
     if: ${{ github.actor != 'allcontributors[bot]' }}
     steps:
       - name: Checkout
