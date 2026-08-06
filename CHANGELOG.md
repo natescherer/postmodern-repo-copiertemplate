@@ -1,5 +1,64 @@
 # Changelog
 
+## [0.7.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.9...v0.7.10) (2026-08-06)
+
+
+### Features
+
+* Add Azure DevOps PR validation pipeline ([55a0958](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/55a09583a4bdeb822c7c903d0baf89c18a25fde2))
+* Add bidirectional nav-completeness test ([79fc8cb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/79fc8cb0cb4612c1ee1643546661e4ace6a58c17))
+* Add explicit nav ordering to zensical.toml ([73009e1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/73009e15675d15ec9854cce2995361ab5e895796))
+* Add lychee link-checking for text files ([e647526](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e647526d717a888fe0dd41bdba5d7344e47190a4))
+* Add render-validation test suite ([7932132](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/793213247ea6f1513999ff7a32dd003e7430e85d))
+* Add shellcheck as a standalone prek hook ([eab14bf](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/eab14bf1d7a9f6f9d7f9292a7d14f607bad5ad1e))
+* Add test verifying invalid answer combinations are rejected ([d42cb75](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d42cb7501ed833cfd46304e4523f0d60bb2b613c))
+* Add update-path testing (last tag -&gt; current) to render suite ([5eab8a1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5eab8a11e4ae71ec97e4bc688d09a60c9f4a1ddf))
+* Add workflow_dispatch trigger to release-please and zensical workflows ([166be1d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/166be1d50ce3205dcf789fabf63835b67372ea50))
+* Compute current_release_please_version_is_pre_1 for real via git+from_json ([097c248](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/097c2485ae30119c9a2fa73a42933617ff692c3a))
+* Replace placeholder test step with the render-validation suite ([b4385ca](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b4385ca6522800da02dbb85e08d7e25e6ad326a2))
+* Run pytest suite for tasks.test, add pytest as pipx tool ([6c14917](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6c149174969e4de3cf37a8cebf0e9eac5e6a066a))
+* Surface pytest failures/warnings as native CI annotations ([8af1c0c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8af1c0c62dd525d981af933574d8561a37ee7af3))
+* Template prek.toml to mirror mise.toml's tool gating ([4c30ec2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4c30ec290650f37792dfcf3542a2de4c903e7ce3))
+* Verify answer_matrix.py covers all copier.yml choices ([04038f9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/04038f957f2b70d1f4beab31a438efc93bfe11ed))
+* Warn in README when a public project has no license set ([adfb43f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/adfb43f7f2e78f3163be8ada5b57e509159cc927))
+
+
+### Bug Fixes
+
+* Add concurrency groups to prevent overlapping workflow runs ([e89acb3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e89acb31d827f52940dbfb77357b9ea4faeadd5b))
+* Add jinja-toml VS Code file association for prek.toml.jinja ([49b0cc6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/49b0cc6d6c5b7fdd0ff0f331964dac430831208e))
+* Align release-please manifest package key with config for Standard projects ([402ec29](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/402ec29f684ccb5ac8b0d8f4677afcb037bb1b92))
+* Compile-time gate the render-test CI step to Template projects only ([8ad8ec9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8ad8ec934931586cfc1dfd541f89937afbba7cf7))
+* Correct APPRISE_URI typo to APPRISE_URL in AzDO update-check pipeline ([5dcec3b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5dcec3baec4773c577ffb3f6bc8820d7a4c924fe))
+* Correct broken doc links in docs/index.md ([424f39a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/424f39af94acbbeee0e7fd737b8c7abdfaf95de4))
+* Correct broken Getting Started link in applying_to_existing_projects.md ([e7eaf73](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e7eaf733f172fd23a8368460335e6f1c2b030bc5))
+* Correct dead anchor link in template_questions.md ([388083b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/388083bad98ce1a39457568e0b1dde7995152215))
+* Correct garbled sentence in token_permissions.md ([f74a279](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f74a279c6ec2857f93be026acc7ce07d7bf5a685))
+* Correct inaccurate step reference in applying_to_existing_projects.md ([5a97ddf](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5a97ddf7f7556ae9ba3fe99386c863a6febbe5a0))
+* Correct renovate cron from every-minute to once-monthly ([1883bf4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1883bf47e9fa98bbe678eadeb2fc8ee4893afc8d))
+* Correct yamlfmt config path in VS Code settings (missing leading dot) ([ca20e32](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ca20e32c9ae3d32a82b95be50cac5801e3e54d80))
+* Don't emit nonsense typos.toml entry when github_org is unset ([123663f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/123663f57432ca0c3ee22c3e8a3b2cc0e5713a22))
+* Don't render README License section unless using_mit ([a8fc949](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a8fc94976d98830beebe7a0874147fd4e0e9a17d))
+* Drop unneeded MISE_ENV: ci from test-pr_validation.yml ([6a0f8d1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6a0f8d163e297af9323d1f620c1236b8b4f0453f))
+* Enable automatic GitHub Action digest pinning via Renovate ([04e73b5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/04e73b5338083a59520e83ad8c8ad522aceed1a1))
+* Fix jinja whitespace issues ([#947](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/947)) ([ba9e7b1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ba9e7b12e11fe4e4e1a4a210d182f994cb8d01d1))
+* Gate [tasks.test] on is_template like the integration-test tasks ([846ba41](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/846ba41a3be3ec785e7065659c5b756a4c7b87e4))
+* Gate actionlint/ruff tooling to when they're actually needed ([352fd76](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/352fd7679c60fd8ad1686b1a349d1a4f062e8f5b))
+* Gate docs_site/ folder on zensical_repo instead of undefined mkdocs_repo ([674992e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/674992ec6b2e568be454de15c6a5699e9baa7a30))
+* Make CONTRIBUTING.md's license clause license-agnostic ([aad791c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/aad791c23893483d541a353c23330d6500fa0844))
+* Pin third-party GitHub Actions to commit SHAs ([8760d7b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8760d7b105a46ce100dd1927679365463cd8128f))
+* Qualify doc-versioning claim to GitHub Pages target only ([80a677e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/80a677e97433e57a63c171dbe6f4f231060edb6f))
+* Remove dead LICENSE link from CONTRIBUTING.md for no-license projects ([2239e0c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2239e0cd7d4df7ccdd3d7bddc25079bd2ebbf49f))
+* Remove orphaned taplo.toml, add missing tombi.toml ([944ba1d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/944ba1d5f68bc1e90d311a01eabf397bbfea3318))
+* Remove trailing comma in release-please-config.json for Standard projects ([2f0254e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2f0254e85af6fa8278e471ba46f03ed8f4457243))
+* Remove trailing comma in vscode extensions.json.jinja ([959aeaa](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/959aeaa13b1708c4b7ece55ba9223ccf6201b256))
+* Remove windows_default_inline_shell_args from mise.toml ([45bf939](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/45bf9390a8e3e052e3df199afe0cf023eb1f8c8d))
+* Replace custom yaml_quote_extension with to_yaml filter chain ([4f14596](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4f14596e6d6d0f6470c5d86ef3fdba7a14d85741))
+* Replace no-op 360min timeouts with realistic per-job values ([665dcaf](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/665dcaf51cd488f4a23e9b59204d75494fe1cbb5))
+* Rewrite prek.toml hooks as TOML array-of-tables, not inline ([3b4ce07](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3b4ce07ff71a2c4ebc074e3234fd0a8dcd649302))
+* Scope workflow permissions to job level least-privilege ([863fd7d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/863fd7d7a2e9246367076a411a3664ecd6d258d6))
+* Urlencode azdo_project_encoded instead of manual replace ([a7131be](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a7131be8b31d987ade8508323900d526683dbd21))
+
 ## [0.7.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.8...v0.7.9) (2026-08-05)
 
 
