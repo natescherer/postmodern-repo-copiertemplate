@@ -36,6 +36,6 @@ stages:
           - bash: mise x -- prek run -c .config/prek.toml --all-files
             displayName: Run Prek Tests
 {%- if is_template %}
-          - bash: mise x -- pytest "tests/test_template_render.py"
+          - bash: mise x -- pytest tests/
             displayName: Run Template Render Tests
 {%- endif %}

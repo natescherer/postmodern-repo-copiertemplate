@@ -1,10 +1,11 @@
-"""Boundary answer combinations used by test_template_render.py.
+"""Boundary answer combinations shared by every test module in this directory.
 
 Edit this file when you add, remove, or rename a Copier question in copier.yml -- each
 entry should be a real, reachable combination (respecting copier.yml's
 `when:`/`validator:` constraints, e.g. `Public` + `MIT` isn't valid on Azure DevOps)
-that exercises a distinct rendering path. This file is repo-specific by design;
-test_template_render.py itself is not.
+that exercises a distinct rendering path. This file is repo-specific by design; the
+test modules that consume it (conftest.py, test_render.py, test_content.py, ...) are
+not.
 """
 
 COMMON = {
