@@ -1,0 +1,41 @@
+name: $(BuildId)-pr_validation
+
+trigger:
+  branches:
+    exclude:
+      - "*"
+
+pr:
+  branches:
+    include:
+      - main
+
+variables:
+  CI: true
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: pr_validation
+    displayName: PR Validation
+    jobs:
+      - job: pr_validation
+        timeoutInMinutes: 60
+        displayName: PR Validation
+        steps:
+          - checkout: self
+            fetchDepth: 0
+          - bash: |
+              curl https://mise.run | sh
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
+            displayName: Install Mise
+          - bash: mise install
+            displayName: Run 'mise install'
+          - bash: mise x -- prek run -c .config/prek.toml --all-files
+            displayName: Run Prek Tests
+{%- if is_template %}
+          - bash: mise x -- pytest "tests/test_template_render.py"
+            displayName: Run Template Render Tests
+{%- endif %}
