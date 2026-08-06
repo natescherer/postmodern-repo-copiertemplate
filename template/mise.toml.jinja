@@ -69,7 +69,11 @@ uvx_args = "--with jinja2-shell-extension==2.1.1"
 
 [tools."pipx:pytest"]
 version = "9.1.1"
-uvx_args = "--with pyyaml==6.0.3 --with jinja2==3.1.6 --with jinja2-ansible-filters==1.3.2"
+# pytest-github-actions-annotate-failures / pytest-azurepipelines surface pytest
+# failures and warnings as native platform annotations (::warning::/::error:: on
+# GitHub, ##vso[task.logissue] on Azure DevOps) with zero config -- they auto-detect
+# their CI via the env vars each platform already sets.
+uvx_args = "--with pyyaml==6.0.3 --with jinja2==3.1.6 --with jinja2-ansible-filters==1.3.2{% if using_github %} --with pytest-github-actions-annotate-failures==0.4.2{% elif using_azdo %} --with pytest-azurepipelines==1.0.5{% endif %}"
 {%- endif %}
 
 [tools."pipx:invoke"]
