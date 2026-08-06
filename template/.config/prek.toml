@@ -33,6 +33,15 @@ hooks = [
     stages = ["commit-msg"]
   },
   {
+    id = "lychee",
+    name = "lychee",
+    description = "Checks files for broken links",
+    language = "system",
+    entry = "mise x -- lychee --no-progress --cache",
+    types = ["text"],
+    require_serial = true
+  },
+  {
     id = "ruff-check",
     name = "ruff check",
     description = "Run 'ruff check' for extremely fast Python linting",
