@@ -6,11 +6,13 @@ specific doc set or question values -- see answer_matrix.py for the repo-specifi
 which a child template should edit alongside its own copier.yml changes.
 """
 
+import io
 import json
 import shutil
 
 # S404: drives real CLI tools below; no untrusted input, no shell=True.
 import subprocess  # noqa: S404
+import tarfile
 from pathlib import Path
 
 import jinja2
@@ -45,6 +47,57 @@ def _find_repo_root() -> Path:
 
 
 REPO_ROOT = _find_repo_root()
+
+
+def _run(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess:
+    """Run subprocess.run with output always captured as UTF-8 text.
+
+    Windows' default console encoding (cp1252) can't decode tool output containing
+    e.g. emoji or box-drawing characters (lychee's summary, for one) -- that mismatch
+    crashes the background reader thread and leaves stdout/stderr as None instead of
+    raising cleanly.
+
+    Returns:
+        The completed subprocess, with UTF-8-decoded stdout/stderr.
+
+    """
+    # S603: args are always a fixed list built by this module; no shell=True.
+    return subprocess.run(  # noqa: S603
+        args,
+        cwd=cwd,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+
+
+def _git(args: list[str], cwd: Path) -> subprocess.CompletedProcess:
+    result = _run(["git", *args], cwd=cwd)
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert result.returncode == 0, (  # noqa: S101
+        f"git {' '.join(args)} failed:\n"
+        f"STDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+    )
+    return result
+
+
+def _git_init_repo(path: Path) -> None:
+    """Init a throwaway git repo at `path` with a fixed local identity.
+
+    Needed because `copier update` requires both the source and the destination to be
+    git repositories -- it records `_commit` from the source at copy time and uses git
+    to detect local destination changes when applying an update.
+    """
+    path.mkdir(parents=True, exist_ok=True)
+    _git(["init", "-q"], path)
+    _git(["config", "user.email", "template-tests@example.invalid"], path)
+    _git(["config", "user.name", "Template Tests"], path)
+
+
+def _git_commit_all(path: Path, message: str) -> None:
+    _git(["add", "-A"], path)
+    _git(["commit", "-q", "-m", message], path)
 
 
 def _ignore_for_copy(directory, names):
@@ -102,6 +155,57 @@ def _assemble_source(repo_root: Path, dest: Path) -> None:
         shutil.copy2(repo_root / "copier.yml", dest / "copier.yml")
 
 
+def _latest_tag(repo_root: Path) -> str | None:
+    """Return this repo's most recent git tag by version sort.
+
+    Returns:
+        The latest tag name, or None if the repo has no tags yet (e.g. a brand-new
+        template before its first release).
+
+    """
+    result = _run(["git", "tag", "--sort=-v:refname"], cwd=repo_root)
+    tags = [line for line in result.stdout.splitlines() if line.strip()]
+    return tags[0] if tags else None
+
+
+def _assemble_update_scratch_repo(repo_root: Path, old_tag: str, dest: Path) -> None:
+    """Build a 2-commit copier source for testing the update path: old_tag -> current.
+
+    Commit 1 is `repo_root`'s real, historical state at `old_tag` (its actual root
+    copier.yml as released, not synthesized) -- exactly what a real user updating from
+    that release would have used as their template source. Commit 2 (HEAD) is the
+    current on-disk template/ contents, assembled the same way _assemble_source builds
+    it for the copy-only tests, so uncommitted edits are covered here too.
+
+    Both states have to live at the same path across two commits, not two separate
+    directories: `copier update` always re-reads `_src_path` from the destination's
+    answers file and re-resolves *that same path* at update time, it can't be pointed
+    at a different "new" source.
+    """
+    _git_init_repo(dest)
+
+    # S603, S607: fixed args, no shell=True, resolved from PATH like every other tool
+    # invocation in this file (actionlint, tombi, zensical, lychee).
+    archive = subprocess.run(  # noqa: S603
+        ["git", "archive", old_tag],  # noqa: S607
+        cwd=repo_root,
+        capture_output=True,
+    )
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert archive.returncode == 0, f"git archive {old_tag} failed: {archive.stderr!r}"  # noqa: S101
+    with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
+        tar.extractall(dest, filter="data")  # trusted content: this repo's own history
+    _git_commit_all(dest, old_tag)
+    _git(["tag", old_tag], dest)
+
+    for child in dest.iterdir():
+        if child.name == ".git":
+            continue
+        shutil.rmtree(child) if child.is_dir() else child.unlink()
+    _assemble_source(repo_root, dest)
+    _git_commit_all(dest, "current")
+
+
 @pytest.fixture(scope="session")
 def template_source(tmp_path_factory):
     """Build a self-contained copier source fresh from the current template/ tree.
@@ -115,31 +219,28 @@ def template_source(tmp_path_factory):
     return src
 
 
-def _run(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess:
-    """Run subprocess.run with output always captured as UTF-8 text.
+@pytest.fixture(scope="session")
+def update_source(tmp_path_factory):
+    """Build a 2-commit copier source (last tag -> current) for update-path testing.
 
-    Windows' default console encoding (cp1252) can't decode tool output containing
-    e.g. emoji or box-drawing characters (lychee's summary, for one) -- that mismatch
-    crashes the background reader thread and leaves stdout/stderr as None instead of
-    raising cleanly.
+    Skips dependent tests if this repo has no git tags yet.
 
     Returns:
-        The completed subprocess, with UTF-8-decoded stdout/stderr.
+        A (source_path, old_tag) tuple.
 
     """
-    # S603: args are always a fixed list built by this module; no shell=True.
-    return subprocess.run(  # noqa: S603
-        args,
-        cwd=cwd,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-    )
+    old_tag = _latest_tag(REPO_ROOT)
+    if old_tag is None:
+        pytest.skip("No git tags found -- nothing to update from yet.")
+    src = tmp_path_factory.mktemp("update-source")
+    _assemble_update_scratch_repo(REPO_ROOT, old_tag, src)
+    return src, old_tag
 
 
-def _render(source: Path, dest: Path, answers: dict):
+def _render(source: Path, dest: Path, answers: dict, vcs_ref: str | None = None):
     args = ["copier", "copy", "--trust", "--defaults", "--skip-tasks"]
+    if vcs_ref is not None:
+        args.append(f"--vcs-ref={vcs_ref}")
     for key, value in answers.items():
         if key == "id":
             continue
@@ -241,18 +342,65 @@ def _check_lychee(root: Path) -> list[str]:
     return []
 
 
+def _check_all(root: Path) -> list[str]:
+    """Run every structural check against a rendered project.
+
+    Returns:
+        All collected error strings, each prefixed by which check produced it.
+
+    """
+    errors = []
+    errors += [f"[structured-files] {e}" for e in _check_structured_files(root)]
+    errors += [f"[actionlint] {e}" for e in _check_actionlint(root)]
+    errors += [f"[tombi] {e}" for e in _check_tombi(root)]
+    errors += [f"[zensical] {e}" for e in _check_zensical_build(root)]
+    errors += [f"[lychee] {e}" for e in _check_lychee(root)]
+    return errors
+
+
 @pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
 def test_render_combination(template_source, tmp_path, answers):
     """Render one answer_matrix.py combination and run every structural check on it."""
     dest = tmp_path / "out"
     _render(template_source, dest, answers)
-
-    errors = []
-    errors += [f"[structured-files] {e}" for e in _check_structured_files(dest)]
-    errors += [f"[actionlint] {e}" for e in _check_actionlint(dest)]
-    errors += [f"[tombi] {e}" for e in _check_tombi(dest)]
-    errors += [f"[zensical] {e}" for e in _check_zensical_build(dest)]
-    errors += [f"[lychee] {e}" for e in _check_lychee(dest)]
-
+    errors = _check_all(dest)
     # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert not errors, "\n\n".join(errors)  # noqa: S101
+
+
+@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+def test_update_from_last_tag(update_source, tmp_path, answers):
+    """Copy at this repo's last tag, update to current, and re-run every check.
+
+    Covers the one class of bug the copy-only test above can't see: logic gated on
+    `_copier_operation == 'update'` (e.g. the `project_initialized` locked-on-update
+    question text, `current_release_please_version`) is never exercised by a fresh
+    `copier copy`, since that operation is always `'copy'`.
+    """
+    source, old_tag = update_source
+    dest = tmp_path / "out"
+    _render(source, dest, answers, vcs_ref=old_tag)
+
+    _git_init_repo(dest)
+    _git_commit_all(dest, "initial render")
+
+    result = _run(
+        [
+            "copier",
+            "update",
+            "--trust",
+            "--defaults",
+            "--skip-tasks",
+            "--vcs-ref=HEAD",
+            "-a",
+            ".config/copier-answers.yml",
+        ],
+        cwd=dest,
+    )
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert result.returncode == 0, (  # noqa: S101
+        f"copier update failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+    )
+
+    errors = _check_all(dest)
     assert not errors, "\n\n".join(errors)  # noqa: S101
