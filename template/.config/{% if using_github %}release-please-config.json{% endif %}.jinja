@@ -9,8 +9,8 @@
       "release-type": "simple",
       "changelog-path": "/CHANGELOG.md"
     }
-  },
-  {%- if is_template %}
+  }
+  {%- if is_template %},
   "changelog-sections": [
     { "type": "feat", "section": "Features", "hidden": false },
     { "type": "fix", "section": "Bug Fixes", "hidden": false },
