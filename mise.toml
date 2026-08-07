@@ -37,7 +37,7 @@ actionlint = "1.7.12"
 committed = "1.1.11"
 lychee = "0.15.1"
 ruff = "0.16.1"
-rumdl = "0.2.50"
+rumdl = "0.2.52"
 shellcheck = "0.11.0"
 yamlfmt = "0.21.0"
 
