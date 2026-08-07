@@ -1,11 +1,11 @@
 {
   "recommendations": [
-    "bluebrown.yamlfmt",
     "charliermarsh.ruff",
     "github.vscode-github-actions",
     "hverlin.mise-vscode",
     "ms-azure-devops.azure-pipelines",
     "ms-python.python",
+    "owenlamont.ryl",
     "redhat.vscode-yaml",
     "rvben.rumdl",
     "samuelcolvin.jinjahtml",

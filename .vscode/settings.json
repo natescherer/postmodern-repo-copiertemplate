@@ -61,8 +61,5 @@
     // END Ignore allcontributors links
   ],
   "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
-  "typos.config": ".config/typos.toml",
-  "yamlfmt.args": [
-    "-conf .config/yamlfmt.yaml"
-  ]
+  "typos.config": ".config/typos.toml"
 }

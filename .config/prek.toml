@@ -76,6 +76,16 @@ types = ["markdown"]
 require_serial = true
 
 [[repos.hooks]]
+id = "ryl"
+name = "ryl"
+description = "Lints and formats YAML files"
+language = "system"
+entry = "mise x -- ryl check --fix"
+types = ["yaml"]
+exclude = "copier-answers.yml"
+require_serial = true
+
+[[repos.hooks]]
 id = "shellcheck"
 name = "shellcheck"
 description = "Lints shell scripts for common bugs"
@@ -109,16 +119,6 @@ entry = "mise x -- typos"
 args = ["-c", ".config/typos.toml", "--write-changes", "--force-exclude"]
 types = ["text"]
 stages = ["pre-commit", "commit-msg"]
-
-[[repos.hooks]]
-id = "yamlfmt"
-name = "yamlfmt"
-description = "This hook uses github.com/google/yamlfmt to format yaml files. Requires Go >1.18 to be installed."
-language = "system"
-entry = "mise x -- yamlfmt"
-args = ["-conf", ".config/yamlfmt.yaml"]
-types = ["yaml"]
-exclude = "copier-answers.yml"
 
 [[repos]]
 repo = "builtin"

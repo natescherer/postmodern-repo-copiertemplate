@@ -33,13 +33,13 @@ uv = "0.12.2" # Used by pipx tools
 actionlint = "1.7.12"
 "aqua:crate-ci/typos" = "1.49.0"
 "aqua:j178/prek" = "0.4.12"
+"aqua:owenlamont/ryl" = "0.21.0"
 "aqua:tombi-toml/tombi" = "1.2.6"
 committed = "1.1.11"
 lychee = "0.15.1"
 ruff = "0.16.1"
 rumdl = "0.2.52"
 shellcheck = "0.11.0"
-yamlfmt = "0.21.0"
 
 [tools."pipx:copier"]
 version = "9.17.1"

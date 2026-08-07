@@ -1,0 +1,36 @@
+# Mirrors yamllint's "default" preset (ryl's TOML config has no `extends`,
+# so the preset's rules are spelled out explicitly) with line-length disabled:
+# the codebase has long generated/templated lines (e.g. copier.yml prompts)
+# that a length cap isn't a meaningful check for.
+[rules]
+anchors = "enable"
+braces = "enable"
+brackets = "enable"
+colons = "enable"
+commas = "enable"
+document-end = "disable"
+empty-lines = "enable"
+empty-values = "disable"
+float-values = "disable"
+hyphens = "enable"
+indentation = "enable"
+key-duplicates = "enable"
+key-ordering = "disable"
+line-length = "disable"
+new-line-at-end-of-file = "enable"
+new-lines = "enable"
+octal-values = "disable"
+quoted-strings = "disable"
+trailing-spaces = "enable"
+
+[rules.comments]
+level = "warning"
+
+[rules.comments-indentation]
+level = "warning"
+
+[rules.document-start]
+level = "warning"
+
+[rules.truthy]
+level = "warning"

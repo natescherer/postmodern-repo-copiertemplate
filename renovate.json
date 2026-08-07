@@ -25,7 +25,7 @@
   },
   "github-actions": {
     "managerFilePatterns": [
-      "(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"
+      "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$/"
     ]
   },
   "packageRules": [
@@ -124,6 +124,14 @@
       "groupName": "rumdl"
     },
     {
+      "description": "Group ryl",
+      "matchPackageNames": [
+        "owenlamont/ryl",
+        "aqua:owenlamont/ryl"
+      ],
+      "groupName": "ryl"
+    },
+    {
       "description": "Group shellcheck",
       "matchPackageNames": [
         "shellcheck",
@@ -154,14 +162,6 @@
         "astral-sh/uv"
       ],
       "groupName": "uv"
-    },
-    {
-      "description": "Group yamlfmt",
-      "matchPackageNames": [
-        "yamlfmt",
-        "google/yamlfmt"
-      ],
-      "groupName": "yamlfmt"
     },
     {
       "description": "Group zensical",

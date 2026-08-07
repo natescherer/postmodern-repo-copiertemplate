@@ -74,7 +74,7 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
   - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
   - Spell checking via [typos](https://github.com/crate-ci/typos)
   - TOML linting and formatting via [Tombi](https://github.com/tombi-toml/tombi)
-  - YAML formatting via [yamlfmt](https://github.com/google/yamlfmt)
+  - YAML linting via [ryl](https://github.com/owenlamont/ryl)
 
 ### CI/CD
 
