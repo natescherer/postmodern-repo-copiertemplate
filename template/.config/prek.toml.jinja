@@ -42,7 +42,7 @@ id = "lychee"
 name = "lychee"
 description = "Checks files for broken links"
 language = "system"
-entry = "mise x -- lychee --no-progress --cache"
+entry = "mise x -- lychee --no-progress -c .config/lychee.toml --cache"
 types = ["text"]
 # renovate.json embeds a regex with a backslash-escaped domain (github, dot-escaped,
 # dot-com) whose backslash truncates lychee's URL extraction to a bogus bare domain.
