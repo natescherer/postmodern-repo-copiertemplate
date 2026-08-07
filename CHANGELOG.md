@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.10...v0.7.11) (2026-08-07)
+
+
+### Bug Fixes
+
+* Sync repo root with template v0.7.10 ([1f46166](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1f461662fa54e3b50c36274b85ea9b8f259f8eb8))
+
 ## [0.7.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.9...v0.7.10) (2026-08-06)
 
 
