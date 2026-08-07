@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.13...v0.7.14) (2026-08-07)
+
+
+### Bug Fixes
+
+* Remove whitespace from template's lychee.toml.jinja ([97c150e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/97c150e43fc3cd12fcaa63d62e740128a3436559))
+
 ## [0.7.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.12...v0.7.13) (2026-08-07)
 
 
