@@ -6,7 +6,7 @@
     "helpers:pinGitHubActionDigests"
   ],
   "schedule": [
-    "0 0 1 * *"
+    "* 0 1 * *"
   ],
   "azure-pipelines": {
     "enabled": true,
