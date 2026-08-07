@@ -1,7 +1,11 @@
-# Mirrors yamllint's "default" preset (ryl's TOML config has no `extends`,
-# so the preset's rules are spelled out explicitly) with line-length disabled:
-# the codebase has long generated/templated lines (e.g. copier.yml prompts)
-# that a length cap isn't a meaningful check for.
+[files]
+yaml = [
+  "*.yaml",
+  "*.yml",
+  "*.yaml{% endif %}",
+  "*.yml{% endif %}",
+]
+
 [rules]
 anchors = "enable"
 braces = "enable"
@@ -9,6 +13,7 @@ brackets = "enable"
 colons = "enable"
 commas = "enable"
 document-end = "disable"
+document-start = "disable"
 empty-lines = "enable"
 empty-values = "disable"
 float-values = "disable"
@@ -25,12 +30,15 @@ trailing-spaces = "enable"
 
 [rules.comments]
 level = "warning"
+min-spaces-from-content = 1
 
 [rules.comments-indentation]
 level = "warning"
 
-[rules.document-start]
-level = "warning"
-
 [rules.truthy]
 level = "warning"
+
+[[per-line-ignores]]
+# GitHub Actions files are improper YAML in some ways
+regex = "^on:$"
+rules = ["truthy"]

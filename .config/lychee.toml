@@ -1,0 +1,12 @@
+exclude = [
+  ".*%7B.*%7D.*", # Python f-strings
+  'git\+https://.*', # Can be removed once squidfunk/mike is replaced by Zensical's built-in versioning
+  'https://dev\.azure\.com', # This errors frequently, easier to just ignore
+  'https://img\.shields\.io/github/all-contributors/', # Part of template code
+
+]
+exclude_path = [
+  ".config/lychee.toml",
+  ".config/typos.toml",
+  "template/.config/lychee.toml.jinja",
+]

@@ -21,7 +21,7 @@
     "**.md[{]% endif %[}]": "markdown",
     "**.y*ml[{]% endif %[}]": "yaml",
     "**.py[{]% endif %[}]": "python",
-    "**.toml[{]% endif %[}]": "toml",
+    "**.toml[{]% endif %[}]": "toml"
   },
   "markdown.validate.ignoredLinks": [
     // START Ignore allcontributors links
@@ -61,5 +61,6 @@
     // END Ignore allcontributors links
   ],
   "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
+  "ryl.configPath": ".config/ryl.toml",
   "typos.config": ".config/typos.toml"
 }
