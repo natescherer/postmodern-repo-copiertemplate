@@ -2,11 +2,7 @@
 _answers_file: .config/copier-answers.yml
 
 _jinja_extensions:
-  # External Dependencies
-  - copier_template_extensions.TemplateExtensionLoader
   - jinja2_shell_extension.ShellExtension
-  # Internal Dependencies
-  - extensions/yaml_quote_extension.py:YamlQuoteExtension
 
 _message_before_copy: Thanks for using this template! Please consult the 'Template Questions' page in documentation for deeper explanation of each question.
 
