@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.7.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.11...v0.7.12) (2026-08-07)
+
+
+### Features
+
+* Replace yamlfmt with ryl ([a9ffd3b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a9ffd3b335c3771ce005619925e1b279ca9a59aa))
+
+
+### Bug Fixes
+
+* Renovate cron schedule needs asterisk minutes ([c82b4e4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c82b4e433e565fbea4671514f9f2d006bc12aea7))
+* Wrap renovate managerFilePatterns in slashes for regex mode ([5c842f5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5c842f54cfb94a18e9324668a8f965f2f5391372))
+
+
+### Miscellaneous
+
+* **deps:** Update dependency python to v3.14.7 ([#953](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/953)) ([7122573](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7122573d173287cd43337d4b4445e073a84eaabd))
+* **deps:** Update rumdl to v0.2.52 ([#957](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/957)) ([b922502](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b9225028c16ae4f254ed360fa5220018557e1b43))
+* **deps:** Update uv to v0.12.2 ([#955](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/955)) ([8124c01](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8124c010949b74c40cac21b7a5f853ce733193ad))
+
 ## [0.7.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.10...v0.7.11) (2026-08-07)
 
 
