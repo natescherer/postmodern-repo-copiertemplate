@@ -8,7 +8,7 @@ Any contribution is encouraged and welcome.
 
 There is one ground rule for contributions:
 
-> This project is licensed under The MIT License, so your contribution will need to use the same license in order to be accepted.
+> Your contribution will need to use the same license as this project in order to be accepted.
 
 ## How to Contribute
 

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -12,25 +13,16 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 15
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
       - name: Validate Secrets Exist
-        shell: pwsh
-        env:
-          REPO_MAINTENANCE_PAT: ${{ secrets.REPO_MAINTENANCE_PAT }}
-        run: |
-          $Secrets = @("REPO_MAINTENANCE_PAT")
-          $MissingSecret = $False
-          foreach ($Secret in $Secrets) {
-            if (!([Environment]::GetEnvironmentVariable($Secret))) {
-              Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Secret' is not set! Please add it in repo/org settings."
-              $MissingSecret = $True
-            }
-          }
-          if ($MissingSecret) {
-            throw "Erroring as one or more required secrets are missing!"
-          }
-      - uses: googleapis/release-please-action@v5
+        uses: ./.github/actions/require-secrets
+        with:
+          secrets: |
+            REPO_MAINTENANCE_PAT=${{ secrets.REPO_MAINTENANCE_PAT }}
+      - uses: googleapis/release-please-action@0dfd8538845b8e92600d271a895a5372865d4062 # v5
         with:
           token: ${{ secrets.REPO_MAINTENANCE_PAT }}
           config-file: .config/release-please-config.json

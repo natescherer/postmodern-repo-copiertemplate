@@ -1,0 +1,23 @@
+name: Require Secrets
+description: Fails the workflow if any of the given secret values are empty.
+inputs:
+  secrets:
+    description: Newline-separated "NAME=value" pairs to validate.
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: pwsh
+      run: |-
+        $Pairs = "${{ inputs.secrets }}" -split "`n" | Where-Object { $_ -ne "" }
+        $MissingSecret = $False
+        foreach ($Pair in $Pairs) {
+          $Name, $Value = $Pair -split "=", 2
+          if ([string]::IsNullOrEmpty($Value)) {
+            Write-Host -Object "::error title=Missing Secret::Required Actions secret '$Name' is not set! Please add it in repo/org settings."
+            $MissingSecret = $True
+          }
+        }
+        if ($MissingSecret) {
+          throw "Erroring as one or more required secrets are missing!"
+        }

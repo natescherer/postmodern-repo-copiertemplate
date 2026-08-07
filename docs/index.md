@@ -1,6 +1,6 @@
 # Getting Started
 
-Documentation is currently being improved, but here is the short version to use this template:
+Here's how to use this template:
 
 1. Ensure you have [mise](https://mise.jdx.dev/getting-started.html) installed on your workstation (Linux/macOS/Windows are all supported).
 1. Clone this repository and open it in your terminal
@@ -17,7 +17,9 @@ mise install
 mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/local-repo-path-here
 ```
 
-## Stuff from old README
+See [Template Questions](template_questions.md) for what each prompt during that step controls.
+
+## Features
 
 ### Core
 
@@ -25,13 +27,13 @@ mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-c
 
 - GitHub **Recommended**
   - Creating repos under both users and orgs is supported
-  - See [GitHub Org Limitations](docs/github_org_limitations.md) for details about template features excluded for Orgs
+  - See [GitHub Org Limitations](platform_notes/github_org.md) for details about template features excluded for Orgs
 - Azure DevOps
-  - See [Azure DevOps Limitations](docs/azure_devops_limitations.md) for details about features missing for AzDO
+  - See [Azure DevOps Limitations](platform_notes/azure_devops.md) for details about features missing for AzDO
 
 #### Support for Public (Open-Source) and Private (Closed-Source) Repositories
 
-This template fully supports both public/open-source and private/closed-source repositories. See [Public vs Private Repos](docs/public_vs_private_repos.md) for the difference.
+This template fully supports both public/open-source and private/closed-source repositories. See [Public vs Private Repos](public_vs_private_repos.md) for the difference.
 
 #### Support for Existing Projects
 
@@ -58,10 +60,9 @@ It is highly encouraged for you to take this template and make your own child te
 
 Rich Markdown documentation is pre-configured using [Zensical](https://zensical.org/), the successor to the extremely popular (but end of life) [mkdocs-material](https://squidfunk.github.io/mkdocs-material/).
 
-- Documentation is automatically built for each version of your project that is released, with old versions maintained
 - Multiple choices of documentation target:
-  - GitHub Pages
-  - A `docs_site` folder in your repo containing rendered HTML suitable for offline use
+  - GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
+  - A `docs_site` folder in your repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
 
 ### Code Management and Formatting
 

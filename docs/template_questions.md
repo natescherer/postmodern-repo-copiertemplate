@@ -1,0 +1,62 @@
+# Template Questions
+
+This page walks through what each Copier question controls, and what it triggers behind the
+scenes. Questions not listed here (`repo_name`, `author_name`, `project_name`,
+`project_description`, and the PAT/token prompts) are self-explanatory and only affect their own
+value — see [Token Permissions](token_permissions.md) for the tokens.
+
+## `developer_platform`: GitHub / Azure DevOps
+
+Determines which platform-specific files get generated: GitHub gets `.github/workflows/`,
+Azure DevOps gets `.azurepipelines/`. This choice also locks out some other options — Azure DevOps
+projects can't use `GitHub Pages` for `zensical_target` or `MIT` isn't affected, but
+`project_visibility` defaults to `Private` since Azure DevOps doesn't support public projects the
+same way. See [Azure DevOps Limitations](platform_notes/azure_devops.md) and
+[GitHub Org Limitations](platform_notes/github_org.md) for platform-specific details.
+
+## `repo_setup_actions`: Create Repo / Set Repo Rules / None
+
+Controls which setup automation runs after the template is copied:
+
+- **Create Repo** — creates the remote repo, sets repo settings/branch protection, and (GitHub
+  only) sets up GitHub Pages if applicable.
+- **Set Repo Rules** — skips repo creation (for an existing repo) but still applies settings and
+  branch protection.
+- **None** — skips all of it; you're on your own for repo creation and settings.
+
+## `project_type`: Standard / Template
+
+**Standard** generates a normal project repo. **Template** additionally generates a `copier.yml`
+of its own (so your project can itself be used as a Copier template — this is how this repo
+works), a fuller `docs/` set explaining the template's own features, and template-authoring tasks
+like `mise run integration-test-gh`/`integration-test-azdo`.
+
+## `project_visibility`: Public / Private
+
+Public repos get contributor-facing files that don't make sense for private code: the
+`CONTRIBUTING.md` "Ground Rules" section, `.all-contributorsrc`, and the All Contributors
+workflow. See [Public vs Private Repos](public_vs_private_repos.md) for the full breakdown.
+
+## `license`: MIT / None
+
+Controls whether a `LICENSE` file is generated and whether the README claims MIT licensing. If you
+pick `None` on a Public repo, the README instead shows a notice that the project currently has no
+license set (meaning nobody may legally use, copy, or contribute to it without your permission) —
+see [Public vs Private Repos](public_vs_private_repos.md#support-files). `MIT` isn't offered for Private
+repos, since a license only matters once code is visible to others.
+
+## `zensical_target`: GitHub Pages / docs_site Directory in Repo
+
+Chooses where rendered documentation ends up:
+
+- **GitHub Pages** — deploys via `maint-zensical.yml`, using `mike` to keep a version-aliased
+  history (`latest`, `dev`, and per-release versions) of the docs site.
+- **docs_site Directory in Repo** — builds via `maint-mkdocs.yml` into a `docs_site/` folder
+  committed to the repo, always reflecting the latest `main`, with no version history. This is the
+  only option for Azure DevOps projects.
+
+## `lifecycle`: Pre-Alpha / Alpha / Beta / Stable / Inactive
+
+Controls the status banner shown at the top of the README, and (for GitHub projects moving to
+Stable) prompts a one-time commit to bump Release Please's version past `1.0.0`. See
+[Lifecycle Management](lifecycle_management.md) for the full behavior.

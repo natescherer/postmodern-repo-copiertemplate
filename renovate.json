@@ -2,10 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    "helpers:pinGitHubActionDigests"
   ],
   "schedule": [
-    "* * 1 * *"
+    "0 0 1 * *"
   ],
   "azure-pipelines": {
     "enabled": true,
@@ -24,7 +25,7 @@
   },
   "github-actions": {
     "managerFilePatterns": [
-      "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$/"
+      "(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$"
     ]
   },
   "packageRules": [
@@ -81,6 +82,14 @@
         "pipx:invoke"
       ],
       "groupName": "invoke"
+    },
+    {
+      "description": "Group lychee",
+      "matchPackageNames": [
+        "lychee",
+        "lycheeverse/lychee"
+      ],
+      "groupName": "lychee"
     },
     {
       "description": "Group mike",

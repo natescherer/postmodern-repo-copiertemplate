@@ -2,6 +2,21 @@
 site_name = "Postmodern Repo Copier Template"
 docs_dir = "docs"
 site_dir = ".cache/zensical_serve"
+nav = [
+  { "Getting Started" = "index.md" },
+  { "Prerequisites" = "prerequisites.md" },
+  { "Applying to Existing Projects" = "applying_to_existing_projects.md" },
+  { "Template Questions" = "template_questions.md" },
+  { "Lifecycle Management" = "lifecycle_management.md" },
+  { "Token Permissions" = "token_permissions.md" },
+  { "Public vs Private Repos" = "public_vs_private_repos.md" },
+  { "Platform Notes" = [
+    "platform_notes/index.md",
+    "platform_notes/github_org.md",
+    "platform_notes/azure_devops.md"
+  ] },
+  { "Components" = ["components/template_engine.md"] }
+]
 site_url = "https://natescherer.github.io/postmodern-repo-copiertemplate"
 repo_url = "https://github.com/natescherer/postmodern-repo-copiertemplate"
 
@@ -61,12 +76,13 @@ toggle.icon = "lucide/moon"
 toggle.name = "Switch to system preference"
 
 # ── Plugins ────────────────────────────────────────────────────────────────────
-
 [project.plugins.mike]
 canonical_version = "latest"
 deploy_prefix = ""
 redirect_template = ""
 alias_type = "symlink"
+
+# ── Extensions ──────────────────────────────────────────────────────────────────
 
 # These are all Markdown/Markdown Extensions extensions officially supported by Zensical as of 2026/04/07
 # (Excluding Arithmatex, which requires external configuration files)

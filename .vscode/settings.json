@@ -16,6 +16,7 @@
     "**.md*.jinja*": "jinja-md",
     "copier.yml": "jinja-yaml",
     "**.y*ml*.jinja": "jinja-yaml",
+    "**.toml*.jinja": "jinja-toml",
     "**.json[{]% endif %[}]": "json",
     "**.md[{]% endif %[}]": "markdown",
     "**.y*ml[{]% endif %[}]": "yaml",
@@ -62,6 +63,6 @@
   "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
   "typos.config": ".config/typos.toml",
   "yamlfmt.args": [
-    "-conf config/yamlfmt.yaml"
+    "-conf .config/yamlfmt.yaml"
   ]
 }

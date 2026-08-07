@@ -2,7 +2,7 @@
 
 To apply this template to an existing project, follow these steps:
 
-1. Review the prerequisites from [Getting Started](getting_started.md) and decide which method you are using
+1. Review the [Prerequisites](prerequisites.md), including [Token Permissions](token_permissions.md), and decide which method you are using
 1. Ensure your project is already using Git, and the all of the following are true:
    1. Project is cloned to your local computer
    1. All changes are committed
@@ -14,7 +14,8 @@ To apply this template to an existing project, follow these steps:
    mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/local-repo-path-here
    ```
 
-1. If you are using GitHub, Make sure to choose `Set Repo Rules` in the first question
+   See [Template Questions](template_questions.md) for what each prompt controls.
+1. If you are using GitHub, make sure to choose `Set Repo Rules` for the Repo Setup Actions question
 1. Set all other settings as appropriate for your project
 1. Once the template is applied, review files that have been changed using git, and stage, discard, or modify as appropriate
 1. Commit and push the changes, then merge them via a Pull Request

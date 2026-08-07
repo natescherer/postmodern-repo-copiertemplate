@@ -44,6 +44,9 @@ description = "Checks files for broken links"
 language = "system"
 entry = "mise x -- lychee --no-progress --cache"
 types = ["text"]
+# renovate.json embeds a regex with a backslash-escaped domain (github, dot-escaped,
+# dot-com) whose backslash truncates lychee's URL extraction to a bogus bare domain.
+exclude = "renovate\\.json"
 require_serial = true
 {%- if is_template %}
 

@@ -11,11 +11,11 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 env:
   MISE_ENV: ci
@@ -23,7 +23,9 @@ env:
 jobs:
   build-zensical:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 15
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7
         with:
@@ -32,7 +34,7 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4
         with:
           experimental: true
       - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
@@ -42,7 +44,7 @@ jobs:
           path: ~/.cache
           restore-keys: |
             zensical-
-      - uses: jiangxin/file-exists-action@v1
+      - uses: jiangxin/file-exists-action@20ca7a67e52212b4ecfd1cbc8d872ae2a8b5001c # v1
         id: index-check
         with:
           path: index.html
@@ -57,8 +59,11 @@ jobs:
         if: ${{ github.event_name == 'release' }}
   deploy-zensical:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 15
     needs: build-zensical
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
