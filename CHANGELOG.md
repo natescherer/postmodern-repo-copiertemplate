@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.12...v0.7.13) (2026-08-07)
+
+
+### Features
+
+* Set sensible lychee and ryl linting rules ([74903d1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/74903d11a64f9a5f145ec3f243f8e82d10052313))
+
+
+### Miscellaneous
+
+* Fix dead link ([dab8d1e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/dab8d1ede95ae33fc710881c58b61a4d5f978aa3))
+
 ## [0.7.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.11...v0.7.12) (2026-08-07)
 
 
