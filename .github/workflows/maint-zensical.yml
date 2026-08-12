@@ -44,7 +44,7 @@ jobs:
           path: ~/.cache
           restore-keys: |
             zensical-
-      - uses: jiangxin/file-exists-action@20ca7a67e52212b4ecfd1cbc8d872ae2a8b5001c # v1
+      - uses: jiangxin/file-exists-action@81a413fe02b9d9c4737c01bf2f566e12735a3285 # v1
         id: index-check
         with:
           path: index.html
