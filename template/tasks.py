@@ -30,51 +30,6 @@ def copy_template_files(c, src_path, vcs_ref=None):
     print("[bold green]*** 'copy-template-files' task end ***[/bold green]")
 
 
-@task(optional=["github_repo_owner", "azdo_org", "azdo_project"])
-def initialize_repo_and_commit_files(
-    c,
-    lifecycle,
-    developer_platform,
-    repo_name,
-    github_repo_owner=None,
-    azdo_org=None,
-    azdo_project=None,
-):
-    """Create an initial branch and commit files."""
-    print(
-        "[bold green]*** 'initialize-repo-and-commit-files' task start ***[/bold green]"
-    )
-    if lifecycle in ["Pre-Alpha", "Alpha", "Beta"]:
-        first_version = "0.1.0"
-    else:
-        first_version = "1.0.0"
-
-    print("[cyan]Initializing git repo with 'main' branch...[/cyan]")
-    c.run("git init -b main")
-    print("[cyan]Adding files to commit...[/cyan]")
-    c.run('git add --all -- ":!tasks.py" ":!mise.init.toml"')
-    print("[cyan]Committing...[/cyan]")
-    commit_cmd = 'git commit -m "feat: initialize project"'
-    if developer_platform == "GitHub":
-        commit_cmd += f' -m "Release-As: {first_version}"'
-    c.run(commit_cmd)
-    print("[cyan]Adding remote...[/cyan]")
-    # No stored token for either platform: Git Credential Manager handles push auth
-    # interactively (its own login, separate from gh/az auth), auto-configuring
-    # credential.useHttpPath for dev.azure.com on install -- identical either way.
-    if developer_platform == "GitHub":
-        remote_url = f"https://github.com/{github_repo_owner}/{repo_name}.git"
-    elif developer_platform == "Azure DevOps":
-        remote_url = f"https://{azdo_org}@dev.azure.com/{azdo_org}/{azdo_project}/_git/{repo_name}"
-    c.run(f"git remote add origin {remote_url}")
-    print("[cyan]Pushing to remote...[/cyan]")
-    c.run("git push -u origin --all")
-
-    print(
-        "[bold green]*** 'initialize-repo-and-commit-files' task end ***[/bold green]"
-    )
-
-
 @task
 def delete_unneeded_template_files(c):
     """Delete files used only in the template process, including this tasks.py file."""
