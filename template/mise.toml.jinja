@@ -6,6 +6,15 @@
 [settings]
 experimental = true # Needed for hooks as of v2025.6.2
 
+[env]
+# Centralize tool caches under .cache/ instead of scattering them across the repo root.
+PYTHONPYCACHEPREFIX = ".cache/pycache"
+RUMDL_CACHE_DIR = ".cache/rumdl"
+{%- if is_template %}
+PYTEST_ADDOPTS = "-o cache_dir=.cache/pytest"
+RUFF_CACHE_DIR = ".cache/ruff"
+{%- endif %}
+
 [tasks.copier-update]
 run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust"
 
