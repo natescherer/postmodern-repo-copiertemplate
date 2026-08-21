@@ -1,6 +1,8 @@
 # Token Permissions
 
-This doc details the minimum scopes/permissions needed for GitHub/Azure DevOps tokens needed to use this template, along with reasons why.
+This doc details the minimum scopes/permissions needed to use this template, along with reasons
+why. Neither platform requires a prompted Personal Access Token for repo setup anymore -- both use
+the platform's own CLI session instead (`gh auth login` / `az login`).
 {%- if using_github %}
 
 ## GitHub
@@ -36,8 +38,12 @@ NOTE: Fine-grained tokens are specifically **not** used, as they cannot open pul
 
 ## Azure DevOps
 
-| **Scope**             | **Reason**                               |
-| --------------------- | ----------------------------------------- |
-| Build: Read & Execute | Needed to allow creating Azure Pipelines |
-| Code: Full            | Needed to create repo                    |
+### `az login` Permissions
+
+Repo setup (creating the repo, registering pipelines, and pushing the initial commit) uses the
+[Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)'s own authenticated session --
+see [Prerequisites](prerequisites.md). No PAT scopes to configure; the signed-in account just needs
+enough permission in the target project to create repos and pipelines (typically **Project
+Administrator**, or an equivalent custom permission set covering `Code: Full` and
+`Build: Read & Execute`).
 {%- endif %}

@@ -2,9 +2,9 @@
 
 This page walks through what each Copier question controls, and what it triggers behind the
 scenes. Questions not listed here (`repo_name`, `author_name`, `project_name`,
-`project_description`, and the Azure DevOps PAT prompt) are self-explanatory and only affect their
-own value — see [Token Permissions](token_permissions.md) for the tokens (GitHub repo setup uses
-`gh auth login` instead of a prompted token — see [Prerequisites](prerequisites.md)).
+`project_description`) are self-explanatory and only affect their own value. Neither platform
+prompts for a token anymore — repo setup uses `gh auth login` (GitHub) or `az login` (Azure
+DevOps) instead — see [Prerequisites](prerequisites.md) and [Token Permissions](token_permissions.md).
 
 ## `developer_platform`: GitHub / Azure DevOps
 
@@ -18,10 +18,13 @@ same way. See [Azure DevOps Limitations](platform_notes/azure_devops.md) and
 ## `repo_setup_actions`: Create Repo / Set Repo Rules / None
 
 Controls which setup automation runs after the template is copied. `.github/settings.yml` (GitHub
-only) is always generated regardless of this answer -- see below.
+only) is always generated regardless of this answer -- see below. Choosing anything but `None`
+triggers this question's validator, which checks the relevant platform CLI (`gh` or `az`) is
+installed and authenticated *before* letting you proceed -- see [Prerequisites](prerequisites.md).
 
-- **Create Repo** — creates the remote repo, sets GitHub Actions workflow permissions, and sets up
-  GitHub Pages if applicable.
+- **Create Repo** — creates the remote repo; on GitHub also sets Actions workflow permissions and
+  sets up GitHub Pages if applicable; on Azure DevOps also registers pipelines for each file under
+  `.azurepipelines/`.
 - **Set Repo Rules** — skips repo creation (for an existing repo) but still applies the other
   automation above.
 - **None** — skips all of it; you're on your own for repo creation and settings.

@@ -48,12 +48,11 @@ repo_setup_actions:
     - None
   default: Create Repo
   # Fails fast with an actionable message instead of a confusing error deep into repo
-  # setup. Only checked for GitHub since Azure DevOps still uses a prompted PAT.
-  # jinja2_shell_extension's shell() filter merges stderr into its captured output
-  # (stderr=subprocess.STDOUT), so a failing command's error text still reads as
-  # non-empty -- an explicit '&& echo <marker>' (portable across cmd.exe and sh) is
+  # setup. jinja2_shell_extension's shell() filter merges stderr into its captured
+  # output (stderr=subprocess.STDOUT), so a failing command's error text still reads
+  # as non-empty -- an explicit '&& echo <marker>' (portable across cmd.exe and sh) is
   # used instead of checking for empty output.
-  validator: "{% if developer_platform == 'GitHub' and not project_initialized and repo_setup_actions != 'None' %}{% set gh_check = ('gh --version && echo GH_INSTALLED' | shell()) %}{% if 'GH_INSTALLED' not in gh_check %}GitHub CLI ('gh') is not installed or not on PATH. Install it, then try again.{% else %}{% set gh_auth_check = ('gh api user --jq .login && echo GH_AUTHED' | shell()) %}{% if 'GH_AUTHED' not in gh_auth_check %}GitHub CLI ('gh') is installed but not authenticated. Run 'gh auth login', then try again.{% endif %}{% endif %}{% endif %}"
+  validator: "{% if not project_initialized and repo_setup_actions != 'None' %}{% if developer_platform == 'GitHub' %}{% set gh_check = ('gh --version && echo GH_INSTALLED' | shell()) %}{% if 'GH_INSTALLED' not in gh_check %}GitHub CLI ('gh') is not installed or not on PATH. Install it, then try again.{% else %}{% set gh_auth_check = ('gh api user --jq .login && echo GH_AUTHED' | shell()) %}{% if 'GH_AUTHED' not in gh_auth_check %}GitHub CLI ('gh') is installed but not authenticated. Run 'gh auth login', then try again.{% endif %}{% endif %}{% elif developer_platform == 'Azure DevOps' %}{% set az_check = ('az --version && echo AZ_INSTALLED' | shell()) %}{% if 'AZ_INSTALLED' not in az_check %}Azure CLI ('az') is not installed. Install it (see https://learn.microsoft.com/cli/azure/install-azure-cli), then try again.{% else %}{% set az_ext_check = ('az extension show --name azure-devops && echo AZ_EXT_INSTALLED' | shell()) %}{% if 'AZ_EXT_INSTALLED' not in az_ext_check %}Azure CLI is installed but the azure-devops extension isn't. Run 'az extension add --name azure-devops', then try again.{% else %}{% set az_auth_check = ('az account show && echo AZ_AUTHED' | shell()) %}{% if 'AZ_AUTHED' not in az_auth_check %}Azure CLI is installed but not logged in. Run 'az login', then try again.{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}"
 
 github_username:
   type: str
@@ -76,13 +75,6 @@ azdo_org:
   help: |
     {% if not project_initialized %}The Azure DevOps organization for this project.{% else %}Locked value on update, press Enter.{% endif %}
   when: "{{ developer_platform == 'Azure DevOps' }}"
-
-azdo_token:
-  type: str
-  secret: true
-  default: ""
-  help: An Azure DevOps Personal Access Token which will be used to set up your repo. Value is not saved.
-  when: "{{ developer_platform == 'Azure DevOps' and not project_initialized and repo_setup_actions != 'None' }}"
 
 azdo_project:
   type: str
@@ -246,7 +238,7 @@ _tasks:
     when: "{% if is_template %}true{% endif %}"
   - command: gh repo create {% if github_org and github_org != 'None' %}{{ github_org }}/{% endif %}{{ repo_name }} {% if is_public %}--public{% else %}--private{% endif %}
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_github %}true{% endif %}"
-  - command: invoke create-repo-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project_encoded }} --azdo-org {{ azdo_org }}
+  - command: az repos create --name {{ repo_name }} --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_azdo %}true{% endif %}"
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/actions/permissions/workflow -X PUT -f can_approve_pull_request_reviews=true
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_github %}true{% endif %}"
@@ -254,7 +246,15 @@ _tasks:
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_github %}true{% endif %}"
   - command: invoke initialize-repo-and-commit-files --lifecycle {{ lifecycle }} --developer-platform "{{ developer_platform }}" --repo-name {{ repo_name }}{% if using_github and github_repo_owner %} --github-repo-owner {{ github_repo_owner }}{% endif %}{% if using_azdo %} --azdo-org {{ azdo_org }} --azdo-project {{ azdo_project_encoded }}{% endif %}
     when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
-  - command: invoke create-pipelines-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project_encoded }} --azdo-org {{ azdo_org }}
+  # One explicit task per file under template/{% if using_azdo %}.azurepipelines{% endif %}/ --
+  # add a matching entry here when adding a new pipeline file.
+  - command: az pipelines create --name "[{{ repo_name }}] copier-update-check" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/copier-update-check.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
+    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
+  - command: az pipelines create --name "[{{ repo_name }}] docs" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/docs.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
+    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
+  - command: az pipelines create --name "[{{ repo_name }}] pr_validation" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/pr_validation.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
+    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
+  - command: az pipelines create --name "[{{ repo_name }}] release" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/release.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
     when: "{% if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
