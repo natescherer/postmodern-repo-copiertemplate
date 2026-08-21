@@ -59,10 +59,9 @@ def initialize_repo_and_commit_files(
         commit_cmd += f' -m "Release-As: {first_version}"'
     c.run(commit_cmd)
     print("[cyan]Adding remote...[/cyan]")
-    # No stored token for either platform: 'gh auth setup-git' (GitHub) and Git
-    # Credential Manager's own interactive Entra login (Azure DevOps, which also
-    # auto-configures credential.useHttpPath for dev.azure.com on install) handle
-    # push auth, so this is otherwise identical between platforms.
+    # No stored token for either platform: Git Credential Manager handles push auth
+    # interactively (its own login, separate from gh/az auth), auto-configuring
+    # credential.useHttpPath for dev.azure.com on install -- identical either way.
     if developer_platform == "GitHub":
         remote_url = f"https://github.com/{github_repo_owner}/{repo_name}.git"
     elif developer_platform == "Azure DevOps":

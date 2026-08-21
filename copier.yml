@@ -242,8 +242,6 @@ _tasks:
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_azdo %}true{% endif %}"
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/actions/permissions/workflow -X PUT -f can_approve_pull_request_reviews=true
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_github %}true{% endif %}"
-  - command: gh auth setup-git
-    when: "{% if _copier_operation == 'copy' and should_create_repo and using_github %}true{% endif %}"
   - command: invoke initialize-repo-and-commit-files --lifecycle {{ lifecycle }} --developer-platform "{{ developer_platform }}" --repo-name {{ repo_name }}{% if using_github and github_repo_owner %} --github-repo-owner {{ github_repo_owner }}{% endif %}{% if using_azdo %} --azdo-org {{ azdo_org }} --azdo-project {{ azdo_project_encoded }}{% endif %}
     when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
   # One explicit task per file under template/{% if using_azdo %}.azurepipelines{% endif %}/ --

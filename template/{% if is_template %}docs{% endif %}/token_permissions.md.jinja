@@ -9,15 +9,12 @@ the platform's own CLI session instead (`gh auth login` / `az login`).
 
 ### `gh auth login` Scopes
 
-Repo setup (creating/configuring the repo and pushing its initial commit) uses the
-[GitHub CLI](https://cli.github.com)'s own authenticated session rather than a prompted Personal
-Access Token -- see [Prerequisites](prerequisites.md). Request at least these scopes when running
-`gh auth login`:
-
-| **Scope** | **Reason**                                |
-| --------- | ------------------------------------------ |
-| repo      | Needed to create the repo & set its settings |
-| workflow  | Needed to push commits containing GitHub Actions workflow files |
+Repo creation and configuration (labels, merge options, branch protection, Actions permissions,
+Pages) uses the [GitHub CLI](https://cli.github.com)'s own authenticated session rather than a
+prompted Personal Access Token -- see [Prerequisites](prerequisites.md). Default scopes (`repo`
+among them) are enough; no need for `gh auth login --scopes ...`. The initial `git push` is a
+separate matter -- `gh auth login`'s scopes don't cover pushing `.github/workflows/` files
+regardless, so that step uses Git Credential Manager's own login instead, not `gh`'s.
 
 ### Repo Maintenance PAT (Classic Token)
 
@@ -40,10 +37,11 @@ NOTE: Fine-grained tokens are specifically **not** used, as they cannot open pul
 
 ### `az login` Permissions
 
-Repo setup (creating the repo, registering pipelines, and pushing the initial commit) uses the
+Repo creation and pipeline registration use the
 [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)'s own authenticated session --
 see [Prerequisites](prerequisites.md). No PAT scopes to configure; the signed-in account just needs
 enough permission in the target project to create repos and pipelines (typically **Project
 Administrator**, or an equivalent custom permission set covering `Code: Full` and
-`Build: Read & Execute`).
+`Build: Read & Execute`). The initial `git push` is a separate matter -- `az login` doesn't bridge
+into git's credentials, so that step uses Git Credential Manager's own login instead.
 {%- endif %}
