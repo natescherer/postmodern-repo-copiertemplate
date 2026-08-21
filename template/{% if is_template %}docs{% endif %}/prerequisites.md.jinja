@@ -3,6 +3,19 @@
 
 ## Azure DevOps
 
+### One-Time Actions Per Azure DevOps Organization
+
+1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) (`az`) via an
+   officially supported method (winget/MSI on Windows, Homebrew on macOS, apt/dnf/zypper on Linux
+   -- installing via pip/pipx is not supported by Microsoft), then run
+   `az extension add --name azure-devops` and `az login`. Unless you choose `None` for the
+   `repo_setup_actions` question, this is used instead of a Personal Access Token to create your
+   repo and register its pipelines. The `repo_setup_actions` question's validator checks that
+   `az`, the `azure-devops` extension, and login are all in place before letting you proceed.
+1. Note that the initial `git push` still isn't covered by `az login` -- see
+   [Token Permissions](token_permissions.md#az-login-permissions) for why, and expect Git
+   Credential Manager to prompt you to sign in (separately) the first time.
+
 ### One-Time Actions per Azure DevOps Project
 
 In order to support the proper parsing of Conventional Commits, the following must be set:
@@ -42,9 +55,8 @@ In order to support the proper parsing of Conventional Commits, the following mu
 ## Personal Access Tokens
 {%- if using_azdo %}
 
-Unless you choose `None` for the `repo_setup_actions` question, Copier will prompt you for a
-Personal Access Token part-way through the run. See [Token Permissions](token_permissions.md) for
-the minimum scopes needed and why.
+Azure DevOps no longer needs one for repo setup -- see the `az login` step above. See
+[Token Permissions](token_permissions.md) for the permissions the signed-in account needs instead.
 {%- endif %}
 {%- if using_github %}
 
