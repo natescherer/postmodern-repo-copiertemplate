@@ -26,6 +26,10 @@ In order to support the proper parsing of Conventional Commits, the following mu
 1. Install the [Renovate GitHub App](https://github.com/apps/renovate) for your user or organization.
     - This app provides automatic dependency updates for your project
     - It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.
+1. Install the [Settings GitHub App](https://github.com/apps/settings) for your user or organization.
+    - This app syncs repo settings (labels, merge options, branch protection) from the committed `.github/settings.yml`, which is always generated for GitHub projects
+    - It must have access to a repo *before* that repo is created for its settings to apply, so grant it access to all your repositories up front, same as the apps above
+    - Skipping this is fine -- see [Manual Repo Settings](manual_repo_settings.md) for how to apply the same configuration by hand instead
 1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [in the repo settings](https://github.com/settings/security_analysis).
 {%- endif %}
 

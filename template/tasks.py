@@ -35,29 +35,24 @@ def copy_template_files(c, src_path, vcs_ref=None):
 
 
 @task(optional=["github_org"])
-def create_repo_github(
-    c, repo_name, github_repo_description, github_repo_owner, is_public, github_org=None
-):
-    """Create a GitHub repo."""
+def create_repo_github(c, repo_name, is_public, github_org=None):
+    """Create a GitHub repo.
+
+    Everything beyond name/visibility (description, homepage, merge options, labels,
+    branch protection) is applied by the Settings GitHub App
+    (https://github.com/apps/settings) from the committed .github/settings.yml.
+    """
     print("[bold green]*** 'create-repo-github' task start ***[/bold green]")
     with open("token.json") as token_file:
         token = json.loads(token_file.read())["token"]
 
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
-    repo_data = {
-        "name": repo_name,
-        "description": github_repo_description,
-        "homepage": f"https://{github_repo_owner}.github.io/{repo_name}"
-        if is_public
-        else "",
-        "private": True if not is_public else False,
-    }
+    repo_data = {"name": repo_name, "private": not is_public}
     if github_org:
         print("[cyan]Creating repo in GitHub organization...[/cyan]")
         github.rest.repos.create_in_org(github_org, data=repo_data)
     else:
-        repo_data.update({"allow_auto_merge": True, "delete_branch_on_merge": True})
         print("[cyan]Creating repo in GitHub user account...[/cyan]")
         github.rest.repos.create_for_authenticated_user(data=repo_data)
     print("[bold green]*** 'create-repo-github' task end ***[/bold green]")
@@ -84,72 +79,17 @@ def create_repo_azdo(c, repo_name, azdo_project, azdo_org):
     print("[bold green]*** 'create-repo-azdo' task end ***[/bold green]")
 
 
-@task(optional=["github_org"])
-def set_repo_settings_github(
-    c, github_repo_owner, repo_name, is_public, github_org=None
-):
-    """Set settings on a GitHub repo."""
-    print("[bold green]*** 'set-repo-settings-github' task start ***[/bold green]")
-    with open("token.json") as token_file:
-        token = json.loads(token_file.read())["token"]
-
-    print("[cyan]Authenticating to GitHub...[/cyan]")
-    github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
-
-    # Auto-merge and delete branch on merge
-    if not github_org:
-        repo_data = {"allow_auto_merge": True, "delete_branch_on_merge": True}
-        github.rest.repos.update(
-            owner=github_repo_owner, repo=repo_name, data=repo_data
-        )
-
-    # Labels
-    current_label_content = github.rest.issues.list_labels_for_repo(
-        owner=github_repo_owner, repo=repo_name
-    )
-    current_labels = [x.name for x in current_label_content.parsed_data]
-
-    if "awaiting pr" not in current_labels:
-        awaiting_pr_label_data = {
-            "name": "awaiting pr",
-            "color": "668F04",
-            "description": "Awaiting completion of a PR from a contributor",
-        }
-        print("[cyan]Creating 'awaiting pr' label...[/cyan]")
-        github.rest.issues.create_label(
-            owner=github_repo_owner, repo=repo_name, data=awaiting_pr_label_data
-        )
-    else:
-        print("[yellow]Label 'awaiting pr' already exists, skipping creation.[/yellow]")
-    if "blocked" not in current_labels:
-        blocked_label_data = {
-            "name": "blocked",
-            "color": "B60205",
-            "description": "Blocked by an external dependency",
-        }
-        print("[cyan]Creating 'blocked' label...[/cyan]")
-        github.rest.issues.create_label(
-            owner=github_repo_owner, repo=repo_name, data=blocked_label_data
-        )
-    else:
-        print("[yellow]Label 'blocked' already exists, skipping creation.[/yellow]")
-
-    # Workflow Permissions
-    workflow_perm_data = {"can_approve_pull_request_reviews": True}
-    print("[cyan]Setting Actions workflow settings...[/cyan]")
-    github.rest.actions.set_github_actions_default_workflow_permissions_repository(
-        owner=github_repo_owner, repo=repo_name, data=workflow_perm_data
-    )
-
-    print("[bold green]*** 'set-repo-settings-github' task end ***[/bold green]")
-
-
 @task
-def set_branch_protection_ruleset_github(c, github_repo_owner, repo_name):
-    """Set branch protection ruleset on a GitHub repo."""
+def set_actions_workflow_permissions_github(c, github_repo_owner, repo_name):
+    """Set Actions workflow permissions on a GitHub repo.
+
+    Not covered by the Settings GitHub App, so this stays imperative -- see
+    .github/settings.yml for everything else (labels, merge options, branch
+    protection).
+    """
     print(
         "[bold green]"
-        "*** 'set-branch-protection-ruleset-github' task start ***"
+        "*** 'set-actions-workflow-permissions-github' task start ***"
         "[/bold green]"
     )
     with open("token.json") as token_file:
@@ -157,45 +97,16 @@ def set_branch_protection_ruleset_github(c, github_repo_owner, repo_name):
 
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
-    rulesets_content = github.rest.repos.get_repo_rulesets(
-        owner=github_repo_owner, repo=repo_name
+
+    workflow_perm_data = {"can_approve_pull_request_reviews": True}
+    print("[cyan]Setting Actions workflow settings...[/cyan]")
+    github.rest.actions.set_github_actions_default_workflow_permissions_repository(
+        owner=github_repo_owner, repo=repo_name, data=workflow_perm_data
     )
-    rulesets = [x.name for x in rulesets_content.parsed_data]
-    if "default-branch-protection" not in rulesets:
-        ruleset_data = {
-            "name": "default-branch-protection",
-            "enforcement": "active",
-            "target": "branch",
-            "bypass_actors": [],
-            "conditions": {"ref_name": {"exclude": [], "include": ["~DEFAULT_BRANCH"]}},
-            "rules": [
-                {"type": "deletion"},
-                {"type": "non_fast_forward"},
-                {
-                    "type": "pull_request",
-                    "parameters": {
-                        "dismiss_stale_reviews_on_push": False,
-                        "require_code_owner_review": False,
-                        "require_last_push_approval": False,
-                        "required_approving_review_count": 0,
-                        "required_review_thread_resolution": False,
-                    },
-                },
-            ],
-        }
-        print("[cyan]Creating branch protection ruleset...[/cyan]")
-        github.rest.repos.create_repo_ruleset(
-            owner=github_repo_owner, repo=repo_name, data=ruleset_data
-        )
-    else:
-        print(
-            "[yellow]Repo ruleset 'default-branch-protection' already exists, "
-            "skipping creation. Please verify this ruleset was made by this "
-            "template or GitHub Actions workflows might not work correctly![/yellow]"
-        )
+
     print(
         "[bold green]"
-        "*** 'set-branch-protection-ruleset-github' task end ***"
+        "*** 'set-actions-workflow-permissions-github' task end ***"
         "[/bold green]"
     )
 
@@ -316,7 +227,12 @@ def create_pipelines_azdo(c, repo_name, azdo_project, azdo_org):
 
 @task
 def setup_zensical_ghpages(c, github_repo_owner, repo_name):
-    """Perform initial setup for zensical on GitHub."""
+    """Enable GitHub Pages for zensical.
+
+    The github-pages environment itself is created by the Settings GitHub App
+    (https://github.com/apps/settings) from the committed .github/settings.yml, but
+    Pages enablement has no equivalent in that app and stays imperative.
+    """
     print("[bold green]*** 'setup-zensical' task start ***[/bold green]")
 
     with open("token.json") as token_file:
@@ -325,16 +241,8 @@ def setup_zensical_ghpages(c, github_repo_owner, repo_name):
     print("[cyan]Authenticating to GitHub...[/cyan]")
     github = githubkit.GitHub(githubkit.TokenAuthStrategy(token))
 
-    # Enable Pages
     github.rest.repos.create_pages_site(
         owner=github_repo_owner, repo=repo_name, data={"build_type": "workflow"}
-    )
-
-    github.rest.repos.create_or_update_environment(
-        owner=github_repo_owner,
-        repo=repo_name,
-        environment_name="github-pages",
-        data={"deployment_branch_policy": None},
     )
     print("[bold green]*** 'setup-zensical' task end ***[/bold green]")
 

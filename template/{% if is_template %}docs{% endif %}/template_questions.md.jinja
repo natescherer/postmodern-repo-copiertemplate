@@ -16,13 +16,19 @@ same way. See [Azure DevOps Limitations](platform_notes/azure_devops.md) and
 
 ## `repo_setup_actions`: Create Repo / Set Repo Rules / None
 
-Controls which setup automation runs after the template is copied:
+Controls which setup automation runs after the template is copied. `.github/settings.yml` (GitHub
+only) is always generated regardless of this answer -- see below.
 
-- **Create Repo** — creates the remote repo, sets repo settings/branch protection, and (GitHub
-  only) sets up GitHub Pages if applicable.
-- **Set Repo Rules** — skips repo creation (for an existing repo) but still applies settings and
-  branch protection.
+- **Create Repo** — creates the remote repo, sets GitHub Actions workflow permissions, and sets up
+  GitHub Pages if applicable.
+- **Set Repo Rules** — skips repo creation (for an existing repo) but still applies the other
+  automation above.
 - **None** — skips all of it; you're on your own for repo creation and settings.
+
+Whichever you choose, GitHub projects still get a generated `.github/settings.yml`, applied
+automatically if you've installed the [Settings GitHub App](https://github.com/apps/settings) (see
+[Prerequisites](prerequisites.md)) or by hand per [Manual Repo Settings](manual_repo_settings.md)
+if you haven't. Choosing `None` prints a reminder about this at the end of the run.
 
 ## `project_type`: Standard / Template
 

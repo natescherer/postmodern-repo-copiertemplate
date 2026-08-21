@@ -1,0 +1,44 @@
+# Managed by the "Settings" GitHub App (https://github.com/apps/settings) -- do not
+# edit repo settings in the GitHub UI, edit this file instead. Install the app with
+# access to this repo for changes here to take effect; see docs/prerequisites.md.
+
+repository:
+  description: "{{ project_description }}"
+  homepage: "{% if is_public %}https://{{ github_repo_owner }}.github.io/{{ repo_name }}{% endif %}"
+  private: {% if is_public %}false{% else %}true{% endif %}
+
+  allow_auto_merge: true
+  delete_branch_on_merge: true
+
+labels:
+  - name: awaiting pr
+    color: 668F04
+    description: Awaiting completion of a PR from a contributor
+  - name: blocked
+    color: B60205
+    description: Blocked by an external dependency
+
+rulesets:
+  - name: default-branch-protection
+    target: branch
+    enforcement: active
+    bypass_actors: []
+    conditions:
+      ref_name:
+        exclude: []
+        include: ["~DEFAULT_BRANCH"]
+    rules:
+      - type: deletion
+      - type: non_fast_forward
+      - type: pull_request
+        parameters:
+          dismiss_stale_reviews_on_push: false
+          require_code_owner_review: false
+          require_last_push_approval: false
+          required_approving_review_count: 0
+          required_review_thread_resolution: false
+{%- if zensical_ghpages %}
+
+environments:
+  - name: github-pages
+{%- endif %}
