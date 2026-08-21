@@ -50,6 +50,13 @@ uv = "0.12.2" # Used by pipx tools
 {#- renovate: datasource=github-releases depName=rhysd/actionlint #}
 actionlint = "1.7.12"
 {%- endif %}
+{%- if using_github %}
+{#- Used by _tasks in copier.yml for repo creation/setup. Note this doesn't help during
+   the questionnaire itself (this file doesn't exist yet at that point) -- the
+   developer_platform question's validator checks whatever gh is already on PATH. #}
+{#- renovate: datasource=github-releases depName=cli/cli #}
+"aqua:cli/cli" = "2.97.0"
+{%- endif %}
 {#- renovate: datasource=github-releases depName=crate-ci/typos #}
 "aqua:crate-ci/typos" = "1.49.0"
 {#- renovate: datasource=github-releases depName=j178/prek #}
@@ -87,7 +94,7 @@ uvx_args = "--with pyyaml==6.0.3 --with jinja2==3.1.6 --with jinja2-ansible-filt
 
 [tools."pipx:invoke"]
 version = "3.0.3"
-uvx_args = "--with copier==9.17.1 --with githubkit==0.16.0 --with requests==2.34.2 --with rich==15.0.0"
+uvx_args = "--with copier==9.17.1 --with requests==2.34.2 --with rich==15.0.0"
 
 [tools."pipx:zensical"]
 version = "0.0.53"

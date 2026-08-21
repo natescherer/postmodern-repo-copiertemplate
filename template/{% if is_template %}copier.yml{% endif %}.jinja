@@ -56,12 +56,13 @@ repo_setup_actions:
     - Set Repo Rules
     - None
   default: Create Repo
-github_token:
-  type: str
-  secret: true
-  default: ""
-  help: A GitHub Personal Access Token which will be used to set up your repo. Value is not saved.
-  when: "{{ developer_platform == 'GitHub' and not project_initialized and repo_setup_actions != 'None' }}"
+  # Fails fast with an actionable message instead of a confusing error deep into repo
+  # setup. Only checked for GitHub since Azure DevOps still uses a prompted PAT.
+  # jinja2_shell_extension's shell() filter merges stderr into its captured output
+  # (stderr=subprocess.STDOUT), so a failing command's error text still reads as
+  # non-empty -- an explicit '&& echo <marker>' (portable across cmd.exe and sh) is
+  # used instead of checking for empty output.
+  validator: "{% if developer_platform == 'GitHub' and not project_initialized and repo_setup_actions != 'None' %}{% set gh_check = ('gh --version && echo GH_INSTALLED' | shell()) %}{% if 'GH_INSTALLED' not in gh_check %}GitHub CLI ('gh') is not installed or not on PATH. Install it, then try again.{% else %}{% set gh_auth_check = ('gh api user --jq .login && echo GH_AUTHED' | shell()) %}{% if 'GH_AUTHED' not in gh_auth_check %}GitHub CLI ('gh') is installed but not authenticated. Run 'gh auth login', then try again.{% endif %}{% endif %}{% endif %}"
 
 github_username:
   type: str
@@ -252,17 +253,19 @@ copyright_year:
 _tasks:
   - command: invoke copy-template-files --src-path {{ _copier_conf.src_path }}{% if _copier_conf.vcs_ref %} --vcs-ref {{ _copier_conf.vcs_ref }}{% endif %}
     when: "{% if is_template %}true{% endif %}"
-  - command: invoke create-repo-github --repo-name {{ repo_name }} --is-public {{ is_public }}{% if github_org and github_org != 'None' %} --github-org {{ github_org }}{% endif %}
+  - command: gh repo create {% if github_org and github_org != 'None' %}{{ github_org }}/{% endif %}{{ repo_name }} {% if is_public %}--public{% else %}--private{% endif %}
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_github %}true{% endif %}"
   - command: invoke create-repo-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project_encoded }} --azdo-org {{ azdo_org }}
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_azdo %}true{% endif %}"
-  - command: invoke set-actions-workflow-permissions-github --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
+  - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/actions/permissions/workflow -X PUT -f can_approve_pull_request_reviews=true
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_github %}true{% endif %}"
-  - command: invoke initialize-repo-and-commit-files --lifecycle {{ lifecycle }} --developer-platform "{{ developer_platform }}" --repo-name {{ repo_name }}{% if using_github %} --github-username {{ github_username }}{% if github_repo_owner %} --github-repo-owner {{ github_repo_owner }}{% endif %}{% endif %}{% if using_azdo %} --azdo-org {{ azdo_org }} --azdo-project {{ azdo_project_encoded }}{% endif %}
+  - command: gh auth setup-git
+    when: "{% if _copier_operation == 'copy' and should_create_repo and using_github %}true{% endif %}"
+  - command: invoke initialize-repo-and-commit-files --lifecycle {{ lifecycle }} --developer-platform "{{ developer_platform }}" --repo-name {{ repo_name }}{% if using_github and github_repo_owner %} --github-repo-owner {{ github_repo_owner }}{% endif %}{% if using_azdo %} --azdo-org {{ azdo_org }} --azdo-project {{ azdo_project_encoded }}{% endif %}
     when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
   - command: invoke create-pipelines-azdo --repo-name {{ repo_name }} --azdo-project {{ azdo_project_encoded }} --azdo-org {{ azdo_org }}
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
-  - command: invoke setup-zensical-ghpages --github-repo-owner {{ github_repo_owner }} --repo-name {{ repo_name }}
+  - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
     when: "{% if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
   - invoke delete-unneeded-template-files
 

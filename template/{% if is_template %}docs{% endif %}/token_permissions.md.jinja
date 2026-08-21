@@ -1,0 +1,43 @@
+# Token Permissions
+
+This doc details the minimum scopes/permissions needed for GitHub/Azure DevOps tokens needed to use this template, along with reasons why.
+{%- if using_github %}
+
+## GitHub
+
+### `gh auth login` Scopes
+
+Repo setup (creating/configuring the repo and pushing its initial commit) uses the
+[GitHub CLI](https://cli.github.com)'s own authenticated session rather than a prompted Personal
+Access Token -- see [Prerequisites](prerequisites.md). Request at least these scopes when running
+`gh auth login`:
+
+| **Scope** | **Reason**                                |
+| --------- | ------------------------------------------ |
+| repo      | Needed to create the repo & set its settings |
+| workflow  | Needed to push commits containing GitHub Actions workflow files |
+
+### Repo Maintenance PAT (Classic Token)
+
+For best security, create this token via [this link](https://github.com/settings/personal-access-tokens/new)
+and save it as a GitHub Actions secret on the repository called **REPO_MAINTENANCE_PAT**. This is
+separate from `gh auth login` above -- it's used on an ongoing basis by this project's own GitHub
+Actions workflows (Copier update checks, Release Please), not just at setup time.
+
+**Repository Access**: All repositories
+
+| **Scope**                     | **Reason**                                 |
+| ----------------------------- | ------------------------------------------ |
+| repo                          | Needed for Copier/Release Please workflows |
+
+NOTE: Fine-grained tokens are specifically **not** used, as they cannot open pull requests. This can be changed once [this issue](https://github.com/github/roadmap/issues/600) is implemented by GitHub.
+{%- endif %}
+{%- if using_azdo %}
+
+## Azure DevOps
+
+| **Scope**             | **Reason**                               |
+| --------------------- | ----------------------------------------- |
+| Build: Read & Execute | Needed to allow creating Azure Pipelines |
+| Code: Full            | Needed to create repo                    |
+{%- endif %}
