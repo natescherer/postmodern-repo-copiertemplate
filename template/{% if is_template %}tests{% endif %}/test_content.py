@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 import tomllib
+import yaml
 from answer_matrix import ANSWER_MATRIX
 from conftest import _render
 
@@ -169,5 +170,61 @@ def test_hook_tools_available(template_source, tmp_path, answers):
     errors = _check_hook_tools_available(
         dest / ".config" / "prek.toml", dest / "mise.toml"
     )
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert not errors, "\n\n".join(errors)  # noqa: S101
+
+
+def _task_command_text(task: dict | str) -> str:
+    """Flatten one _tasks entry's command into a single searchable string.
+
+    A `command:` value is either a plain string or a list of argv parts (Copier runs
+    the latter with shell=False) -- either way, joining into one string is enough for
+    substring checks, without needing to know which form a given task uses.
+
+    Returns:
+        The command flattened into one space-joined string.
+
+    """
+    command = task.get("command", "") if isinstance(task, dict) else task
+    return " ".join(command) if isinstance(command, list) else str(command)
+
+
+def _check_azdo_pipelines_registered(dest: Path) -> list[str]:
+    """Verify every .azurepipelines/*.yml file has a matching az pipelines create task.
+
+    copier.yml.jinja hardcodes one explicit `az pipelines create --yml-path
+    .azurepipelines/<file>` _tasks entry per pipeline file -- a dynamic loop isn't
+    possible in Copier's static _tasks list, so nothing else stops a newly-added
+    pipeline file from silently never getting registered.
+
+    Returns:
+        One error string per pipeline file missing a matching _tasks entry.
+
+    """
+    pipelines_dir = dest / ".azurepipelines"
+    copier_yml = dest / "copier.yml"
+    if not pipelines_dir.is_dir() or not copier_yml.is_file():
+        return []
+    pipeline_files = sorted(
+        f.name
+        for f in pipelines_dir.glob("*.yml")
+        if not f.name.startswith("template-")
+    )
+    data = yaml.safe_load(copier_yml.read_text(encoding="utf-8"))
+    task_text = "\n".join(_task_command_text(task) for task in data.get("_tasks", []))
+    return [
+        f".azurepipelines/{name} has no matching 'az pipelines create --yml-path "
+        f".azurepipelines/{name}' entry in _tasks"
+        for name in pipeline_files
+        if f".azurepipelines/{name}" not in task_text
+    ]
+
+
+@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+def test_azdo_pipelines_registered(template_source, tmp_path, answers):
+    """Verify every Azure Pipelines file in the render has a matching _tasks entry."""
+    dest = tmp_path / "out"
+    _render(template_source, dest, answers)
+    errors = _check_azdo_pipelines_registered(dest)
     # S101: `assert` is the normal, expected way to fail a pytest test.
     assert not errors, "\n\n".join(errors)  # noqa: S101
