@@ -234,7 +234,28 @@ copyright_year:
 ## Tasks
 
 _tasks:
-  - command: invoke copy-template-files --src-path {{ _copier_conf.src_path }}{% if _copier_conf.vcs_ref %} --vcs-ref {{ _copier_conf.vcs_ref }}{% endif %}
+  # Runs on both copy and update (no _copier_operation check) -- pulls a fresh copy
+  # of template/ from the source and merges it into this project's own template/ so
+  # it can act as a parent template too. The merge (not wipe-then-copy) matters on
+  # update, where the destination already has this project's own template/ content.
+  # The sleep works around a suspected ref-propagation race when vcs_ref points at a
+  # tag that may have just been created (e.g. right after a release).
+  - command:
+      - python
+      - -c
+      - |
+        import os, shutil, subprocess, sys, tempfile, time
+        src, ref = sys.argv[1], sys.argv[2]
+        with tempfile.TemporaryDirectory() as d:
+            args = ["git", "-c", "advice.detachedHead=false", "clone", "--quiet"]
+            if ref and ref != "HEAD":
+                time.sleep(5)
+                args += ["--branch", ref]
+            args += [src, d]
+            subprocess.run(args, check=True)
+            shutil.copytree(os.path.join(d, "template"), "template", dirs_exist_ok=True)
+      - "{{ _copier_conf.src_path }}"
+      - "{{ _copier_conf.vcs_ref if _copier_conf.vcs_ref else '' }}"
     when: "{% if is_template %}true{% endif %}"
   - command: gh repo create {% if github_org and github_org != 'None' %}{{ github_org }}/{% endif %}{{ repo_name }} {% if is_public %}--public{% else %}--private{% endif %}
     when: "{% if _copier_operation == 'copy' and should_create_repo and using_github %}true{% endif %}"
@@ -244,7 +265,7 @@ _tasks:
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_github %}true{% endif %}"
   - command: git init -b main
     when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
-  - command: git add --all -- ":!tasks.py"
+  - command: git add --all
     when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
   # No stored token for either platform: Git Credential Manager handles push auth
   # interactively (its own login, separate from gh/az auth) below.
@@ -266,7 +287,6 @@ _tasks:
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
     when: "{% if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
-  - invoke delete-unneeded-template-files
 
 _message_after_copy: |-
   {% if using_github and not should_set_repo_settings %} Repo settings (labels, merge options, branch protection) are not being applied automatically. See the 'Manual Repo Settings' page in documentation for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.{% endif %}

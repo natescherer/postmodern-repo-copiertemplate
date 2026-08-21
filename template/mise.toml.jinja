@@ -92,10 +92,6 @@ version = "9.1.1"
 uvx_args = "--with pyyaml==6.0.3 --with jinja2==3.1.6 --with jinja2-ansible-filters==1.3.2{% if using_github %} --with pytest-github-actions-annotate-failures==0.4.2{% elif using_azdo %} --with pytest-azurepipelines==1.0.5{% endif %}"
 {%- endif %}
 
-[tools."pipx:invoke"]
-version = "3.0.3"
-uvx_args = "--with copier==9.17.1 --with rich==15.0.0"
-
 [tools."pipx:zensical"]
 version = "0.0.53"
 uvx_args = "--with git+https://github.com/squidfunk/mike.git@2.2.0+zensical-0.1.0"
