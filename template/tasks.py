@@ -7,7 +7,6 @@ import os
 import shutil
 import tempfile
 import time
-from pathlib import Path
 
 from invoke import task
 from rich import print
@@ -85,28 +84,6 @@ def initialize_repo_and_commit_files(
     print(
         "[bold green]*** 'initialize-repo-and-commit-files' task end ***[/bold green]"
     )
-
-
-@task
-def create_pipelines_azdo(c, repo_name, azdo_project, azdo_org):
-    """Register pipelines for an Azure DevOps repo."""
-    print("[bold green]*** 'create-pipelines-azdo' task start ***[/bold green]")
-
-    for entry in os.scandir(".azurepipelines"):
-        if entry.name.endswith(".yml") and not entry.name.startswith("template-"):
-            pipeline_name = f"[{repo_name}] {Path(entry.name).with_suffix('')}"
-            print(
-                f"[cyan]"
-                f"Creating pipeline for '.azurepipelines/{entry.name}' in "
-                "Azure DevOps...[/cyan]"
-            )
-            c.run(
-                f'az pipelines create --name "{pipeline_name}" '
-                f"--repository {repo_name} --repository-type tfsgit --branch main "
-                f"--yml-path .azurepipelines/{entry.name} --skip-first-run true "
-                f'--org https://dev.azure.com/{azdo_org}/ --project "{azdo_project}"'
-            )
-    print("[bold green]*** 'create-pipelines-azdo' task end ***[/bold green]")
 
 
 @task
