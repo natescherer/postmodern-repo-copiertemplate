@@ -26,9 +26,10 @@ run = "zensical serve"
 run = "pytest tests/"
 
 [tasks.integration-test-gh]
-run = '''
-copier copy --trust --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} -d 'repo_setup_actions=Create Repo' -d 'developer_platform=GitHub' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'lifecycle=Pre-Alpha' {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} {% raw %}{{option(name="path")}}{% endraw %}
-'''
+# Same script maint-integration_test.yml runs in CI (--cleanup added there) -- see
+# that file for what this actually verifies and why. Repo is left in place here by
+# default so it can be inspected; pass --cleanup yourself to delete it.
+run = 'python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} --repo-prefix {{ repo_name }}'
 
 [tasks.integration-test-azdo]
 run = '''

@@ -30,6 +30,30 @@ Actions workflows (Copier update checks, Release Please), not just at setup time
 | repo                          | Needed for Copier/Release Please workflows |
 
 NOTE: Fine-grained tokens are specifically **not** used, as they cannot open pull requests. This can be changed once [this issue](https://github.com/github/roadmap/issues/600) is implemented by GitHub.
+{%- if is_template %}
+
+### Integration Test PAT (Classic Token)
+
+Create this token the same way as the Repo Maintenance PAT above and save it as a GitHub Actions
+secret called **INTEGRATION_TEST_PAT**. Used by `maint-integration_test.yml`, which creates a
+real, throwaway repo on a schedule to verify repo setup actually works end to end, then deletes
+it -- `delete_repo` is needed specifically for that cleanup step and isn't part of any other
+token this project uses.
+
+**Repository Access**: All repositories
+
+| **Scope**   | **Reason**                                                  |
+| ----------- | ------------------------------------------------------------ |
+| repo        | Needed to create the test repo and read back its settings   |
+| workflow    | Needed to push the test repo's initial commit (includes `.github/workflows/`) |
+| delete_repo | Needed to delete the test repo during cleanup                |
+
+The account this token belongs to also needs the [Settings GitHub App](https://github.com/apps/settings)
+installed with access to **all** repositories, not just selected ones -- the workflow's
+verification step checks that the app actually synced `.github/settings.yml` (labels, branch
+ruleset) to the freshly-created test repo, and an app installed on "only select repositories"
+never automatically gains access to a repo created after the fact.
+{%- endif %}
 {%- endif %}
 {%- if using_azdo %}
 
