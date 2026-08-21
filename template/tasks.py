@@ -59,27 +59,17 @@ def initialize_repo_and_commit_files(
         commit_cmd += f' -m "Release-As: {first_version}"'
     c.run(commit_cmd)
     print("[cyan]Adding remote...[/cyan]")
-
+    # No stored token for either platform: 'gh auth setup-git' (GitHub) and Git
+    # Credential Manager's own interactive Entra login (Azure DevOps, which also
+    # auto-configures credential.useHttpPath for dev.azure.com on install) handle
+    # push auth, so this is otherwise identical between platforms.
     if developer_platform == "GitHub":
-        # Auth for the push below is handled by 'gh auth setup-git', run earlier in
-        # _tasks -- no credential file needed here, unlike the Azure DevOps branch.
         remote_url = f"https://github.com/{github_repo_owner}/{repo_name}.git"
-        c.run(f"git remote add origin {remote_url}")
-        print("[cyan]Pushing to remote...[/cyan]")
-        c.run("git push -u origin --all")
     elif developer_platform == "Azure DevOps":
-        # No stored token: Git Credential Manager handles auth interactively (its own
-        # Entra login flow) on first push, since 'az login' doesn't bridge into git's
-        # credentials. useHttpPath is still needed regardless -- dev.azure.com is
-        # shared across orgs, so credential lookups must be scoped by the full path.
         remote_url = f"https://{azdo_org}@dev.azure.com/{azdo_org}/{azdo_project}/_git/{repo_name}"
-        print("[cyan]Temporarily setting git config options for AzDO...[/cyan]")
-        c.run("git config credential.useHttpPath true")
-        c.run(f"git remote add origin {remote_url}")
-        print("[cyan]Pushing to remote...[/cyan]")
-        c.run("git push -u origin --all")
-        print("[cyan]Unsetting git config options for AzDO...[/cyan]")
-        c.run("git config --unset credential.useHttpPath")
+    c.run(f"git remote add origin {remote_url}")
+    print("[cyan]Pushing to remote...[/cyan]")
+    c.run("git push -u origin --all")
 
     print(
         "[bold green]*** 'initialize-repo-and-commit-files' task end ***[/bold green]"

@@ -12,9 +12,11 @@
    `repo_setup_actions` question, this is used instead of a Personal Access Token to create your
    repo and register its pipelines. The `repo_setup_actions` question's validator checks that
    `az`, the `azure-devops` extension, and login are all in place before letting you proceed.
-1. Note that the initial `git push` still isn't covered by `az login` -- see
-   [Token Permissions](token_permissions.md#az-login-permissions) for why, and expect Git
-   Credential Manager to prompt you to sign in (separately) the first time.
+1. Make sure [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager) is
+   installed (bundled with Git for Windows if you enabled it during install; a separate install on
+   macOS/Linux). The initial `git push` isn't covered by `az login` -- see
+   [Token Permissions](token_permissions.md#az-login-permissions) for why -- so GCM handles that
+   push's authentication with its own (separate) interactive Entra sign-in the first time.
 
 ### One-Time Actions per Azure DevOps Project
 
