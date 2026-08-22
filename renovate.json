@@ -76,14 +76,6 @@
       "groupName": "copier"
     },
     {
-      "description": "Group invoke",
-      "matchPackageNames": [
-        "invoke",
-        "pipx:invoke"
-      ],
-      "groupName": "invoke"
-    },
-    {
       "description": "Group lychee",
       "matchPackageNames": [
         "lychee",

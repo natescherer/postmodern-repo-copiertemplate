@@ -6,8 +6,23 @@ postinstall = [
 [settings]
 experimental = true # Needed for hooks as of v2025.6.2
 
+[env]
+# Centralize tool caches under .cache/ instead of scattering them across the repo root.
+PYTHONPYCACHEPREFIX = ".cache/pycache"
+RUMDL_CACHE_DIR = ".cache/rumdl"
+PYTEST_ADDOPTS = "-o cache_dir=.cache/pytest"
+RUFF_CACHE_DIR = ".cache/ruff"
+
 [tasks.copier-update]
 run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust"
+
+[tasks.set-lifecycle]
+# Re-prompts just the `lifecycle` question (--ask overrides --skip-answered for it,
+# showing its normal choice menu with the current value pre-selected) without pulling
+# in a template update alongside it -- `--vcs-ref=:current:` pins the update to the
+# currently-installed template version instead of the latest one. Both flags' minimum
+# copier versions are enforced by this project's own _min_copier_version.
+run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust --vcs-ref=:current: --ask lifecycle"
 
 [tasks.docs-server]
 run = "zensical serve"
@@ -16,14 +31,19 @@ run = "zensical serve"
 run = "pytest tests/"
 
 [tasks.integration-test-gh]
-run = '''
-copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'repo_setup_actions=Create Repo' -d 'developer_platform=GitHub' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Public' -d 'license=MIT' -d 'lifecycle=Pre-Alpha' https://github.com/natescherer/postmodern-repo-copiertemplate {{option(name="path")}}
-'''
+# Same script maint-integration_test.yml runs in CI (--cleanup added there) -- see
+# that file for what this actually verifies and why. Repo is left in place here by
+# default so it can be inspected; pass --cleanup yourself to delete it.
+run = 'python scripts/integration_test_github.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --vcs-ref={{option(name="branch",default="HEAD")}} --repo-prefix postmodern-repo-copiertemplate'
 
 [tasks.integration-test-azdo]
-run = '''
-copier copy --trust --vcs-ref={{option(name="branch",default="HEAD")}} -d 'repo_setup_actions=Create Repo' -d 'developer_platform=Azure DevOps' -d 'project_description=Integration Test - NOT FOR PUBLIC USE' -d 'project_type=Template' -d 'project_name=Integration Test' -d 'project_visibility=Private' -d 'license=None' -d 'lifecycle=Pre-Alpha' https://github.com/natescherer/postmodern-repo-copiertemplate {{option(name="path")}}
-'''
+# Same script maint-integration_test.yml runs in CI (--cleanup added there) -- see
+# that file for what this actually verifies and why. Repo is left in place here by
+# default so it can be inspected; pass --cleanup yourself to delete it. --org/--project
+# default to this project's own Azure DevOps org/project when using_azdo, otherwise
+# there's no natural default and they must be passed explicitly, e.g.
+# `mise run integration-test-azdo -- --org myorg --project myproject`.
+run = 'python scripts/integration_test_azdo.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --vcs-ref={{option(name="branch",default="HEAD")}} --repo-prefix postmodern-repo-copiertemplate --org {{option(name="org")}} --project "{{option(name="project")}}"'
 
 [tools]
 # Backends
@@ -31,6 +51,7 @@ python = "3.14.7" # Used by copier
 uv = "0.12.2" # Used by pipx tools
 # Tools
 actionlint = "1.7.12"
+"aqua:cli/cli" = "2.97.0"
 "aqua:crate-ci/typos" = "1.49.0"
 "aqua:j178/prek" = "0.4.12"
 "aqua:owenlamont/ryl" = "0.21.0"
@@ -52,10 +73,6 @@ version = "9.1.1"
 # GitHub, ##vso[task.logissue] on Azure DevOps) with zero config -- they auto-detect
 # their CI via the env vars each platform already sets.
 uvx_args = "--with pyyaml==6.0.3 --with jinja2==3.1.6 --with jinja2-ansible-filters==1.3.2 --with pytest-github-actions-annotate-failures==0.4.2"
-
-[tools."pipx:invoke"]
-version = "3.0.3"
-uvx_args = "--with copier==9.17.1 --with githubkit==0.16.0 --with requests==2.34.2 --with rich==15.0.0"
 
 [tools."pipx:zensical"]
 version = "0.0.53"

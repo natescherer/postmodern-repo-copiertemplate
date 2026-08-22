@@ -2,8 +2,9 @@
 
 This page walks through what each Copier question controls, and what it triggers behind the
 scenes. Questions not listed here (`repo_name`, `author_name`, `project_name`,
-`project_description`, and the PAT/token prompts) are self-explanatory and only affect their own
-value — see [Token Permissions](token_permissions.md) for the tokens.
+`project_description`) are self-explanatory and only affect their own value. Neither platform
+prompts for a token anymore — repo setup uses `gh auth login` (GitHub) or `az login` (Azure
+DevOps) instead — see [Prerequisites](prerequisites.md) and [Token Permissions](token_permissions.md).
 
 ## `developer_platform`: GitHub / Azure DevOps
 
@@ -16,13 +17,22 @@ same way. See [Azure DevOps Limitations](platform_notes/azure_devops.md) and
 
 ## `repo_setup_actions`: Create Repo / Set Repo Rules / None
 
-Controls which setup automation runs after the template is copied:
+Controls which setup automation runs after the template is copied. `.github/settings.yml` (GitHub
+only) is always generated regardless of this answer -- see below. Choosing anything but `None`
+triggers this question's validator, which checks the relevant platform CLI (`gh` or `az`) is
+installed and authenticated *before* letting you proceed -- see [Prerequisites](prerequisites.md).
 
-- **Create Repo** — creates the remote repo, sets repo settings/branch protection, and (GitHub
-  only) sets up GitHub Pages if applicable.
-- **Set Repo Rules** — skips repo creation (for an existing repo) but still applies settings and
-  branch protection.
+- **Create Repo** — creates the remote repo; on GitHub also sets Actions workflow permissions and
+  sets up GitHub Pages if applicable; on Azure DevOps also registers pipelines for each file under
+  `.azurepipelines/`.
+- **Set Repo Rules** — skips repo creation (for an existing repo) but still applies the other
+  automation above.
 - **None** — skips all of it; you're on your own for repo creation and settings.
+
+Whichever you choose, GitHub projects still get a generated `.github/settings.yml`, applied
+automatically if you've installed the [Settings GitHub App](https://github.com/apps/settings) (see
+[Prerequisites](prerequisites.md)) or by hand per [Manual Repo Settings](manual_repo_settings.md)
+if you haven't. Choosing `None` prints a reminder about this at the end of the run.
 
 ## `project_type`: Standard / Template
 
@@ -30,6 +40,18 @@ Controls which setup automation runs after the template is copied:
 of its own (so your project can itself be used as a Copier template — this is how this repo
 works), a fuller `docs/` set explaining the template's own features, and template-authoring tasks
 like `mise run integration-test-gh`/`integration-test-azdo`.
+
+## `integration_test_scheduled`: Yes / No (Template projects only)
+
+Whether to also generate a scheduled maintenance job/pipeline that periodically creates a real,
+throwaway repo from your template and verifies its repo-setup automation still works end to end,
+then deletes it. On GitHub this is `maint-integration_test.yml`; on Azure DevOps it's
+`.azurepipelines/integration_test.yml` (registered as a pipeline automatically, same as the other
+files under `.azurepipelines/`). Both need a token secret configured after copy -- see the
+"Integration Test PAT" sections in [Token Permissions](token_permissions.md) -- and the GitHub
+workflow's Azure DevOps job additionally needs its org/project placeholders edited by hand, since
+there's no way for a GitHub-hosted workflow to auto-detect which Azure DevOps org/project to test
+against.
 
 ## `project_visibility`: Public / Private
 
