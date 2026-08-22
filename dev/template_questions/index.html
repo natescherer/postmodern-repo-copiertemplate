@@ -434,6 +434,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#integration_test_scheduled-yes-no-template-projects-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>integration_test_scheduled</code>: Yes / No (Template projects only)
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#project_visibility-public-private" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -544,6 +555,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../manual_repo_settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Manual Repo Settings
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../public_vs_private_repos/" class="md-nav__link">
         
   
@@ -593,7 +630,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -614,14 +651,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -717,10 +754,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
             
   
   
@@ -737,8 +774,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -843,6 +880,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#integration_test_scheduled-yes-no-template-projects-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>integration_test_scheduled</code>: Yes / No (Template projects only)
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#project_visibility-public-private" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -915,8 +963,9 @@
 <h1 id="template-questions">Template Questions<a class="headerlink" href="#template-questions" title="Permanent link">&para;</a></h1>
 <p>This page walks through what each Copier question controls, and what it triggers behind the
 scenes. Questions not listed here (<code>repo_name</code>, <code>author_name</code>, <code>project_name</code>,
-<code>project_description</code>, and the PAT/token prompts) are self-explanatory and only affect their own
-value — see <a href="../token_permissions/">Token Permissions</a> for the tokens.</p>
+<code>project_description</code>) are self-explanatory and only affect their own value. Neither platform
+prompts for a token anymore — repo setup uses <code>gh auth login</code> (GitHub) or <code>az login</code> (Azure
+DevOps) instead — see <a href="../prerequisites/">Prerequisites</a> and <a href="../token_permissions/">Token Permissions</a>.</p>
 <h2 id="developer_platform-github-azure-devops"><code>developer_platform</code>: GitHub / Azure DevOps<a class="headerlink" href="#developer_platform-github-azure-devops" title="Permanent link">&para;</a></h2>
 <p>Determines which platform-specific files get generated: GitHub gets <code>.github/workflows/</code>,
 Azure DevOps gets <code>.azurepipelines/</code>. This choice also locks out some other options — Azure DevOps
@@ -925,19 +974,37 @@ projects can't use <code>GitHub Pages</code> for <code>zensical_target</code> or
 same way. See <a href="../platform_notes/azure_devops/">Azure DevOps Limitations</a> and
 <a href="../platform_notes/github_org/">GitHub Org Limitations</a> for platform-specific details.</p>
 <h2 id="repo_setup_actions-create-repo-set-repo-rules-none"><code>repo_setup_actions</code>: Create Repo / Set Repo Rules / None<a class="headerlink" href="#repo_setup_actions-create-repo-set-repo-rules-none" title="Permanent link">&para;</a></h2>
-<p>Controls which setup automation runs after the template is copied:</p>
+<p>Controls which setup automation runs after the template is copied. <code>.github/settings.yml</code> (GitHub
+only) is always generated regardless of this answer -- see below. Choosing anything but <code>None</code>
+triggers this question's validator, which checks the relevant platform CLI (<code>gh</code> or <code>az</code>) is
+installed and authenticated <em>before</em> letting you proceed -- see <a href="../prerequisites/">Prerequisites</a>.</p>
 <ul>
-<li><strong>Create Repo</strong> — creates the remote repo, sets repo settings/branch protection, and (GitHub
-  only) sets up GitHub Pages if applicable.</li>
-<li><strong>Set Repo Rules</strong> — skips repo creation (for an existing repo) but still applies settings and
-  branch protection.</li>
+<li><strong>Create Repo</strong> — creates the remote repo; on GitHub also sets Actions workflow permissions and
+  sets up GitHub Pages if applicable; on Azure DevOps also registers pipelines for each file under
+  <code>.azurepipelines/</code>.</li>
+<li><strong>Set Repo Rules</strong> — skips repo creation (for an existing repo) but still applies the other
+  automation above.</li>
 <li><strong>None</strong> — skips all of it; you're on your own for repo creation and settings.</li>
 </ul>
+<p>Whichever you choose, GitHub projects still get a generated <code>.github/settings.yml</code>, applied
+automatically if you've installed the <a href="https://github.com/apps/settings">Settings GitHub App</a> (see
+<a href="../prerequisites/">Prerequisites</a>) or by hand per <a href="../manual_repo_settings/">Manual Repo Settings</a>
+if you haven't. Choosing <code>None</code> prints a reminder about this at the end of the run.</p>
 <h2 id="project_type-standard-template"><code>project_type</code>: Standard / Template<a class="headerlink" href="#project_type-standard-template" title="Permanent link">&para;</a></h2>
 <p><strong>Standard</strong> generates a normal project repo. <strong>Template</strong> additionally generates a <code>copier.yml</code>
 of its own (so your project can itself be used as a Copier template — this is how this repo
 works), a fuller <code>docs/</code> set explaining the template's own features, and template-authoring tasks
 like <code>mise run integration-test-gh</code>/<code>integration-test-azdo</code>.</p>
+<h2 id="integration_test_scheduled-yes-no-template-projects-only"><code>integration_test_scheduled</code>: Yes / No (Template projects only)<a class="headerlink" href="#integration_test_scheduled-yes-no-template-projects-only" title="Permanent link">&para;</a></h2>
+<p>Whether to also generate a scheduled maintenance job/pipeline that periodically creates a real,
+throwaway repo from your template and verifies its repo-setup automation still works end to end,
+then deletes it. On GitHub this is <code>maint-integration_test.yml</code>; on Azure DevOps it's
+<code>.azurepipelines/integration_test.yml</code> (registered as a pipeline automatically, same as the other
+files under <code>.azurepipelines/</code>). Both need a token secret configured after copy -- see the
+"Integration Test PAT" sections in <a href="../token_permissions/">Token Permissions</a> -- and the GitHub
+workflow's Azure DevOps job additionally needs its org/project placeholders edited by hand, since
+there's no way for a GitHub-hosted workflow to auto-detect which Azure DevOps org/project to test
+against.</p>
 <h2 id="project_visibility-public-private"><code>project_visibility</code>: Public / Private<a class="headerlink" href="#project_visibility-public-private" title="Permanent link">&para;</a></h2>
 <p>Public repos get contributor-facing files that don't make sense for private code: the
 <code>CONTRIBUTING.md</code> "Ground Rules" section, <code>.all-contributorsrc</code>, and the All Contributors

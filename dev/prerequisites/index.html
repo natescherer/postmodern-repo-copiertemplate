@@ -506,6 +506,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../manual_repo_settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Manual Repo Settings
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../public_vs_private_repos/" class="md-nav__link">
         
   
@@ -555,7 +581,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -576,14 +602,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -679,10 +705,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
             
   
   
@@ -699,8 +725,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -840,6 +866,16 @@
 <h2 id="github">GitHub<a class="headerlink" href="#github" title="Permanent link">&para;</a></h2>
 <h3 id="one-time-actions-per-github-userorganization">One-Time Actions Per GitHub User/Organization<a class="headerlink" href="#one-time-actions-per-github-userorganization" title="Permanent link">&para;</a></h3>
 <ol>
+<li>Install the <a href="https://cli.github.com">GitHub CLI</a> (<code>gh</code>) and run <code>gh auth login</code> (default
+   scopes are enough). Unless you choose <code>None</code> for the <code>repo_setup_actions</code> question, this is
+   used instead of a Personal Access Token to create/configure your repo. The <code>repo_setup_actions</code>
+   question's validator checks that <code>gh</code> is installed and authenticated before letting you
+   proceed.</li>
+<li>Make sure <a href="https://github.com/git-ecosystem/git-credential-manager">Git Credential Manager</a> is
+   installed (bundled with Git for Windows if you enabled it during install; a separate install on
+   macOS/Linux). <code>gh auth login</code>'s default scopes don't cover pushing <code>.github/workflows/</code> files --
+   see <a href="../token_permissions/#gh-auth-login-scopes">Token Permissions</a> for why -- so GCM handles the
+   initial push with its own (separate) interactive GitHub sign-in the first time.</li>
 <li>Install the <a href="https://github.com/apps/allcontributors/installations/new">AllContributors GitHub App</a> for your user or organization.<ul>
 <li>This app provides automatic README crediting when other people contribute to your project</li>
 <li>If you know you are only going to be making Private projects, you can skip installing this app</li>
@@ -851,12 +887,18 @@
 <li>It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.</li>
 </ul>
 </li>
+<li>Install the <a href="https://github.com/apps/settings">Settings GitHub App</a> for your user or organization.<ul>
+<li>This app syncs repo settings (labels, merge options, branch protection) from the committed <code>.github/settings.yml</code>, which is always generated for GitHub projects</li>
+<li>It must have access to a repo <em>before</em> that repo is created for its settings to apply, so grant it access to all your repositories up front, same as the apps above</li>
+<li>Skipping this is fine -- see <a href="../manual_repo_settings/">Manual Repo Settings</a> for how to apply the same configuration by hand instead</li>
+</ul>
+</li>
 <li>Ensure <code>Private vulnerability reporting &gt; Automatically enable for new public repositories</code> is checked <a href="https://github.com/settings/security_analysis">in the repo settings</a>.</li>
 </ol>
 <h2 id="personal-access-tokens">Personal Access Tokens<a class="headerlink" href="#personal-access-tokens" title="Permanent link">&para;</a></h2>
-<p>Unless you choose <code>None</code> for the <code>repo_setup_actions</code> question, Copier will prompt you for a
-Personal Access Token part-way through the run. See <a href="../token_permissions/">Token Permissions</a> for
-the minimum scopes needed and why.</p>
+<p>GitHub no longer needs one for repo setup -- see the <code>gh auth login</code> step above. See
+<a href="../token_permissions/">Token Permissions</a> for the separate, ongoing <strong>Repo Maintenance PAT</strong> used
+by this project's own GitHub Actions workflows.</p>
 
 
 

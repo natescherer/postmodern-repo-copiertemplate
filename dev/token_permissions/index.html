@@ -14,7 +14,7 @@
         <link rel="prev" href="../lifecycle_management/">
       
       
-        <link rel="next" href="../public_vs_private_repos/">
+        <link rel="next" href="../manual_repo_settings/">
       
       
         
@@ -465,10 +465,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#repo-setup-pat-classic-token" class="md-nav__link">
+  <a href="#gh-auth-login-scopes" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Repo Setup PAT (Classic Token)
+        <code>gh auth login</code> Scopes
       </span>
     </span>
   </a>
@@ -486,19 +486,30 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#azure-devops" class="md-nav__link">
+          <li class="md-nav__item">
+  <a href="#integration-test-pat-classic-token" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Azure DevOps
+        Integration Test PAT (Classic Token)
       </span>
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-test-pat-for-azure-devops" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Integration Test PAT for Azure DevOps
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -506,6 +517,32 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual_repo_settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Manual Repo Settings
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -566,7 +603,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -587,14 +624,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -690,10 +727,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
             
   
   
@@ -710,8 +747,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -795,10 +832,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#repo-setup-pat-classic-token" class="md-nav__link">
+  <a href="#gh-auth-login-scopes" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Repo Setup PAT (Classic Token)
+        <code>gh auth login</code> Scopes
       </span>
     </span>
   </a>
@@ -816,19 +853,30 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#azure-devops" class="md-nav__link">
+          <li class="md-nav__item">
+  <a href="#integration-test-pat-classic-token" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Azure DevOps
+        Integration Test PAT (Classic Token)
       </span>
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-test-pat-for-azure-devops" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Integration Test PAT for Azure DevOps
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -859,33 +907,22 @@
 
 
 <h1 id="token-permissions">Token Permissions<a class="headerlink" href="#token-permissions" title="Permanent link">&para;</a></h1>
-<p>This doc details the minimum scopes/permissions needed for GitHub/Azure DevOps tokens needed to use this template, along with reasons why.</p>
+<p>This doc details the minimum scopes/permissions needed to use this template, along with reasons
+why. Neither platform requires a prompted Personal Access Token for repo setup anymore -- both use
+the platform's own CLI session instead (<code>gh auth login</code> / <code>az login</code>).</p>
 <h2 id="github">GitHub<a class="headerlink" href="#github" title="Permanent link">&para;</a></h2>
-<p>For best security, you should create two GitHub Personal Access tokens via <a href="https://github.com/settings/personal-access-tokens/new">this link</a>, a <strong>Repo Setup PAT</strong> and a <strong>Repo Maintenance PAT</strong>, permissions of which are detailed below.</p>
-<p>The <strong>Repo Setup PAT</strong> can be stored in your password vault of choice, as you will only need it when you are creating a new repo via this template.</p>
-<p>The <strong>Repo Maintenance PAT</strong> should be saved as a GitHub Actions secret on the repository called <strong>REPO_MAINTENANCE_PAT</strong>.</p>
-<p>NOTE: Fine-grained tokens are specifically <strong>not</strong> used, as they cannot open pull requests. This can be changed once <a href="https://github.com/github/roadmap/issues/600">this issue</a> is implemented by GitHub.</p>
-<h3 id="repo-setup-pat-classic-token">Repo Setup PAT (Classic Token)<a class="headerlink" href="#repo-setup-pat-classic-token" title="Permanent link">&para;</a></h3>
-<p><strong>Repository Access</strong>: All repositories</p>
-<table>
-<thead>
-<tr>
-<th><strong>Scope</strong></th>
-<th><strong>Reason</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>repo</td>
-<td>Needed to create repo &amp; set its settings</td>
-</tr>
-<tr>
-<td>workflow</td>
-<td>Needed to commit GitHub Actions workflows</td>
-</tr>
-</tbody>
-</table>
+<h3 id="gh-auth-login-scopes"><code>gh auth login</code> Scopes<a class="headerlink" href="#gh-auth-login-scopes" title="Permanent link">&para;</a></h3>
+<p>Repo creation and configuration (labels, merge options, branch protection, Actions permissions,
+Pages) uses the <a href="https://cli.github.com">GitHub CLI</a>'s own authenticated session rather than a
+prompted Personal Access Token -- see <a href="../prerequisites/">Prerequisites</a>. Default scopes (<code>repo</code>
+among them) are enough; no need for <code>gh auth login --scopes ...</code>. The initial <code>git push</code> is a
+separate matter -- <code>gh auth login</code>'s scopes don't cover pushing <code>.github/workflows/</code> files
+regardless, so that step uses Git Credential Manager's own login instead, not <code>gh</code>'s.</p>
 <h3 id="repo-maintenance-pat-classic-token">Repo Maintenance PAT (Classic Token)<a class="headerlink" href="#repo-maintenance-pat-classic-token" title="Permanent link">&para;</a></h3>
+<p>For best security, create this token via <a href="https://github.com/settings/personal-access-tokens/new">this link</a>
+and save it as a GitHub Actions secret on the repository called <strong>REPO_MAINTENANCE_PAT</strong>. This is
+separate from <code>gh auth login</code> above -- it's used on an ongoing basis by this project's own GitHub
+Actions workflows (Copier update checks, Release Please), not just at setup time.</p>
 <p><strong>Repository Access</strong>: All repositories</p>
 <table>
 <thead>
@@ -901,7 +938,14 @@
 </tr>
 </tbody>
 </table>
-<h2 id="azure-devops">Azure DevOps<a class="headerlink" href="#azure-devops" title="Permanent link">&para;</a></h2>
+<p>NOTE: Fine-grained tokens are specifically <strong>not</strong> used, as they cannot open pull requests. This can be changed once <a href="https://github.com/github/roadmap/issues/600">this issue</a> is implemented by GitHub.</p>
+<h3 id="integration-test-pat-classic-token">Integration Test PAT (Classic Token)<a class="headerlink" href="#integration-test-pat-classic-token" title="Permanent link">&para;</a></h3>
+<p>Create this token the same way as the Repo Maintenance PAT above and save it as a GitHub Actions
+secret called <strong>INTEGRATION_TEST_PAT</strong>. Used by <code>maint-integration_test.yml</code>, which creates a
+real, throwaway repo on a schedule to verify repo setup actually works end to end, then deletes
+it -- <code>delete_repo</code> is needed specifically for that cleanup step and isn't part of any other
+token this project uses.</p>
+<p><strong>Repository Access</strong>: All repositories</p>
 <table>
 <thead>
 <tr>
@@ -911,15 +955,38 @@
 </thead>
 <tbody>
 <tr>
-<td>Build: Read &amp; Execute</td>
-<td>Needed to allow creating Azure Pipelines</td>
+<td>repo</td>
+<td>Needed to create the test repo and read back its settings</td>
 </tr>
 <tr>
-<td>Code: Full</td>
-<td>Needed to create repo</td>
+<td>workflow</td>
+<td>Needed to push the test repo's initial commit (includes <code>.github/workflows/</code>)</td>
+</tr>
+<tr>
+<td>delete_repo</td>
+<td>Needed to delete the test repo during cleanup</td>
 </tr>
 </tbody>
 </table>
+<p>The account this token belongs to also needs the <a href="https://github.com/apps/settings">Settings GitHub App</a>
+installed with access to <strong>all</strong> repositories, not just selected ones -- the workflow's
+verification step checks that the app actually synced <code>.github/settings.yml</code> (labels, branch
+ruleset) to the freshly-created test repo, and an app installed on "only select repositories"
+never automatically gains access to a repo created after the fact.</p>
+<h3 id="integration-test-pat-for-azure-devops">Integration Test PAT for Azure DevOps<a class="headerlink" href="#integration-test-pat-for-azure-devops" title="Permanent link">&para;</a></h3>
+<p><code>maint-integration_test.yml</code> also runs a second job that creates a throwaway repo with
+<code>developer_platform=Azure DevOps</code> to verify that path end to end, regardless of which platform
+this project itself uses. Create an Azure DevOps PAT covering <strong>Code (Full)</strong> and <strong>Build (Read &amp;
+execute)</strong> for the target org/project -- the same permissions a signed-in <code>az login</code> session would
+need for repo/pipeline creation, just via a PAT since CI can't do an interactive login -- and save
+it as a GitHub Actions secret called <strong>AZURE_DEVOPS_EXT_PAT</strong> -- this exact name is what the <code>azure-devops</code> <code>az</code> CLI
+extension auto-detects for non-interactive auth, so it's reused as-is for both <code>az</code> calls and the
+test repo's initial <code>git push</code>. There's no way to auto-detect which Azure DevOps org/project the
+throwaway repo should be created in (unlike the AzDO-hosted pipeline below, which reads that from
+its own pipeline variables), so also edit the <code>integration-test-azdo</code> job's <code>env:</code> block directly
+in <code>maint-integration_test.yml</code>, replacing the <code>AZDO_INTEGRATION_TEST_ORG</code>/<code>AZDO_INTEGRATION_TEST_PROJECT</code>
+placeholder values with your real org/project -- left as placeholders, the job fails fast with an
+explanatory error instead of a confusing <code>az</code> CLI one.</p>
 
 
 
@@ -974,13 +1041,13 @@
         
         
           
-          <a href="../public_vs_private_repos/" class="md-footer__link md-footer__link--next" aria-label="Next: Public vs Private Repos">
+          <a href="../manual_repo_settings/" class="md-footer__link md-footer__link--next" aria-label="Next: Manual Repo Settings">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Public vs Private Repos
+                Manual Repo Settings
               </div>
             </div>
             <div class="md-footer__button md-icon">
