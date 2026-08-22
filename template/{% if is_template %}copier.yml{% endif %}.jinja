@@ -12,6 +12,11 @@ _answers_file: .config/copier-answers.yml
 _jinja_extensions:
   - jinja2_shell_extension.ShellExtension
 
+# mise.toml's `set-lifecycle` task depends on the `--ask` flag (copier-org/copier#2705),
+# which shipped in 9.17.0 -- newer than the `:current:` VCS ref sentinel it also needs
+# (copier-org/copier#2136, 9.8.0), so 9.17.0 is the effective floor.
+_min_copier_version: "9.17.0"
+
 _message_before_copy: Thanks for using this template! Please consult the 'Template Questions' page in documentation for deeper explanation of each question.
 
 _subdirectory: template
