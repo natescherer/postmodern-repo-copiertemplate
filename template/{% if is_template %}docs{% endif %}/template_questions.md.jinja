@@ -41,6 +41,18 @@ of its own (so your project can itself be used as a Copier template — this is 
 works), a fuller `docs/` set explaining the template's own features, and template-authoring tasks
 like `mise run integration-test-gh`/`integration-test-azdo`.
 
+## `integration_test_scheduled`: Yes / No (Template projects only)
+
+Whether to also generate a scheduled maintenance job/pipeline that periodically creates a real,
+throwaway repo from your template and verifies its repo-setup automation still works end to end,
+then deletes it. On GitHub this is `maint-integration_test.yml`; on Azure DevOps it's
+`.azurepipelines/integration_test.yml` (registered as a pipeline automatically, same as the other
+files under `.azurepipelines/`). Both need a token secret configured after copy -- see the
+"Integration Test PAT" sections in [Token Permissions](token_permissions.md) -- and the GitHub
+workflow's Azure DevOps job additionally needs its org/project placeholders edited by hand, since
+there's no way for a GitHub-hosted workflow to auto-detect which Azure DevOps org/project to test
+against.
+
 ## `project_visibility`: Public / Private
 
 Public repos get contributor-facing files that don't make sense for private code: the

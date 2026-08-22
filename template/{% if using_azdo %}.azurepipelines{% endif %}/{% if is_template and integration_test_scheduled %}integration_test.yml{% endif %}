@@ -1,0 +1,75 @@
+name: $(BuildId)-integration_test
+
+trigger:
+  branches:
+    exclude:
+      - "*"
+
+schedules:
+  - cron: 0 19 * * 1
+    displayName: Run Integration Test Every Monday at 7pm UTC
+    branches:
+      include:
+        - main
+
+variables:
+  CI: true
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: integration_test
+    displayName: Integration Test
+    jobs:
+      - job: integration_test
+        timeoutInMinutes: 60
+        displayName: Integration Test
+        steps:
+          - pwsh: |
+              $Secrets = @("AZURE_DEVOPS_EXT_PAT")
+              $MissingSecret = $False
+              foreach ($Secret in $Secrets) {
+                if (!([Environment]::GetEnvironmentVariable($Secret)) -or ([Environment]::GetEnvironmentVariable($Secret) -eq "`$($Secret)")) {
+                  Write-Host -Object "[error]Required Pipeline variable '$Secret' is not set! Please add it in Pipelines settings."
+                  $MissingSecret = $True
+                }
+              }
+              if ($MissingSecret) {
+                throw "Erroring as one or more required secrets are missing!"
+              }
+            env:
+              AZURE_DEVOPS_EXT_PAT: $(AZURE_DEVOPS_EXT_PAT)
+            displayName: Validate Secrets Exist
+          - checkout: self
+            fetchDepth: 0
+          - bash: |
+              curl https://mise.run | sh
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
+            displayName: Install Mise
+          - bash: mise install
+            displayName: Run 'mise install'
+          - bash: az extension add --name azure-devops --only-show-errors
+            displayName: Install Azure DevOps CLI Extension
+          - bash: |
+              # Same script `mise run integration-test-azdo` runs locally (there,
+              # --cleanup is left off so the repo stays around for inspection) -- see
+              # scripts/integration_test_azdo.py for what this verifies and why. Org
+              # and project are read from this pipeline's own predefined variables --
+              # the throwaway repo is always created in the same org/project this
+              # pipeline itself runs in, so there's nothing here to configure by hand.
+              ORG="${COLLECTION_URI%/}"
+              ORG="${ORG##*/}"
+              python scripts/integration_test_azdo.py \
+                --source "git+$(Build.Repository.Uri)" \
+                --vcs-ref="$(Build.SourceBranchName)" \
+                --repo-prefix "$(Build.Repository.Name)" \
+                --org "$ORG" \
+                --project "$(System.TeamProject)" \
+                --cleanup \
+                --ci
+            env:
+              AZURE_DEVOPS_EXT_PAT: $(AZURE_DEVOPS_EXT_PAT)
+              COLLECTION_URI: $(System.CollectionUri)
+            displayName: Create, Verify, and Clean Up Test Repo

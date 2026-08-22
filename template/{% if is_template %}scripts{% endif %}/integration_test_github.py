@@ -110,6 +110,8 @@ def create(
         "-d",
         "project_type=Template",
         "-d",
+        "integration_test_scheduled=true",
+        "-d",
         "project_name=Integration Test",
         "-d",
         "project_visibility=Public",
