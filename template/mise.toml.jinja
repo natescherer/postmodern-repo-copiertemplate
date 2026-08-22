@@ -18,6 +18,14 @@ RUFF_CACHE_DIR = ".cache/ruff"
 [tasks.copier-update]
 run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust"
 
+[tasks.set-lifecycle]
+# Re-prompts just the `lifecycle` question (--ask overrides --skip-answered for it,
+# showing its normal choice menu with the current value pre-selected) without pulling
+# in a template update alongside it -- `--vcs-ref=:current:` pins the update to the
+# currently-installed template version instead of the latest one. Both flags' minimum
+# copier versions are enforced by this project's own _min_copier_version.
+run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust --vcs-ref=:current: --ask lifecycle"
+
 [tasks.docs-server]
 run = "zensical serve"
 {%- if is_template %}
