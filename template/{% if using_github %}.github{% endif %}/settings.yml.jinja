@@ -10,6 +10,10 @@ repository:
   allow_auto_merge: true
   delete_branch_on_merge: true
 
+# The Settings App treats this list as authoritative: any label that exists on the
+# repo but isn't listed here gets deleted on sync -- including GitHub's own
+# auto-created defaults (bug, enhancement, etc.), which is why they're listed
+# explicitly below rather than left for GitHub to create on its own.
 labels:
   - name: awaiting pr
     color: 668F04
@@ -17,6 +21,36 @@ labels:
   - name: blocked
     color: B60205
     description: Blocked by an external dependency
+  - name: accessibility
+    color: f143ab
+    description: Barrier affecting people with disabilities
+  - name: bug
+    color: d73a4a
+    description: Something isn't working
+  - name: documentation
+    color: 0075ca
+    description: Improvements or additions to documentation
+  - name: duplicate
+    color: cfd3d7
+    description: This issue or pull request already exists
+  - name: enhancement
+    color: a2eeef
+    description: New feature or request
+  - name: good first issue
+    color: 7057ff
+    description: Good for newcomers
+  - name: help wanted
+    color: "008672"
+    description: Extra attention is needed
+  - name: invalid
+    color: e4e669
+    description: This doesn't seem right
+  - name: question
+    color: d876e3
+    description: Further information is requested
+  - name: wontfix
+    color: ffffff
+    description: This will not be worked on
 
 rulesets:
   - name: default-branch-protection
