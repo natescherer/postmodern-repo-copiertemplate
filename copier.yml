@@ -90,6 +90,12 @@ project_type:
     - Standard
     - Template
   default: Standard
+integration_test_scheduled:
+  type: bool
+  help: |
+    {% if not project_initialized %}Schedule a maintenance job/pipeline that periodically creates and tears down a real throwaway repo to verify this template's repo-setup automation still works end to end. Requires configuring a token secret (and, for the Azure DevOps job in a GitHub-hosted workflow, an org/project) after copy -- see the 'Integration Test PAT' sections in docs/token_permissions.md.{% else %}Locked value on update, press Enter.{% endif %}
+  default: false
+  when: "{{ project_type == 'Template' }}"
 project_name:
   type: str
   help: The friendly name of this project, which can include captitals, spaces, etc.
@@ -285,6 +291,8 @@ _tasks:
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
   - command: az pipelines create --name "[{{ repo_name }}] release" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/release.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
     when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
+  - command: az pipelines create --name "[{{ repo_name }}] integration_test" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/integration_test.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
+    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo and is_template and integration_test_scheduled %}true{% endif %}"
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
     when: "{% if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
 
