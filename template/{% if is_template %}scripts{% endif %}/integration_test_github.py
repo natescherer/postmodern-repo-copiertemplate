@@ -22,6 +22,12 @@ REQUIRED_SCOPES = ("repo", "workflow", "delete_repo")
 # Must match _tasks' project_description -d flag in create() below.
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
+# Must match .github/settings.yml.jinja's `labels:` list, sorted.
+EXPECTED_LABELS = (
+    "accessibility,awaiting pr,blocked,bug,documentation,duplicate,enhancement,"
+    "good first issue,help wanted,invalid,question,wontfix"
+)
+
 
 def run(
     *args: str, check: bool = True, capture: bool = False
@@ -156,7 +162,7 @@ def settings_synced(repo: str, homepage: str) -> bool:
         check=False,
         capture=True,
     )
-    if labels.returncode != 0 or labels.stdout.strip() != "awaiting pr,blocked":
+    if labels.returncode != 0 or labels.stdout.strip() != EXPECTED_LABELS:
         return False
 
     rulesets = run(
