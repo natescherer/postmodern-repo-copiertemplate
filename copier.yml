@@ -13,56 +13,85 @@ _message_before_copy: Thanks for using this template! Please consult the 'Templa
 
 _subdirectory: template
 
-## The below variables are used to track parent/child template relationships and should not be manually adjusted.
+## Start Parent Template Values - DO NOT EDIT
 parent_template_name:
   type: str
   default: Postmodern Repo Copier Template
   when: false
+
 parent_template_url:
   type: str
-  default: https://github.com/natescherer/postmodern-repo-copiertemplate
+  default: >-
+    https://github.com/natescherer/postmodern-repo-copiertemplate
   when: false
+## End Parent Template Values - DO NOT EDIT
 
-## Questions
-repo_name:
-  type: str
-  help: |
-    {% if not project_initialized %}The name of this project's Git repository. Defaults to the name of the destination folder.{% else %}Locked value on update, press Enter.{% endif %}
-  default: "{{ _copier_conf.dst_path | basename }}"
-
-author_name:
-  type: str
-  help: The name to whom this project will be credited. Autodetect attempted from Git 'user.name'.
-  default: "{{ 'git config --global user.name' | shell() | trim }}"
-
+## Start Questions
 developer_platform:
   type: str
   help: |
-    {% if not project_initialized %}The platform where you are going to host your Git repo and CI/CD.{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      The platform where you are going to host your Git repo and CI/CD.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   choices:
     - GitHub
     - Azure DevOps
   default: GitHub
+
 repo_setup_actions:
   type: str
   help: |
-    {% if not project_initialized %}New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Don't want to do anything? 'None'.{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Don't want to do anything? 'None'.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   choices:
     - Create Repo
     - Set Repo Rules
     - None
   default: Create Repo
-  # Fails fast with an actionable message instead of a confusing error deep into repo
-  # setup. jinja2_shell_extension's shell() filter merges stderr into its captured
-  # output (stderr=subprocess.STDOUT), so a failing command's error text still reads
-  # as non-empty -- an explicit '&& echo <marker>' (portable across cmd.exe and sh) is
-  # used instead of checking for empty output.
-  validator: "{% if not project_initialized and repo_setup_actions != 'None' %}{% if developer_platform == 'GitHub' %}{% set gh_check = ('gh --version && echo GH_INSTALLED' | shell()) %}{% if 'GH_INSTALLED' not in gh_check %}GitHub CLI ('gh') is not installed or not on PATH. Install it, then try again.{% else %}{% set gh_auth_check = ('gh api user --jq .login && echo GH_AUTHED' | shell()) %}{% if 'GH_AUTHED' not in gh_auth_check %}GitHub CLI ('gh') is installed but not authenticated. Run 'gh auth login', then try again.{% endif %}{% endif %}{% elif developer_platform == 'Azure DevOps' %}{% set az_check = ('az --version && echo AZ_INSTALLED' | shell()) %}{% if 'AZ_INSTALLED' not in az_check %}Azure CLI ('az') is not installed. Install it (see https://learn.microsoft.com/cli/azure/install-azure-cli), then try again.{% else %}{% set az_ext_check = ('az extension show --name azure-devops && echo AZ_EXT_INSTALLED' | shell()) %}{% if 'AZ_EXT_INSTALLED' not in az_ext_check %}Azure CLI is installed but the azure-devops extension isn't. Run 'az extension add --name azure-devops', then try again.{% else %}{% set az_auth_check = ('az account show && echo AZ_AUTHED' | shell()) %}{% if 'AZ_AUTHED' not in az_auth_check %}Azure CLI is installed but not logged in. Run 'az login', then try again.{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}"
+  # This validator makes sure you have the proper CLI for your platform both installed and logged in
+  validator: |-
+    {%- if not project_initialized and repo_setup_actions != 'None' -%}
+      {%- if developer_platform == 'GitHub' -%}
+        {%- set gh_check = ('gh --version && echo GH_INSTALLED' | shell()) -%}
+        {%- if 'GH_INSTALLED' not in gh_check -%}
+          GitHub CLI ('gh') is not installed or not on PATH. Install it, then try again.
+        {%- else -%}
+          {%- set gh_auth_check = ('gh api user --jq .login && echo GH_AUTHED' | shell()) -%}
+          {%- if 'GH_AUTHED' not in gh_auth_check -%}
+            GitHub CLI ('gh') is installed but not authenticated. Run 'gh auth login', then try again.
+          {%- endif -%}
+        {%- endif -%}
+      {%- elif developer_platform == 'Azure DevOps' -%}
+        {%- set az_check = ('az --version && echo AZ_INSTALLED' | shell()) -%}
+        {%- if 'AZ_INSTALLED' not in az_check -%}
+          Azure CLI ('az') is not installed. Install it (see https://learn.microsoft.com/cli/azure/install-azure-cli), then try again.
+        {%- else -%}
+          {%- set az_ext_check = ('az extension show --name azure-devops && echo AZ_EXT_INSTALLED' | shell()) -%}
+          {%- if 'AZ_EXT_INSTALLED' not in az_ext_check -%}
+            Azure CLI is installed but the azure-devops extension isn't. Run 'az extension add --name azure-devops', then try again.
+          {%- else -%}
+            {%- set az_auth_check = ('az account show && echo AZ_AUTHED' | shell()) -%}
+            {%- if 'AZ_AUTHED' not in az_auth_check -%}
+              Azure CLI is installed but not logged in. Run 'az login', then try again.
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
 
 github_username:
   type: str
   help: |
-    {% if not project_initialized %}Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   # Assumes GitHub's noreply-email pattern (12345+username@users.noreply.github.com); for any
   # other "+"-tagged email (e.g. user+tag@gmail.com) this will incorrectly default to the tag.
   default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
@@ -71,36 +100,73 @@ github_username:
 github_org:
   type: str
   help: |
-    {% if not project_initialized %}If this repo is part of a GitHub organization, supply its name here, otherwise leave the default value of 'None'.{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      If this repo is part of a GitHub organization, supply its name here, otherwise leave the default value of 'None'.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   default: None
   when: "{{ developer_platform == 'GitHub' }}"
 
 azdo_org:
   type: str
   help: |
-    {% if not project_initialized %}The Azure DevOps organization for this project.{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      The Azure DevOps organization for this project.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
 azdo_project:
   type: str
   help: |
-    {% if not project_initialized %}The Azure DevOps project for your repo.{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      The Azure DevOps project for your repo.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   when: "{{ developer_platform == 'Azure DevOps' }}"
+
+repo_name:
+  type: str
+  help: |
+    {%- if not project_initialized -%}
+      The name of this project's Git repository. Defaults to the name of the destination folder.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
+  default: "{{ _copier_conf.dst_path | basename }}"
+
+author_name:
+  type: str
+  help: The name to whom this project will be credited. Autodetect attempted from Git 'user.name'.
+  default: "{{ 'git config --global user.name' | shell() | trim }}"
 
 project_type:
   type: str
   help: |
-    {% if not project_initialized %}If you are creating a basic repo, choose Standard. If you are creating a child template, choose Template.{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      If you are creating a basic repo, choose Standard. If you are creating a child template, choose Template.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   choices:
     - Standard
     - Template
   default: Standard
+
 integration_test_scheduled:
   type: bool
   help: |
-    {% if not project_initialized %}Schedule a maintenance job/pipeline that periodically creates and tears down a real throwaway repo to verify this template's repo-setup automation still works end to end. Requires configuring a token secret (and, for the Azure DevOps job in a GitHub-hosted workflow, an org/project) after copy -- see the 'Integration Test PAT' sections in docs/token_permissions.md.{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      Schedule a maintenance job/pipeline to periodically run integration tests.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   default: false
   when: "{{ project_type == 'Template' }}"
+
 project_name:
   type: str
   help: The friendly name of this project, which can include captitals, spaces, etc.
@@ -112,35 +178,64 @@ project_description:
 project_visibility:
   type: str
   help: |
-    {% if not project_initialized %}Choose if you want this project to be Public or Private.{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      Choose if you want this project to be Public or Private.
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   choices:
     Public:
       value: Public
-      validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
+      validator: |-
+        {%- if developer_platform == 'Azure DevOps' -%}
+          Not Supported on Azure DevOps
+        {%- endif %}
     Private:
       value: Private
-  default: "{% if developer_platform == 'Azure DevOps' %}Private{% else %}Public{% endif %}"
+  default: |-
+    {%- if developer_platform == 'Azure DevOps' -%}
+      Private
+    {%- else -%}
+      Public
+    {%- endif %}
+
 license:
   type: str
   help: Choose the license for this project.
   choices:
     MIT:
       value: MIT
-      validator: "{% if project_visibility == 'Private' %}Not Supported on Private repos{% endif %}"
+      validator: |-
+        {%- if project_visibility == 'Private' -%}
+          Not Supported on Private repos
+        {%- endif %}
     None:
       value: None
 
 zensical_target:
   type: str
   help: |
-    {% if not project_initialized %}Choose how you want to publish your documentation{% else %}Locked value on update, press Enter.{% endif %}
+    {%- if not project_initialized -%}
+      Choose how you want to publish your documentation
+    {%- else -%}
+      Locked value on update, press Enter.
+    {%- endif %}
   choices:
     GitHub Pages:
       value: GitHub Pages
-      validator: "{% if developer_platform == 'Azure DevOps' %}Not Supported on Azure DevOps{% endif %}"
+      validator: |-
+        {%- if developer_platform == 'Azure DevOps' -%}
+          Not Supported on Azure DevOps
+        {%- endif %}
     docs_site Directory in Repo:
       value: docs_site Directory in Repo
-  default: "{% if developer_platform == 'Azure DevOps' %}docs_site Directory in Repo{% else %}GitHub Pages{% endif %}"
+  default: |-
+    {%- if developer_platform == 'Azure DevOps' -%}
+      docs_site Directory in Repo
+    {%- else -%}
+      GitHub Pages
+    {%- endif %}
+
 lifecycle:
   type: str
   help: Choose what state this project is in.
@@ -150,22 +245,33 @@ lifecycle:
     - Beta
     - Stable
     - Inactive
+## End Questions
 
-## Computed Values
-
+## Start Computed Values
 using_github:
   type: bool
-  default: "{% if developer_platform == 'GitHub' %}true{% endif %}"
+  default: |-
+    {%- if developer_platform == 'GitHub' -%}
+      true
+    {%- endif %}
   when: false
 
 github_repo_owner:
   type: str
-  default: "{% if github_org and github_org != 'None' %}{{ github_org }}{% else %}{{ github_username }}{% endif %}"
+  default: |-
+    {%- if github_org and github_org != 'None' -%}
+      {{ github_org }}
+    {%- else -%}
+      {{ github_username }}
+    {%- endif %}
   when: false
 
 using_azdo:
   type: bool
-  default: "{% if developer_platform == 'Azure DevOps' %}true{% endif %}"
+  default: |-
+    {%- if developer_platform == 'Azure DevOps' -%}
+      true
+    {%- endif %}
   when: false
 
 azdo_project_encoded:
@@ -175,82 +281,113 @@ azdo_project_encoded:
 
 using_mit:
   type: bool
-  default: "{% if license == 'MIT' %}true{% endif %}"
+  default: |-
+    {%- if license == 'MIT' -%}
+      true
+    {%- endif %}
   when: false
 
 is_public:
   type: bool
-  default: "{% if project_visibility == 'Public' %}true{% endif %}"
+  default: |-
+    {%- if project_visibility == 'Public' -%}
+      true
+    {%- endif %}
   when: false
 
 is_private:
   type: bool
-  default: "{% if project_visibility == 'Private' %}true{% endif %}"
+  default: |-
+    {%- if project_visibility == 'Private' -%}
+      true
+    {%- endif %}
   when: false
 
 is_standard:
   type: bool
-  default: "{% if project_type == 'Standard' %}true{% endif %}"
+  default: |-
+    {%- if project_type == 'Standard' -%}
+      true
+    {%- endif %}
   when: false
 
 is_template:
   type: bool
-  default: "{% if project_type == 'Template' %}true{% endif %}"
+  default: |-
+    {%- if project_type == 'Template' -%}
+      true
+    {%- endif %}
   when: false
 
 is_prerelease:
   type: bool
-  default: "{% if lifecycle == 'Pre-Alpha' or lifecycle == 'Alpha' or lifecycle == 'Beta' %}true{% endif %}"
+  default: |-
+    {%- if lifecycle == 'Pre-Alpha' or lifecycle == 'Alpha' or lifecycle == 'Beta' -%}
+      true
+    {%- endif %}
   when: false
 
 should_create_repo:
   type: bool
-  default: "{% if repo_setup_actions == 'Create Repo' %}true{% endif %}"
+  default: |-
+    {%- if repo_setup_actions == 'Create Repo' -%}
+      true
+    {%- endif %}
   when: false
 
 should_set_repo_settings:
   type: bool
-  default: "{% if repo_setup_actions == 'Create Repo' or repo_setup_actions == 'Set Repo Rules' %}true{% endif %}"
+  default: |-
+    {%- if repo_setup_actions == 'Create Repo' or repo_setup_actions == 'Set Repo Rules' -%}
+      true
+    {%- endif %}
   when: false
 
 zensical_ghpages:
   type: bool
-  default: "{% if zensical_target == 'GitHub Pages' %}true{% endif %}"
+  default: |-
+    {%- if zensical_target == 'GitHub Pages' -%}
+      true
+    {%- endif %}
   when: false
 
 zensical_repo:
   type: bool
-  default: "{% if zensical_target == 'docs_site Directory in Repo' or using_azdo %}true{% endif %}"
+  default: |-
+    {%- if zensical_target == 'docs_site Directory in Repo' or using_azdo -%}
+      true
+    {%- endif %}
   when: false
 
-# Reads the version Release Please last committed to .config/release-please-manifest.json, via `git show`
-# so it works regardless of shell.
 current_release_please_version:
   type: str
-  default: "{% if _copier_operation == 'update' and using_github %}{% set _rp_manifest = ('git show HEAD:.config/release-please-manifest.json' | shell()) | from_json %}{{ _rp_manifest.values() | first }}{% endif %}"
+  default: |-
+    {%- if _copier_operation == 'update' and using_github -%}
+      {%- set _rp_manifest = ('git show HEAD:.config/release-please-manifest.json' | shell()) | from_json -%}
+      {{- _rp_manifest.values() | first -}}
+    {%- endif %}
   when: false
 
 current_release_please_version_is_pre_1:
   type: bool
-  default: "{% if current_release_please_version.split('.')[0] == '0' %}true{% endif %}"
+  default: |-
+    {%- if current_release_please_version.split('.')[0] == '0' -%}
+      true
+    {%- endif %}
   when: false
+## End Computed Values
 
-## Locked Computed Values
-
+## Start Locked Values
 copyright_year:
   type: str
   default: "{{ copyright_year | default('%Y' | strftime) }}"
   when: false
+## End Locked Values
 
-## Tasks
-
+## Start Tasks
 _tasks:
-  # Runs on both copy and update (no _copier_operation check) -- pulls a fresh copy
-  # of template/ from the source and merges it into this project's own template/ so
-  # it can act as a parent template too. The merge (not wipe-then-copy) matters on
-  # update, where the destination already has this project's own template/ content.
-  # The sleep works around a suspected ref-propagation race when vcs_ref points at a
-  # tag that may have just been created (e.g. right after a release).
+  # This is the secret sauce that makes nested templates work. Every template gets
+  # a copy of the parent template's 'template' directory added back unrendered
   - command:
       - python
       - -c
@@ -267,44 +404,153 @@ _tasks:
             shutil.copytree(os.path.join(d, "template"), "template", dirs_exist_ok=True)
       - "{{ _copier_conf.src_path }}"
       - "{{ _copier_conf.vcs_ref if _copier_conf.vcs_ref else '' }}"
-    when: "{% if is_template %}true{% endif %}"
-  - command: gh repo create {% if github_org and github_org != 'None' %}{{ github_org }}/{% endif %}{{ repo_name }} {% if is_public %}--public{% else %}--private{% endif %}
-    when: "{% if _copier_operation == 'copy' and should_create_repo and using_github %}true{% endif %}"
-  - command: az repos create --name {{ repo_name }} --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
-    when: "{% if _copier_operation == 'copy' and should_create_repo and using_azdo %}true{% endif %}"
-  - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/actions/permissions/workflow -X PUT -f can_approve_pull_request_reviews=true
-    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_github %}true{% endif %}"
-  - command: git init -b main
-    when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
-  - command: git add --all
-    when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
-  # No stored token for either platform: Git Credential Manager handles push auth
-  # interactively (its own login, separate from gh/az auth) below.
-  - command: 'git commit -m "feat: initialize project"{% if using_github %} -m "Release-As: {% if lifecycle in ["Pre-Alpha", "Alpha", "Beta"] %}0.1.0{% else %}1.0.0{% endif %}"{% endif %}'
-    when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
-  - command: git remote add origin {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}.git{% elif using_azdo %}https://{{ azdo_org }}@dev.azure.com/{{ azdo_org }}/{{ azdo_project }}/_git/{{ repo_name }}{% endif %}
-    when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
-  - command: git push -u origin --all
-    when: "{% if _copier_operation == 'copy' and should_create_repo %}true{% endif %}"
-  # One explicit task per file under template/{% if using_azdo %}.azurepipelines{% endif %}/ --
-  # add a matching entry here when adding a new pipeline file.
-  - command: az pipelines create --name "[{{ repo_name }}] copier-update-check" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/copier-update-check.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
-    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
-  - command: az pipelines create --name "[{{ repo_name }}] docs" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/docs.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
-    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
-  - command: az pipelines create --name "[{{ repo_name }}] pr_validation" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/pr_validation.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
-    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
-  - command: az pipelines create --name "[{{ repo_name }}] release" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/release.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
-    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo %}true{% endif %}"
-  - command: az pipelines create --name "[{{ repo_name }}] integration_test" --repository {{ repo_name }} --repository-type tfsgit --branch main --yml-path .azurepipelines/integration_test.yml --skip-first-run true --org https://dev.azure.com/{{ azdo_org }}/ --project "{{ azdo_project }}"
-    when: "{% if _copier_operation == 'copy' and should_set_repo_settings and using_azdo and is_template and integration_test_scheduled %}true{% endif %}"
-  - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
-    when: "{% if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' %}true{% endif %}"
+    when: |-
+      {%- if is_template -%}
+        true
+      {%- endif %}
 
+  # Creates GitHub Repo
+  - command: >-
+      gh repo create
+      {% if github_org and github_org != 'None' %}{{ github_org }}/{% endif %}{{ repo_name }}
+      {% if is_public %}--public{% else %}--private{% endif %}
+    when: |-
+      {%- if _copier_operation == 'copy' and should_create_repo and using_github -%}
+        true
+      {%- endif %}
+
+  # Creates Azure DevOps Repo
+  - command: >-
+      az repos create
+      --name {{ repo_name }}
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: |-
+      {%- if _copier_operation == 'copy' and should_create_repo and using_azdo -%}
+        true
+      {%- endif %}
+
+  # Inits Local Git Repo
+  - command: git init -b main
+    when: &when_copy_create_repo |-
+      {%- if _copier_operation == 'copy' and should_create_repo -%}
+        true
+      {%- endif %}
+
+  # Tracks all Files in Git
+  - command: git add --all
+    when: *when_copy_create_repo
+
+  # Commits template files
+  - command: >-
+      {%- set release_as_version = "0.1.0" if is_prerelease else "1.0.0" -%}
+      git commit -m "feat: initialize project"
+      {%- if using_github %} -m "Release-As: {{ release_as_version }}"{% endif %}
+    when: *when_copy_create_repo
+
+  # Adds Git Remote
+  - command: >-
+      git remote add origin
+      {% if using_github -%}
+        https://github.com/{{ github_repo_owner }}/{{ repo_name }}.git
+      {%- elif using_azdo -%}
+        https://{{ azdo_org }}@dev.azure.com/{{ azdo_org }}/{{ azdo_project }}/_git/{{ repo_name }}
+      {%- endif %}
+    when: *when_copy_create_repo
+
+  # Push commit to remote
+  - command: git push -u origin --all
+    when: *when_copy_create_repo
+
+  # Creates Azure Pipeline for copier-update-check
+  - command: >-
+      az pipelines create
+      --name "[{{ repo_name }}] copier-update-check"
+      --repository {{ repo_name }}
+      --repository-type tfsgit
+      --branch main
+      --yml-path .azurepipelines/copier-update-check.yml
+      --skip-first-run true
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: &when_copy_set_repo_settings_azdo |-
+      {%- if _copier_operation == 'copy' and should_set_repo_settings and using_azdo -%}
+        true
+      {%- endif %}
+
+  # Creates Azure Pipeline for docs
+  - command: >-
+      az pipelines create
+      --name "[{{ repo_name }}] docs"
+      --repository {{ repo_name }}
+      --repository-type tfsgit
+      --branch main
+      --yml-path .azurepipelines/docs.yml
+      --skip-first-run true
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: *when_copy_set_repo_settings_azdo
+
+  # Creates Azure Pipeline for pr_validation
+  - command: >-
+      az pipelines create
+      --name "[{{ repo_name }}] pr_validation"
+      --repository {{ repo_name }}
+      --repository-type tfsgit
+      --branch main
+      --yml-path .azurepipelines/pr_validation.yml
+      --skip-first-run true
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: *when_copy_set_repo_settings_azdo
+
+  # Creates Azure Pipeline for release
+  - command: >-
+      az pipelines create
+      --name "[{{ repo_name }}] release"
+      --repository {{ repo_name }}
+      --repository-type tfsgit
+      --branch main
+      --yml-path .azurepipelines/release.yml
+      --skip-first-run true
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: *when_copy_set_repo_settings_azdo
+
+  # Creates Azure Pipeline for integration_test
+  - command: >-
+      az pipelines create
+      --name "[{{ repo_name }}] integration_test"
+      --repository {{ repo_name }}
+      --repository-type tfsgit
+      --branch main
+      --yml-path .azurepipelines/integration_test.yml
+      --skip-first-run true
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: |-
+      {%- if _copier_operation == 'copy' and should_set_repo_settings and using_azdo and is_template and integration_test_scheduled -%}
+        true
+      {%- endif %}
+
+  # Sets up GitHub Pages
+  - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
+    when: |-
+      {%- if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' -%}
+        true
+      {%- endif %}
+## End Tasks
+
+## Start Messages
 _message_after_copy: |-
-  {% if using_github and not should_set_repo_settings %} Repo settings (labels, merge options, branch protection) are not being applied automatically. See the 'Manual Repo Settings' page in documentation for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.{% endif %}
+  {%- if using_github and not should_set_repo_settings -%}
+    Repo settings (labels, merge options, branch protection) are not being applied automatically. See the 'Manual Repo Settings' page in documentation for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.
+  {%- endif %}
 
 _message_after_update: |-
-  {% if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 %} This project's lifecycle is 'Stable' but Release Please hasn't bumped the version to 1.0.0 yet. Merge the following commit to main to have it do so.
+  {%- if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 -%}
+  This project's lifecycle is 'Stable' but Release Please hasn't bumped the version to 1.0.0 yet. Merge the following commit to main to have it do so.
 
-  git commit --allow-empty -m "chore: bump version to v1.0.0" -m "Release-As: 1.0.0"{% endif %}
+  git commit --allow-empty -m "chore: bump version to v1.0.0" -m "Release-As: 1.0.0"
+  {%- endif %}
+## End Messages

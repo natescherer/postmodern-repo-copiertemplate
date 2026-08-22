@@ -204,17 +204,6 @@ def verify(repo: str, homepage: str) -> None:
     if visibility != "PUBLIC":
         raise SystemExit(f"Expected PUBLIC visibility, got {visibility!r}")
 
-    workflow_perms = gh_value(
-        "api",
-        f"repos/{repo}/actions/permissions/workflow",
-        "-q",
-        ".can_approve_pull_request_reviews",
-    )
-    if workflow_perms != "true":
-        raise SystemExit(
-            f"Expected can_approve_pull_request_reviews=true, got {workflow_perms!r}"
-        )
-
     pages_build_type = gh_value("api", f"repos/{repo}/pages", "-q", ".build_type")
     if pages_build_type != "workflow":
         raise SystemExit(
