@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.7.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.13...v0.7.14) (2026-08-22)
+
+
+### Features
+
+* Add set-lifecycle mise task ([#645](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/645)) ([#968](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/968)) ([e44721f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e44721f19fd73cb14b1c3e26e28ac40e35ba16e9))
+* Centralize tool caches ([#961](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/961)) ([246bec4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/246bec43699cf9137914a89510488c9d1ae79461))
+* Improve integration tests ([#967](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/967)) ([e8f628f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e8f628fb27d4455dc5c188e7249424daeffc17b5))
+* Migrate Azure DevOps repo setup to az CLI ([#962](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/962)) ([b43e84b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b43e84b4e469528b263ac21f03dfab0a114e7250))
+* Migrate GitHub repo setup from githubkit to gh CLI ([d12d567](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d12d5677627c783990259503c7caa45d4c76929a))
+* Replace imperative GitHub repo settings with Settings App ([54f18a8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/54f18a8974e569166fcd8bd0f94f6941a4e84394))
+
+
+### Bug Fixes
+
+* Remove whitespace from template's lychee.toml.jinja ([97c150e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/97c150e43fc3cd12fcaa63d62e740128a3436559))
+
+
+### Miscellaneous
+
+* **deps:** Update jiangxin/file-exists-action digest to 81a413f ([#958](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/958)) ([9eb754d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9eb754d7d2d8d9b1703ac33dd0b6ba8ac0e9ae74))
+
 ## [0.7.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.12...v0.7.13) (2026-08-07)
 
 
