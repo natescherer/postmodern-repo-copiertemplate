@@ -34,21 +34,37 @@ run = "zensical serve"
 run = "pytest tests/"
 
 [tasks.integration-test-gh]
-# Same script maint-integration_test.yml runs in CI (--cleanup added there) -- see
+# Same script test-integration_test.yml runs in CI (--cleanup added there) -- see
 # that file for what this actually verifies and why. Repo is left in place here by
-# default so it can be inspected; pass --cleanup yourself to delete it.
-run = 'python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} --repo-prefix {{ repo_name }}'
+# default so it can be inspected; pass --cleanup yourself to delete it. Uses the
+# `usage` field (not the deprecated option() Tera function) so --branch is passed to
+# the script as a real env var (usage_branch) rather than templated into the command
+# line -- works identically regardless of the invoking shell/platform.
+usage = '''
+flag "--branch <branch>" help="Template ref to test against" default="HEAD"
+'''
+run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}"
 
 [tasks.integration-test-azdo]
 {%- set org_default = azdo_org if using_azdo else '' %}
 {%- set project_default = azdo_project if using_azdo else '' %}
-# Same script maint-integration_test.yml runs in CI (--cleanup added there) -- see
+# Same script test-integration_test.yml runs in CI (--cleanup added there) -- see
 # that file for what this actually verifies and why. Repo is left in place here by
 # default so it can be inspected; pass --cleanup yourself to delete it. --org/--project
 # default to this project's own Azure DevOps org/project when using_azdo, otherwise
 # there's no natural default and they must be passed explicitly, e.g.
-# `mise run integration-test-azdo -- --org myorg --project myproject`.
-run = 'python scripts/integration_test_azdo.py --source {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} --vcs-ref={% raw %}{{option(name="branch",default="HEAD")}}{% endraw %} --repo-prefix {{ repo_name }} --org {% raw %}{{option(name="org"{% endraw %}{% if org_default %}, default="{{ org_default }}"{% endif %}{% raw %})}}{% endraw %} --project "{% raw %}{{option(name="project"{% endraw %}{% if project_default %}, default="{{ project_default }}"{% endif %}{% raw %})}}{% endraw %}"'
+# `mise run integration-test-azdo -- --org myorg --project myproject`. Uses the
+# `usage` field (not the deprecated option() Tera function) so these are passed to
+# the script as real env vars (usage_branch/usage_org/usage_project) rather than
+# templated into the command line -- works identically regardless of the invoking
+# shell/platform, and (unlike option()) a missing required value doesn't silently
+# vanish from the command line and desync argparse.
+usage = '''
+flag "--branch <branch>" help="Template ref to test against" default="HEAD"
+flag "--org <org>" help="Azure DevOps organization"{% if org_default %} default="{{ org_default }}"{% endif %}
+flag "--project <project>" help="Azure DevOps project"{% if project_default %} default="{{ project_default }}"{% endif %}
+'''
+run = "python scripts/integration_test_azdo.py --source {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} --repo-prefix {{ repo_name }}"
 {%- endif %}
 
 [tools]

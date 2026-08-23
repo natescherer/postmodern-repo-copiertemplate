@@ -1,7 +1,7 @@
 """Create a throwaway repo from this template, verify it, then optionally clean it up.
 
 Shared by `mise run integration-test-gh` (a human's own gh/GCM session, repo left in
-place by default so it can be inspected) and maint-integration_test.yml
+place by default so it can be inspected) and test-integration_test.yml
 (INTEGRATION_TEST_PAT, always passes --cleanup) -- not templated itself; both callers
 pass this repo's own source URL and name as arguments, so there's nothing here for
 Jinja to render.
@@ -9,6 +9,7 @@ Jinja to render.
 
 import argparse
 import json
+import os
 
 # S404: drives real CLI tools below; no untrusted input, no shell=True.
 import subprocess  # noqa: S404
@@ -257,7 +258,11 @@ def main() -> None:
     """Parse args, then create, verify, and (if requested) clean up a test repo."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", required=True, help="Copier template source URL")
-    parser.add_argument("--vcs-ref", default="HEAD")
+    # `usage_branch` is set when this runs via `mise run integration-test-gh`, whose
+    # `usage` field defines a --branch flag (mise's own arg-parsing, not this one) --
+    # mise passes it through as a real env var rather than templating it into the
+    # command line, so it works the same regardless of the invoking shell/platform.
+    parser.add_argument("--vcs-ref", default=os.environ.get("usage_branch", "HEAD"))
     parser.add_argument("--repo-prefix", required=True, help="This repo's own name")
     parser.add_argument(
         "--cleanup",
