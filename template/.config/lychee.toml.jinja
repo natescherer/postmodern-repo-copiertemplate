@@ -4,7 +4,7 @@ exclude = [
 {%- if is_template %}
   'https://dev\.azure\.com', # This errors frequently, easier to just ignore
   'https://img\.shields\.io/github/all-contributors/', # Part of template code
-  'https://github\.com/\$GITHUB_REPOSITORY', # Shell placeholder in maint-integration_test.yml, not a real URL
+  'https://github\.com/\$GITHUB_REPOSITORY', # Shell placeholder in test-integration_test.yml, not a real URL
 {%- endif %}
 ]
 exclude_path = [
