@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.14...v0.7.15) (2026-08-22)
+
+
+### Features
+
+* Add release-please labels to settings.yml, group by source ([#981](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/981)) ([3b66041](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3b66041ce8b8239370f4c1a1533674e441ddcf9d))
+
+
+### Bug Fixes
+
+* Restore GitHub default labels deleted by Settings App sync ([#977](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/977)) ([eebf2e4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/eebf2e482474e441c85748494eeb7e113e2fb2c2))
+
 ## [0.7.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.13...v0.7.14) (2026-08-22)
 
 
