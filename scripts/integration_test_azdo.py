@@ -32,7 +32,7 @@ import time
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
 # Must match the AZDO_INTEGRATION_TEST_ORG/AZDO_INTEGRATION_TEST_PROJECT placeholder
-# values in maint-integration_test.yml's integration-test-azdo job -- there's no way
+# values in test-integration_test.yml's integration-test-azdo job -- there's no way
 # to auto-detect which org/project a GitHub-hosted workflow should test against.
 PLACEHOLDER = "CHANGE_ME"
 
@@ -292,15 +292,28 @@ def main() -> None:
     """Parse args, then create, verify, and (if requested) clean up a test repo.
 
     Raises:
-        SystemExit: if --org/--project are left at their placeholder value.
+        SystemExit: if --org/--project are missing, or left at their placeholder
+            value.
 
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", required=True, help="Copier template source URL")
-    parser.add_argument("--vcs-ref", default="HEAD")
+    # usage_branch/usage_org/usage_project are set when this runs via `mise run
+    # integration-test-azdo`, whose `usage` field defines matching flags (mise's own
+    # arg-parsing, not this one) -- mise passes them through as real env vars rather
+    # than templating them into the command line, so it works the same regardless of
+    # the invoking shell/platform (unlike e.g. POSIX `${var}` expansion, which cmd.exe
+    # can't parse).
+    parser.add_argument("--vcs-ref", default=os.environ.get("usage_branch", "HEAD"))
     parser.add_argument("--repo-prefix", required=True, help="This repo's own name")
-    parser.add_argument("--org", required=True, help="Azure DevOps organization")
-    parser.add_argument("--project", required=True, help="Azure DevOps project")
+    parser.add_argument(
+        "--org", default=os.environ.get("usage_org"), help="Azure DevOps organization"
+    )
+    parser.add_argument(
+        "--project",
+        default=os.environ.get("usage_project"),
+        help="Azure DevOps project",
+    )
     parser.add_argument(
         "--cleanup",
         action="store_true",
@@ -318,10 +331,17 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not args.org or not args.project:
+        raise SystemExit(
+            "--org/--project are required. Pass them directly, or (when running "
+            "via `mise run integration-test-azdo`) via "
+            "`mise run integration-test-azdo -- --org X --project Y`."
+        )
+
     if PLACEHOLDER in (args.org, args.project):
         raise SystemExit(
             f"--org/--project are still set to the placeholder {PLACEHOLDER!r}. If "
-            "running via maint-integration_test.yml, edit the integration-test-azdo "
+            "running via test-integration_test.yml, edit the integration-test-azdo "
             "job's env block with your real Azure DevOps org/project. See "
             "docs/token_permissions.md."
         )

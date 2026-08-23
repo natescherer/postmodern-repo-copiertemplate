@@ -31,19 +31,35 @@ run = "zensical serve"
 run = "pytest tests/"
 
 [tasks.integration-test-gh]
-# Same script maint-integration_test.yml runs in CI (--cleanup added there) -- see
+# Same script test-integration_test.yml runs in CI (--cleanup added there) -- see
 # that file for what this actually verifies and why. Repo is left in place here by
-# default so it can be inspected; pass --cleanup yourself to delete it.
-run = 'python scripts/integration_test_github.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --vcs-ref={{option(name="branch",default="HEAD")}} --repo-prefix postmodern-repo-copiertemplate'
+# default so it can be inspected; pass --cleanup yourself to delete it. Uses the
+# `usage` field (not the deprecated option() Tera function) so --branch is passed to
+# the script as a real env var (usage_branch) rather than templated into the command
+# line -- works identically regardless of the invoking shell/platform.
+usage = '''
+flag "--branch <branch>" help="Template ref to test against" default="HEAD"
+'''
+run = "python scripts/integration_test_github.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --repo-prefix postmodern-repo-copiertemplate"
 
 [tasks.integration-test-azdo]
-# Same script maint-integration_test.yml runs in CI (--cleanup added there) -- see
+# Same script test-integration_test.yml runs in CI (--cleanup added there) -- see
 # that file for what this actually verifies and why. Repo is left in place here by
 # default so it can be inspected; pass --cleanup yourself to delete it. --org/--project
 # default to this project's own Azure DevOps org/project when using_azdo, otherwise
 # there's no natural default and they must be passed explicitly, e.g.
-# `mise run integration-test-azdo -- --org myorg --project myproject`.
-run = 'python scripts/integration_test_azdo.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --vcs-ref={{option(name="branch",default="HEAD")}} --repo-prefix postmodern-repo-copiertemplate --org {{option(name="org")}} --project "{{option(name="project")}}"'
+# `mise run integration-test-azdo -- --org myorg --project myproject`. Uses the
+# `usage` field (not the deprecated option() Tera function) so these are passed to
+# the script as real env vars (usage_branch/usage_org/usage_project) rather than
+# templated into the command line -- works identically regardless of the invoking
+# shell/platform, and (unlike option()) a missing required value doesn't silently
+# vanish from the command line and desync argparse.
+usage = '''
+flag "--branch <branch>" help="Template ref to test against" default="HEAD"
+flag "--org <org>" help="Azure DevOps organization"
+flag "--project <project>" help="Azure DevOps project"
+'''
+run = "python scripts/integration_test_azdo.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --repo-prefix postmodern-repo-copiertemplate"
 
 [tools]
 # Backends
