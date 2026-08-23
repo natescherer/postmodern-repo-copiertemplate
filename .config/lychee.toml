@@ -3,7 +3,7 @@ exclude = [
   'git\+https://.*', # Can be removed once squidfunk/mike is replaced by Zensical's built-in versioning
   'https://dev\.azure\.com', # This errors frequently, easier to just ignore
   'https://img\.shields\.io/github/all-contributors/', # Part of template code
-  'https://github\.com/\$GITHUB_REPOSITORY', # Shell placeholder in maint-integration_test.yml, not a real URL
+  'https://github\.com/\$GITHUB_REPOSITORY', # Shell placeholder in test-integration_test.yml, not a real URL
 ]
 exclude_path = [
   ".config/lychee.toml",

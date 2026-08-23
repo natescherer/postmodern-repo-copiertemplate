@@ -45,7 +45,7 @@ like `mise run integration-test-gh`/`integration-test-azdo`.
 
 Whether to also generate a scheduled maintenance job/pipeline that periodically creates a real,
 throwaway repo from your template and verifies its repo-setup automation still works end to end,
-then deletes it. On GitHub this is `maint-integration_test.yml`; on Azure DevOps it's
+then deletes it. On GitHub this is `test-integration_test.yml`; on Azure DevOps it's
 `.azurepipelines/integration_test.yml` (registered as a pipeline automatically, same as the other
 files under `.azurepipelines/`). Both need a token secret configured after copy -- see the
 "Integration Test PAT" sections in [Token Permissions](token_permissions.md) -- and the GitHub
