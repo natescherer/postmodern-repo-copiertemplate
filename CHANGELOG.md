@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.19...v0.7.20) (2026-08-23)
+
+
+### Features
+
+* Enable auto-merge on all repos, not just Zensical ones ([#1006](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1006)) ([66f93e4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/66f93e4b6587205707f4c6ce1fe2ca62f1036dcf))
+
+
+### Bug Fixes
+
+* Resolve az via shutil.which() in the AzDO PR-policy task ([#1008](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1008)) ([6cc453b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6cc453ba6ab218f617c7539d27fd522706d8d864))
+
 ## [0.7.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.18...v0.7.19) (2026-08-23)
 
 
