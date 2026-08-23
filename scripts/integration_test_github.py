@@ -97,6 +97,12 @@ def create(
     account gh actually authenticated as (especially in CI, where git config may have
     no user.email at all), breaking verify() for reasons unrelated to what it's
     actually trying to test.
+
+    `--defaults` falls back to each question's own default for anything not covered
+    by an explicit -d below (currently github_org, author_name, zensical_target) --
+    without it, copier drops into an interactive prompt for those, which just hangs
+    in CI and adds unnecessary keypresses locally. Explicit -d values below still take
+    priority over --defaults regardless of order.
     """
     if ci:
         run("gh", "auth", "setup-git")
@@ -104,6 +110,7 @@ def create(
         "copier",
         "copy",
         "--trust",
+        "--defaults",
         f"--vcs-ref={vcs_ref}",
         "-d",
         f"repo_name={repo_name}",
@@ -150,8 +157,9 @@ def settings_synced(repo: str, homepage: str) -> bool:
         return False
     if repo_data.get("homepage") != homepage:
         return False
-    if repo_data.get("allow_auto_merge") is not True:
-        return False
+    # allow_auto_merge isn't checked here: settings.yml.jinja only sets it when
+    # zensical_repo is true, and this test always renders with the default
+    # zensical_target (GitHub Pages), so it's never declared for this specific repo.
     if repo_data.get("delete_branch_on_merge") is not True:
         return False
 
