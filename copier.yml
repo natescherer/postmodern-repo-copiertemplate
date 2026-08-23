@@ -504,6 +504,81 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
+  # Requires the pr_validation build to pass before a PR can be completed, and lets
+  # Project Administrators override that when completing a PR (mirrors GitHub's
+  # admin bypass_actors entry in settings.yml.jinja). `az repos policy` has no flag
+  # for the override part -- it's a branch-level security permission instead, set
+  # via the raw security-namespace API since `az repos`/`az devops` has no
+  # higher-level command for it. Namespace ID, permission bit, and token format
+  # aren't in Microsoft's own CLI docs; cross-checked against
+  # https://github.com/Azure/azure-devops-cli-extension/blob/master/doc/security_tokens.md
+  # and https://devblogs.microsoft.com/devops/git-repo-tokens-for-the-security-service/.
+  - command:
+      - python
+      - -c
+      - |
+        import json, subprocess
+
+        ORG = "https://dev.azure.com/{{ azdo_org }}/"
+        PROJECT = "{{ azdo_project }}"
+
+
+        def az(*args, project=True):
+            cmd = ["az", *args, "--org", ORG]
+            if project:
+                cmd += ["--project", PROJECT]
+            return subprocess.run(cmd, check=True, capture_output=True, text=True).stdout
+
+
+        repo_id = az(
+            "repos", "show", "--repository", "{{ repo_name }}", "--query", "id", "-o", "tsv"
+        ).strip()
+        pipeline_id = az(
+            "pipelines", "show", "--name", "[{{ repo_name }}] pr_validation",
+            "--query", "id", "-o", "tsv",
+        ).strip()
+
+        subprocess.run(
+            [
+                "az", "repos", "policy", "build", "create",
+                "--blocking", "true",
+                "--enabled", "true",
+                "--branch", "main",
+                "--build-definition-id", pipeline_id,
+                "--display-name", "PR Validation",
+                "--manual-queue-only", "false",
+                "--queue-on-source-update-only", "false",
+                "--valid-duration", "0",
+                "--repository-id", repo_id,
+                "--org", ORG,
+                "--project", PROJECT,
+            ],
+            check=True,
+        )
+
+        project_id = az("devops", "project", "show", "--query", "id", "-o", "tsv").strip()
+        groups = json.loads(az("devops", "security", "group", "list", "-o", "json"))
+        descriptor = next(
+            g["descriptor"]
+            for g in groups["graphGroups"]
+            if g["displayName"] == "Project Administrators"
+        )
+        # refs/heads/main, UTF-16LE hex-encoded per character -- Azure DevOps's Git
+        # ACL token format for a specific branch.
+        token = f"repoV2/{project_id}/{repo_id}/refs/heads/6d00610069006e00"
+        subprocess.run(
+            [
+                "az", "devops", "security", "permission", "update",
+                "--namespace-id", "2e9eb7ed-3c0a-47d4-87c1-0ffdd275fd87",  # Git Repositories
+                "--subject", descriptor,
+                "--token", token,
+                "--allow-bit", "32768",  # PullRequestBypassPolicy
+                "--org", ORG,
+            ],
+            check=True,
+        )
+    when: *when_copy_set_repo_settings_azdo
+
   # Creates Azure Pipeline for release
   - command: >-
       az pipelines create

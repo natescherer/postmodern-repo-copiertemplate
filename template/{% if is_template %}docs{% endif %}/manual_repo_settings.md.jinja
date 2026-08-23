@@ -39,6 +39,12 @@ Under **Settings > Rules > Rulesets**, create a new ruleset:
         - Require review from Code Owners: off
         - Require approval of the most recent reviewable push: off
         - Require conversation resolution before merging: off
+    - **Require status checks to pass**, with:
+        - Require branches to be up to date before merging: on
+        - Status check: `tests` (the job in `[Test] PR Validation`)
+- Bypass list: add **Repository admin**, with bypass mode **Pull requests only** -- this lets
+  repo admins use the "Merge without waiting for requirements to be met" button instead of being
+  blocked entirely.
 {%- if zensical_ghpages %}
 
 ## GitHub Pages Environment
