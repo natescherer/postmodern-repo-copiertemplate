@@ -68,6 +68,22 @@ def gh_value(*args: str) -> str:
     return run("gh", *args, capture=True).stdout.strip()
 
 
+def check_gh_installed() -> None:
+    """Verify the `gh` CLI is actually resolvable on PATH.
+
+    Without this, a missing `gh` surfaces as a raw FileNotFoundError traceback from
+    deep inside the first real `gh` call instead of a clear message up front.
+
+    Raises:
+        SystemExit: if `gh` can't be found.
+
+    """
+    if shutil.which("gh") is None:
+        raise SystemExit(
+            "GitHub CLI ('gh') not found on PATH. Install it: https://cli.github.com"
+        )
+
+
 def check_scopes() -> None:
     """Verify the active gh token has every scope this script needs.
 
@@ -290,6 +306,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    check_gh_installed()
     check_scopes()
 
     owner = gh_value("api", "user", "--jq", ".login")
