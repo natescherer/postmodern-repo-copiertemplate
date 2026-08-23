@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.17](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.16...v0.7.17) (2026-08-23)
+
+
+### Bug Fixes
+
+* Fix integration test structure ([#992](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/992)) ([8a961cd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8a961cd989bf3f1ad4427aad4ff22a028deab51d))
+
 ## [0.7.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.15...v0.7.16) (2026-08-23)
 
 
