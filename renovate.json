@@ -25,7 +25,7 @@
   },
   "github-actions": {
     "managerFilePatterns": [
-      "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?$/"
+      "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"
     ]
   },
   "packageRules": [
