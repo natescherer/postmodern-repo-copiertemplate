@@ -530,14 +530,20 @@ _tasks:
       - python
       - -c
       - |
-        import json, subprocess
+        import json, shutil, subprocess
 
         ORG = "https://dev.azure.com/{{ azdo_org }}/"
         PROJECT = "{{ azdo_project }}"
+        # az is an az.cmd batch wrapper on Windows, not a real .exe -- subprocess with
+        # shell=False (the default, used throughout below) won't find it from the bare
+        # name alone, failing with FileNotFoundError: [WinError 2]. which() finds the
+        # actual resolvable path on any platform, sidestepping that gap without
+        # needing shell=True.
+        AZ = shutil.which("az") or "az"
 
 
         def az(*args, project=True):
-            cmd = ["az", *args, "--org", ORG]
+            cmd = [AZ, *args, "--org", ORG]
             if project:
                 cmd += ["--project", PROJECT]
             return subprocess.run(cmd, check=True, capture_output=True, text=True).stdout
@@ -553,7 +559,7 @@ _tasks:
 
         subprocess.run(
             [
-                "az", "repos", "policy", "build", "create",
+                AZ, "repos", "policy", "build", "create",
                 "--blocking", "true",
                 "--enabled", "true",
                 "--branch", "main",
@@ -581,7 +587,7 @@ _tasks:
         token = f"repoV2/{project_id}/{repo_id}/refs/heads/6d00610069006e00"
         subprocess.run(
             [
-                "az", "devops", "security", "permission", "update",
+                AZ, "devops", "security", "permission", "update",
                 "--namespace-id", "2e9eb7ed-3c0a-47d4-87c1-0ffdd275fd87",  # Git Repositories
                 "--subject", descriptor,
                 "--token", token,
