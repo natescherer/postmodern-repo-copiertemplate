@@ -545,6 +545,24 @@ _tasks:
 _message_after_copy: |-
   {%- if using_github and not should_set_repo_settings -%}
     Repo settings (labels, merge options, branch protection) are not being applied automatically. See the 'Manual Repo Settings' page in documentation for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.
+
+  {% endif -%}
+  {%- if using_github -%}
+  Before CI works, add these as GitHub Actions secrets (Settings > Secrets and variables > Actions):
+    - REPO_MAINTENANCE_PAT
+    - APPRISE_URL
+  {%- if is_template and integration_test_scheduled %}
+    - INTEGRATION_TEST_PAT
+    - AZURE_DEVOPS_EXT_PAT
+  {%- endif %}
+  Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token_permissions.md for what each one needs.
+  {%- elif using_azdo -%}
+  Before CI works, add these as secret Azure DevOps pipeline variables (Pipelines > Library):
+    - APPRISE_URL
+  {%- if is_template and integration_test_scheduled %}
+    - AZURE_DEVOPS_EXT_PAT
+  {%- endif %}
+  Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token_permissions.md for what each one needs.
   {%- endif %}
 
 _message_after_update: |-

@@ -28,6 +28,29 @@ run = "copier update --answers-file .config/copier-answers.yml --skip-answered -
 
 [tasks.docs-server]
 run = "zensical serve"
+
+[tasks.provision-secrets]
+# Opt-in and separate from _tasks on purpose -- see docs/token_permissions.md. `raw`
+# gives gh/az direct terminal control so each CLI's own masked prompt (gh's
+# Prompter.Password, az's knack.prompting.prompt_pass) reads the value straight from
+# the terminal -- it never touches a command-line argument, mise's own logging, or a
+# script of ours.
+raw = true
+run = [
+{%- if using_github %}
+  "gh secret set REPO_MAINTENANCE_PAT",
+  "gh secret set APPRISE_URL",
+{%- if is_template and integration_test_scheduled %}
+  "gh secret set INTEGRATION_TEST_PAT",
+  "gh secret set AZURE_DEVOPS_EXT_PAT",
+{%- endif %}
+{%- elif using_azdo %}
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] copier-update-check\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+{%- if is_template and integration_test_scheduled %}
+  "az pipelines variable create --name AZURE_DEVOPS_EXT_PAT --pipeline-name \"[{{ repo_name }}] integration_test\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+{%- endif %}
+{%- endif %}
+]
 {%- if is_template %}
 
 [tasks.test]
