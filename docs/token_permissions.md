@@ -4,6 +4,19 @@ This doc details the minimum scopes/permissions needed to use this template, alo
 why. Neither platform requires a prompted Personal Access Token for repo setup anymore -- both use
 the platform's own CLI session instead (`gh auth login` / `az login`).
 
+Once you've created each secret/token below, run `mise run provision-secrets`: each value is
+entered via that platform's own CLI prompt (`gh secret set` / `az pipelines variable create`),
+masked as you type and never passed as a command-line argument. It's opt-in and safe to re-run
+any time, e.g. to rotate a token.
+
+## Update Notifications
+
+Both platforms' Copier update-check job needs a secret/variable called **APPRISE_URL**. Unlike the
+tokens below, it isn't a scope to grant -- it's an [Apprise](https://github.com/caronc/apprise)
+notification URL pointing at wherever you want update notifications sent (email, Slack, Discord,
+ntfy, Pushover, and 80+ others -- see Apprise's own docs for the URL format for your service of
+choice).
+
 ## GitHub
 
 ### `gh auth login` Scopes

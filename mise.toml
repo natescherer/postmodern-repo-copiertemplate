@@ -27,6 +27,20 @@ run = "copier update --answers-file .config/copier-answers.yml --skip-answered -
 [tasks.docs-server]
 run = "zensical serve"
 
+[tasks.provision-secrets]
+# Opt-in and separate from _tasks on purpose -- see docs/token_permissions.md. `raw`
+# gives gh/az direct terminal control so each CLI's own masked prompt (gh's
+# Prompter.Password, az's knack.prompting.prompt_pass) reads the value straight from
+# the terminal -- it never touches a command-line argument, mise's own logging, or a
+# script of ours.
+raw = true
+run = [
+  "gh secret set REPO_MAINTENANCE_PAT",
+  "gh secret set APPRISE_URL",
+  "gh secret set INTEGRATION_TEST_PAT",
+  "gh secret set AZURE_DEVOPS_EXT_PAT",
+]
+
 [tasks.test]
 run = "pytest tests/"
 
