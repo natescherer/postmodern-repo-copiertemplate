@@ -7,7 +7,9 @@ repository:
   homepage: "https://natescherer.github.io/postmodern-repo-copiertemplate"
   private: false
 
-  allow_auto_merge: true
+  # Deliberate overrides of GitHub's defaults
+  allow_merge_commit: false
+  allow_rebase_merge: false
   delete_branch_on_merge: true
 
 # The Settings App treats this list as authoritative: any label that exists on the

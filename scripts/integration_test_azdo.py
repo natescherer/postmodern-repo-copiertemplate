@@ -131,13 +131,21 @@ def create(
     *,
     ci: bool,
 ) -> None:
-    """Render+run the template to create the test repo and register its pipelines."""
+    """Render+run the template to create the test repo and register its pipelines.
+
+    `--defaults` falls back to each question's own default for anything not covered
+    by an explicit -d below (currently author_name, zensical_target) -- without it,
+    copier drops into an interactive prompt for those, which just hangs in CI and
+    adds unnecessary keypresses locally. Explicit -d values below still take priority
+    over --defaults regardless of order.
+    """
     if ci:
         configure_git_push_auth()
     run(
         "copier",
         "copy",
         "--trust",
+        "--defaults",
         f"--vcs-ref={vcs_ref}",
         "-d",
         f"repo_name={repo_name}",
