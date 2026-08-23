@@ -82,6 +82,46 @@ def az_value(*args: str) -> str:
     return run("az", *args, capture=True).stdout.strip()
 
 
+def check_az_installed() -> None:
+    """Verify the `az` CLI is actually resolvable on PATH.
+
+    Without this, a missing `az` surfaces as a raw FileNotFoundError traceback from
+    deep inside the first real `az` call instead of a clear message up front.
+
+    Raises:
+        SystemExit: if `az` can't be found.
+
+    """
+    if shutil.which("az") is None:
+        raise SystemExit(
+            "Azure CLI ('az') not found on PATH. Install it: "
+            "https://learn.microsoft.com/cli/azure/install-azure-cli"
+        )
+
+
+def check_azure_devops_extension() -> None:
+    """Verify the azure-devops CLI extension is installed.
+
+    `az devops`/`az repos`/`az pipelines` commands, if the extension isn't installed,
+    prompt interactively to install it ("Do you want to install it now? (Y/n):") --
+    which just hangs forever with no stdin attached (e.g. under `mise run` or in CI).
+    Checking via `az extension list` first (a core command that doesn't itself need
+    the extension) avoids ever triggering that prompt.
+
+    Raises:
+        SystemExit: if the extension isn't installed.
+
+    """
+    installed = az_value(
+        "extension", "list", "--query", "[?name=='azure-devops'].name", "-o", "tsv"
+    )
+    if not installed:
+        raise SystemExit(
+            "Azure CLI extension 'azure-devops' is not installed. Install it: "
+            "az extension add --name azure-devops"
+        )
+
+
 def check_access(org_url: str, project: str) -> None:
     """Verify the active az session can actually see the target project.
 
@@ -300,8 +340,8 @@ def main() -> None:
     """Parse args, then create, verify, and (if requested) clean up a test repo.
 
     Raises:
-        SystemExit: if --org/--project are missing, or left at their placeholder
-            value.
+        SystemExit: if `az` or its azure-devops extension aren't installed, or
+            --org/--project are missing or left at their placeholder value.
 
     """
     parser = argparse.ArgumentParser(description=__doc__)
@@ -338,6 +378,9 @@ def main() -> None:
         ),
     )
     args = parser.parse_args()
+
+    check_az_installed()
+    check_azure_devops_extension()
 
     if not args.org or not args.project:
         raise SystemExit(
