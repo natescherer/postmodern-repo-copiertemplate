@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.18...v0.7.19) (2026-08-23)
+
+
+### Features
+
+* Remind users to set CI secrets after copy, add opt-in provisioning task ([#1003](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1003)) ([f967fd0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f967fd0dd46e155e2bfbaa5a4be65e6bb556f7e5))
+* Require PR validation to pass before merge, with admin override ([#1004](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1004)) ([093c4b9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/093c4b9c5aa8b36debd815675d162913078359b4))
+
+
+### Bug Fixes
+
+* Fail fast when az/gh CLI or the azure-devops extension are missing ([#1000](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1000)) ([53ee91f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/53ee91f908d0af3068b82f194787f342ab63cd6b))
+
 ## [0.7.18](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.17...v0.7.18) (2026-08-23)
 
 
