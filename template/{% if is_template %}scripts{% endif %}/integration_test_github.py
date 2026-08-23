@@ -150,8 +150,9 @@ def settings_synced(repo: str, homepage: str) -> bool:
         return False
     if repo_data.get("homepage") != homepage:
         return False
-    if repo_data.get("allow_auto_merge") is not True:
-        return False
+    # allow_auto_merge isn't checked here: settings.yml.jinja only sets it when
+    # zensical_repo is true, and this test always renders with the default
+    # zensical_target (GitHub Pages), so it's never declared for this specific repo.
     if repo_data.get("delete_branch_on_merge") is not True:
         return False
 

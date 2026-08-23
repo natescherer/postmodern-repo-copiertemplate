@@ -7,7 +7,12 @@ repository:
   homepage: "{% if is_public %}https://{{ github_repo_owner }}.github.io/{{ repo_name }}{% endif %}"
   private: {% if is_public %}false{% else %}true{% endif %}
 
+  # Deliberate overrides of GitHub's defaults
+  {%- if zensical_repo %}
   allow_auto_merge: true
+  {%- endif %}
+  allow_merge_commit: false
+  allow_rebase_merge: false
   delete_branch_on_merge: true
 
 # The Settings App treats this list as authoritative: any label that exists on the
