@@ -998,7 +998,7 @@ like <code>mise run integration-test-gh</code>/<code>integration-test-azdo</code
 <h2 id="integration_test_scheduled-yes-no-template-projects-only"><code>integration_test_scheduled</code>: Yes / No (Template projects only)<a class="headerlink" href="#integration_test_scheduled-yes-no-template-projects-only" title="Permanent link">&para;</a></h2>
 <p>Whether to also generate a scheduled maintenance job/pipeline that periodically creates a real,
 throwaway repo from your template and verifies its repo-setup automation still works end to end,
-then deletes it. On GitHub this is <code>maint-integration_test.yml</code>; on Azure DevOps it's
+then deletes it. On GitHub this is <code>test-integration_test.yml</code>; on Azure DevOps it's
 <code>.azurepipelines/integration_test.yml</code> (registered as a pipeline automatically, same as the other
 files under <code>.azurepipelines/</code>). Both need a token secret configured after copy -- see the
 "Integration Test PAT" sections in <a href="../token_permissions/">Token Permissions</a> -- and the GitHub

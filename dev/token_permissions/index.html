@@ -941,7 +941,7 @@ Actions workflows (Copier update checks, Release Please), not just at setup time
 <p>NOTE: Fine-grained tokens are specifically <strong>not</strong> used, as they cannot open pull requests. This can be changed once <a href="https://github.com/github/roadmap/issues/600">this issue</a> is implemented by GitHub.</p>
 <h3 id="integration-test-pat-classic-token">Integration Test PAT (Classic Token)<a class="headerlink" href="#integration-test-pat-classic-token" title="Permanent link">&para;</a></h3>
 <p>Create this token the same way as the Repo Maintenance PAT above and save it as a GitHub Actions
-secret called <strong>INTEGRATION_TEST_PAT</strong>. Used by <code>maint-integration_test.yml</code>, which creates a
+secret called <strong>INTEGRATION_TEST_PAT</strong>. Used by <code>test-integration_test.yml</code>, which creates a
 real, throwaway repo on a schedule to verify repo setup actually works end to end, then deletes
 it -- <code>delete_repo</code> is needed specifically for that cleanup step and isn't part of any other
 token this project uses.</p>
@@ -974,7 +974,7 @@ verification step checks that the app actually synced <code>.github/settings.yml
 ruleset) to the freshly-created test repo, and an app installed on "only select repositories"
 never automatically gains access to a repo created after the fact.</p>
 <h3 id="integration-test-pat-for-azure-devops">Integration Test PAT for Azure DevOps<a class="headerlink" href="#integration-test-pat-for-azure-devops" title="Permanent link">&para;</a></h3>
-<p><code>maint-integration_test.yml</code> also runs a second job that creates a throwaway repo with
+<p><code>test-integration_test.yml</code> also runs a second job that creates a throwaway repo with
 <code>developer_platform=Azure DevOps</code> to verify that path end to end, regardless of which platform
 this project itself uses. Create an Azure DevOps PAT covering <strong>Code (Full)</strong> and <strong>Build (Read &amp;
 execute)</strong> for the target org/project -- the same permissions a signed-in <code>az login</code> session would
@@ -984,7 +984,7 @@ extension auto-detects for non-interactive auth, so it's reused as-is for both <
 test repo's initial <code>git push</code>. There's no way to auto-detect which Azure DevOps org/project the
 throwaway repo should be created in (unlike the AzDO-hosted pipeline below, which reads that from
 its own pipeline variables), so also edit the <code>integration-test-azdo</code> job's <code>env:</code> block directly
-in <code>maint-integration_test.yml</code>, replacing the <code>AZDO_INTEGRATION_TEST_ORG</code>/<code>AZDO_INTEGRATION_TEST_PROJECT</code>
+in <code>test-integration_test.yml</code>, replacing the <code>AZDO_INTEGRATION_TEST_ORG</code>/<code>AZDO_INTEGRATION_TEST_PROJECT</code>
 placeholder values with your real org/project -- left as placeholders, the job fails fast with an
 explanatory error instead of a confusing <code>az</code> CLI one.</p>
 
