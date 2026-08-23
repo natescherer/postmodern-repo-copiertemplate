@@ -10,6 +10,7 @@ Jinja to render.
 import argparse
 import json
 import os
+import shutil
 
 # S404: drives real CLI tools below; no untrusted input, no shell=True.
 import subprocess  # noqa: S404
@@ -37,14 +38,23 @@ def run(
 ) -> subprocess.CompletedProcess:
     """Run a CLI command, echoing it first.
 
+    Resolves argv[0] via shutil.which() first: some CLIs (e.g. Azure CLI's `az`) are
+    `.cmd` batch wrappers on Windows rather than real .exe files, and subprocess with
+    shell=False (unlike cmd.exe's own PATH resolution) won't find those from the bare
+    name alone, failing with `FileNotFoundError: [WinError 2]`. which() finds the
+    actual resolvable path on any platform, sidestepping that gap without needing
+    shell=True. gh/copier don't hit this today, but there's no downside to guarding
+    every invocation here the same way.
+
     Returns:
         The completed process, with captured stdout/stderr if `capture` is True.
 
     """
     print(f"$ {' '.join(args)}")
+    resolved = (shutil.which(args[0]) or args[0], *args[1:])
     # S603: args are always a fixed list built by this module; no shell=True.
     return subprocess.run(  # noqa: S603
-        args, check=check, text=True, capture_output=capture
+        resolved, check=check, text=True, capture_output=capture
     )
 
 
