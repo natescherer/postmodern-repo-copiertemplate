@@ -925,8 +925,16 @@ if the two ever disagree, trust the file.</p>
 <li>Require conversation resolution before merging: off</li>
 </ul>
 </li>
+<li><strong>Require status checks to pass</strong>, with:<ul>
+<li>Require branches to be up to date before merging: on</li>
+<li>Status check: <code>tests</code> (the job in <code>[Test] PR Validation</code>)</li>
 </ul>
 </li>
+</ul>
+</li>
+<li>Bypass list: add <strong>Repository admin</strong>, with bypass mode <strong>Pull requests only</strong> -- this lets
+  repo admins use the "Merge without waiting for requirements to be met" button instead of being
+  blocked entirely.</li>
 </ul>
 <h2 id="github-pages-environment">GitHub Pages Environment<a class="headerlink" href="#github-pages-environment" title="Permanent link">&para;</a></h2>
 <p>After the first successful Pages deployment, an environment named <code>github-pages</code> will exist under
