@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.15...v0.7.16) (2026-08-23)
+
+
+### Features
+
+* Set more github settings via settings app ([#987](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/987)) ([15ab4df](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/15ab4df1641f41b5bf36fc490dd718f779b1ce6f))
+
+
+### Bug Fixes
+
+* Fix integration test interactivity ([#990](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/990)) ([b826361](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b826361a6f69ae1a88e8811c28bf9d3a9c046fbd))
+
 ## [0.7.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.14...v0.7.15) (2026-08-22)
 
 
