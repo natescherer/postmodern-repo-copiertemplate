@@ -31,7 +31,9 @@ developer_platform:
   type: str
   help: |
     {%- if not project_initialized -%}
-      The platform where you are going to host your Git repo and CI/CD.
+      The platform where you are going to host your Git repo and CI/CD. Azure DevOps
+      support is deprecated and will eventually be removed -- prefer GitHub unless you
+      specifically need Azure DevOps.
     {%- else -%}
       Locked value on update, press Enter.
     {%- endif %}

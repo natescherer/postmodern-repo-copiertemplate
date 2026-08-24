@@ -7,11 +7,11 @@
 | :exclamation: Notice: This project is currently in a Pre-Alpha state and is not ready for public use. |
 | ------------------------------------------------------------------------------------ |
 
-A [Copier](https://github.com/copier-org/copier) template to create a repo with the Hard/Boring stuff automated, so you can get back to coding.
+A Copier template to create a repo with the Hard/Boring stuff automated, so you can get back to coding.
 
 ## What kind of repo does it make?
 
-A basic one, by intention. And in either GitHub or Azure DevOps!
+A basic one, by intention.
 
 This is the root template for a whole family of templates that do more specific tasks. If you want a simple repository that releases static files at a point-in-time, you're in the right place. Otherwise, you might want to look at the Other Postmodern Templates.
 

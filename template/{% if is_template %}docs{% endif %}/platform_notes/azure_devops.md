@@ -1,5 +1,9 @@
 # Azure DevOps Limitations
 
+**Azure DevOps support is deprecated and will eventually be removed.** It's kept around for
+existing organizational needs, not as a recommendation -- prefer GitHub for new projects unless
+you specifically need Azure DevOps.
+
 Support for Azure DevOps is provided on a best-effort basis and has some limitations compared to GitHub.
 
 - Public projects not supported
