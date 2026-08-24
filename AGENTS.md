@@ -76,7 +76,7 @@ or a new `validator:` constraint is added.**
 
 ## Renovate `schedule` cron syntax is not standard cron
 
-Renovate's `schedule` option (see `renovate.json` / `template/{% if using_github %}renovate.json{% endif %}.jinja`)
+Renovate's `schedule` option (see `renovate.json` / `template/renovate.json.jinja`)
 looks like 5-field cron but isn't interpreted the same way:
 
 - The minutes field **must** be `*` -- Renovate doesn't support minute-level
