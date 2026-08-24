@@ -28,7 +28,7 @@ jobs:
           subcommand: check-update
       - name: Notify if Update is Available
         if: steps.copier.outputs.check-update_update_available == 'true'
-        uses: cstuder/apprise-ga@6eeb31014014413a118d716eacf7cabf67cc8430 # v3.1.0
+        uses: cstuder/apprise-ga@bf5b5984a6017b3aea5c277da593839a0cdd2368 # v3.1.0
         with:
           title: ${{ github.repository }} Template Update Available
           message: |
