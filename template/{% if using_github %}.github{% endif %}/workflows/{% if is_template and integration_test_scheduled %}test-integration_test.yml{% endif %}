@@ -23,7 +23,7 @@ jobs:
         with:
           secrets: |
             INTEGRATION_TEST_PAT=${{ secrets.INTEGRATION_TEST_PAT }}
-      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
         with:
           experimental: true
       - name: Create, Verify, and Clean Up Test Repo
@@ -64,7 +64,7 @@ jobs:
         with:
           secrets: |
             AZURE_DEVOPS_EXT_PAT=${{ secrets.AZURE_DEVOPS_EXT_PAT }}
-      - uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
         with:
           experimental: true
       - name: Install Azure DevOps CLI Extension
