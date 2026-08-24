@@ -202,7 +202,7 @@
       "description": "Manager for simple mise tools",
       "customType": "regex",
       "managerFilePatterns": [
-        "/mise\\..*toml\\.jinja/"
+        {% raw %}"/mise\\..*toml(?:{%.*%})?\\.jinja/"{% endraw %}
       ],
       "matchStrings": [
         {% raw %}"{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':/]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"{% endraw %}
@@ -213,7 +213,7 @@
       "description": "Manager for pipx git-sourced tools",
       "customType": "regex",
       "managerFilePatterns": [
-        "/(^|/)mise(\\.\\w+)*\\.toml(\\.jinja)?$/"
+        {% raw %}"/(^|/)(?:{%.*%})?mise(\\.\\w+)*\\.toml(?:{%.*%})?(\\.jinja)?$/"{% endraw %}
       ],
       "matchStrings": [
         "\\[tools\\.\"pipx:git\\+https://github\\.com/(?<packageName>[^/]+/[^\"]+)\\.git\"\\]\\s+version = \"(?<currentValue>[^+\"]*)"
@@ -226,7 +226,7 @@
       "customType": "regex",
       "datasourceTemplate": "pypi",
       "managerFilePatterns": [
-        "/mise\\..*toml\\.jinja/"
+        {% raw %}"/mise\\..*toml(?:{%.*%})?\\.jinja/"{% endraw %}
       ],
       "matchStrings": [
         "\\[tools\\.\"?pipx:(?<depName>[A-Za-z0-9_.-]+)\"?\\]\\sversion = \"(?<currentValue>[^\\s]*)\""
