@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "dependencyDashboard": {% if using_github %}true{% else %}false{% endif %},
+  "dependencyDashboard": true,
   "extends": [
     "config:recommended",
     "helpers:pinGitHubActionDigests"
@@ -115,6 +115,16 @@
       ],
       "groupName": "prek"
     },
+    {%- if using_azdo %}
+    {
+      "description": "Group renovate",
+      "matchPackageNames": [
+        "renovate",
+        "npm:renovate"
+      ],
+      "groupName": "renovate"
+    },
+    {%- endif %}
     {
       "description": "Group ruff",
       "matchPackageNames": [

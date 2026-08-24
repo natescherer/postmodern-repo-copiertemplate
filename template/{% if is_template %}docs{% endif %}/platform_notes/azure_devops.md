@@ -6,9 +6,16 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
   - It is assumed that if you are using Azure DevOps, it is due to organizational requirements.
 - GitHub-specific features not implemented
   - Custom Issue tags
-  - Renovate
 - Branch protection policies not set
   - It is assumed that your organization will be enforcing this at the project level
 - `zensical_target` is always `docs_site Directory in Repo`
   - `GitHub Pages` isn't offered, so Azure DevOps projects never get the release-versioned docs
     site that target provides — see [Getting Started](../index.md#documentation)
+- Renovate needs a one-time manual permission grant
+  - Unlike GitHub (which uses the Renovate GitHub App), Renovate runs here as a self-hosted
+    scheduled pipeline (`.azurepipelines/renovate.yml`), authenticated via the pipeline's own
+    `$(System.AccessToken)` rather than a stored secret. For it to push branches and open PRs,
+    grant the **Project Collection Build Service** account **Contribute**, **Create branch**,
+    and **Contribute to pull requests** on this repo (Project Settings > Repositories > this
+    repo > Security) -- this is normally a one-time, org-wide grant, not something you need to
+    repeat per repo.

@@ -1,0 +1,87 @@
+name: $(BuildId)
+
+trigger:
+  branches:
+    exclude:
+      - "*"
+
+schedules:
+  # Matches renovate.json's own "schedule": ["* 0 1 * *"] window (once a month, day 1,
+  # hour 0 UTC) -- unlike Renovate's schedule syntax, Azure Pipelines cron is standard
+  # cron with real minute granularity, so this fires once, directly in that window,
+  # rather than needing to poll daily.
+  - cron: 0 0 1 * *
+    displayName: Run Renovate Monthly, Matching renovate.json's Schedule
+    branches:
+      include:
+        - main
+
+variables:
+  CI: true
+  MISE_ENV: ci,azdo
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: renovate
+    displayName: Renovate
+    jobs:
+      - job: renovate
+        timeoutInMinutes: 60
+        displayName: Renovate
+        steps:
+          - pwsh: |
+              $Secrets = @("APPRISE_URL")
+              $MissingSecret = $False
+              foreach ($Secret in $Secrets) {
+                if (!([Environment]::GetEnvironmentVariable($Secret)) -or ([Environment]::GetEnvironmentVariable($Secret) -eq "`$($Secret)")) {
+                  Write-Host -Object "[error]Required Pipeline variable '$Secret' is not set! Please add it in Pipelines settings."
+                  $MissingSecret = $True
+                }
+              }
+              if ($MissingSecret) {
+                throw "Erroring as one or more required secrets are missing!"
+              }
+            env:
+              APPRISE_URL: $(APPRISE_URL)
+            displayName: Validate Secrets Exist
+          - checkout: self
+            fetchDepth: 0
+          - bash: |
+              curl https://mise.run | sh
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
+            displayName: Install Mise
+          - bash: mise install
+            displayName: Run 'mise install'
+          - bash: mise x -- renovate "{{ azdo_project }}/{{ repo_name }}"
+            env:
+              RENOVATE_PLATFORM: azure
+              RENOVATE_ENDPOINT: $(System.CollectionUri)
+              RENOVATE_TOKEN: $(System.AccessToken)
+              RENOVATE_CONFIG_FILE: $(Build.SourcesDirectory)/renovate.json
+              RENOVATE_AUTODISCOVER: "false"
+              RENOVATE_REPORT_TYPE: file
+              RENOVATE_REPORT_PATH: $(Build.SourcesDirectory)/renovate-report.json
+            displayName: Run Renovate
+          - pwsh: |
+              $Report = Get-Content -Raw -Path $env:REPORT_PATH | ConvertFrom-Json
+              $CreatedPrs = @()
+              foreach ($RepoName in $Report.repositories.PSObject.Properties.Name) {
+                foreach ($Branch in $Report.repositories.$RepoName.branches) {
+                  if ($Branch.result -eq "pr-created") {
+                    $CreatedPrs += $Branch
+                  }
+                }
+              }
+              if ($CreatedPrs.Count -gt 0) {
+                $Titles = ($CreatedPrs | ForEach-Object { $_.prTitle }) -join "<br>"
+                apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Renovate Opened $($CreatedPrs.Count) PR(s)" -b "Renovate opened the following PR(s):<br><br>$Titles" $env:APPRISE_URL
+              } else {
+                Write-Host -Object "No new PRs opened by Renovate this run."
+              }
+            env:
+              REPORT_PATH: $(Build.SourcesDirectory)/renovate-report.json
+              APPRISE_URL: $(APPRISE_URL)
+            displayName: Notify if Renovate Opened PRs

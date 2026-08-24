@@ -1,0 +1,8 @@
+[tools]
+# Used by the Renovate pipeline (.azurepipelines/renovate.yml.jinja) -- isolated from
+# the base mise.toml/mise.ci.toml since no other pipeline needs Node.js or Renovate
+# itself.
+{#- renovate: datasource=node-version depName=node versioning=node #}
+node = "24.19.0"
+{#- renovate: datasource=npm depName=renovate #}
+"npm:renovate" = "44.39.3"

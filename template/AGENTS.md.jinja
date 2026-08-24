@@ -100,9 +100,9 @@ or a new `validator:` constraint is added.**
 
 ## Renovate `schedule` cron syntax is not standard cron
 
-Renovate's `schedule` option{% if using_github %} (see `renovate.json`{% if is_template %} / {% raw %}`template/{% if using_github %}renovate.json{% endif %}.jinja`{% endraw %}{% endif %}){% endif %}
+Renovate's `schedule` option (see `renovate.json`{% if is_template %} / `template/renovate.json.jinja`{% endif %})
 looks like 5-field cron but isn't interpreted the same way -- this applies to
-any platform Renovate runs on, not just GitHub:
+any platform Renovate runs on:
 
 - The minutes field **must** be `*` -- Renovate doesn't support minute-level
   granularity, and a schedule that restricts it is invalid.

@@ -478,6 +478,19 @@ _tasks:
         true
       {%- endif %}
 
+  # Creates Azure Pipeline for renovate
+  - command: >-
+      az pipelines create
+      --name "[{{ repo_name }}] renovate"
+      --repository {{ repo_name }}
+      --repository-type tfsgit
+      --branch main
+      --yml-path .azurepipelines/renovate.yml
+      --skip-first-run true
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: *when_copy_set_repo_settings_azdo
+
   # Creates Azure Pipeline for docs
   - command: >-
       az pipelines create
