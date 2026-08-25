@@ -27,3 +27,10 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
     and **Contribute to pull requests** on this repo (Project Settings > Repositories > this
     repo > Security) -- this is normally a one-time, org-wide grant, not something you need to
     repeat per repo.
+- `release` pipeline is manually queued
+  - Unlike GitHub's Release Please, which reacts to every push to `main`, this pipeline has no
+    trigger and must be run by hand (Pipelines > select the pipeline > Run) whenever you want a
+    release. This is intentional, not a missing-automation gap: `cz bump` (commitizen) computes
+    the next version and changelog directly against whatever commits already exist on `main` at
+    queue time, so there's no equivalent to release-please's own PR-tracking state that would
+    need a push trigger to stay current.
