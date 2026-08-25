@@ -21,7 +21,10 @@ stages:
     displayName: Build Zensical
     jobs:
       - job: zensical_build
-        timeoutInMinutes: 60
+        # Higher than the other pipelines' 15 minutes: the "Wait for PR Validation Policy"
+        # step alone can poll for up to 20 minutes (40 attempts * 30s), on top of the
+        # actual pr_validation pipeline run and the steps before it.
+        timeoutInMinutes: 30
         displayName: Build Zensical
         steps:
           - pwsh: |
