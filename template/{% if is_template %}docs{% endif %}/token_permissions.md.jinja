@@ -11,8 +11,9 @@ any time, e.g. to rotate a token.
 
 ## Notifications
 
-Both platforms' Copier update-check job{% if using_azdo %} and the Azure DevOps Renovate pipeline
-need{% else %} needs{% endif %} a secret/variable called **APPRISE_URL**. Unlike the tokens below, it isn't a scope to grant -- it's
+Both platforms' Copier update-check job{% if using_azdo %}, the Azure DevOps Renovate pipeline, and
+the Azure DevOps release/docs pipelines (which notify on both successful auto-merge and on PR
+validation failing to pass, since those pipelines merge without a human in the loop) need{% else %} needs{% endif %} a secret/variable called **APPRISE_URL**. Unlike the tokens below, it isn't a scope to grant -- it's
 an [Apprise](https://github.com/caronc/apprise) notification URL pointing at wherever you want
 these notifications sent (email, Slack, Discord, ntfy, Pushover, and 80+ others -- see Apprise's
 own docs for the URL format for your service of choice).
