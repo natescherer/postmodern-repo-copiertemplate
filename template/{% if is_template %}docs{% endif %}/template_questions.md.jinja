@@ -84,3 +84,9 @@ Chooses where rendered documentation ends up:
 Controls the status banner shown at the top of the README, and (for GitHub projects moving to
 Stable) prompts a one-time commit to bump Release Please's version past `1.0.0`. See
 [Lifecycle Management](lifecycle_management.md) for the full behavior.
+
+## `agent_instructions`: Yes / No
+
+Whether to generate `AGENTS.md` (repo conventions for AI coding agents) and `CLAUDE.md` (a
+one-line `@AGENTS.md` import, so Claude Code picks up the same content). Choosing `No` skips
+both files entirely.

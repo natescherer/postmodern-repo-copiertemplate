@@ -1,0 +1,49 @@
+# Notes for AI Agents
+
+## Git workflow
+
+- Commit message style: `type: summary` as the first line (Conventional
+  Commits, enforced by `.config/committed.toml` -- keep the subject at or
+  under 72 characters). A short body paragraph explaining non-obvious
+  rationale is fine when it adds real context; don't pad a trivial change with
+  one just to have one.
+{%- if is_template %}
+
+## Render-validation test suite
+
+Location: {% raw %}`template/{% if is_template %}tests{% endif %}/`{% endraw %}. Run via:
+
+```sh
+{% raw %}mise x -- pytest "template/{% if is_template %}tests{% endif %}/"{% endraw %}
+```
+
+Files: `conftest.py` (shared fixtures), `test_render.py` (structural
+validation across `answer_matrix.py`'s `ANSWER_MATRIX`, including an
+update-from-last-tag path), `test_content.py` (config/content consistency,
+e.g. nav completeness, hook-tool availability), `test_validators.py` (asserts
+`copier.yml.jinja`'s `validator:` blocks actually reject what they claim to,
+via `INVALID_ANSWER_MATRIX`), `test_answer_matrix_coverage.py` (audits
+`answer_matrix.py` itself against the real question set). **Update
+`answer_matrix.py` whenever a Copier question is added, removed, or renamed,
+or a new `validator:` constraint is added.**
+{%- endif %}
+
+## Renovate `schedule` cron syntax is not standard cron
+
+Renovate's `schedule` option (see `renovate.json`{% if is_template %} / `template/renovate.json.jinja`{% endif %})
+looks like 5-field cron but isn't interpreted the same way -- this applies to
+any platform Renovate runs on:
+
+- The minutes field **must** be `*` -- Renovate doesn't support minute-level
+  granularity, and a schedule that restricts it is invalid.
+- A cron schedule defines an allowed **time window**, not an exact trigger
+  instant -- Renovate itself runs on its own polling cadence (external to
+  this project) and only acts during the window the schedule describes.
+
+So `"* 0 1 * *"` is the *correct* idiomatic form for "once a month, on the
+1st, during hour 0" -- it is not a bug, even though it looks like a broken
+"every minute" cron at a glance. Do not change it to `"0 0 1 * *"` (a
+standard-cron-style fix) -- that's invalid for Renovate specifically, since it
+constrains the minutes field.
+
+Reference: <https://docs.renovatebot.com/key-concepts/scheduling/>

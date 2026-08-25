@@ -10,6 +10,11 @@
 
 ## Dogfooding architecture
 
+This section is hand-maintained, not templated -- `template/AGENTS.md.jinja` doesn't
+carry it, since dogfooding is specific to this repo and never applies to a generated
+child. Treat it like the root `copier.yml` exception: a deliberate, permanent addendum,
+not something a future `copier update` should reconcile away.
+
 This repo is both a Copier template (source of truth under `template/`) and,
 via dogfooding, a rendered instance of that same template
 (`project_type: Template` in `.config/copier-answers.yml`). Root-level files
