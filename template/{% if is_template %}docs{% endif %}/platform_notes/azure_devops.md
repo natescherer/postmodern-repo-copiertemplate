@@ -15,7 +15,9 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
     automatically on the default branch (the `pr_validation` pipeline must pass before a PR can
     complete), along with a **Project Administrators** bypass permission mirroring GitHub's
     admin `bypass_actors` entry. Unlike GitHub's ruleset, force-push and branch deletion on the
-    default branch are **not** blocked -- this is a known, currently-accepted gap
+    default branch are **not** blocked -- this is a known, currently-accepted gap. If you chose
+    `repo_setup_actions: None`, see [Manual Repo Settings](../manual_repo_settings.md) for how to
+    set this up by hand.
 - `zensical_target` is always `docs_site Directory in Repo`
   - `GitHub Pages` isn't offered, so Azure DevOps projects never get the release-versioned docs
     site that target provides — see [Getting Started](../index.md#documentation)
