@@ -36,3 +36,10 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
     the next version and changelog directly against whatever commits already exist on `main` at
     queue time, so there's no equivalent to release-please's own PR-tracking state that would
     need a push trigger to stay current.
+- Can't test (or otherwise create) a GitHub-target repo from Azure DevOps-hosted CI
+  - `.azurepipelines/integration_test.yml` only ever creates and verifies an Azure DevOps-hosted
+    throwaway repo -- it has no `gh` CLI setup or GitHub token, so it can't scaffold a
+    GitHub-target child the way GitHub's own integration test workflow scaffolds an Azure
+    DevOps-target one (it already has `AZURE_DEVOPS_EXT_PAT` wired up for exactly that). This is
+    an intentional, accepted asymmetry, not a gap to close: a regression in GitHub-target
+    scaffolding is still caught, just only by GitHub-hosted CI.
