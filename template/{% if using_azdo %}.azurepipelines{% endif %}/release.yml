@@ -28,7 +28,8 @@ stages:
               git config user.name "Azure DevOps"
             displayName: Set Git Config
           - bash: |
-              curl https://mise.run | sh
+              # renovate: datasource=github-releases depName=jdx/mise
+              curl https://mise.run | MISE_VERSION=v2026.8.10 MISE_INSTALL_SKIP_IF_EXISTS=1 sh
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
             displayName: Install Mise
