@@ -6,8 +6,9 @@ trigger:
       - "*"
 
 schedules:
-  - cron: 0 2 * * 1
-    displayName: Run 'copier update' Every Monday at 2am
+  # Matches maint-copier_update_check.yml's own schedule (5pm UTC every Monday).
+  - cron: 0 17 * * 1
+    displayName: Check for Copier Template Updates Every Monday at 5pm UTC
     branches:
       include:
         - main
