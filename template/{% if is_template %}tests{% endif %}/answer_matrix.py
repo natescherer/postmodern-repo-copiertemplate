@@ -51,6 +51,7 @@ ANSWER_MATRIX = [
         "license": "None",
         "zensical_target": "GitHub Pages",
         "lifecycle": "Inactive",
+        "agent_instructions": False,
     },
     {
         "id": "azdo-template-private-docs_site-beta",
