@@ -45,6 +45,7 @@ PIPELINE_FILE_STEMS = (
     "docs",
     "pr_validation",
     "release",
+    "renovate",
     "integration_test",
 )
 
@@ -224,11 +225,73 @@ def create(
     )
 
 
-def verify(repo_name: str, org_url: str, project: str) -> None:
-    """Assert the created repo and its registered pipelines actually exist.
+def check_pr_validation_policy(
+    repo_id: str, pipelines: list[dict], org_url: str, project: str, repo_name: str
+) -> None:
+    """Assert the PR-validation build-validation policy was actually applied.
+
+    Only checks the policy configuration itself (existence, blocking, enabled, and
+    that it targets the pr_validation pipeline) -- not the Project Administrators
+    bypass-permission grant alongside it. `az devops security permission`'s JSON
+    output shape isn't documented clearly enough (no example response in Microsoft's
+    own docs) to assert against confidently without a live org to verify against, so
+    that half is left unverified here rather than risk a check that's confidently
+    wrong in either direction.
 
     Raises:
-        SystemExit: if the repo or any expected pipeline is missing.
+        SystemExit: if no matching, enabled, blocking policy is found.
+
+    """
+    pr_validation_id = next(
+        (p["id"] for p in pipelines if p["name"] == f"[{repo_name}] pr_validation"),
+        None,
+    )
+    if pr_validation_id is None:
+        raise SystemExit(
+            "Can't check the PR-validation policy: pr_validation pipeline not found"
+        )
+
+    policies = json.loads(
+        az_value(
+            "repos",
+            "policy",
+            "list",
+            "--repository-id",
+            repo_id,
+            "--branch",
+            "main",
+            "--org",
+            org_url,
+            "--project",
+            project,
+        )
+        or "[]"
+    )
+    build_policies = [
+        p for p in policies if p.get("type", {}).get("displayName") == "Build"
+    ]
+    matching = [
+        p
+        for p in build_policies
+        if p.get("settings", {}).get("buildDefinitionId") == pr_validation_id
+    ]
+    if not matching:
+        raise SystemExit(
+            "No build-validation policy on 'main' targets the pr_validation pipeline"
+        )
+    policy = matching[0]
+    if not policy.get("isBlocking") or not policy.get("isEnabled"):
+        raise SystemExit(
+            f"Build-validation policy {policy.get('id')} exists but isn't both "
+            "blocking and enabled"
+        )
+
+
+def verify(repo_name: str, org_url: str, project: str) -> None:
+    """Assert the created repo, its pipelines, and its PR-validation policy exist.
+
+    Raises:
+        SystemExit: if the repo, any expected pipeline, or the policy is missing.
 
     """
     print(f"Verifying {org_url}{project}/{repo_name}...")
@@ -249,7 +312,7 @@ def verify(repo_name: str, org_url: str, project: str) -> None:
     if not repo_id:
         raise SystemExit(f"Repo {repo_name!r} not found")
 
-    pipeline_names = json.loads(
+    pipelines = json.loads(
         az_value(
             "pipelines",
             "list",
@@ -260,14 +323,17 @@ def verify(repo_name: str, org_url: str, project: str) -> None:
             "--repository",
             repo_name,
             "--query",
-            "[].name",
+            "[].{id: id, name: name}",
         )
         or "[]"
     )
+    pipeline_names = {p["name"] for p in pipelines}
     expected = {f"[{repo_name}] {stem}" for stem in PIPELINE_FILE_STEMS}
-    missing = expected - set(pipeline_names)
+    missing = expected - pipeline_names
     if missing:
         raise SystemExit(f"Missing pipeline(s): {', '.join(sorted(missing))}")
+
+    check_pr_validation_policy(repo_id, pipelines, org_url, project, repo_name)
     print("All checks passed.")
 
 
