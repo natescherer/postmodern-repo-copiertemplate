@@ -20,6 +20,21 @@ stages:
         timeoutInMinutes: 60
         displayName: Release
         steps:
+          - pwsh: |
+              $Secrets = @("APPRISE_URL")
+              $MissingSecret = $False
+              foreach ($Secret in $Secrets) {
+                if (!([Environment]::GetEnvironmentVariable($Secret)) -or ([Environment]::GetEnvironmentVariable($Secret) -eq "`$($Secret)")) {
+                  Write-Host -Object "[error]Required Pipeline variable '$Secret' is not set! Please add it in Pipelines settings."
+                  $MissingSecret = $True
+                }
+              }
+              if ($MissingSecret) {
+                throw "Erroring as one or more required secrets are missing!"
+              }
+            env:
+              APPRISE_URL: $(APPRISE_URL)
+            displayName: Validate Secrets Exist
           - checkout: self
             fetchDepth: 0
             persistCredentials: true
@@ -85,8 +100,6 @@ stages:
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - pwsh: |
-              $MergeCommitMessage = "$(PR_TITLE)"
-
               $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
               $BaseSplat = @{
                 ContentType = "application/json"
@@ -117,8 +130,71 @@ stages:
               }
               Write-Host "Approving Pull Request..."
               Invoke-RestMethod @ApproveSplat | Out-Null
+            displayName: Approve Pull Request
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          - pwsh: |
+              # Polls the PR-validation build-validation policy (set up by "az repos policy
+              # build create" in copier.yml.jinja's repo-setup tasks) until it reaches a
+              # terminal state, instead of bypassing it. Unlike GitHub's release-please flow
+              # (which only ever opens/updates a PR for a human to merge), this pipeline
+              # auto-merges its own PR, so it must earn a real pass through the same policy
+              # every other PR on this repo is required to pass, rather than silently
+              # skipping it.
+              $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
+              $BaseSplat = @{
+                ContentType = "application/json"
+                Headers = @{
+                  Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("user:$env:SYSTEM_ACCESSTOKEN")))"
+                }
+              }
 
-              Start-Sleep -Seconds 5
+              $ArtifactID = "vstfs:///CodeReview/CodeReviewId/$(System.TeamProjectId)/$(PULL_REQUEST_ID)"
+              $EvalSplat = $BaseSplat + @{
+                Uri = "$ProjectBaseUri/policy/evaluations?artifactId=$([Uri]::EscapeDataString($ArtifactID))&api-version=7.1-preview.1"
+                Method = "GET"
+              }
+
+              $MaxAttempts = 40
+              $DelaySeconds = 30
+              $Status = "queued"
+              for ($Attempt = 1; $Attempt -le $MaxAttempts; $Attempt++) {
+                $EvalResponse = Invoke-RestMethod @EvalSplat
+                $Evaluations = if ($EvalResponse.PSObject.Properties.Name -contains "value") { $EvalResponse.value } else { $EvalResponse }
+                $BuildEval = $Evaluations | Where-Object { $_.configuration.type.displayName -eq "Build" } | Select-Object -First 1
+
+                if (-not $BuildEval) {
+                  Write-Host "No build-validation policy evaluation found yet (attempt $Attempt/$MaxAttempts)..."
+                } else {
+                  $Status = $BuildEval.status
+                  Write-Host "Build-validation policy status: $Status (attempt $Attempt/$MaxAttempts)"
+                  if ($Status -in @("approved", "rejected", "broken", "notApplicable")) {
+                    break
+                  }
+                }
+
+                Start-Sleep -Seconds $DelaySeconds
+              }
+
+              Write-Host "##vso[task.setvariable variable=PR_VALIDATION_STATUS;]$Status"
+            displayName: Wait for PR Validation Policy
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          - pwsh: |
+              if ("$(PR_VALIDATION_STATUS)" -ne "approved") {
+                apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Release PR Needs Manual Attention" -b "PR #$(PULL_REQUEST_ID) ($(PR_TITLE)) did not pass PR validation (status: $(PR_VALIDATION_STATUS)) and was not merged automatically. Please review it manually." $env:APPRISE_URL
+                throw "PR validation did not succeed (status: $(PR_VALIDATION_STATUS)) -- leaving PR #$(PULL_REQUEST_ID) open for manual review."
+              }
+
+              $MergeCommitMessage = "$(PR_TITLE)"
+
+              $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
+              $BaseSplat = @{
+                ContentType = "application/json"
+                Headers = @{
+                  Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("user:$env:SYSTEM_ACCESSTOKEN")))"
+                }
+              }
 
               $MergeSplat = $BaseSplat + @{
                 Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests/$(PULL_REQUEST_ID)?api-version=7.0"
@@ -129,8 +205,6 @@ stages:
                   }
                   status = "completed"
                   completionOptions = @{
-                    bypassPolicy = $true
-                    bypassReason = "Pipeline Automation"
                     deleteSourceBranch = $true
                     mergeCommitMessage = $MergeCommitMessage
                     mergeStrategy = "squash"
@@ -139,6 +213,9 @@ stages:
               }
               Write-Host "Merging Pull Request..."
               Invoke-RestMethod @MergeSplat | Out-Null
-            displayName: Approve & Merge Pull Request
+
+              apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Release PR Merged" -b "PR #$(PULL_REQUEST_ID) ($(PR_TITLE)) passed PR validation and was merged automatically." $env:APPRISE_URL
+            displayName: Merge Pull Request
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+              APPRISE_URL: $(APPRISE_URL)
