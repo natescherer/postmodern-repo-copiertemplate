@@ -652,8 +652,12 @@ _tasks:
 
 ## Start Messages
 _message_after_copy: |-
-  {%- if using_github and not should_set_repo_settings -%}
+  {%- if using_github -%}
     Repo settings (labels, merge options, branch protection) are not being applied automatically. See the 'Manual Repo Settings' page in documentation for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.
+
+  {% endif -%}
+  {%- if using_azdo and not should_set_repo_settings -%}
+    Azure Pipelines and the PR-validation build policy were not created automatically since repo setup was skipped. See the 'Manual Repo Settings' page in documentation for how to set these up by hand.
 
   {% endif -%}
   {%- if using_github -%}
