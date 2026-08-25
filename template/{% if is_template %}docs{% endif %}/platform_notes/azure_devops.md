@@ -43,3 +43,8 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
     DevOps-target one (it already has `AZURE_DEVOPS_EXT_PAT` wired up for exactly that). This is
     an intentional, accepted asymmetry, not a gap to close: a regression in GitHub-target
     scaffolding is still caught, just only by GitHub-hosted CI.
+- No semantic linter for Azure Pipelines YAML
+  - `.azurepipelines/*.yml` files get generic YAML syntax checking via `ryl`, but nothing checks
+    Azure Pipelines-specific schema/semantics the way `actionlint` does for GitHub Actions
+    workflows. No comparable standalone tool exists for Azure Pipelines, so this is treated as an
+    accepted limitation rather than a gap to close.
