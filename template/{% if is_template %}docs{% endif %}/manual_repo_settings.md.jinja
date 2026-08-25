@@ -1,4 +1,5 @@
 # Manual Repo Settings
+{%- if using_github %}
 
 When you use the [Settings GitHub App](https://github.com/apps/settings), it syncs the repo
 settings, labels, and branch protection ruleset described below from the committed
@@ -52,4 +53,33 @@ Under **Settings > Rules > Rulesets**, create a new ruleset:
 After the first successful Pages deployment, an environment named `github-pages` will exist under
 **Settings > Environments**. Open it and ensure **Deployment branches and tags** is set to
 **All branches** (no restriction).
+{%- endif %}
+{%- elif using_azdo %}
+
+If you chose `repo_setup_actions: None` (or need to reapply this after the fact), here's how to
+recreate what `Create Repo`/`Set Repo Rules` would otherwise set up automatically, through the
+Azure DevOps UI.
+
+## Pipelines
+
+Under **Pipelines > New pipeline**, create one pipeline per file under `.azurepipelines/`,
+pointing each at the matching YAML file in this repo. Name each `[{{ repo_name }}] <file-stem>`
+(e.g. `[{{ repo_name }}] pr_validation`) to match what this template's own automation would have
+named them.
+
+## PR-Validation Branch Policy
+
+Under **Project Settings > Repositories > (this repo) > Policies > Branch Policies > main**, add
+a **Build Validation** policy:
+
+- Build pipeline: the `pr_validation` pipeline created above
+- Trigger: **Automatic**
+- Policy requirement: **Required**
+- Build expiration: **Immediately**
+
+## Bypass Permission
+
+Under **Project Settings > Repositories > (this repo) > Security**, select **Project
+Administrators** and set **Bypass policies when completing pull requests** to **Allow** -- this
+lets project admins use the "Complete" button's bypass option instead of being blocked entirely.
 {%- endif %}
