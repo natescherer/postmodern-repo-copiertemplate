@@ -48,6 +48,7 @@ run = [
   "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] copier-update-check\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
   "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] release\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
   "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] docs\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] renovate\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
 {%- if is_template and integration_test_scheduled %}
   "az pipelines variable create --name AZURE_DEVOPS_EXT_PAT --pipeline-name \"[{{ repo_name }}] integration_test\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
 {%- endif %}
