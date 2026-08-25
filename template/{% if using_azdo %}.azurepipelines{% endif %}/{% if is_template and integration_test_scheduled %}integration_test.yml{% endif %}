@@ -23,7 +23,7 @@ stages:
     displayName: Integration Test
     jobs:
       - job: integration_test
-        timeoutInMinutes: 60
+        timeoutInMinutes: 15
         displayName: Integration Test
         steps:
           - pwsh: |

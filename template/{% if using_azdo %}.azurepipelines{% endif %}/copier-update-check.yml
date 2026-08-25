@@ -25,7 +25,7 @@ stages:
     displayName: Check for Template Update
     jobs:
       - job: checkfortemplateupdate
-        timeoutInMinutes: 60
+        timeoutInMinutes: 15
         displayName: Check for Template Update
         steps:
           - pwsh: |
