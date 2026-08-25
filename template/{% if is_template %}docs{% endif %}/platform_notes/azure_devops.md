@@ -10,8 +10,12 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
   - It is assumed that if you are using Azure DevOps, it is due to organizational requirements.
 - GitHub-specific features not implemented
   - Custom Issue tags
-- Branch protection policies not set
-  - It is assumed that your organization will be enforcing this at the project level
+- Branch protection is partial
+  - When `repo_setup_actions` triggers setup, a required PR-validation build policy is created
+    automatically on the default branch (the `pr_validation` pipeline must pass before a PR can
+    complete), along with a **Project Administrators** bypass permission mirroring GitHub's
+    admin `bypass_actors` entry. Unlike GitHub's ruleset, force-push and branch deletion on the
+    default branch are **not** blocked -- this is a known, currently-accepted gap
 - `zensical_target` is always `docs_site Directory in Repo`
   - `GitHub Pages` isn't offered, so Azure DevOps projects never get the release-versioned docs
     site that target provides — see [Getting Started](../index.md#documentation)

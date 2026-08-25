@@ -214,6 +214,20 @@
       "versioningTemplate": "pep440"
     },
     {
+      "description": "Manager for the mise install version pin in Azure Pipelines",
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "jdx/mise",
+      "extractVersionTemplate": "^v(?<version>.*)$",
+      "managerFilePatterns": [
+        "/(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"
+      ],
+      "matchStrings": [
+        "MISE_VERSION=v(?<currentValue>[^\\s]+)"
+      ],
+      "versioningTemplate": "semver"
+    },
+    {
       "description": "Manager for pipx tool dependencies",
       "customType": "regex",
       "datasourceTemplate": "pypi",
