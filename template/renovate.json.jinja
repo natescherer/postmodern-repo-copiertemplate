@@ -210,6 +210,17 @@
       "versioningTemplate": {% raw %}"{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"{% endraw %}
     },
     {
+      "description": "Manager for a Template project's own copier.yml min_copier_version pin",
+      "customType": "regex",
+      "managerFilePatterns": [
+        {% raw %}"/(^|/)(?:{%.*%})?copier\\.yml(?:{%.*%})?(?:\\.jinja)?$/"{% endraw %}
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s*\\n_min_copier_version:\\s*[\"'](?<currentValue>[^\"']*)[\"']"
+      ],
+      "versioningTemplate": {% raw %}"{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"{% endraw %}
+    },
+    {
       "description": "Manager for pipx git-sourced tools",
       "customType": "regex",
       "managerFilePatterns": [
