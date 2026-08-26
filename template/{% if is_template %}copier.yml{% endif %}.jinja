@@ -658,6 +658,15 @@ _tasks:
       {%- if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' -%}
         true
       {%- endif %}
+
+  # Lets anyone privately report a security vulnerability (Security > Advisories)
+  # instead of only via a public issue -- meaningful for public repos specifically,
+  # since a private repo's issues are already restricted to invited collaborators.
+  - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/private-vulnerability-reporting -X PUT
+    when: |-
+      {%- if _copier_operation == 'copy' and is_public and using_github and repo_setup_actions != 'None' -%}
+        true
+      {%- endif %}
 ## End Tasks
 
 ## Start Messages
