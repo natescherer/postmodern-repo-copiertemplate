@@ -664,10 +664,16 @@ _tasks:
   - command: >-
       gh api repos/{{ github_repo_owner }}/{{ repo_name }}/code-scanning/default-setup
       -X PATCH -f state=configured
-    when: |-
+    when: &when_copy_public_github |-
       {%- if _copier_operation == 'copy' and is_public and using_github and repo_setup_actions != 'None' -%}
         true
       {%- endif %}
+
+  # Lets anyone privately report a security vulnerability (Security > Advisories)
+  # instead of only via a public issue -- meaningful for public repos specifically,
+  # since a private repo's issues are already restricted to invited collaborators.
+  - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/private-vulnerability-reporting -X PUT
+    when: *when_copy_public_github
 ## End Tasks
 
 ## Start Messages

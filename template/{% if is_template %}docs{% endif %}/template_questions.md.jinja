@@ -25,9 +25,9 @@ triggers this question's validator, which checks the relevant platform CLI (`gh`
 installed and authenticated *before* letting you proceed -- see [Prerequisites](prerequisites.md).
 
 - **Create Repo** — creates the remote repo; on GitHub also sets Actions workflow permissions,
-  sets up GitHub Pages if applicable, and enables CodeQL code scanning's default setup if the
-  repo is public; on Azure DevOps also registers pipelines for each file under
-  `.azurepipelines/`.
+  sets up GitHub Pages if applicable, and (for public repos) enables CodeQL code scanning's
+  default setup and private vulnerability reporting; on Azure DevOps also registers pipelines for
+  each file under `.azurepipelines/`.
 - **Set Repo Rules** — skips repo creation (for an existing repo) but still applies the other
   automation above.
 - **None** — skips all of it; you're on your own for repo creation and settings.
