@@ -20,11 +20,19 @@ jobs:
       - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
         with:
           experimental: true
-      - id: changed-files
-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
       - name: Run Prek Tests
+        env:
+          BASE_REF: {% raw %}${{ github.base_ref }}{% endraw %}
         run: |
-          mise x -- prek run -c .config/prek.toml --files {% raw %}${{ steps.changed-files.outputs.all_changed_files }}{% endraw %}
+          git fetch origin "$BASE_REF"
+          CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No changed files detected; skipping prek."
+          else
+            echo "$CHANGED_FILES"
+            mapfile -t FILES <<< "$CHANGED_FILES"
+            mise x -- prek run -c .config/prek.toml --files "${FILES[@]}"
+          fi
 {%- if is_template %}
       - name: Run Template Render Tests
         run: |-
