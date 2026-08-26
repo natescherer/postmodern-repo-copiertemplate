@@ -329,7 +329,7 @@ is_template:
     {%- endif %}
   when: false
 
-is_prerelease:
+lifecycle_is_pre_stable:
   type: bool
   default: |-
     {%- if lifecycle == 'Pre-Alpha' or lifecycle == 'Alpha' or lifecycle == 'Beta' -%}
@@ -453,7 +453,7 @@ _tasks:
 
   # Commits template files
   - command: >-
-      {%- set release_as_version = "0.1.0" if is_prerelease else "1.0.0" -%}
+      {%- set release_as_version = "0.1.0" if lifecycle_is_pre_stable else "1.0.0" -%}
       git commit -m "feat: initialize project"
       {%- if using_github %} -m "Release-As: {{ release_as_version }}"{% endif %}
     when: *when_copy_create_repo
