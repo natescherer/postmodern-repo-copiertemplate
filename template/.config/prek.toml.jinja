@@ -138,6 +138,11 @@ id = "fix-byte-order-marker"
 
 [[repos.hooks]]
 id = "mixed-line-ending"
+# Replaces a repo-wide `* text eol=lf` .gitattributes rule, which can corrupt binary
+# files (e.g. images) that Git's own text-detection heuristic misclassifies -- this
+# hook's `types: [text]` filter (from pre-commit-hooks' own default) uses the more
+# reliable `identify` library instead, and never touches a file it can't confirm is text.
+args = ["--fix=lf"]
 
 [[repos.hooks]]
 id = "trailing-whitespace"
