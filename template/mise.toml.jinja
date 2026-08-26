@@ -40,6 +40,9 @@ run = [
 {%- if using_github %}
   "gh secret set REPO_MAINTENANCE_PAT",
   "gh secret set APPRISE_URL",
+{%- if code_coverage %}
+  "gh secret set CODECOV_TOKEN",
+{%- endif %}
 {%- if is_template and integration_test_scheduled %}
   "gh secret set INTEGRATION_TEST_PAT",
   "gh secret set AZURE_DEVOPS_EXT_PAT",
