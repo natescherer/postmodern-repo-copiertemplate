@@ -17,6 +17,20 @@ validation failing to pass, since those pipelines merge without a human in the l
 an [Apprise](https://github.com/caronc/apprise) notification URL pointing at wherever you want
 these notifications sent (email, Slack, Discord, ntfy, Pushover, and 80+ others -- see Apprise's
 own docs for the URL format for your service of choice).
+
+## Code Coverage
+
+Only relevant if you answer Yes to the `code_coverage` question.
+{%- if using_github %}
+
+Reporting code coverage needs a secret called **CODECOV_TOKEN**. Sign up at
+[codecov.io](https://codecov.io), add this repo, and copy the repository upload token from its
+settings page.
+{%- elif using_azdo %}
+
+Reporting code coverage needs no secret or external service on Azure DevOps -- coverage
+publishing (`PublishCodeCoverageResults@2`) is a built-in Azure Pipelines feature.
+{%- endif %}
 {%- if using_github %}
 
 ## GitHub

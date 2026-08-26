@@ -265,6 +265,11 @@ agent_instructions:
   type: bool
   help: Generate AGENTS.md/CLAUDE.md with instructions for AI coding agents.
   default: true
+
+code_coverage:
+  type: bool
+  help: Report code coverage via Codecov (GitHub) or Azure Pipelines' built-in publishing (Azure DevOps) -- wires up reporting only, your test command needs to produce coverage.xml (Cobertura) at the repo root.
+  default: false
 ## End Questions
 
 ## Start Computed Values
@@ -669,6 +674,9 @@ _message_after_copy: |-
   Before CI works, add these as GitHub Actions secrets (Settings > Secrets and variables > Actions):
     - REPO_MAINTENANCE_PAT
     - APPRISE_URL
+  {%- if code_coverage %}
+    - CODECOV_TOKEN
+  {%- endif %}
   {%- if is_template and integration_test_scheduled %}
     - INTEGRATION_TEST_PAT
     - AZURE_DEVOPS_EXT_PAT

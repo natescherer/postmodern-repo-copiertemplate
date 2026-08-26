@@ -90,3 +90,12 @@ Stable) prompts a one-time commit to bump Release Please's version past `1.0.0`.
 Whether to generate `AGENTS.md` (repo conventions for AI coding agents) and `CLAUDE.md` (a
 one-line `@AGENTS.md` import, so Claude Code picks up the same content). Choosing `No` skips
 both files entirely.
+
+## `code_coverage`: Yes / No
+
+Whether to wire up code coverage reporting: the Codecov GitHub Action on GitHub, or Azure
+Pipelines' built-in coverage publishing on Azure DevOps. This only plumbs the upload/publish
+step -- it expects a `coverage.xml` (Cobertura format) at the repo root, and doesn't produce
+one itself. Your own test command (or a language-specific child template built from this one)
+needs to actually generate that file, e.g. `pytest-cov`'s `--cov-report=xml` for Python or
+Pester's `-CodeCoverage` for PowerShell.
