@@ -12,6 +12,18 @@ repository:
   allow_merge_commit: false
   allow_rebase_merge: false
   delete_branch_on_merge: true
+{%- if is_public %}
+
+  # Free for public repos; needs a paid GitHub Advanced Security license on private
+  # ones, so scoped to public only. New public repos under a personal account get
+  # this by default already, but org-owned ones don't -- this makes it explicit
+  # either way rather than depending on that default.
+  security_and_analysis:
+    secret_scanning:
+      status: enabled
+    secret_scanning_push_protection:
+      status: enabled
+{%- endif %}
 
 # The Settings App treats this list as authoritative: any label that exists on the
 # repo but isn't listed here gets deleted on sync -- including GitHub's own
