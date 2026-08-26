@@ -645,6 +645,16 @@ _tasks:
       {%- if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' -%}
         true
       {%- endif %}
+
+  # Enables CodeQL code scanning's default setup -- free for public repos, needs
+  # GitHub Advanced Security (paid) on private ones, so scoped to public only.
+  - command: >-
+      gh api repos/{{ github_repo_owner }}/{{ repo_name }}/code-scanning/default-setup
+      -X PATCH -f state=configured
+    when: |-
+      {%- if _copier_operation == 'copy' and is_public and using_github and repo_setup_actions != 'None' -%}
+        true
+      {%- endif %}
 ## End Tasks
 
 ## Start Messages
