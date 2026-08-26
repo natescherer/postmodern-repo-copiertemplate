@@ -69,17 +69,17 @@ stages:
             displayName: Run 'mise install'
           - bash: |
               # Scopes the lint run to files actually changed on this PR, matching
-              # GitHub's counterpart (which uses tj-actions/changed-files for the same
-              # purpose) -- identical PR content could otherwise pass on GitHub and fail
-              # on Azure DevOps (or vice versa) depending on unrelated pre-existing lint
-              # state elsewhere in the repo.
+              # GitHub's counterpart (which runs the same git diff) -- identical PR
+              # content could otherwise pass on GitHub and fail on Azure DevOps (or vice
+              # versa) depending on unrelated pre-existing lint state elsewhere in the repo.
               git fetch origin $(System.PullRequest.TargetBranchName)
               CHANGED_FILES=$(git diff --name-only "origin/$(System.PullRequest.TargetBranchName)...HEAD")
               if [ -z "$CHANGED_FILES" ]; then
                 echo "No changed files detected; skipping prek."
               else
                 echo "$CHANGED_FILES"
-                mise x -- prek run -c .config/prek.toml --files $CHANGED_FILES
+                mapfile -t FILES <<< "$CHANGED_FILES"
+                mise x -- prek run -c .config/prek.toml --files "${FILES[@]}"
               fi
             displayName: Run Prek Tests
 {%- if is_template %}
