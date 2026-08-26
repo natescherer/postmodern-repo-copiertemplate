@@ -24,8 +24,9 @@ only) is always generated regardless of this answer -- see below. Choosing anyth
 triggers this question's validator, which checks the relevant platform CLI (`gh` or `az`) is
 installed and authenticated *before* letting you proceed -- see [Prerequisites](prerequisites.md).
 
-- **Create Repo** — creates the remote repo; on GitHub also sets Actions workflow permissions and
-  sets up GitHub Pages if applicable; on Azure DevOps also registers pipelines for each file under
+- **Create Repo** — creates the remote repo; on GitHub also sets Actions workflow permissions,
+  sets up GitHub Pages if applicable, and enables CodeQL code scanning's default setup if the
+  repo is public; on Azure DevOps also registers pipelines for each file under
   `.azurepipelines/`.
 - **Set Repo Rules** — skips repo creation (for an existing repo) but still applies the other
   automation above.
