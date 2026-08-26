@@ -93,7 +93,7 @@ rumdl = "0.2.52"
 shellcheck = "0.11.0"
 
 [tools."pipx:copier"]
-version = "9.17.1"
+version = "9.17.2"
 uvx_args = "--with jinja2-shell-extension==2.1.1"
 
 [tools."pipx:pytest"]
