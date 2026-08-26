@@ -29,6 +29,7 @@ ANSWER_MATRIX = [
         "license": "MIT",
         "zensical_target": "GitHub Pages",
         "lifecycle": "Pre-Alpha",
+        "code_coverage": True,
     },
     {
         "id": "github-standard-private-none-docs_site-stable",
@@ -65,6 +66,7 @@ ANSWER_MATRIX = [
         "license": "None",
         "zensical_target": "docs_site Directory in Repo",
         "lifecycle": "Beta",
+        "code_coverage": True,
     },
     {
         "id": "azdo-standard-private-docs_site-alpha",

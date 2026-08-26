@@ -86,3 +86,10 @@ stages:
           - bash: mise x -- pytest tests/
             displayName: Run Template Render Tests
 {%- endif %}
+{%- if code_coverage %}
+          - task: PublishCodeCoverageResults@2
+            condition: succeededOrFailed()
+            inputs:
+              summaryFileLocation: $(Build.SourcesDirectory)/coverage.xml
+              failIfCoverageEmpty: false
+{%- endif %}

@@ -30,3 +30,12 @@ jobs:
         run: |-
           mise x -- pytest tests/
 {%- endif %}
+{%- if code_coverage %}
+      - name: Upload Coverage to Codecov
+        if: {% raw %}${{ hashFiles('coverage.xml') != '' }}{% endraw %}
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        with:
+          token: {% raw %}${{ secrets.CODECOV_TOKEN }}{% endraw %}
+          files: coverage.xml
+          fail_ci_if_error: false
+{%- endif %}
