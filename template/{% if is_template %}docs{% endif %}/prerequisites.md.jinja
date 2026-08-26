@@ -1,5 +1,4 @@
 # Prerequisites
-{%- if using_azdo %}
 
 ## Azure DevOps
 
@@ -33,8 +32,6 @@ In order to support the proper parsing of Conventional Commits, the following mu
                     - Contribute
                     - Contribute to pull requests
                     - Create branch
-{%- endif %}
-{%- if using_github %}
 
 ## GitHub
 
@@ -62,17 +59,10 @@ In order to support the proper parsing of Conventional Commits, the following mu
     - It must have access to a repo *before* that repo is created for its settings to apply, so grant it access to all your repositories up front, same as the apps above
     - Skipping this is fine -- see [Manual Repo Settings](manual_repo_settings.md) for how to apply the same configuration by hand instead
 1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [in the repo settings](https://github.com/settings/security_analysis).
-{%- endif %}
 
 ## Personal Access Tokens
-{%- if using_azdo %}
 
-Azure DevOps no longer needs one for repo setup -- see the `az login` step above. See
-[Token Permissions](token_permissions.md) for the permissions the signed-in account needs instead.
-{%- endif %}
-{%- if using_github %}
-
-GitHub no longer needs one for repo setup -- see the `gh auth login` step above. See
-[Token Permissions](token_permissions.md) for the separate, ongoing **Repo Maintenance PAT** used
-by this project's own GitHub Actions workflows.
-{%- endif %}
+Neither platform needs one for repo setup anymore -- see the `az login`/`gh auth login` steps
+above. See [Token Permissions](token_permissions.md) for the permissions the signed-in account
+needs instead on Azure DevOps, and for the separate, ongoing **Repo Maintenance PAT** used by
+this project's own GitHub Actions workflows.
