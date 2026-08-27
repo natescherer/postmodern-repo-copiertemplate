@@ -96,6 +96,11 @@ repo_setup_actions:
             {%- set az_auth_check = ('az account show && echo AZ_AUTHED' | shell()) -%}
             {%- if 'AZ_AUTHED' not in az_auth_check -%}
               Azure CLI is installed but not logged in. Run 'az login', then try again.
+            {%- elif repo_setup_actions == 'Create Repo' -%}
+              {%- set knope_check = ('knope --version && echo KNOPE_INSTALLED' | shell()) -%}
+              {%- if 'KNOPE_INSTALLED' not in knope_check -%}
+                Knope ('knope') is not installed or not on PATH -- it's used to stage this project's first release. Install it (see https://knope.tech/), then try again.
+              {%- endif -%}
             {%- endif -%}
           {%- endif -%}
         {%- endif -%}
@@ -390,7 +395,7 @@ zensical_repo:
 current_knope_version:
   type: str
   default: |-
-    {%- if _copier_operation == 'update' and using_github -%}
+    {%- if _copier_operation == 'update' -%}
       {%- set _version_file = ('git show HEAD:.config/knope-current-version.json' | shell()) | from_json -%}
       {{- _version_file.version -}}
     {%- endif %}
@@ -493,13 +498,24 @@ _tasks:
       - -c
       - |
         import os, subprocess
-        token = subprocess.run(["gh", "auth", "token"], capture_output=True, text=True, check=True).stdout.strip()
-        env = {**os.environ, "GITHUB_TOKEN": token}
-        subprocess.run(["knope", "autoupdate-knope-pr", "--override-version", "{{ '0.1.0' if lifecycle_is_pre_stable else '1.0.0' }}"], env=env, check=True)
-    when: |-
-      {%- if _copier_operation == 'copy' and should_create_repo and using_github -%}
-        true
-      {%- endif %}
+        version = "{{ '0.1.0' if lifecycle_is_pre_stable else '1.0.0' }}"
+        try:
+            {%- if using_github %}
+            token = subprocess.run(["gh", "auth", "token"], capture_output=True, text=True, check=True).stdout.strip()
+            env = {**os.environ, "GITHUB_TOKEN": token}
+            subprocess.run(["knope", "autoupdate-knope-pr", "--override-version", version], env=env, check=True)
+            {%- elif using_azdo %}
+            subprocess.run(["knope", "autoupdate-knope-pr", "--override-version", version], check=True)
+            {%- endif %}
+        except subprocess.CalledProcessError:
+            print(
+                "Warning: could not automatically open the first release PR "
+                "(a common cause is a shell-quoting quirk in the PR-creation step "
+                "on some platforms/shells). Once you've confirmed your CLI auth is "
+                "working, run this manually to open it yourself:\n"
+                f"  knope autoupdate-knope-pr --override-version {version}"
+            )
+    when: *when_copy_create_repo
 
   # Creates Azure Pipeline for copier-update-check
   - command: >-
@@ -539,6 +555,17 @@ _tasks:
       --branch main
       --yml-path .azurepipelines/docs.yml
       --skip-first-run true
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: *when_copy_set_repo_settings_azdo
+
+  # A freshly-registered AzDO YAML pipeline's push-based CI trigger doesn't reliably
+  # activate until the pipeline has run at least once -- confirmed via live testing (a
+  # real push produced zero pipeline runs until a manual run was queued first). This
+  # one-time warm-up run activates it for every push after.
+  - command: >-
+      az pipelines run
+      --name "[{{ repo_name }}] docs"
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
@@ -644,7 +671,28 @@ _tasks:
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/release.yml
+      --yml-path .azurepipelines/knope-release.yml
+      --skip-first-run true
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: *when_copy_set_repo_settings_azdo
+
+  # See the docs pipeline's warm-up task above for why this is needed.
+  - command: >-
+      az pipelines run
+      --name "[{{ repo_name }}] release"
+      --org https://dev.azure.com/{{ azdo_org }}/
+      --project "{{ azdo_project }}"
+    when: *when_copy_set_repo_settings_azdo
+
+  # Creates Azure Pipeline for prerelease
+  - command: >-
+      az pipelines create
+      --name "[{{ repo_name }}] prerelease"
+      --repository {{ repo_name }}
+      --repository-type tfsgit
+      --branch main
+      --yml-path .azurepipelines/knope-prerelease.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -722,14 +770,19 @@ _message_after_copy: |-
   {%- endif %}
 
 _message_after_update: |-
-  {%- if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_knope_version_is_pre_1 -%}
-  This project's lifecycle is 'Stable' but the version hasn't been bumped to 1.0.0 yet. Run one of the following (whichever matches your shell) to open a PR proposing that release:
+  {%- if lifecycle == 'Stable' and current_knope_version_is_pre_1 -%}
+  This project's lifecycle is 'Stable' but the version hasn't been bumped to 1.0.0 yet. Run
+  {%- if using_github %} one of the following (whichever matches your shell) to open a PR proposing that release:
 
   # bash/zsh/Git Bash
   GITHUB_TOKEN=$(gh auth token) knope autoupdate-knope-pr --override-version 1.0.0
 
   # PowerShell
   $env:GITHUB_TOKEN = (gh auth token); knope autoupdate-knope-pr --override-version 1.0.0
+  {%- elif using_azdo %} the following to open a PR proposing that release:
+
+  knope autoupdate-knope-pr --override-version 1.0.0
+  {%- endif %}
   {%- endif %}
 ## End Messages
 {%- endraw %}

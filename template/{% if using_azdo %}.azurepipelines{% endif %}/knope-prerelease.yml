@@ -1,0 +1,66 @@
+name: $(BuildId)
+
+trigger:
+  branches:
+    exclude:
+      - "*"
+
+parameters:
+  - name: label
+    displayName: Prerelease label
+    type: string
+    default: alpha
+    values:
+      - alpha
+      - beta
+      - rc
+
+variables:
+  CI: true
+  MISE_ENV: ci
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: prerelease
+    displayName: Prerelease
+    jobs:
+      - job: prerelease
+        timeoutInMinutes: 15
+        displayName: Prerelease
+        steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
+          - pwsh: |
+              git config user.email "azuredevops@microsoft.com"
+              git config user.name "Azure DevOps"
+            displayName: Set Git Config
+          - bash: |
+              # renovate: datasource=github-releases depName=jdx/mise
+              curl https://mise.run | MISE_VERSION=v2026.8.10 MISE_INSTALL_SKIP_IF_EXISTS=1 sh
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
+            displayName: Install Mise
+          - bash: mise install
+            displayName: Run 'mise install'
+          - pwsh: |
+              $Label = "${{ parameters.label }}"
+              $Tags = git tag --points-at HEAD
+              $Duplicate = $Tags | Where-Object { $_ -match "-$([regex]::Escape($Label))\.\d+$" }
+              if ($Duplicate) {
+                Write-Host "##vso[task.logissue type=error]This commit is already tagged as $Duplicate -- push a new commit before cutting another $Label prerelease."
+                throw "Duplicate prerelease"
+              }
+            displayName: Block Duplicate Prerelease
+          - bash: mise x -- knope create-prerelease-via-knope --prerelease-label ${{ parameters.label }} --verbose
+            displayName: Create Prerelease
+          - pwsh: |
+              $Content = Get-Content .config/knope-current-version.json -Raw | ConvertFrom-Json
+              Write-Host "##vso[task.setvariable variable=VERSION]$($Content.version)"
+            displayName: Capture Version
+          - pwsh: |
+              $TagUrl = "$(System.CollectionUri)$(System.TeamProject)/_git/$(Build.Repository.Name)?version=GTv$(VERSION)"
+              Write-Host "##vso[task.logissue type=warning]Prerelease published: v$(VERSION) -- $TagUrl"
+            displayName: Emit Release Notice
