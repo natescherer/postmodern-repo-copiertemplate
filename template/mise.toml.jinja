@@ -116,6 +116,11 @@ actionlint = "1.7.12"
    developer_platform question's validator checks whatever gh is already on PATH. #}
 {#- renovate: datasource=github-releases depName=cli/cli #}
 "aqua:cli/cli" = "2.97.0"
+{#- Used by _tasks in copier.yml (repo bootstrap) and the maint-*knope*.yml workflows
+   for the release flow. ubi is deprecated in mise and knope isn't in the aqua
+   registry, so this uses the github backend directly. #}
+{#- renovate: datasource=github-releases depName=knope-dev/knope #}
+"github:knope-dev/knope" = "v0.23.0"
 {%- endif %}
 {#- renovate: datasource=github-releases depName=crate-ci/typos #}
 "aqua:crate-ci/typos" = "1.49.0"

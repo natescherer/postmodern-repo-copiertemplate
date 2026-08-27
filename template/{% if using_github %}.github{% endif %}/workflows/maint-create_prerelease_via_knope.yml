@@ -1,0 +1,52 @@
+name: "[Maint] Create Prerelease"
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: "Prerelease label"
+        required: true
+        type: choice
+        options:
+          - alpha
+          - beta
+          - rc
+
+jobs:
+  create-prerelease-via-knope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - name: Block Duplicate Prerelease
+        shell: pwsh
+        env:
+          LABEL: ${{ inputs.label }}
+        run: |
+          $tags = git tag --points-at HEAD
+          $duplicate = $tags | Where-Object { $_ -match "-$([regex]::Escape($env:LABEL))\.\d+$" }
+          if ($duplicate) {
+            Write-Host "::error::This commit is already tagged as $duplicate -- push a new commit before cutting another $($env:LABEL) prerelease."
+            exit 1
+          }
+      - uses: knope-dev/action@19617851f9f13ab2f27a05989c55efb18aca3675 # v2.1.2
+        with:
+          version: 0.23.0
+      - name: Create Prerelease
+        run: knope create-prerelease-via-knope --prerelease-label ${{ inputs.label }} --verbose
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Capture Version
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Get-Content .config/knope-current-version.json -Raw | ConvertFrom-Json).version
+          "version=$version" >> $env:GITHUB_OUTPUT
+      - name: Emit Release Notice
+        shell: pwsh
+        run: echo "::notice title=Prerelease Published::https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }}"

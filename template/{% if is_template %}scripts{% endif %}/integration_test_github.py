@@ -26,10 +26,8 @@ PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
 # Must match .github/settings.yml.jinja's `labels:` list, sorted.
 EXPECTED_LABELS = (
-    "accessibility,autorelease: pending,autorelease: snapshot,autorelease: snooze,"
-    "autorelease: tagged,awaiting pr,blocked,bug,documentation,duplicate,"
-    "enhancement,good first issue,help wanted,invalid,question,release-please,"
-    "wontfix"
+    "accessibility,awaiting pr,blocked,bug,documentation,duplicate,"
+    "enhancement,good first issue,help wanted,invalid,question,wontfix"
 )
 
 
