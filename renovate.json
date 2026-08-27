@@ -84,6 +84,13 @@
       "groupName": "copier"
     },
     {
+      "description": "Group knope",
+      "matchPackageNames": [
+        "knope-dev/knope"
+      ],
+      "groupName": "knope"
+    },
+    {
       "description": "Group lychee",
       "matchPackageNames": [
         "lychee",
@@ -186,6 +193,45 @@
       ],
       "matchStrings": [
         "{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':/]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
+    },
+    {
+      "description": "Manager for the knope mise tool pin -- knope-dev/knope is a monorepo that tags each crate's releases separately (e.g. knope/vX.Y.Z), so the generic \"simple mise tools\" manager above can't be used: extractVersionTemplate is what filters the mixed-prefix tags down to just knope's own",
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "knope-dev/knope",
+      "extractVersionTemplate": "^knope/v(?<version>.*)$",
+      "managerFilePatterns": [
+        "/mise\\..*toml(?:{%.*%})?\\.jinja/"
+      ],
+      "matchStrings": [
+        "\"github:knope-dev/knope\"\\s*=\\s*\"knope/v(?<currentValue>[^\"]*)\""
+      ],
+      "versioningTemplate": "semver"
+    },
+    {
+      "description": "Manager for the knope version pin in the Knope-based release workflows",
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "knope-dev/knope",
+      "extractVersionTemplate": "^knope/v(?<version>.*)$",
+      "managerFilePatterns": [
+        "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.*knope.*\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"
+      ],
+      "matchStrings": [
+        "version:\\s*(?<currentValue>[\\d.]+)"
+      ],
+      "versioningTemplate": "semver"
+    },
+    {
+      "description": "Manager for a Template project's own copier.yml min_copier_version pin",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)(?:{%.*%})?copier\\.yml(?:{%.*%})?(?:\\.jinja)?$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s*\\n_min_copier_version:\\s*[\"'](?<currentValue>[^\"']*)[\"']"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
     },
