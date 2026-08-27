@@ -2,8 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
   "extends": [
-    "config:recommended",
+    "config:recommended"
+    {%- if is_template or using_github %},
     "helpers:pinGitHubActionDigests"
+    {%- endif %}
   ],
   "schedule": [
     "* 0 1 * *"
@@ -25,11 +27,6 @@
     "enabled": false
   },
   {%- if is_template %}
-  "devcontainer": {
-    "managerFilePatterns": [
-      "/(^|/)devcontainer\\.json(?:\\.jinja)?$/"
-    ]
-  },
   "github-actions": {
     "managerFilePatterns": [
       {% raw %}"/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"{% endraw %}
@@ -37,12 +34,6 @@
   },
   {%- endif %}
   "packageRules": [
-    {
-      "matchCategories": [
-        "docker"
-      ],
-      "pinDigests": true
-    },
     {
       "description": "Group actionlint",
       "matchPackageNames": [
