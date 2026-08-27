@@ -203,6 +203,29 @@
       "versioningTemplate": "semver"
     },
     {
+      "description": "Manager for a Template project's own copier.yml min_copier_version pin",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)(?:{%.*%})?copier\\.yml(?:{%.*%})?(?:\\.jinja)?$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s*\\n_min_copier_version:\\s*[\"'](?<currentValue>[^\"']*)[\"']"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
+    },
+    {
+      "description": "Manager for pipx tools with options",
+      "customType": "regex",
+      "datasourceTemplate": "pypi",
+      "managerFilePatterns": [
+        "/mise\\..*toml(?:{%.*%})?\\.jinja/"
+      ],
+      "matchStrings": [
+        "\\[tools\\.\"?pipx:(?<depName>[A-Za-z0-9_.-]+)\"?\\]\\sversion = \"(?<currentValue>[^\\s]*)\""
+      ],
+      "versioningTemplate": "pep440"
+    },
+    {
       "description": "Manager for the knope version pin in the Knope-based release workflows",
       "customType": "regex",
       "datasourceTemplate": "github-releases",
@@ -217,17 +240,6 @@
       "versioningTemplate": "semver"
     },
     {
-      "description": "Manager for a Template project's own copier.yml min_copier_version pin",
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/(^|/)(?:{%.*%})?copier\\.yml(?:{%.*%})?(?:\\.jinja)?$/"
-      ],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s*\\n_min_copier_version:\\s*[\"'](?<currentValue>[^\"']*)[\"']"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
-    },
-    {
       "description": "Manager for pipx git-sourced tools",
       "customType": "regex",
       "managerFilePatterns": [
@@ -238,18 +250,6 @@
       ],
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver"
-    },
-    {
-      "description": "Manager for pipx tools with options",
-      "customType": "regex",
-      "datasourceTemplate": "pypi",
-      "managerFilePatterns": [
-        "/mise\\..*toml(?:{%.*%})?\\.jinja/"
-      ],
-      "matchStrings": [
-        "\\[tools\\.\"?pipx:(?<depName>[A-Za-z0-9_.-]+)\"?\\]\\sversion = \"(?<currentValue>[^\\s]*)\""
-      ],
-      "versioningTemplate": "pep440"
     },
     {
       "description": "Manager for the mise install version pin in Azure Pipelines",
