@@ -1,4 +1,4 @@
-name: "[Maint] Copier Update Check"
+name: "Maint (Auto): Copier Update Check"
 
 on:
   schedule:

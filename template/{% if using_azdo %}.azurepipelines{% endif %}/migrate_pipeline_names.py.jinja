@@ -1,0 +1,249 @@
+"""Fix up this repo's Azure Pipeline registrations after a naming-scheme rename.
+
+`copier update` renames `.azurepipelines/*.yml` files on disk (ordinary template-diff
+behavior), but it can't touch pipeline *registrations* already living in Azure DevOps --
+those are live objects the original `_tasks` bootstrap created via `az pipelines
+create`, and `_tasks` only ever run on a fresh `copier copy`, never on `update`. Run
+this once after a `copier update` that renamed pipelines, to repoint each existing
+registration at its new name and YAML path in place -- preserving its ID, run history,
+and any manually-set variables (e.g. APPRISE_URL, set via `mise run provision-secrets`)
+instead of losing them to a delete-and-recreate.
+
+Safe to run more than once: a no-op on a project that's already migrated, or one that
+never had the old names.
+"""
+
+import argparse
+import json
+import shutil
+
+# S404: drives a real CLI tool below; no untrusted input, no shell=True.
+import subprocess  # noqa: S404
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_NAME = "{{ repo_name }}"
+
+# (old display name, new display name, new yml-path relative to the repo root). Pulled
+# directly from copier.yml's `az pipelines create` _tasks entries as of the rename that
+# introduced this script -- a future rename should add its own migration rather than
+# extend this table.
+MIGRATIONS = (
+    (
+        "copier-update-check",
+        "Maint (Auto): Copier Update Check",
+        ".azurepipelines/maint-auto-copier_update_check.yml",
+    ),
+    (
+        "link-check",
+        "Maint (Auto): Link Check",
+        ".azurepipelines/maint-auto-link_check.yml",
+    ),
+    ("renovate", "Maint (Auto): Renovate", ".azurepipelines/maint-auto-renovate.yml"),
+    (
+        "docs",
+        "Docs (Auto): Zensical Build & Publish",
+        ".azurepipelines/docs-auto-zensical.yml",
+    ),
+    (
+        "pr_validation",
+        "Test (Auto): PR Validation",
+        ".azurepipelines/test-auto-pr_validation.yml",
+    ),
+    (
+        "release",
+        "Release (Auto): Prepare/Publish Release",
+        ".azurepipelines/release-auto-release.yml",
+    ),
+    (
+        "prerelease",
+        "Release (Manual): Create Prerelease",
+        ".azurepipelines/release-manual-create_prerelease.yml",
+    ),
+    (
+        "integration_test",
+        "Test (Auto): Integration Test",
+        ".azurepipelines/test-auto-integration_test.yml",
+    ),
+)
+
+
+def run(
+    *args: str, check: bool = True, capture: bool = False
+) -> subprocess.CompletedProcess:
+    """Run a CLI command, echoing it first.
+
+    Resolves argv[0] via shutil.which() first: on Windows, `az` is an `az.cmd` batch
+    wrapper rather than a real .exe, and subprocess with shell=False (unlike cmd.exe's
+    own PATH resolution) won't find it from the bare name alone, failing with
+    `FileNotFoundError: [WinError 2]`. which() finds the actual resolvable path on any
+    platform, sidestepping that gap without needing shell=True.
+
+    Returns:
+        The completed process, with captured stdout/stderr if `capture` is True.
+
+    """
+    print(f"$ {' '.join(args)}")
+    resolved = (shutil.which(args[0]) or args[0], *args[1:])
+    # S603: args are always a fixed list built by this module; no shell=True.
+    return subprocess.run(  # noqa: S603
+        resolved, check=check, text=True, capture_output=capture
+    )
+
+
+def az_value(*args: str) -> str:
+    """Run `az <args>` and return its trimmed stdout.
+
+    Returns:
+        The command's stdout, stripped of surrounding whitespace.
+
+    """
+    return run("az", *args, capture=True).stdout.strip()
+
+
+def check_az_installed() -> None:
+    """Verify the `az` CLI is actually resolvable on PATH.
+
+    Raises:
+        SystemExit: if `az` can't be found.
+
+    """
+    if shutil.which("az") is None:
+        raise SystemExit(
+            "Azure CLI ('az') not found on PATH. Install it: "
+            "https://learn.microsoft.com/cli/azure/install-azure-cli"
+        )
+
+
+def check_azure_devops_extension() -> None:
+    """Verify the azure-devops CLI extension is installed.
+
+    `az devops`/`az repos`/`az pipelines` commands, if the extension isn't installed,
+    prompt interactively to install it -- which just hangs with no stdin attached.
+    Checking via `az extension list` first (a core command that doesn't itself need
+    the extension) avoids ever triggering that prompt.
+
+    Raises:
+        SystemExit: if the extension isn't installed.
+
+    """
+    installed = az_value(
+        "extension", "list", "--query", "[?name=='azure-devops'].name", "-o", "tsv"
+    )
+    if not installed:
+        raise SystemExit(
+            "Azure CLI extension 'azure-devops' is not installed. Install it: "
+            "az extension add --name azure-devops"
+        )
+
+
+def migrate(org: str, project: str, *, dry_run: bool) -> None:
+    """Repoint each existing pipeline registration at its renamed name and yml-path.
+
+    Whether a given entry even applies to this project is decided by whether its new
+    `.azurepipelines/*.yml` file exists on disk -- the ground truth for "this project
+    needs this pipeline," since that file only exists if the project's own answers
+    (e.g. `integration_test_scheduled`) caused copier to render it.
+    """
+    pipelines = json.loads(
+        az_value(
+            "pipelines",
+            "list",
+            "--repository",
+            REPO_NAME,
+            "--org",
+            org,
+            "--project",
+            project,
+            "--query",
+            "[].{id: id, name: name}",
+        )
+        or "[]"
+    )
+    by_name = {p["name"]: p["id"] for p in pipelines}
+    recognized_names = set()
+
+    for old, new, yml_path in MIGRATIONS:
+        old_full = f"[{REPO_NAME}] {old}"
+        new_full = f"[{REPO_NAME}] {new}"
+        recognized_names.update((old_full, new_full))
+
+        if not (REPO_ROOT / yml_path).exists():
+            continue  # this pipeline category doesn't apply to this project
+
+        old_id = by_name.get(old_full)
+        new_id = by_name.get(new_full)
+
+        if old_id and new_id:
+            print(
+                f"WARNING: both {old_full!r} and {new_full!r} are registered -- "
+                "skipping, fix manually."
+            )
+        elif old_id:
+            print(f"Migrating {old_full!r} -> {new_full!r} ({yml_path})")
+            if not dry_run:
+                run(
+                    "az",
+                    "pipelines",
+                    "update",
+                    "--id",
+                    str(old_id),
+                    "--new-name",
+                    new_full,
+                    "--yml-path",
+                    yml_path,
+                    "--org",
+                    org,
+                    "--project",
+                    project,
+                )
+        elif new_id:
+            print(f"Already up to date: {new_full!r}")
+        else:
+            print(
+                f"WARNING: {yml_path} exists locally but no pipeline is registered "
+                f"under {old_full!r} or {new_full!r} -- create it manually, e.g. via "
+                "'az pipelines create'."
+            )
+
+    cruft = sorted(name for name in by_name if name not in recognized_names)
+    if cruft:
+        print(
+            "\nPipelines registered for this repo that don't match any known old or "
+            "new name -- review manually, not auto-deleted:"
+        )
+        for name in cruft:
+            print(f"  {name!r} (id {by_name[name]})")
+
+
+def main() -> None:
+    """Parse args, then migrate this repo's Azure Pipeline registrations.
+
+    Raises:
+        SystemExit: if `az` or its azure-devops extension aren't installed.
+
+    """
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--org",
+        default="https://dev.azure.com/{{ azdo_org }}/",
+        help="Azure DevOps organization URL",
+    )
+    parser.add_argument(
+        "--project", default="{{ azdo_project }}", help="Azure DevOps project"
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print what would change without calling az",
+    )
+    args = parser.parse_args()
+
+    check_az_installed()
+    check_azure_devops_extension()
+    migrate(args.org, args.project, dry_run=args.dry_run)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

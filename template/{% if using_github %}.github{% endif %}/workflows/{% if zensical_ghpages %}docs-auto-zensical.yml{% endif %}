@@ -1,4 +1,4 @@
-name: "[Maint] Zensical Publish to GitHub Pages"
+name: "Docs (Auto): Zensical Publish to GitHub Pages"
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - zensical.toml
-      - .github/workflows/maint-zensical.yml
+      - .github/workflows/docs-auto-zensical.yml
       - docs/**
   release:
     types:

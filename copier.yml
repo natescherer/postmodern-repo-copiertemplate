@@ -530,14 +530,14 @@ _tasks:
             )
     when: *when_copy_create_repo
 
-  # Creates Azure Pipeline for copier-update-check
+  # Creates Azure Pipeline for maint-auto-copier_update_check
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] copier-update-check"
+      --name "[{{ repo_name }}] Maint (Auto): Copier Update Check"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/copier-update-check.yml
+      --yml-path .azurepipelines/maint-auto-copier_update_check.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -546,10 +546,10 @@ _tasks:
         true
       {%- endif %}
 
-  # Creates Azure Pipeline for link checking
+  # Creates Azure Pipeline for maint-auto-link_check
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] link-check"
+      --name "[{{ repo_name }}] Maint (Auto): Link Check"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
@@ -559,27 +559,27 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for renovate
+  # Creates Azure Pipeline for maint-auto-renovate
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] renovate"
+      --name "[{{ repo_name }}] Maint (Auto): Renovate"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/renovate.yml
+      --yml-path .azurepipelines/maint-auto-renovate.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for docs
+  # Creates Azure Pipeline for docs-auto-zensical
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] docs"
+      --name "[{{ repo_name }}] Docs (Auto): Zensical Build & Publish"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/docs.yml
+      --yml-path .azurepipelines/docs-auto-zensical.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -591,19 +591,19 @@ _tasks:
   # one-time warm-up run activates it for every push after.
   - command: >-
       az pipelines run
-      --name "[{{ repo_name }}] docs"
+      --name "[{{ repo_name }}] Docs (Auto): Zensical Build & Publish"
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for pr_validation
+  # Creates Azure Pipeline for test-auto-pr_validation
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] pr_validation"
+      --name "[{{ repo_name }}] Test (Auto): PR Validation"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/pr_validation.yml
+      --yml-path .azurepipelines/test-auto-pr_validation.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -645,7 +645,7 @@ _tasks:
             "repos", "show", "--repository", "{{ repo_name }}", "--query", "id", "-o", "tsv"
         ).strip()
         pipeline_id = az(
-            "pipelines", "show", "--name", "[{{ repo_name }}] pr_validation",
+            "pipelines", "show", "--name", "[{{ repo_name }}] Test (Auto): PR Validation",
             "--query", "id", "-o", "tsv",
         ).strip()
 
@@ -690,14 +690,14 @@ _tasks:
         )
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for release
+  # Creates Azure Pipeline for release-auto-release
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] release"
+      --name "[{{ repo_name }}] Release (Auto): Prepare/Publish Release"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/knope-release.yml
+      --yml-path .azurepipelines/release-auto-release.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -706,32 +706,32 @@ _tasks:
   # See the docs pipeline's warm-up task above for why this is needed.
   - command: >-
       az pipelines run
-      --name "[{{ repo_name }}] release"
+      --name "[{{ repo_name }}] Release (Auto): Prepare/Publish Release"
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for prerelease
+  # Creates Azure Pipeline for release-manual-create_prerelease
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] prerelease"
+      --name "[{{ repo_name }}] Release (Manual): Create Prerelease"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/knope-prerelease.yml
+      --yml-path .azurepipelines/release-manual-create_prerelease.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for integration_test
+  # Creates Azure Pipeline for test-auto-integration_test
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] integration_test"
+      --name "[{{ repo_name }}] Test (Auto): Integration Test"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/integration_test.yml
+      --yml-path .azurepipelines/test-auto-integration_test.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"

@@ -244,7 +244,7 @@
       "depNameTemplate": "knope-dev/knope",
       "extractVersionTemplate": "^knope/v(?<version>.*)$",
       "managerFilePatterns": [
-        {% raw %}"/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.*knope.*\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"{% endraw %}
+        {% raw %}"/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/(?:{%.*%})?release-.*\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"{% endraw %}
       ],
       "matchStrings": [
         "version:\\s*(?<currentValue>[\\d.]+)"
