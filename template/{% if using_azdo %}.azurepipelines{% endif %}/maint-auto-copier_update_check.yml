@@ -6,7 +6,7 @@ trigger:
       - "*"
 
 schedules:
-  # Matches maint-copier_update_check.yml's own schedule (5pm UTC every Monday).
+  # Matches the GitHub workflow of the same name's own schedule (5pm UTC every Monday).
   - cron: 0 17 * * 1
     displayName: Check for Copier Template Updates Every Monday at 5pm UTC
     branches:

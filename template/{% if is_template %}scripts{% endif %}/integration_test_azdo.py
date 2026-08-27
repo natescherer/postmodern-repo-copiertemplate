@@ -33,20 +33,21 @@ import time
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
 # Must match the AZDO_INTEGRATION_TEST_ORG/AZDO_INTEGRATION_TEST_PROJECT placeholder
-# values in test-integration_test.yml's integration-test-azdo job -- there's no way
+# values in test-auto-integration_test.yml's integration-test-azdo job -- there's no way
 # to auto-detect which org/project a GitHub-hosted workflow should test against.
 PLACEHOLDER = "CHANGE_ME"
 
 # Must match template/{% if is_template %}copier.yml{% endif %}.jinja's hardcoded
-# `az pipelines create --name "[<repo_name>] <file>"` _tasks entries. "integration_test"
-# only registers because create() below passes integration_test_scheduled=true.
-PIPELINE_FILE_STEMS = (
-    "copier-update-check",
-    "docs",
-    "pr_validation",
-    "release",
-    "renovate",
-    "integration_test",
+# `az pipelines create --name "[<repo_name>] <name>"` _tasks entries. "Test (Auto):
+# Integration Test" only registers because create() below passes
+# integration_test_scheduled=true.
+PIPELINE_DISPLAY_NAMES = (
+    "Maint (Auto): Copier Update Check",
+    "Docs (Auto): Zensical Build & Publish",
+    "Test (Auto): PR Validation",
+    "Release (Auto): Prepare/Publish Release",
+    "Maint (Auto): Renovate",
+    "Test (Auto): Integration Test",
 )
 
 
@@ -243,7 +244,11 @@ def check_pr_validation_policy(
 
     """
     pr_validation_id = next(
-        (p["id"] for p in pipelines if p["name"] == f"[{repo_name}] pr_validation"),
+        (
+            p["id"]
+            for p in pipelines
+            if p["name"] == f"[{repo_name}] Test (Auto): PR Validation"
+        ),
         None,
     )
     if pr_validation_id is None:
@@ -328,7 +333,7 @@ def verify(repo_name: str, org_url: str, project: str) -> None:
         or "[]"
     )
     pipeline_names = {p["name"] for p in pipelines}
-    expected = {f"[{repo_name}] {stem}" for stem in PIPELINE_FILE_STEMS}
+    expected = {f"[{repo_name}] {name}" for name in PIPELINE_DISPLAY_NAMES}
     missing = expected - pipeline_names
     if missing:
         raise SystemExit(f"Missing pipeline(s): {', '.join(sorted(missing))}")
@@ -458,9 +463,9 @@ def main() -> None:
     if PLACEHOLDER in (args.org, args.project):
         raise SystemExit(
             f"--org/--project are still set to the placeholder {PLACEHOLDER!r}. If "
-            "running via test-integration_test.yml, edit the integration-test-azdo "
-            "job's env block with your real Azure DevOps org/project. See "
-            "docs/token_permissions.md."
+            "running via test-auto-integration_test.yml, edit the "
+            "integration-test-azdo job's env block with your real Azure DevOps "
+            "org/project. See docs/token_permissions.md."
         )
 
     org_url = f"https://dev.azure.com/{args.org}/"

@@ -48,8 +48,8 @@ like `mise run integration-test-gh`/`integration-test-azdo`.
 
 Whether to also generate a scheduled maintenance job/pipeline that periodically creates a real,
 throwaway repo from your template and verifies its repo-setup automation still works end to end,
-then deletes it. On GitHub this is `test-integration_test.yml`; on Azure DevOps it's
-`.azurepipelines/integration_test.yml` (registered as a pipeline automatically, same as the other
+then deletes it. On GitHub this is `test-auto-integration_test.yml`; on Azure DevOps it's
+`.azurepipelines/test-auto-integration_test.yml` (registered as a pipeline automatically, same as the other
 files under `.azurepipelines/`). Both need a token secret configured after copy -- see the
 "Integration Test PAT" sections in [Token Permissions](token_permissions.md) -- and the GitHub
 workflow's Azure DevOps job additionally needs its org/project placeholders edited by hand, since
@@ -74,9 +74,9 @@ repos, since a license only matters once code is visible to others.
 
 Chooses where rendered documentation ends up:
 
-- **GitHub Pages** — deploys via `maint-zensical.yml`, using `mike` to keep a version-aliased
+- **GitHub Pages** — deploys via `docs-auto-zensical.yml`, using `mike` to keep a version-aliased
   history (`latest`, `dev`, and per-release versions) of the docs site.
-- **docs_site Directory in Repo** — builds via `maint-mkdocs.yml` into a `docs_site/` folder
+- **docs_site Directory in Repo** — builds via `docs-auto-mkdocs.yml` into a `docs_site/` folder
   committed to the repo, always reflecting the latest `main`, with no version history. This is the
   only option for Azure DevOps projects.
 

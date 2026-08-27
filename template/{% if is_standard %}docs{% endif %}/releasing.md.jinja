@@ -19,7 +19,7 @@ bug, and no PR is opened or updated.
 
 ## Prereleases
 
-To cut an ad-hoc prerelease (`alpha`, `beta`, or `rc`), run the "[Maint] Create
+To cut an ad-hoc prerelease (`alpha`, `beta`, or `rc`), run the "Release (Manual): Create
 Prerelease" workflow from the Actions tab, choosing a label. Each dispatch increments
 that label's number (e.g. `1.1.0-alpha.0`, then `.1`). Cutting the same label again at
 the same commit is blocked -- push a new commit first -- but moving to a new label
@@ -51,8 +51,8 @@ bug, and no PR is opened or updated.
 
 ## Prereleases
 
-To cut an ad-hoc prerelease (`alpha`, `beta`, or `rc`), run the "prerelease" pipeline
-manually from Azure Pipelines, choosing a label. Each dispatch increments that label's
+To cut an ad-hoc prerelease (`alpha`, `beta`, or `rc`), run the "Release (Manual): Create
+Prerelease" pipeline manually from Azure Pipelines, choosing a label. Each dispatch increments that label's
 number (e.g. `1.1.0-alpha.0`, then `.1`). Cutting the same label again at the same
 commit is blocked -- push a new commit first -- but moving to a new label (e.g. `alpha`
 to `beta`) is always allowed, even without one.

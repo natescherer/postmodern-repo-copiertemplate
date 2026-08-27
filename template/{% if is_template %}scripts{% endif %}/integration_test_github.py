@@ -1,7 +1,7 @@
 """Create a throwaway repo from this template, verify it, then optionally clean it up.
 
 Shared by `mise run integration-test-gh` (a human's own gh/GCM session, repo left in
-place by default so it can be inspected) and test-integration_test.yml
+place by default so it can be inspected) and test-auto-integration_test.yml
 (INTEGRATION_TEST_PAT, always passes --cleanup) -- not templated itself; both callers
 pass this repo's own source URL and name as arguments, so there's nothing here for
 Jinja to render.
