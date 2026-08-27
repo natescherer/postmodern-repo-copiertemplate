@@ -2,6 +2,9 @@ name: "[Test] PR Validation"
 
 on:
   pull_request:
+    # Explicit -- the implicit default (opened, synchronize, reopened) omits `edited`,
+    # so a title-only edit wouldn't otherwise re-run the PR-title check below.
+    types: [opened, edited, synchronize, reopened]
 
 concurrency:
   group: {% raw %}${{ github.head_ref || github.run_id }}{% endraw %}
@@ -20,6 +23,10 @@ jobs:
       - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
         with:
           experimental: true
+      - name: Check PR Title is a Conventional Commit
+        env:
+          PR_TITLE: {% raw %}${{ github.event.pull_request.title }}{% endraw %}
+        run: echo "$PR_TITLE" | mise x -- committed --config .config/committed.toml --commit-file -
       - name: Run Prek Tests
         env:
           BASE_REF: {% raw %}${{ github.base_ref }}{% endraw %}

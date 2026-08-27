@@ -67,6 +67,19 @@ stages:
             displayName: Install Mise
           - bash: mise install
             displayName: Run 'mise install'
+          - pwsh: |
+              $GetSplat = @{
+                ContentType = "application/json"
+                Headers = @{
+                  Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("user:$env:SYSTEM_ACCESSTOKEN")))"
+                }
+                Uri = "$(System.CollectionUri)/$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullrequests/$(System.PullRequest.PullRequestId)?api-version=7.0"
+              }
+              $PRTitle = (Invoke-RestMethod @GetSplat).title
+              $PRTitle | mise x -- committed --config .config/committed.toml --commit-file -
+            displayName: Check PR Title is a Conventional Commit
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - bash: |
               # Scopes the lint run to files actually changed on this PR, matching
               # GitHub's counterpart (which runs the same git diff) -- identical PR
