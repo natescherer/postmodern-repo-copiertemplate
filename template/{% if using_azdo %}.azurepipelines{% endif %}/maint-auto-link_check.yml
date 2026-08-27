@@ -1,0 +1,42 @@
+name: $(BuildId)
+
+trigger:
+  branches:
+    exclude:
+      - "*"
+
+schedules:
+  # Offset from the other Monday jobs (copier-update-check, renovate) to avoid runner
+  # contention.
+  - cron: 0 18 * * 1
+    displayName: Check for Broken Links Every Monday at 6pm UTC
+    branches:
+      include:
+        - main
+
+variables:
+  CI: true
+  MISE_ENV: ci
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: link_check
+    displayName: Link Check
+    jobs:
+      - job: link_check
+        timeoutInMinutes: 15
+        displayName: Link Check
+        steps:
+          - checkout: self
+          - bash: |
+              # renovate: datasource=github-releases depName=jdx/mise
+              curl https://mise.run | MISE_VERSION=v2026.8.10 MISE_INSTALL_SKIP_IF_EXISTS=1 sh
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
+            displayName: Install Mise
+          - bash: mise install
+            displayName: Run 'mise install'
+          - bash: mise x -- lychee --no-progress -c .config/lychee.toml .
+            displayName: Check for Broken Links
