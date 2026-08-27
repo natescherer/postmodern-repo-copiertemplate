@@ -1,0 +1,56 @@
+[package]
+versioned_files = [
+    { path = ".config/knope-current-version.json", regex = "\"version\": \"(?<version>[^\"]+)\"" }
+]
+changelog = "CHANGELOG.md"
+
+[[workflows]]
+name = "autoupdate-knope-pr"
+
+[[workflows.steps]]
+type = "Command"
+command = "git switch -C knope/release"
+
+[[workflows.steps]]
+type = "PrepareRelease"
+
+[[workflows.steps]]
+type = "Command"
+command = "git commit -m \"chore: prepare release $version\""
+
+[[workflows.steps]]
+type = "Command"
+command = "git push --force --set-upstream origin knope/release"
+
+[[workflows.steps]]
+type = "CreatePullRequest"
+base = "main"
+
+[workflows.steps.title]
+template = "chore: prepare release $version"
+
+[workflows.steps.body]
+template = "This PR was created by Knope. Merging it will create a new release (v$version).\n\n$changelog"
+
+[[workflows]]
+name = "release-on-knope-pr-merge"
+
+[[workflows.steps]]
+type = "Release"
+
+[[workflows]]
+name = "create-prerelease-via-knope"
+
+[[workflows.steps]]
+type = "PrepareRelease"
+
+[[workflows.steps]]
+type = "Release"
+
+[[workflows.steps]]
+type = "Command"
+command = "git push --tags"
+
+[github]
+owner = "{{ github_repo_owner }}"
+repo = "{{ repo_name }}"

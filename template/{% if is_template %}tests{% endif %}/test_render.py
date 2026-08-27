@@ -136,7 +136,7 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
 
     Covers the one class of bug the copy-only test above can't see: logic gated on
     `_copier_operation == 'update'` (e.g. the `project_initialized` locked-on-update
-    question text, `current_release_please_version`) is never exercised by a fresh
+    question text, `current_knope_version`) is never exercised by a fresh
     `copier copy`, since that operation is always `'copy'`.
     """
     source, old_tag = update_source

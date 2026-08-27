@@ -17,18 +17,10 @@ automatically.
 
 ## Moving to Stable for the First Time
 
-While `lifecycle` is Pre-Alpha, Alpha, or Beta, Release Please keeps your version below `1.0.0`,
-bumping the minor/patch component for `feat`/`fix` commits instead of the usual major/minor bump.
-Release Please won't cross the `1.0.0` line on its own — that requires an explicit
-`Release-As: 1.0.0` commit trailer.
+While `lifecycle` is Pre-Alpha, Alpha, or Beta, normal commits only ever bump your version's
+minor/patch component — see [Releasing](releasing.md) for how the release flow normally works.
 
-To make this easy, once you set `lifecycle` to `Stable` on a GitHub project and run
-`copier update`, if the version Release Please last tracked is still below `1.0.0`, you'll see a
-message with a ready-to-run command:
-
-```bash
-git commit --allow-empty -m "chore: bump version to v1.0.0" -m "Release-As: 1.0.0"
-```
-
-Merge that commit to `main` and Release Please's next run will bump the version to `1.0.0`. The
-message stops appearing automatically once that's done.
+Once you set `lifecycle` to `Stable` on a GitHub project (run `mise run set-lifecycle` to change
+just that question), if the version last tracked is still below `1.0.0`, you'll see a message
+with a ready-to-run command that opens a pull request proposing the `1.0.0` release. Merging
+that PR publishes it. The message stops appearing automatically once that's done.

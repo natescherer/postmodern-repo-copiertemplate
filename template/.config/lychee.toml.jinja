@@ -1,10 +1,10 @@
 exclude = [
   ".*%7B.*%7D.*", # Python f-strings
   'git\+https://.*', # Can be removed once squidfunk/mike is replaced by Zensical's built-in versioning
+  'https://github\.com/\$', # Shell/GH-Actions-expression placeholder in a URL (e.g. a $VAR or a templated repository expression), not a real URL
 {%- if is_template %}
   'https://dev\.azure\.com', # This errors frequently, easier to just ignore
   'https://img\.shields\.io/github/all-contributors/', # Part of template code
-  'https://github\.com/\$GITHUB_REPOSITORY', # Shell placeholder in test-integration_test.yml, not a real URL
 {%- endif %}
 ]
 exclude_path = [

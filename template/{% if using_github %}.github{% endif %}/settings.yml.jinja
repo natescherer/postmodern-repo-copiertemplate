@@ -62,28 +62,6 @@ labels:
     color: ffffff
     description: This will not be worked on
 
-  # Release Please -- "release-please" comes from release-please-config.json's
-  # extra-label, applied to every PR it opens; the "autorelease: *" labels are its
-  # own built-in defaults (pending while open, tagged once merged and released,
-  # snooze to manually pause processing for a PR). "autorelease: snapshot" is included
-  # for completeness even though this template's release-type (simple) never triggers
-  # it -- that label's only used by Java/Maven-style snapshot releases.
-  - name: release-please
-    color: "5319e7"
-    description: Applied to every pull request release-please opens
-  - name: "autorelease: pending"
-    color: fbca04
-    description: A release PR is open, waiting to be merged
-  - name: "autorelease: tagged"
-    color: 0e8a16
-    description: This PR was merged and its release has been tagged
-  - name: "autorelease: snapshot"
-    color: 1d76db
-    description: A snapshot (pre-release) version was published
-  - name: "autorelease: snooze"
-    color: c5def5
-    description: Pause release-please processing for this PR
-
   # Custom
   - name: awaiting pr
     color: 668F04

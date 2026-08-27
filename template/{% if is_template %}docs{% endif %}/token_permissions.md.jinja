@@ -35,13 +35,13 @@ regardless, so that step uses Git Credential Manager's own login instead, not `g
 For best security, create this token via [this link](https://github.com/settings/personal-access-tokens/new)
 and save it as a GitHub Actions secret on the repository called **REPO_MAINTENANCE_PAT**. This is
 separate from `gh auth login` above -- it's used on an ongoing basis by this project's own GitHub
-Actions workflows (Copier update checks, Release Please), not just at setup time.
+Actions workflows (Copier update checks, docs builds), not just at setup time.
 
 **Repository Access**: All repositories
 
-| **Scope**                     | **Reason**                                 |
-| ----------------------------- | ------------------------------------------ |
-| repo                          | Needed for Copier/Release Please workflows |
+| **Scope**                     | **Reason**                        |
+| ----------------------------- | ---------------------------------- |
+| repo                          | Needed for Copier/docs workflows   |
 
 NOTE: Fine-grained tokens are specifically **not** used, as they cannot open pull requests. This can be changed once [this issue](https://github.com/github/roadmap/issues/600) is implemented by GitHub.
 

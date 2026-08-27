@@ -77,6 +77,11 @@ repo_setup_actions:
           {%- set gh_auth_check = ('gh api user --jq .login && echo GH_AUTHED' | shell()) -%}
           {%- if 'GH_AUTHED' not in gh_auth_check -%}
             GitHub CLI ('gh') is installed but not authenticated. Run 'gh auth login', then try again.
+          {%- elif repo_setup_actions == 'Create Repo' -%}
+            {%- set knope_check = ('knope --version && echo KNOPE_INSTALLED' | shell()) -%}
+            {%- if 'KNOPE_INSTALLED' not in knope_check -%}
+              Knope ('knope') is not installed or not on PATH -- it's used to stage this project's first release. Install it (see https://knope.tech/), then try again.
+            {%- endif -%}
           {%- endif -%}
         {%- endif -%}
       {%- elif developer_platform == 'Azure DevOps' -%}
@@ -382,19 +387,19 @@ zensical_repo:
     {%- endif %}
   when: false
 
-current_release_please_version:
+current_knope_version:
   type: str
   default: |-
     {%- if _copier_operation == 'update' and using_github -%}
-      {%- set _rp_manifest = ('git show HEAD:.config/release-please-manifest.json' | shell()) | from_json -%}
-      {{- _rp_manifest.values() | first -}}
+      {%- set _version_file = ('git show HEAD:.config/knope-current-version.json' | shell()) | from_json -%}
+      {{- _version_file.version -}}
     {%- endif %}
   when: false
 
-current_release_please_version_is_pre_1:
+current_knope_version_is_pre_1:
   type: bool
   default: |-
-    {%- if current_release_please_version.split('.')[0] == '0' -%}
+    {%- if current_knope_version.split('.')[0] == '0' -%}
       true
     {%- endif %}
   when: false
@@ -465,10 +470,7 @@ _tasks:
     when: *when_copy_create_repo
 
   # Commits template files
-  - command: >-
-      {%- set release_as_version = "0.1.0" if lifecycle_is_pre_stable else "1.0.0" -%}
-      git commit -m "feat: initialize project"
-      {%- if using_github %} -m "Release-As: {{ release_as_version }}"{% endif %}
+  - command: 'git commit -m "feat: initialize project"'
     when: *when_copy_create_repo
 
   # Adds Git Remote
@@ -484,6 +486,20 @@ _tasks:
   # Push commit to remote
   - command: git push -u origin --all
     when: *when_copy_create_repo
+
+  # Stages First Release PR
+  - command:
+      - python
+      - -c
+      - |
+        import os, subprocess
+        token = subprocess.run(["gh", "auth", "token"], capture_output=True, text=True, check=True).stdout.strip()
+        env = {**os.environ, "GITHUB_TOKEN": token}
+        subprocess.run(["knope", "autoupdate-knope-pr", "--override-version", "{{ '0.1.0' if lifecycle_is_pre_stable else '1.0.0' }}"], env=env, check=True)
+    when: |-
+      {%- if _copier_operation == 'copy' and should_create_repo and using_github -%}
+        true
+      {%- endif %}
 
   # Creates Azure Pipeline for copier-update-check
   - command: >-
@@ -706,10 +722,14 @@ _message_after_copy: |-
   {%- endif %}
 
 _message_after_update: |-
-  {%- if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_release_please_version_is_pre_1 -%}
-  This project's lifecycle is 'Stable' but Release Please hasn't bumped the version to 1.0.0 yet. Merge the following commit to main to have it do so.
+  {%- if lifecycle == 'Stable' and developer_platform == 'GitHub' and current_knope_version_is_pre_1 -%}
+  This project's lifecycle is 'Stable' but the version hasn't been bumped to 1.0.0 yet. Run one of the following (whichever matches your shell) to open a PR proposing that release:
 
-  git commit --allow-empty -m "chore: bump version to v1.0.0" -m "Release-As: 1.0.0"
+  # bash/zsh/Git Bash
+  GITHUB_TOKEN=$(gh auth token) knope autoupdate-knope-pr --override-version 1.0.0
+
+  # PowerShell
+  $env:GITHUB_TOKEN = (gh auth token); knope autoupdate-knope-pr --override-version 1.0.0
   {%- endif %}
 ## End Messages
 {%- endraw %}

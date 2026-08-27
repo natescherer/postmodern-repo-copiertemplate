@@ -142,7 +142,7 @@ stages:
           - pwsh: |
               # Polls the PR-validation build-validation policy (set up by "az repos policy
               # build create" in copier.yml.jinja's repo-setup tasks) until it reaches a
-              # terminal state, instead of bypassing it. Unlike GitHub's release-please flow
+              # terminal state, instead of bypassing it. Unlike GitHub's Knope-based flow
               # (which only ever opens/updates a PR for a human to merge), this pipeline
               # auto-merges its own PR, so it must earn a real pass through the same policy
               # every other PR on this repo is required to pass, rather than silently
