@@ -11,7 +11,7 @@ min_version = "2026.8.13"
 PYTHONPYCACHEPREFIX = ".cache/pycache"
 RUMDL_CACHE_DIR = ".cache/rumdl"
 {%- if is_template %}
-PYTEST_ADDOPTS = "-o cache_dir=.cache/pytest"
+PYTEST_ADDOPTS = "-o cache_dir=.cache/pytest -n auto"
 RUFF_CACHE_DIR = ".cache/ruff"
 {%- endif %}
 
@@ -158,7 +158,7 @@ version = "9.1.1"
 # failures and warnings as native platform annotations (::warning::/::error:: on
 # GitHub, ##vso[task.logissue] on Azure DevOps) with zero config -- they auto-detect
 # their CI via the env vars each platform already sets.
-uvx_args = "--with pyyaml==6.0.3 --with jinja2==3.1.6 --with jinja2-ansible-filters==1.3.2{% if using_github %} --with pytest-github-actions-annotate-failures==0.4.2{% elif using_azdo %} --with pytest-azurepipelines==1.0.5{% endif %}"
+uvx_args = "--with pyyaml==6.0.3 --with jinja2==3.1.6 --with jinja2-ansible-filters==1.3.2 --with pytest-xdist==3.8.0{% if using_github %} --with pytest-github-actions-annotate-failures==0.4.2{% elif using_azdo %} --with pytest-azurepipelines==1.0.5{% endif %}"
 {%- endif %}
 
 [tools."pipx:zensical"]
