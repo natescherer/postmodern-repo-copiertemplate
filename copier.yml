@@ -396,10 +396,10 @@ zensical_repo:
 current_knope_version:
   type: str
   default: |-
-    {%- if _copier_operation == 'update' -%}
-      {%- set _version_file = ('git show HEAD:.config/knope-current-version.json' | shell()) | from_json -%}
-      {{- _version_file.version -}}
-    {%- endif %}
+    {%- set _version_file_raw = ('git show HEAD:.config/knope-current-version.json 2>&1' | shell()) -%}
+    {%- if '"version"' in _version_file_raw -%}
+      {{- (_version_file_raw | from_json).version -}}
+    {%- endif -%}
   when: false
 
 current_knope_version_is_pre_1:
