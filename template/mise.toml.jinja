@@ -116,15 +116,16 @@ actionlint = "1.7.12"
    developer_platform question's validator checks whatever gh is already on PATH. #}
 {#- renovate: datasource=github-releases depName=cli/cli #}
 "aqua:cli/cli" = "2.97.0"
-{#- Used by _tasks in copier.yml (repo bootstrap) and the maint-*knope*.yml workflows
-   for the release flow. ubi is deprecated in mise and knope isn't in the aqua
+{%- endif %}
+{#- Used by _tasks in copier.yml (repo bootstrap) and the release-flow pipelines/
+   workflows on both platforms. ubi is deprecated in mise and knope isn't in the aqua
    registry, so this uses the github backend directly. knope-dev/knope is a monorepo
    that tags each crate's releases separately (e.g. "knope/vX.Y.Z", not a bare
    "vX.Y.Z") -- tracked by the dedicated "Manager for the knope mise tool pin"
    customManager in renovate.json.jinja, not the generic "simple mise tools" one,
-   since that can't filter a monorepo's mixed-prefix tags. #}
+   since that can't filter a monorepo's mixed-prefix tags -- deliberately no
+   `renovate:` comment marker here, since that generic manager would also match it. #}
 "github:knope-dev/knope" = "knope/v0.23.0"
-{%- endif %}
 {#- renovate: datasource=github-releases depName=crate-ci/typos #}
 "aqua:crate-ci/typos" = "1.49.0"
 {#- renovate: datasource=github-releases depName=j178/prek #}

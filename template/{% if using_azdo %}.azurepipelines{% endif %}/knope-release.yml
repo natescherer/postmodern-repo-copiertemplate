@@ -1,0 +1,71 @@
+name: $(BuildId)
+
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  CI: true
+  MISE_ENV: ci
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: release
+    displayName: Release
+    jobs:
+      - job: release
+        timeoutInMinutes: 15
+        displayName: Release
+        steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
+          - pwsh: |
+              git config user.email "azuredevops@microsoft.com"
+              git config user.name "Azure DevOps"
+            displayName: Set Git Config
+          - bash: |
+              # renovate: datasource=github-releases depName=jdx/mise
+              curl https://mise.run | MISE_VERSION=v2026.8.10 MISE_INSTALL_SKIP_IF_EXISTS=1 sh
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
+              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
+            displayName: Install Mise
+          - bash: mise install
+            displayName: Run 'mise install'
+          - bash: az extension add --name azure-devops
+            displayName: Install azure-devops CLI Extension
+          - bash: az devops configure --defaults organization=$(System.CollectionUri) project="$(System.TeamProject)"
+            displayName: Configure az CLI Defaults
+            env:
+              AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+          - bash: |
+              # Commit-message sniffing isn't reliable here: AzDO's regular (non-squash)
+              # merge commit message is "Merge pull request NNN from knope/release into
+              # main" -- it doesn't reproduce the PR title at all, unlike a squash merge.
+              # Ask the API directly instead: is the most recently *completed* PR from
+              # knope/release into main's merge commit the same commit that triggered
+              # this run? That's true exactly once, for the run immediately after that
+              # PR is completed, regardless of which merge strategy was used.
+              MERGE_COMMIT=$(az repos pr list --source-branch knope/release --target-branch main --status completed --top 1 --query "[0].lastMergeCommit.commitId" -o tsv)
+              if [[ "$MERGE_COMMIT" == "$(Build.SourceVersion)" ]]; then
+                echo "##vso[task.setvariable variable=IS_RELEASE_MERGE]true"
+              else
+                echo "##vso[task.setvariable variable=IS_RELEASE_MERGE]false"
+              fi
+            displayName: Detect Release Merge
+            env:
+              AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+          - bash: mise x -- knope release-on-knope-pr-merge --verbose
+            displayName: Publish Release
+            condition: eq(variables['IS_RELEASE_MERGE'], 'true')
+            env:
+              AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+          - bash: mise x -- knope autoupdate-knope-pr --verbose
+            displayName: Prepare Release PR
+            condition: eq(variables['IS_RELEASE_MERGE'], 'false')
+            continueOnError: true
+            env:
+              AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)

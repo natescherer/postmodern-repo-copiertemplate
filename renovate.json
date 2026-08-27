@@ -60,14 +60,6 @@
       "groupName": "cli"
     },
     {
-      "description": "Group commitizen",
-      "matchPackageNames": [
-        "commitizen",
-        "pipx:commitizen"
-      ],
-      "groupName": "commitizen"
-    },
-    {
       "description": "Group committed",
       "matchPackageNames": [
         "committed",
