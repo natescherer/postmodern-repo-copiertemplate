@@ -1,4 +1,4 @@
-name: "[Test] Integration Test"
+name: "Test (Auto): Integration Test"
 
 on:
   schedule:

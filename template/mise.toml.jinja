@@ -48,22 +48,30 @@ run = [
   "gh secret set AZURE_DEVOPS_EXT_PAT",
 {%- endif %}
 {%- elif using_azdo %}
-  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] copier-update-check\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
-  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] release\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
-  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] docs\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
-  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] renovate\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Maint (Auto): Copier Update Check\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Release (Auto): Prepare/Publish Release\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Docs (Auto): Zensical Build & Publish\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Maint (Auto): Renovate\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
 {%- if is_template and integration_test_scheduled %}
-  "az pipelines variable create --name AZURE_DEVOPS_EXT_PAT --pipeline-name \"[{{ repo_name }}] integration_test\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name AZURE_DEVOPS_EXT_PAT --pipeline-name \"[{{ repo_name }}] Test (Auto): Integration Test\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
 {%- endif %}
 {%- endif %}
 ]
+{%- if using_azdo %}
+
+[tasks.migrate-azdo-pipeline-names]
+# One-time fixup for an *existing* project after a copier update that renamed
+# .azurepipelines/*.yml files -- see that script's own docstring for why this can't
+# just be a _tasks entry (those only ever run on a fresh `copier copy`).
+run = "python .azurepipelines/migrate_pipeline_names.py"
+{%- endif %}
 {%- if is_template %}
 
 [tasks.test]
 run = "pytest tests/"
 
 [tasks.integration-test-gh]
-# Same script test-integration_test.yml runs in CI (--cleanup added there) -- see
+# Same script test-auto-integration_test.yml runs in CI (--cleanup added there) -- see
 # that file for what this actually verifies and why. Repo is left in place here by
 # default so it can be inspected; pass --cleanup yourself to delete it. Uses the
 # `usage` field (not the deprecated option() Tera function) so --branch is passed to
@@ -77,7 +85,7 @@ run = "python scripts/integration_test_github.py --source https://github.com/{{ 
 [tasks.integration-test-azdo]
 {%- set org_default = azdo_org if using_azdo else '' %}
 {%- set project_default = azdo_project if using_azdo else '' %}
-# Same script test-integration_test.yml runs in CI (--cleanup added there) -- see
+# Same script test-auto-integration_test.yml runs in CI (--cleanup added there) -- see
 # that file for what this actually verifies and why. Repo is left in place here by
 # default so it can be inspected; pass --cleanup yourself to delete it. --org/--project
 # default to this project's own Azure DevOps org/project when using_azdo, otherwise

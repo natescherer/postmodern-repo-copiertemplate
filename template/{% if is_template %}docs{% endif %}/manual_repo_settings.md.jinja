@@ -43,7 +43,7 @@ Under **Settings > Rules > Rulesets**, create a new ruleset:
         - Require conversation resolution before merging: off
     - **Require status checks to pass**, with:
         - Require branches to be up to date before merging: on
-        - Status check: `tests` (the job in `[Test] PR Validation`)
+        - Status check: `tests` (the job in `Test (Auto): PR Validation`)
 - Bypass list: add **Repository admin**, with bypass mode **Pull requests only** -- this lets
   repo admins use the "Merge without waiting for requirements to be met" button instead of being
   blocked entirely.
@@ -71,16 +71,17 @@ Azure DevOps UI.
 ### Pipelines
 
 Under **Pipelines > New pipeline**, create one pipeline per file under `.azurepipelines/`,
-pointing each at the matching YAML file in this repo. Name each `[{{ repo_name }}] <file-stem>`
-(e.g. `[{{ repo_name }}] pr_validation`) to match what this template's own automation would have
-named them.
+pointing each at the matching YAML file in this repo. Name each
+`[{{ repo_name }}] <Category> (<Auto|Manual>): <Name>`
+(e.g. `[{{ repo_name }}] Test (Auto): PR Validation`) to match what this template's own automation
+would have named them.
 
 ### PR-Validation Branch Policy
 
 Under **Project Settings > Repositories > (this repo) > Policies > Branch Policies > main**, add
 a **Build Validation** policy:
 
-- Build pipeline: the `pr_validation` pipeline created above
+- Build pipeline: the `Test (Auto): PR Validation` pipeline created above
 - Trigger: **Automatic**
 - Policy requirement: **Required**
 - Build expiration: **Immediately**

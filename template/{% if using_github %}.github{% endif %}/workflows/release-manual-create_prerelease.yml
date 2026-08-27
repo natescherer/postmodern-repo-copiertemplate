@@ -1,4 +1,4 @@
-name: "[Maint] Create Prerelease"
+name: "Release (Manual): Create Prerelease"
 
 on:
   workflow_dispatch:

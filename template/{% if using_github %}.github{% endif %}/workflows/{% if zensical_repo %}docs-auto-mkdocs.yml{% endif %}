@@ -1,4 +1,4 @@
-name: "[Maint] Zensical Build & Commit"
+name: "Docs (Auto): Zensical Build & Commit"
 
 on:
   push:
