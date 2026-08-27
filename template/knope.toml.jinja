@@ -32,12 +32,12 @@ base = "main"
 template = "chore: prepare release $version"
 
 [workflows.steps.body]
-template = "This PR was created by Knope. Merging it will create a new release (v$version).\n\n$changelog"
+template = "This PR was created by Knope. Merging it will create a new release (v$version).\n\n$changelog\n\n- [ ] Integration tests have been run and passed (or N/A)"
 {%- elif using_azdo %}
 
 [[workflows.steps]]
 type = "Command"
-command = "az repos pr create --source-branch knope/release --target-branch main --title \"chore: prepare release $version\" --description \"This PR was created by Knope. Merging it will create a new release (v$version).\n\n$changelog\" --squash true --auto-complete false"
+command = "az repos pr create --source-branch knope/release --target-branch main --title \"chore: prepare release $version\" --description \"This PR was created by Knope. Merging it will create a new release (v$version).\n\n$changelog\n\n- [ ] Integration tests have been run and passed (or N/A)\" --squash true --auto-complete false"
 shell = true
 {%- endif %}
 
