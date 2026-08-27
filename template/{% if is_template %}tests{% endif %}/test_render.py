@@ -104,8 +104,14 @@ def _check_lychee(root: Path) -> list[str]:
     return []
 
 
-def _check_all(root: Path) -> list[str]:
+def _check_all(root: Path, *, zensical: bool = True) -> list[str]:
     """Run every structural check against a rendered project.
+
+    `zensical` is skippable: `test_update_from_last_tag` renders the same combo
+    `test_render_combination` already builds docs for, just via `copier update`
+    instead of a fresh copy -- re-running the (comparatively slow) zensical build
+    there would only re-confirm docs content that hasn't changed, not exercise
+    anything update-path-specific.
 
     Returns:
         All collected error strings, each prefixed by which check produced it.
@@ -115,7 +121,8 @@ def _check_all(root: Path) -> list[str]:
     errors += [f"[structured-files] {e}" for e in _check_structured_files(root)]
     errors += [f"[actionlint] {e}" for e in _check_actionlint(root)]
     errors += [f"[tombi] {e}" for e in _check_tombi(root)]
-    errors += [f"[zensical] {e}" for e in _check_zensical_build(root)]
+    if zensical:
+        errors += [f"[zensical] {e}" for e in _check_zensical_build(root)]
     errors += [f"[lychee] {e}" for e in _check_lychee(root)]
     return errors
 
@@ -164,5 +171,5 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
         f"copier update failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
     )
 
-    errors = _check_all(dest)
+    errors = _check_all(dest, zensical=False)
     assert not errors, "\n\n".join(errors)  # noqa: S101
