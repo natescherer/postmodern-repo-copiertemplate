@@ -26,6 +26,13 @@ via `INVALID_ANSWER_MATRIX`), `test_answer_matrix_coverage.py` (audits
 `answer_matrix.py` itself against the real question set). **Update
 `answer_matrix.py` whenever a Copier question is added, removed, or renamed,
 or a new `validator:` constraint is added.**
+
+## Setup checklist
+
+`setup_checklist` in `copier.yml.jinja` (opened as a GitHub Issue, or printed, on
+`copier copy`) is the single source of truth for what a new project's owner needs to
+manually finish. **Update its default list whenever a new template feature requires
+the end user to manually configure, replace, or complete something after copying.**
 {%- endif %}
 
 ## Renovate `schedule` cron syntax is not standard cron
