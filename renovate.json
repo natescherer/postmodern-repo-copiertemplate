@@ -18,23 +18,12 @@
     "description": "Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline",
     "enabled": false
   },
-  "devcontainer": {
-    "managerFilePatterns": [
-      "/(^|/)devcontainer\\.json(?:\\.jinja)?$/"
-    ]
-  },
   "github-actions": {
     "managerFilePatterns": [
       "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"
     ]
   },
   "packageRules": [
-    {
-      "matchCategories": [
-        "docker"
-      ],
-      "pinDigests": true
-    },
     {
       "description": "Group actionlint",
       "matchPackageNames": [
