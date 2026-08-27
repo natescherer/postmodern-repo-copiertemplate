@@ -4,3 +4,6 @@ disable = [
   "MD046", # disable code block style (zensical)
   "MD057", # disable link checking in favor of lychee
 ]
+
+[MD007]
+indent = 4

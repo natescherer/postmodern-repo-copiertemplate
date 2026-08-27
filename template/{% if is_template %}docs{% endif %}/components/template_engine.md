@@ -4,8 +4,8 @@ This template started out as a [Cookiecutter](https://github.com/cookiecutter/co
 
 - Conditional Questions
 - Template Updating
-  - This was available for Cookiecutters via [Cruft](https://cruft.github.io/cruft/), but its featureset seemed to lag behind Cookiecutter's
+    - This was available for Cookiecutters via [Cruft](https://cruft.github.io/cruft/), but its featureset seemed to lag behind Cookiecutter's
 - Proper `.jinja` Extension for Templates
-  - Because Cookiecutter didn't use a proper template extension, it caused larger problems for linters and formatters
+    - Because Cookiecutter didn't use a proper template extension, it caused larger problems for linters and formatters
 
 Copier provides these out of the box, and uses a friendly YAML syntax to boot. The Copier project also explicitly indicates that they want to be a language-agnostic templating engine, which is nice as the Postmodern template family is designed to be useful for any/all purposes.
