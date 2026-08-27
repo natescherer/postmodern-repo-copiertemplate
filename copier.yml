@@ -409,6 +409,18 @@ current_knope_version_is_pre_1:
       true
     {%- endif %}
   when: false
+
+setup_checklist:
+  type: str
+  default: |-
+    - [ ] Add more badges to the top of README.md, or remove that section.
+    - [ ] Replace docs/images/readme-logo.png with your own logo, or remove that section from README.md.
+    - [ ] Replace docs/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
+    - [ ] Set required secrets/pipeline variables -- run `mise run provision-secrets` or see docs/token_permissions.md.
+    {%- if is_template and integration_test_scheduled and using_github %}
+    - [ ] Edit the AZDO_INTEGRATION_TEST_ORG/AZDO_INTEGRATION_TEST_PROJECT placeholders in .github/workflows/test-auto-integration_test.yml with your real Azure DevOps org/project.
+    {%- endif %}
+  when: false
 ## End Post-Question Computed Values
 
 ## Start Locked Values
@@ -750,10 +762,31 @@ _tasks:
   # since a private repo's issues are already restricted to invited collaborators.
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/private-vulnerability-reporting -X PUT
     when: *when_copy_public_github
+
+  # Opens the setup checklist as a GitHub Issue
+  - command:
+      - gh
+      - issue
+      - create
+      - --repo
+      - "{{ github_repo_owner }}/{{ repo_name }}"
+      - --title
+      - "Template Setup Checklist"
+      - --body
+      - "{{ setup_checklist }}"
+    when: |-
+      {%- if _copier_operation == 'copy' and using_github and repo_setup_actions != 'None' -%}
+        true
+      {%- endif %}
 ## End Tasks
 
 ## Start Messages
 _message_after_copy: |-
+  {%- if using_azdo or (using_github and repo_setup_actions == 'None') %}
+
+  Setup checklist:
+  {{ setup_checklist }}
+  {% endif -%}
   {%- if using_github -%}
     Repo settings (labels, merge options, branch protection) are not being applied automatically. See the 'Manual Repo Settings' page in documentation for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.
 
