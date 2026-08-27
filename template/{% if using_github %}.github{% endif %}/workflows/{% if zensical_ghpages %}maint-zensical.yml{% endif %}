@@ -44,11 +44,17 @@ jobs:
           path: ~/.cache
           restore-keys: |
             zensical-
-      - uses: jiangxin/file-exists-action@81a413fe02b9d9c4737c01bf2f566e12735a3285 # v1
+      - name: Check for gh-pages Index
         id: index-check
-        with:
-          path: index.html
-          ref: gh-pages
+        # jiangxin/file-exists-action is unmaintained (GitHub flags it) -- this is
+        # simple enough to inline. fetch-depth: 0 above fetches all branches, so
+        # origin/gh-pages is resolvable locally without a separate checkout.
+        run: |
+          if git cat-file -e origin/gh-pages:index.html 2>/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
       - run: mike set-default --push --allow-undefined dev
         if: ${{ steps.index-check.outputs.exists == 'false' }}
       - run: mike deploy --push --update-aliases dev
