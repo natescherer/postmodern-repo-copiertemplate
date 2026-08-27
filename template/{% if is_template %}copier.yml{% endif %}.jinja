@@ -37,6 +37,15 @@ parent_template_url:
 ## End Parent Template Values - DO NOT EDIT
 {%- raw %}
 
+## Start Pre-Question Computed Values
+lifecycle_previous:
+  # Records the value of lifecycle before it is asked, so that it can be used as
+  # part of the validator on the lifecycle question itself.
+  type: str
+  default: "{{ lifecycle | default('') }}"
+  when: false
+## End Pre-Question Computed Values
+
 ## Start Questions
 developer_platform:
   type: str
@@ -268,6 +277,11 @@ lifecycle:
     - Beta
     - Stable
     - Inactive
+  validator: |-
+    {%- set _rank = {"Pre-Alpha": 0, "Alpha": 1, "Beta": 2, "Stable": 3} -%}
+    {%- if lifecycle_previous in _rank and lifecycle in _rank and _rank[lifecycle] < _rank[lifecycle_previous] -%}
+      Can't move from '{{ lifecycle_previous }}' back to '{{ lifecycle }}' -- lifecycle only moves forward (Pre-Alpha -> Alpha -> Beta -> Stable). 'Inactive' is a separate state, reachable from any of these.
+    {%- endif -%}
 
 agent_instructions:
   type: bool
@@ -280,7 +294,7 @@ code_coverage:
   default: false
 ## End Questions
 
-## Start Computed Values
+## Start Post-Question Computed Values
 using_github:
   type: bool
   default: |-
@@ -408,7 +422,7 @@ current_knope_version_is_pre_1:
       true
     {%- endif %}
   when: false
-## End Computed Values
+## End Post-Question Computed Values
 
 ## Start Locked Values
 copyright_year:
