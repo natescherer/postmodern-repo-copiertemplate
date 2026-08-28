@@ -72,8 +72,8 @@ Azure DevOps UI.
 
 Under **Pipelines > New pipeline**, create one pipeline per file under `.azurepipelines/`,
 pointing each at the matching YAML file in this repo. Name each
-`[{{ repo_name }}] <Category> (<Auto|Manual>): <Name>`
-(e.g. `[{{ repo_name }}] Test (Auto): PR Validation`) to match what this template's own automation
+`[{{ repo_name }}] <Category> (<Auto|Manual>) - <Name>`
+(e.g. `[{{ repo_name }}] Test (Auto) - PR Validation`) to match what this template's own automation
 would have named them.
 
 ### PR-Validation Branch Policy
@@ -81,7 +81,7 @@ would have named them.
 Under **Project Settings > Repositories > (this repo) > Policies > Branch Policies > main**, add
 a **Build Validation** policy:
 
-- Build pipeline: the `Test (Auto): PR Validation` pipeline created above
+- Build pipeline: the `Test (Auto) - PR Validation` pipeline created above
 - Trigger: **Automatic**
 - Policy requirement: **Required**
 - Build expiration: **Immediately**

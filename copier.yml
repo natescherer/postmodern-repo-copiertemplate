@@ -519,7 +519,7 @@ _tasks:
   # Creates Azure Pipeline for maint-auto-copierupdatecheck
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Maint (Auto): Copier Update Check"
+      --name "[{{ repo_name }}] Maint (Auto) - Copier Update Check"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
@@ -535,7 +535,7 @@ _tasks:
   # Creates Azure Pipeline for maint-auto-linkcheck
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Maint (Auto): Link Check"
+      --name "[{{ repo_name }}] Maint (Auto) - Link Check"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
@@ -548,7 +548,7 @@ _tasks:
   # Creates Azure Pipeline for maint-auto-renovate
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Maint (Auto): Renovate"
+      --name "[{{ repo_name }}] Maint (Auto) - Renovate"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
@@ -561,7 +561,7 @@ _tasks:
   # Creates Azure Pipeline for docs-auto-zensical
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Docs (Auto): Zensical Build & Publish"
+      --name "[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
@@ -577,7 +577,7 @@ _tasks:
   # one-time warm-up run activates it for every push after.
   - command: >-
       az pipelines run
-      --name "[{{ repo_name }}] Docs (Auto): Zensical Build & Publish"
+      --name "[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish"
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
@@ -585,7 +585,7 @@ _tasks:
   # Creates Azure Pipeline for test-auto-prvalidation
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Test (Auto): PR Validation"
+      --name "[{{ repo_name }}] Test (Auto) - PR Validation"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
@@ -631,7 +631,7 @@ _tasks:
             "repos", "show", "--repository", "{{ repo_name }}", "--query", "id", "-o", "tsv"
         ).strip()
         pipeline_id = az(
-            "pipelines", "show", "--name", "[{{ repo_name }}] Test (Auto): PR Validation",
+            "pipelines", "show", "--name", "[{{ repo_name }}] Test (Auto) - PR Validation",
             "--query", "id", "-o", "tsv",
         ).strip()
 
@@ -679,7 +679,7 @@ _tasks:
   # Creates Azure Pipeline for release-auto-release
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Release (Auto): Prepare/Publish Release"
+      --name "[{{ repo_name }}] Release (Auto) - Prepare & Publish Release"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
@@ -692,7 +692,7 @@ _tasks:
   # See the docs pipeline's warm-up task above for why this is needed.
   - command: >-
       az pipelines run
-      --name "[{{ repo_name }}] Release (Auto): Prepare/Publish Release"
+      --name "[{{ repo_name }}] Release (Auto) - Prepare & Publish Release"
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
@@ -700,7 +700,7 @@ _tasks:
   # Creates Azure Pipeline for release-manual-createprerelease
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Release (Manual): Create Prerelease"
+      --name "[{{ repo_name }}] Release (Manual) - Create Prerelease"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main

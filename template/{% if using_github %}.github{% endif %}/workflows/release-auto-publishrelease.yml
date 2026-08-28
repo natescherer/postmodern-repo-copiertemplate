@@ -17,9 +17,20 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+      - name: Validate Secrets Exist
+        uses: ./.github/actions/require-secrets
+        with:
+          secrets: |
+            REPO_MAINTENANCE_PAT=${{ secrets.REPO_MAINTENANCE_PAT }}
       - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
       - name: Publish Release
         shell: bash
         run: mise x -- knope release-on-knope-pr-merge --verbose
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # A release created with the default GITHUB_TOKEN doesn't fire a `release:
+          # published` event that other workflows can react to -- GitHub explicitly
+          # doesn't cascade-trigger workflows from GITHUB_TOKEN-authenticated actions,
+          # to prevent recursive runs. docs-auto-zensical.yml's `on: release:
+          # published` listener (which publishes the "latest" Pages docs alias) would
+          # silently never fire without this.
+          GITHUB_TOKEN: ${{ secrets.REPO_MAINTENANCE_PAT }}

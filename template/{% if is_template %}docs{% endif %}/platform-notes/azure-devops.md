@@ -12,7 +12,7 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
     - Custom Issue tags
 - Branch protection is partial
     - When `repo_setup_actions` triggers setup, a required PR-validation build policy is created
-      automatically on the default branch (the `Test (Auto): PR Validation` pipeline must pass
+      automatically on the default branch (the `Test (Auto) - PR Validation` pipeline must pass
       before a PR can complete), along with a **Project Administrators** bypass permission mirroring GitHub's
       admin `bypass_actors` entry. Unlike GitHub's ruleset, force-push and branch deletion on the
       default branch are **not** blocked -- this is a known, currently-accepted gap. If you chose
@@ -29,14 +29,14 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
       and **Contribute to pull requests** on this repo (Project Settings > Repositories > this
       repo > Security) -- this is normally a one-time, org-wide grant, not something you need to
       repeat per repo.
-- `Release (Auto): Prepare/Publish Release` pipeline detects PR merges via the API, not a native trigger
+- `Release (Auto) - Prepare & Publish Release` pipeline detects PR merges via the API, not a native trigger
     - The release flow matches GitHub's: every push to `main` opens or updates a preview PR
       (`knope/release`), and merging it publishes the release -- see [Releasing](../releasing.md).
       Azure Pipelines has no "PR completed" trigger, only branch-push triggers, so the pipeline
       tells "a normal push" apart from "this push is that PR's own merge" by asking the API
       whether the most recently completed PR from `knope/release` into `main` matches the commit
       that triggered this run, rather than a push-type distinction. Ad-hoc alpha/beta/rc builds go
-      through the separate, manually-queued `Release (Manual): Create Prerelease` pipeline
+      through the separate, manually-queued `Release (Manual) - Create Prerelease` pipeline
       (Pipelines > select it > Run) instead.
 - No semantic linter for Azure Pipelines YAML
     - `.azurepipelines/*.yml` files get generic YAML syntax checking via `ryl`, but nothing checks
