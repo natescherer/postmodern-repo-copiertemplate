@@ -96,4 +96,19 @@ jobs:
     permissions:
       actions: write
     steps:
-      - uses: liskin/gh-workflow-keepalive@f72ff1a1336129f29bf0166c0fd0ca6cf1bcb38c # v1
+      # Re-enables this workflow if GitHub disabled it for inactivity. Inlined from
+      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh` --
+      # unsupported on Windows runners, unlike bash, which is available there via Git
+      # for Windows.
+      - name: Re-enable Workflow
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          case "${GITHUB_WORKFLOW_REF:?}" in
+            "${GITHUB_REPOSITORY:?}"/.github/workflows/*.y*ml@*) ;;
+            *) false ;;
+          esac
+          workflow="${GITHUB_WORKFLOW_REF%%@*}"
+          workflow="${workflow#"$GITHUB_REPOSITORY"/.github/workflows/}"
+          gh api -X PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/enable"
