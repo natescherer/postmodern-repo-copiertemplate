@@ -8,36 +8,36 @@
       
       
       
-        <link rel="canonical" href="https://natescherer.github.io/latest/lifecycle_management/">
+        <link rel="canonical" href="https://natescherer.github.io/latest/platform-notes/azure-devops/">
       
       
-        <link rel="prev" href="../template_questions/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../token_permissions/">
+        <link rel="next" href="../../components/template-engine/">
       
       
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="zensical-0.0.53">
     
     
       
-        <title>Lifecycle Management - Postmodern Repo Copier Template</title>
+        <title>Azure DevOps Limitations - Postmodern Repo Copier Template</title>
       
     
     
       
         
       
-      <link rel="stylesheet" href="../assets/stylesheets/classic/main.39e53929.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/classic/main.39e53929.min.css">
       
         
           
         
-        <link rel="stylesheet" href="../assets/stylesheets/classic/palette.7dc9a0ad.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/classic/palette.7dc9a0ad.min.css">
       
       
 
@@ -56,7 +56,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
 
@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#lifecycle-management" class="md-skip">
+        <a href="#azure-devops-limitations" class="md-skip">
           Skip to content
         </a>
       
@@ -96,12 +96,12 @@
             <div class="md-banner__inner md-grid md-typeset">
               
   You're not viewing the latest version.
-  <a href="../..">
+  <a href="../../..">
     <strong>Click here to go to latest.</strong>
   </a>
 
             </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
           </aside>
         
       </div>
@@ -113,7 +113,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="./.." title="Postmodern Repo Copier Template" class="md-header__button md-logo" aria-label="Postmodern Repo Copier Template" data-md-component="logo">
+    <a href="../.." title="Postmodern Repo Copier Template" class="md-header__button md-logo" aria-label="Postmodern Repo Copier Template" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.75 0A2.75 2.75 0 0 0 3 2.75v1a.75.75 0 0 0 1.5 0v-1c0-.69.56-1.25 1.25-1.25h1a.75.75 0 0 0 0-1.5zm4 0a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zm7.5 0a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-3a.75.75 0 0 0-.75-.75zM4.5 6.5a.75.75 0 0 0-1.5 0v3.75a.75.75 0 0 0 1.5 0zm16.5 0a.75.75 0 0 0-1.5 0v3.75a.75.75 0 0 0 1.5 0zM4.5 13.25a.75.75 0 0 0-1.5 0v5.5a3.25 3.25 0 0 0 1.95 2.98.75.75 0 1 0 .6-1.375A1.75 1.75 0 0 1 4.5 18.75V18A1.5 1.5 0 0 1 6 16.5h.75a.75.75 0 0 0 0-1.5H6c-.546 0-1.059.146-1.5.401zm16.5 0a.75.75 0 0 0-1.5 0V15h-2.25a.75.75 0 0 0 0 1.5h2.25v4h-5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 .75-.75zM9.75 15a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zm-2.353 8.461A.25.25 0 0 1 7 23.26v-5.01a.25.25 0 0 1 .25-.25h5a.25.25 0 0 1 .25.25v5.01a.25.25 0 0 1-.397.201l-2.206-1.604a.25.25 0 0 0-.294 0z"/></svg>
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Lifecycle Management
+              Azure DevOps Limitations
             
           </span>
         </div>
@@ -232,7 +232,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="./.." title="Postmodern Repo Copier Template" class="md-nav__button md-logo" aria-label="Postmodern Repo Copier Template" data-md-component="logo">
+    <a href="../.." title="Postmodern Repo Copier Template" class="md-nav__button md-logo" aria-label="Postmodern Repo Copier Template" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.75 0A2.75 2.75 0 0 0 3 2.75v1a.75.75 0 0 0 1.5 0v-1c0-.69.56-1.25 1.25-1.25h1a.75.75 0 0 0 0-1.5zm4 0a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zm7.5 0a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-3a.75.75 0 0 0-.75-.75zM4.5 6.5a.75.75 0 0 0-1.5 0v3.75a.75.75 0 0 0 1.5 0zm16.5 0a.75.75 0 0 0-1.5 0v3.75a.75.75 0 0 0 1.5 0zM4.5 13.25a.75.75 0 0 0-1.5 0v5.5a3.25 3.25 0 0 0 1.95 2.98.75.75 0 1 0 .6-1.375A1.75 1.75 0 0 1 4.5 18.75V18A1.5 1.5 0 0 1 6 16.5h.75a.75.75 0 0 0 0-1.5H6c-.546 0-1.059.146-1.5.401zm16.5 0a.75.75 0 0 0-1.5 0V15h-2.25a.75.75 0 0 0 0 1.5h2.25v4h-5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 .75-.75zM9.75 15a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zm-2.353 8.461A.25.25 0 0 1 7 23.26v-5.01a.25.25 0 0 1 .25-.25h5a.25.25 0 0 1 .25.25v5.01a.25.25 0 0 1-.397.201l-2.206-1.604a.25.25 0 0 0-.294 0z"/></svg>
@@ -262,7 +262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="./.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -288,7 +288,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prerequisites/" class="md-nav__link">
+      <a href="../../prerequisites/" class="md-nav__link">
         
   
   
@@ -314,7 +314,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../applying_to_existing_projects/" class="md-nav__link">
+      <a href="../../applying-to-existing-projects/" class="md-nav__link">
         
   
   
@@ -340,7 +340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../template_questions/" class="md-nav__link">
+      <a href="../../template-questions/" class="md-nav__link">
         
   
   
@@ -363,38 +363,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      
-        <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  Lifecycle Management
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="././" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../lifecycle-management/" class="md-nav__link">
         
   
   
@@ -409,48 +381,177 @@
   
 
       </a>
+    </li>
+  
+
+    
       
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releasing/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Releasing
 
+    
+  </span>
+  
+  
 
-<nav class="md-nav md-nav--secondary" aria-label="On this page">
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
   
   
   
     
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+    
       
-        <li class="md-nav__item">
-  <a href="#choices" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Choices
-      </span>
-    </span>
-  </a>
-  
-</li>
+        
       
-        <li class="md-nav__item">
-  <a href="#moving-to-stable-for-the-first-time" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Moving to Stable for the First Time
-      </span>
-    </span>
-  </a>
-  
-</li>
+        
       
-    </ul>
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
   
-</nav>
+  
+  <span class="md-ellipsis">
+    
+  
+  Integration Testing
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Integration Testing
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../integration-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Integration Testing
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual-verification-github/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Manual Verification Checklist (GitHub)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual-verification-azdo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Manual Verification Checklist (Azure DevOps)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -463,7 +564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../token_permissions/" class="md-nav__link">
+      <a href="../../token-permissions/" class="md-nav__link">
         
   
   
@@ -489,7 +590,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../manual_repo_settings/" class="md-nav__link">
+      <a href="../../manual-repo-settings/" class="md-nav__link">
         
   
   
@@ -515,7 +616,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../public_vs_private_repos/" class="md-nav__link">
+      <a href="../../public-vs-private-repos/" class="md-nav__link">
         
   
   
@@ -538,6 +639,8 @@
       
   
   
+    
+  
   
   
     
@@ -549,8 +652,6 @@
       
         
       
-        
-      
     
     
     
@@ -560,15 +661,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../platform_notes/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -585,14 +686,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -607,37 +708,21 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../platform_notes/github_org/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+        <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
         
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  GitHub Org Limitations
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../platform_notes/azure_devops/" class="md-nav__link">
+      
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
         
   
   
@@ -652,6 +737,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -688,10 +774,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
         
           
-          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
             
   
   
@@ -708,8 +794,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_10">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -725,7 +811,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../components/template_engine/" class="md-nav__link">
+      <a href="../../components/template-engine/" class="md-nav__link">
         
   
   
@@ -774,36 +860,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#choices" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Choices
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#moving-to-stable-for-the-first-time" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Moving to Stable for the First Time
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -820,6 +876,59 @@
   
 
 
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    Platform Notes
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
               
               <article class="md-content__inner md-typeset">
                 
@@ -828,32 +937,64 @@
   
 
 
-<h1 id="lifecycle-management">Lifecycle Management<a class="headerlink" href="#lifecycle-management" title="Permanent link">&para;</a></h1>
-<p>This doc explains what the <code>lifecycle</code> question controls and how your project's status is
-communicated as it changes over time.</p>
-<h2 id="choices">Choices<a class="headerlink" href="#choices" title="Permanent link">&para;</a></h2>
+<h1 id="azure-devops-limitations">Azure DevOps Limitations<a class="headerlink" href="#azure-devops-limitations" title="Permanent link">&para;</a></h1>
+<p><strong>Azure DevOps support is deprecated and will eventually be removed.</strong> It's kept around for
+existing organizational needs, not as a recommendation -- prefer GitHub for new projects unless
+you specifically need Azure DevOps.</p>
+<p>Support for Azure DevOps is provided on a best-effort basis and has some limitations compared to GitHub.</p>
 <ul>
-<li><strong>Pre-Alpha</strong> / <strong>Alpha</strong> — The README displays a notice that the project is not ready for
-  public use.</li>
-<li><strong>Beta</strong> — The README displays a notice that the project should be used with caution.</li>
-<li><strong>Stable</strong> — No notice is shown; the project is considered production-ready.</li>
-<li><strong>Inactive</strong> — The README displays a notice that the project is no longer under active
-  development.</li>
+<li>Public projects not supported<ul>
+<li>It is assumed that if you are using Azure DevOps, it is due to organizational requirements.</li>
 </ul>
-<p>Changing <code>lifecycle</code> via <code>copier update</code> updates this notice (or removes it, for Stable)
-automatically.</p>
-<h2 id="moving-to-stable-for-the-first-time">Moving to Stable for the First Time<a class="headerlink" href="#moving-to-stable-for-the-first-time" title="Permanent link">&para;</a></h2>
-<p>While <code>lifecycle</code> is Pre-Alpha, Alpha, or Beta, Release Please keeps your version below <code>1.0.0</code>,
-bumping the minor/patch component for <code>feat</code>/<code>fix</code> commits instead of the usual major/minor bump.
-Release Please won't cross the <code>1.0.0</code> line on its own — that requires an explicit
-<code>Release-As: 1.0.0</code> commit trailer.</p>
-<p>To make this easy, once you set <code>lifecycle</code> to <code>Stable</code> on a GitHub project and run
-<code>copier update</code>, if the version Release Please last tracked is still below <code>1.0.0</code>, you'll see a
-message with a ready-to-run command:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>commit<span class="w"> </span>--allow-empty<span class="w"> </span>-m<span class="w"> </span><span class="s2">"chore: bump version to v1.0.0"</span><span class="w"> </span>-m<span class="w"> </span><span class="s2">"Release-As: 1.0.0"</span>
-</span></code></pre></div>
-<p>Merge that commit to <code>main</code> and Release Please's next run will bump the version to <code>1.0.0</code>. The
-message stops appearing automatically once that's done.</p>
+</li>
+<li>GitHub-specific features not implemented<ul>
+<li>Custom Issue tags</li>
+</ul>
+</li>
+<li>Branch protection is partial<ul>
+<li>When <code>repo_setup_actions</code> triggers setup, a required PR-validation build policy is created
+  automatically on the default branch (the <code>Test (Auto) - PR Validation</code> pipeline must pass
+  before a PR can complete), along with a <strong>Project Administrators</strong> bypass permission mirroring GitHub's
+  admin <code>bypass_actors</code> entry. Unlike GitHub's ruleset, force-push and branch deletion on the
+  default branch are <strong>not</strong> blocked -- this is a known, currently-accepted gap. If you chose
+  <code>repo_setup_actions: None</code>, see <a href="../../manual-repo-settings/">Manual Repo Settings</a> for how to
+  set this up by hand.</li>
+</ul>
+</li>
+<li><code>zensical_target</code> is always <code>docs-site Directory in Repo</code><ul>
+<li><code>GitHub Pages</code> isn't offered, so Azure DevOps projects never get the release-versioned docs
+  site that target provides — see <a href="../../#documentation">Getting Started</a></li>
+</ul>
+</li>
+<li>Renovate needs a one-time manual permission grant<ul>
+<li>Unlike GitHub (which uses the Renovate GitHub App), Renovate runs here as a self-hosted
+  scheduled pipeline (<code>.azurepipelines/maint-auto-renovate.yml</code>), authenticated via the pipeline's own
+  <code>$(System.AccessToken)</code> rather than a stored secret. For it to push branches and open PRs,
+  grant the <strong>Project Collection Build Service</strong> account <strong>Contribute</strong>, <strong>Create branch</strong>,
+  and <strong>Contribute to pull requests</strong> on this repo (Project Settings &gt; Repositories &gt; this
+  repo &gt; Security) -- this is normally a one-time, org-wide grant, not something you need to
+  repeat per repo.</li>
+</ul>
+</li>
+<li><code>Release (Auto) - Prepare &amp; Publish Release</code> pipeline detects PR merges via the API, not a native trigger<ul>
+<li>The release flow matches GitHub's: every push to <code>main</code> opens or updates a preview PR
+  (<code>knope/release</code>), and merging it publishes the release -- see <a href="../../releasing/">Releasing</a>.
+  Azure Pipelines has no "PR completed" trigger, only branch-push triggers, so the pipeline
+  tells "a normal push" apart from "this push is that PR's own merge" by asking the API
+  whether the most recently completed PR from <code>knope/release</code> into <code>main</code> matches the commit
+  that triggered this run, rather than a push-type distinction. Ad-hoc alpha/beta/rc builds go
+  through the separate, manually-queued <code>Release (Manual) - Create Prerelease</code> pipeline
+  (Pipelines &gt; select it &gt; Run) instead.</li>
+</ul>
+</li>
+<li>No semantic linter for Azure Pipelines YAML<ul>
+<li><code>.azurepipelines/*.yml</code> files get generic YAML syntax checking via <code>ryl</code>, but nothing checks
+  Azure Pipelines-specific schema/semantics the way <code>actionlint</code> does for GitHub Actions
+  workflows. No comparable standalone tool exists for Azure Pipelines, so this is treated as an
+  accepted limitation rather than a gap to close.</li>
+</ul>
+</li>
+</ul>
 
 
 
@@ -891,7 +1032,7 @@ message stops appearing automatically once that's done.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../template_questions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Template Questions">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Platform Notes">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -901,20 +1042,20 @@ message stops appearing automatically once that's done.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Template Questions
+                Platform Notes
               </div>
             </div>
           </a>
         
         
           
-          <a href="../token_permissions/" class="md-footer__link md-footer__link--next" aria-label="Next: Token Permissions">
+          <a href="../../components/template-engine/" class="md-footer__link md-footer__link--next" aria-label="Next: Why Copier?">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Token Permissions
+                Why Copier?
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -951,10 +1092,12 @@ message stops appearing automatically once that's done.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["content.code.copy","navigation.indexes","navigation.footer","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight","toc.follow"],"search":"../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"alias":true,"provider":"mike"}}</script>
+      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["content.code.copy","navigation.indexes","navigation.footer","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight","toc.follow"],"search":"../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"alias":true,"provider":"mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.69c251d7.min.js"></script>
+      <script src="../../assets/javascripts/bundle.69c251d7.min.js"></script>
+      
+        <script src="../../javascripts/manual-verification-checkboxes.js"></script>
       
     
   </body>

@@ -7,33 +7,42 @@
         <loc>https://natescherer.github.io/latest/prerequisites/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/applying_to_existing_projects/</loc>
+        <loc>https://natescherer.github.io/latest/applying-to-existing-projects/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/template_questions/</loc>
+        <loc>https://natescherer.github.io/latest/template-questions/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/lifecycle_management/</loc>
+        <loc>https://natescherer.github.io/latest/lifecycle-management/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/token_permissions/</loc>
+        <loc>https://natescherer.github.io/latest/releasing/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/manual_repo_settings/</loc>
+        <loc>https://natescherer.github.io/latest/integration-testing/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/public_vs_private_repos/</loc>
+        <loc>https://natescherer.github.io/latest/manual-verification-github/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/platform_notes/</loc>
+        <loc>https://natescherer.github.io/latest/manual-verification-azdo/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/platform_notes/github_org/</loc>
+        <loc>https://natescherer.github.io/latest/token-permissions/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/platform_notes/azure_devops/</loc>
+        <loc>https://natescherer.github.io/latest/manual-repo-settings/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/components/template_engine/</loc>
+        <loc>https://natescherer.github.io/latest/public-vs-private-repos/</loc>
+      </url>
+      <url>
+        <loc>https://natescherer.github.io/latest/platform-notes/</loc>
+      </url>
+      <url>
+        <loc>https://natescherer.github.io/latest/platform-notes/azure-devops/</loc>
+      </url>
+      <url>
+        <loc>https://natescherer.github.io/latest/components/template-engine/</loc>
       </url>
 </urlset>

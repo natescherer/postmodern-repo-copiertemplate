@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://natescherer.github.io/latest/platform_notes/">
+        <link rel="canonical" href="https://natescherer.github.io/latest/integration-testing/">
       
       
-        <link rel="prev" href="../public_vs_private_repos/">
+        <link rel="prev" href="../releasing/">
       
       
-        <link rel="next" href="./github_org/">
+        <link rel="next" href="../manual-verification-github/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>Platform Notes - Postmodern Repo Copier Template</title>
+        <title>Integration Testing - Postmodern Repo Copier Template</title>
       
     
     
@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#platform-notes" class="md-skip">
+        <a href="#integration-testing" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Platform Notes
+              Integration Testing
             
           </span>
         </div>
@@ -314,7 +314,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../applying_to_existing_projects/" class="md-nav__link">
+      <a href="../applying-to-existing-projects/" class="md-nav__link">
         
   
   
@@ -340,7 +340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../template_questions/" class="md-nav__link">
+      <a href="../template-questions/" class="md-nav__link">
         
   
   
@@ -366,7 +366,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lifecycle_management/" class="md-nav__link">
+      <a href="../lifecycle-management/" class="md-nav__link">
         
   
   
@@ -392,7 +392,274 @@
   
   
     <li class="md-nav__item">
-      <a href="../token_permissions/" class="md-nav__link">
+      <a href="../releasing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Releasing
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Integration Testing
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Integration Testing
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+        <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Integration Testing
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Integration Testing
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#running-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Running It
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#repo-a-and-repo-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Repo A and Repo B
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-it-checks-and-what-it-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What It Checks, and What It Doesn't
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vs-pytest-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        vs. <code>pytest tests/</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual-verification-github/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Manual Verification Checklist (GitHub)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual-verification-azdo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Manual Verification Checklist (Azure DevOps)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../token-permissions/" class="md-nav__link">
         
   
   
@@ -418,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../manual_repo_settings/" class="md-nav__link">
+      <a href="../manual-repo-settings/" class="md-nav__link">
         
   
   
@@ -444,7 +711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../public_vs_private_repos/" class="md-nav__link">
+      <a href="../public-vs-private-repos/" class="md-nav__link">
         
   
   
@@ -467,8 +734,6 @@
       
   
   
-    
-  
   
   
     
@@ -480,8 +745,6 @@
       
         
       
-        
-      
     
     
     
@@ -491,15 +754,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="././" class="md-nav__link md-nav__link--active">
+            <a href="../platform-notes/" class="md-nav__link ">
               
   
   
@@ -516,14 +779,14 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -541,34 +804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="./github_org/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  GitHub Org Limitations
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="./azure_devops/" class="md-nav__link">
+      <a href="../platform-notes/azure-devops/" class="md-nav__link">
         
   
   
@@ -619,10 +855,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
         
           
-          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
             
   
   
@@ -639,8 +875,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_10">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -656,7 +892,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../components/template_engine/" class="md-nav__link">
+      <a href="../components/template-engine/" class="md-nav__link">
         
   
   
@@ -705,6 +941,58 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#running-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Running It
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#repo-a-and-repo-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Repo A and Repo B
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-it-checks-and-what-it-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What It Checks, and What It Doesn't
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vs-pytest-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        vs. <code>pytest tests/</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -748,8 +1036,6 @@
     
       
         
-          
-        
       
         
       
@@ -764,7 +1050,7 @@
           
   
   <span class="md-ellipsis">
-    Platform Notes
+    Integration Testing
   </span>
 
         </a>
@@ -784,15 +1070,34 @@
   
 
 
-<h1 id="platform-notes">Platform Notes<a class="headerlink" href="#platform-notes" title="Permanent link">&para;</a></h1>
-<p>Each generated project targets one platform (GitHub or Azure DevOps), and that platform has a few
-quirks or intentional limitations worth knowing about:</p>
+<h1 id="integration-testing">Integration Testing<a class="headerlink" href="#integration-testing" title="Permanent link">&para;</a></h1>
+<p><strong>Run this as the last step before cutting every release.</strong> It's the only way to catch a real regression in this template's own scaffolding -- a local render can't create a repo, register a pipeline, or trigger a workflow, and those are exactly the things a release needs to still work.</p>
+<p>Integration testing means actually running the template: creating a real throwaway repo from the current template source and confirming the result holds up, not just inspecting a local render.</p>
+<h2 id="running-it">Running It<a class="headerlink" href="#running-it" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="github_org/">GitHub Org Limitations</a> — features excluded for repos made under a GitHub
-  organization.</li>
-<li><a href="azure_devops/">Azure DevOps Limitations</a> — features unavailable or unimplemented for Azure
-  DevOps projects.</li>
+<li><code>mise run integration-test-gh</code> -- creates two real GitHub repos from this template, named <code>&lt;prefix&gt;-integration-test-&lt;timestamp&gt;-a</code> and <code>...-b</code>.</li>
+<li><code>mise run integration-test-azdo</code> -- the same shape, on Azure DevOps (pass <code>--org</code>/<code>--project</code>, or let them default to this project's own if it already uses Azure DevOps).</li>
 </ul>
+<p>Run both, regardless of which platform this template's own repo happens to use -- a release has to be good for every platform this template supports, not just the one you personally host on.</p>
+<h2 id="repo-a-and-repo-b">Repo A and Repo B<a class="headerlink" href="#repo-a-and-repo-b" title="Permanent link">&para;</a></h2>
+<p>Each run creates two repos with deliberately different answers, so between them a single run covers more of the answer space instead of exercising the same fixed answers twice. Each checklist below has a matching section per repo.</p>
+<ul>
+<li><strong>Repo A</strong> is a plain <code>copier copy</code> at <code>HEAD</code>, ready to check immediately -- both <code>mise run integration-test-gh</code>/<code>integration-test-azdo</code> run every automated check they can against it directly (dispatching pipelines, opening real PRs, cutting a real release) before returning.</li>
+<li><strong>Repo B</strong> is copied at the last stable release tag and left there -- it does <em>not</em> get updated for you. Applying that update is deliberately a manual step, spelled out in each checklist's own Repo B section: running the exact command a real user runs, prompts included, is the only way to see a new question land the way it actually would for them, not however a script might have answered it. Once you've updated it by hand, <code>mise run integration-test-verify-update-gh</code>/<code>integration-test-verify-update-azdo</code> automates checking that it applied cleanly.</li>
+</ul>
+<p>The two repos also split every other either/or answer this template offers, so both branches get exercised somewhere: <code>code_coverage</code> is on for Repo A and off for Repo B on both platforms; on GitHub, <code>zensical_target</code> is <code>GitHub Pages</code> for Repo A and <code>docs-site Directory in Repo</code> for Repo B.</p>
+<h2 id="what-it-checks-and-what-it-doesnt">What It Checks, and What It Doesn't<a class="headerlink" href="#what-it-checks-and-what-it-doesnt" title="Permanent link">&para;</a></h2>
+<p>Both scripts check as much as is feasible for them to automatically: they dispatch real pipelines and wait for them to finish, open real PRs and confirm they're blocked or pass, push real commits and confirm the release flow reacts correctly, and cut a real release and prerelease. Every check prints its own <code>[PASS]</code>/<code>[FAIL]</code> line as it runs, plus a summary at the end -- nothing stops at the first failure, so one run gives the full picture.</p>
+<p>What's still out of reach: anything that depends on a human's judgment (does a badge actually look right, was the setup checklist genuinely addressed) or an external system this script can't inspect (whether an Apprise notification actually landed at your configured endpoint, whether a third-party bot like Renovate or All Contributors responded). That's what the checklists are for -- each one only lists what's actually left for a human, with a note wherever a check nearby is already automated.</p>
+<h2 id="vs-pytest-tests">vs. <code>pytest tests/</code><a class="headerlink" href="#vs-pytest-tests" title="Permanent link">&para;</a></h2>
+<p><code>pytest tests/</code> (<code>mise run test</code>; CI runs the same command directly on every PR) already covers a lot of this template's own correctness, including an update-path check (<code>test_update_from_last_tag</code>) that runs a real <code>copier update</code> against a real git history -- but entirely locally: it renders into a temp directory, never touches GitHub or Azure DevOps, and skips every <code>_tasks</code> entry (<code>--skip-tasks</code>), so it can't create a repo, register a pipeline, or apply a branch policy for real. It's what catches broken Jinja, invalid YAML/JSON, dead links, and template-diff bugs, fast and on every PR, with no external side effects.</p>
+<p>Integration testing picks up exactly where that stops: anything gated on a real API call, a real running pipeline, or an external system's own behavior -- none of which a local render can exercise, which is why this has to be a manual, pre-release step rather than something CI runs on every PR.</p>
+<p>Run through <strong>all of</strong> the relevant checklist, by hand, against the repos the integration test just created:</p>
+<ul>
+<li><a href="../manual-verification-github/">Manual Verification Checklist (GitHub)</a></li>
+<li><a href="../manual-verification-azdo/">Manual Verification Checklist (Azure DevOps)</a></li>
+</ul>
+<p>Each checklist ends with its own cleanup steps for tearing the throwaway repos back down once you're done.</p>
 
 
 
@@ -830,7 +1135,7 @@ quirks or intentional limitations worth knowing about:</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../public_vs_private_repos/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Public vs Private Repos">
+          <a href="../releasing/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Releasing">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -840,20 +1145,20 @@ quirks or intentional limitations worth knowing about:</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Public vs Private Repos
+                Releasing
               </div>
             </div>
           </a>
         
         
           
-          <a href="./github_org/" class="md-footer__link md-footer__link--next" aria-label="Next: GitHub Org Limitations">
+          <a href="../manual-verification-github/" class="md-footer__link md-footer__link--next" aria-label="Next: Manual Verification Checklist (GitHub)">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                GitHub Org Limitations
+                Manual Verification Checklist (GitHub)
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -894,6 +1199,8 @@ quirks or intentional limitations worth knowing about:</p>
     
     
       <script src="../assets/javascripts/bundle.69c251d7.min.js"></script>
+      
+        <script src="../javascripts/manual-verification-checkboxes.js"></script>
       
     
   </body>

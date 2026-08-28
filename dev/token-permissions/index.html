@@ -8,34 +8,36 @@
       
       
       
-        <link rel="canonical" href="https://natescherer.github.io/latest/components/template_engine/">
+        <link rel="canonical" href="https://natescherer.github.io/latest/token-permissions/">
       
       
-        <link rel="prev" href="../../platform_notes/azure_devops/">
+        <link rel="prev" href="../manual-verification-azdo/">
       
+      
+        <link rel="next" href="../manual-repo-settings/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="zensical-0.0.53">
     
     
       
-        <title>Why Copier? - Postmodern Repo Copier Template</title>
+        <title>Token Permissions - Postmodern Repo Copier Template</title>
       
     
     
       
         
       
-      <link rel="stylesheet" href="../../assets/stylesheets/classic/main.39e53929.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/classic/main.39e53929.min.css">
       
         
           
         
-        <link rel="stylesheet" href="../../assets/stylesheets/classic/palette.7dc9a0ad.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/classic/palette.7dc9a0ad.min.css">
       
       
 
@@ -54,7 +56,7 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    <script>__md_scope=new URL("..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
 
@@ -79,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#why-copier" class="md-skip">
+        <a href="#token-permissions" class="md-skip">
           Skip to content
         </a>
       
@@ -94,12 +96,12 @@
             <div class="md-banner__inner md-grid md-typeset">
               
   You're not viewing the latest version.
-  <a href="../../..">
+  <a href="../..">
     <strong>Click here to go to latest.</strong>
   </a>
 
             </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
           </aside>
         
       </div>
@@ -111,7 +113,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Postmodern Repo Copier Template" class="md-header__button md-logo" aria-label="Postmodern Repo Copier Template" data-md-component="logo">
+    <a href="./.." title="Postmodern Repo Copier Template" class="md-header__button md-logo" aria-label="Postmodern Repo Copier Template" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.75 0A2.75 2.75 0 0 0 3 2.75v1a.75.75 0 0 0 1.5 0v-1c0-.69.56-1.25 1.25-1.25h1a.75.75 0 0 0 0-1.5zm4 0a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zm7.5 0a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-3a.75.75 0 0 0-.75-.75zM4.5 6.5a.75.75 0 0 0-1.5 0v3.75a.75.75 0 0 0 1.5 0zm16.5 0a.75.75 0 0 0-1.5 0v3.75a.75.75 0 0 0 1.5 0zM4.5 13.25a.75.75 0 0 0-1.5 0v5.5a3.25 3.25 0 0 0 1.95 2.98.75.75 0 1 0 .6-1.375A1.75 1.75 0 0 1 4.5 18.75V18A1.5 1.5 0 0 1 6 16.5h.75a.75.75 0 0 0 0-1.5H6c-.546 0-1.059.146-1.5.401zm16.5 0a.75.75 0 0 0-1.5 0V15h-2.25a.75.75 0 0 0 0 1.5h2.25v4h-5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 .75-.75zM9.75 15a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zm-2.353 8.461A.25.25 0 0 1 7 23.26v-5.01a.25.25 0 0 1 .25-.25h5a.25.25 0 0 1 .25.25v5.01a.25.25 0 0 1-.397.201l-2.206-1.604a.25.25 0 0 0-.294 0z"/></svg>
@@ -131,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Why Copier?
+              Token Permissions
             
           </span>
         </div>
@@ -230,7 +232,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Postmodern Repo Copier Template" class="md-nav__button md-logo" aria-label="Postmodern Repo Copier Template" data-md-component="logo">
+    <a href="./.." title="Postmodern Repo Copier Template" class="md-nav__button md-logo" aria-label="Postmodern Repo Copier Template" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.75 0A2.75 2.75 0 0 0 3 2.75v1a.75.75 0 0 0 1.5 0v-1c0-.69.56-1.25 1.25-1.25h1a.75.75 0 0 0 0-1.5zm4 0a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zm7.5 0a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-3a.75.75 0 0 0-.75-.75zM4.5 6.5a.75.75 0 0 0-1.5 0v3.75a.75.75 0 0 0 1.5 0zm16.5 0a.75.75 0 0 0-1.5 0v3.75a.75.75 0 0 0 1.5 0zM4.5 13.25a.75.75 0 0 0-1.5 0v5.5a3.25 3.25 0 0 0 1.95 2.98.75.75 0 1 0 .6-1.375A1.75 1.75 0 0 1 4.5 18.75V18A1.5 1.5 0 0 1 6 16.5h.75a.75.75 0 0 0 0-1.5H6c-.546 0-1.059.146-1.5.401zm16.5 0a.75.75 0 0 0-1.5 0V15h-2.25a.75.75 0 0 0 0 1.5h2.25v4h-5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 .75-.75zM9.75 15a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5zm-2.353 8.461A.25.25 0 0 1 7 23.26v-5.01a.25.25 0 0 1 .25-.25h5a.25.25 0 0 1 .25.25v5.01a.25.25 0 0 1-.397.201l-2.206-1.604a.25.25 0 0 0-.294 0z"/></svg>
@@ -260,7 +262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="./.." class="md-nav__link">
         
   
   
@@ -286,7 +288,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prerequisites/" class="md-nav__link">
+      <a href="../prerequisites/" class="md-nav__link">
         
   
   
@@ -312,7 +314,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../applying_to_existing_projects/" class="md-nav__link">
+      <a href="../applying-to-existing-projects/" class="md-nav__link">
         
   
   
@@ -338,7 +340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../template_questions/" class="md-nav__link">
+      <a href="../template-questions/" class="md-nav__link">
         
   
   
@@ -364,7 +366,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lifecycle_management/" class="md-nav__link">
+      <a href="../lifecycle-management/" class="md-nav__link">
         
   
   
@@ -390,14 +392,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../token_permissions/" class="md-nav__link">
+      <a href="../releasing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-  Token Permissions
+  Releasing
 
     
   </span>
@@ -415,8 +417,307 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Integration Testing
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Integration Testing
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../manual_repo_settings/" class="md-nav__link">
+      <a href="../integration-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Integration Testing
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual-verification-github/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Manual Verification Checklist (GitHub)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual-verification-azdo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Manual Verification Checklist (Azure DevOps)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+        <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Token Permissions
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Token Permissions
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Notifications
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#github" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GitHub
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GitHub">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gh-auth-login-scopes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>gh auth login</code> Scopes
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repo-maintenance-pat-classic-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Repo Maintenance PAT (Classic Token)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#azure-devops" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Azure DevOps
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Azure DevOps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#az-login-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>az login</code> Permissions
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual-repo-settings/" class="md-nav__link">
         
   
   
@@ -442,7 +743,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../public_vs_private_repos/" class="md-nav__link">
+      <a href="../public-vs-private-repos/" class="md-nav__link">
         
   
   
@@ -476,8 +777,6 @@
       
         
       
-        
-      
     
     
     
@@ -491,11 +790,11 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform_notes/" class="md-nav__link ">
+            <a href="../platform-notes/" class="md-nav__link ">
               
   
   
@@ -512,14 +811,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -537,34 +836,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform_notes/github_org/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  GitHub Org Limitations
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform_notes/azure_devops/" class="md-nav__link">
+      <a href="../platform-notes/azure-devops/" class="md-nav__link">
         
   
   
@@ -595,10 +867,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -613,14 +883,14 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
         
           
-          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
             
   
   
@@ -637,8 +907,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_10">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -651,21 +921,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      
-        <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        
-      
-      
-      <a href="././" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../components/template-engine/" class="md-nav__link">
         
   
   
@@ -680,7 +939,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -715,6 +973,92 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Notifications
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#github" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GitHub
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GitHub">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gh-auth-login-scopes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>gh auth login</code> Scopes
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repo-maintenance-pat-classic-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Repo Maintenance PAT (Classic Token)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#azure-devops" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Azure DevOps
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Azure DevOps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#az-login-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>az login</code> Permissions
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -731,55 +1075,6 @@
   
 
 
-  <nav class="md-path" aria-label="Navigation" >
-    <ol class="md-path__list">
-      
-        
-  
-  
-    <li class="md-path__item">
-      <a href="../.." class="md-path__link">
-        
-  
-  <span class="md-ellipsis">
-    Getting Started
-  </span>
-
-      </a>
-    </li>
-  
-
-      
-      
-        
-  
-  
-    
-    
-      
-        
-      
-    
-    
-    
-    
-      <li class="md-path__item">
-        <a href="././" class="md-path__link">
-          
-  
-  <span class="md-ellipsis">
-    Components
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-    </ol>
-  </nav>
-
               
               <article class="md-content__inner md-typeset">
                 
@@ -788,16 +1083,60 @@
   
 
 
-<h1 id="why-copier">Why Copier?<a class="headerlink" href="#why-copier" title="Permanent link">&para;</a></h1>
-<p>This template started out as a <a href="https://github.com/cookiecutter/cookiecutter">Cookiecutter</a> template, and was inspired by the <a href="https://github.com/cjolowicz/cookiecutter-hypermodern-python">Hypermodern Python Cookiecutter</a>. Cookiecutter is a great platform, but lacks several features, including:</p>
-<ul>
-<li>Conditional Questions</li>
-<li>Template Updating</li>
-<li>This was available for Cookiecutters via <a href="https://cruft.github.io/cruft/">Cruft</a>, but its featureset seemed to lag behind Cookiecutter's</li>
-<li>Proper <code>.jinja</code> Extension for Templates</li>
-<li>Because Cookiecutter didn't use a proper template extension, it caused larger problems for linters and formatters</li>
-</ul>
-<p>Copier provides these out of the box, and uses a friendly YAML syntax to boot. The Copier project also explicitly indicates that they want to be a language-agnostic templating engine, which is nice as the Postmodern template family is designed to be useful for any/all purposes.</p>
+<h1 id="token-permissions">Token Permissions<a class="headerlink" href="#token-permissions" title="Permanent link">&para;</a></h1>
+<p>This doc details the minimum scopes/permissions needed to use this template, along with reasons
+why. Neither platform requires a prompted Personal Access Token for repo setup anymore -- both use
+the platform's own CLI session instead (<code>gh auth login</code> / <code>az login</code>).</p>
+<p>Once you've created each secret/token below, run <code>mise run provision-secrets</code>: each value is
+entered via that platform's own CLI prompt (<code>gh secret set</code> / <code>az pipelines variable create</code>),
+masked as you type and never passed as a command-line argument. It's opt-in and safe to re-run
+any time, e.g. to rotate a token.</p>
+<h2 id="notifications">Notifications<a class="headerlink" href="#notifications" title="Permanent link">&para;</a></h2>
+<p>Both platforms' Copier update-check job needs a secret/variable called <strong>APPRISE_URL</strong>. Azure
+DevOps additionally needs it for the Renovate pipeline and the release/docs pipelines, since
+those merge without a human in the loop and notify on both successful auto-merge and on PR
+validation failing to pass. Unlike the tokens below, it isn't a scope to grant -- it's an
+<a href="https://github.com/caronc/apprise">Apprise</a> notification URL pointing at wherever you want these
+notifications sent (email, Slack, Discord, ntfy, Pushover, and 80+ others -- see Apprise's own
+docs for the URL format for your service of choice).</p>
+<h2 id="github">GitHub<a class="headerlink" href="#github" title="Permanent link">&para;</a></h2>
+<h3 id="gh-auth-login-scopes"><code>gh auth login</code> Scopes<a class="headerlink" href="#gh-auth-login-scopes" title="Permanent link">&para;</a></h3>
+<p>Repo creation and configuration (labels, merge options, branch protection, Actions permissions,
+Pages) uses the <a href="https://cli.github.com">GitHub CLI</a>'s own authenticated session rather than a
+prompted Personal Access Token -- see <a href="../prerequisites/">Prerequisites</a>. Default scopes (<code>repo</code>
+among them) are enough; no need for <code>gh auth login --scopes ...</code>. The initial <code>git push</code> is a
+separate matter -- <code>gh auth login</code>'s scopes don't cover pushing <code>.github/workflows/</code> files
+regardless, so that step uses Git Credential Manager's own login instead, not <code>gh</code>'s.</p>
+<h3 id="repo-maintenance-pat-classic-token">Repo Maintenance PAT (Classic Token)<a class="headerlink" href="#repo-maintenance-pat-classic-token" title="Permanent link">&para;</a></h3>
+<p>For best security, create this token via <a href="https://github.com/settings/personal-access-tokens/new">this link</a>
+and save it as a GitHub Actions secret on the repository called <strong>REPO_MAINTENANCE_PAT</strong>. This is
+separate from <code>gh auth login</code> above -- it's used on an ongoing basis by this project's own GitHub
+Actions workflows (Copier update checks, docs builds), not just at setup time.</p>
+<p><strong>Repository Access</strong>: All repositories</p>
+<table>
+<thead>
+<tr>
+<th><strong>Scope</strong></th>
+<th><strong>Reason</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>repo</td>
+<td>Needed for Copier/docs workflows</td>
+</tr>
+</tbody>
+</table>
+<p>NOTE: Fine-grained tokens are specifically <strong>not</strong> used, as they cannot open pull requests. This can be changed once <a href="https://github.com/github/roadmap/issues/600">this issue</a> is implemented by GitHub.</p>
+<h2 id="azure-devops">Azure DevOps<a class="headerlink" href="#azure-devops" title="Permanent link">&para;</a></h2>
+<h3 id="az-login-permissions"><code>az login</code> Permissions<a class="headerlink" href="#az-login-permissions" title="Permanent link">&para;</a></h3>
+<p>Repo creation and pipeline registration use the
+<a href="https://learn.microsoft.com/cli/azure/install-azure-cli">Azure CLI</a>'s own authenticated session --
+see <a href="../prerequisites/">Prerequisites</a>. No PAT scopes to configure; the signed-in account just needs
+enough permission in the target project to create repos and pipelines (typically <strong>Project
+Administrator</strong>, or an equivalent custom permission set covering <code>Code: Full</code> and
+<code>Build: Read &amp; Execute</code>). The initial <code>git push</code> is a separate matter -- <code>az login</code> doesn't bridge
+into git's credentials, so that step uses Git Credential Manager's own login instead.</p>
 
 
 
@@ -835,7 +1174,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../platform_notes/azure_devops/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Azure DevOps Limitations">
+          <a href="../manual-verification-azdo/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Manual Verification Checklist (Azure DevOps)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -845,11 +1184,27 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Azure DevOps Limitations
+                Manual Verification Checklist (Azure DevOps)
               </div>
             </div>
           </a>
         
+        
+          
+          <a href="../manual-repo-settings/" class="md-footer__link md-footer__link--next" aria-label="Next: Manual Repo Settings">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Manual Repo Settings
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
         
       </nav>
     
@@ -879,10 +1234,12 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["content.code.copy","navigation.indexes","navigation.footer","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight","toc.follow"],"search":"../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"alias":true,"provider":"mike"}}</script>
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["content.code.copy","navigation.indexes","navigation.footer","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight","toc.follow"],"search":"../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"alias":true,"provider":"mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.69c251d7.min.js"></script>
+      <script src="../assets/javascripts/bundle.69c251d7.min.js"></script>
+      
+        <script src="../javascripts/manual-verification-checkboxes.js"></script>
       
     
   </body>
