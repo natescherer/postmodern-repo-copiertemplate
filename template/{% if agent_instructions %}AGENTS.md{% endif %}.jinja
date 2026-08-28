@@ -33,6 +33,14 @@ or a new `validator:` constraint is added.**
 `copier copy`) is the single source of truth for what a new project's owner needs to
 manually finish. **Update its default list whenever a new template feature requires
 the end user to manually configure, replace, or complete something after copying.**
+
+## Manual verification checklist
+
+`docs/manual_verification.md.jinja` covers what the automated integration test can't:
+whether a pipeline/workflow actually authenticates, triggers, and does what it claims,
+not just that it's registered with the right name. **Update it whenever a new or
+changed pipeline/workflow needs its own real-world behavior hand-verified**, the same
+way a new template feature gets added to the setup checklist above.
 {%- endif %}
 
 ## Renovate `schedule` cron syntax is not standard cron
