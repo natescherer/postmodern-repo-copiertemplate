@@ -32,33 +32,33 @@ REPO_NAME = "{{ repo_name }}"
 MIGRATIONS = (
     (
         "copier-update-check",
-        "Maint (Auto): Copier Update Check",
+        "Maint (Auto) - Copier Update Check",
         ".azurepipelines/maint-auto-copierupdatecheck.yml",
     ),
     (
         "link-check",
-        "Maint (Auto): Link Check",
+        "Maint (Auto) - Link Check",
         ".azurepipelines/maint-auto-linkcheck.yml",
     ),
-    ("renovate", "Maint (Auto): Renovate", ".azurepipelines/maint-auto-renovate.yml"),
+    ("renovate", "Maint (Auto) - Renovate", ".azurepipelines/maint-auto-renovate.yml"),
     (
         "docs",
-        "Docs (Auto): Zensical Build & Publish",
+        "Docs (Auto) - Zensical Build & Publish",
         ".azurepipelines/docs-auto-zensical.yml",
     ),
     (
         "pr_validation",
-        "Test (Auto): PR Validation",
+        "Test (Auto) - PR Validation",
         ".azurepipelines/test-auto-prvalidation.yml",
     ),
     (
         "release",
-        "Release (Auto): Prepare/Publish Release",
+        "Release (Auto) - Prepare & Publish Release",
         ".azurepipelines/release-auto-release.yml",
     ),
     (
         "prerelease",
-        "Release (Manual): Create Prerelease",
+        "Release (Manual) - Create Prerelease",
         ".azurepipelines/release-manual-createprerelease.yml",
     ),
 )

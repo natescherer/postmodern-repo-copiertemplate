@@ -40,6 +40,14 @@ type = "Command"
 command = "az repos pr create --source-branch knope/release --target-branch main --title \"chore: prepare release $version\" --description \"This PR was created by Knope. Merging it will create a new release (v$version).\n\n$changelog\n\n- [ ] Integration tests have been run and passed (or N/A)\" --squash true --auto-complete false"
 shell = true
 {%- endif %}
+{%- if using_github %}
+
+[[workflows]]
+name = "prepare-release-only"
+
+[[workflows.steps]]
+type = "PrepareRelease"
+{%- endif %}
 
 [[workflows]]
 name = "release-on-knope-pr-merge"

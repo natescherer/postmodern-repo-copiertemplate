@@ -30,6 +30,7 @@ jobs:
         shell: bash
         env:
           BASE_REF: {% raw %}${{ github.base_ref }}{% endraw %}
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
         run: |
           git fetch origin "$BASE_REF"
           CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")

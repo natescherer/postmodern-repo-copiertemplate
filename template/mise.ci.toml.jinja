@@ -11,7 +11,14 @@ jq = "1.8.2"
 {#- renovate: datasource=node-version depName=node versioning=node #}
 node = "24.19.0"
 {#- renovate: datasource=npm depName=renovate #}
-"npm:renovate" = "44.39.3"
+[tools."npm:renovate"]
+version = "44.39.3"
+# @yarnpkg/libzip@3.2.2 (a renovate transitive dependency) lost the provenance
+# attestation an earlier published version (3.2.0) had -- mise's trust policy
+# flags that downgrade and refuses to install rather than risk a tampered
+# release. Narrowly excluded pending upstream investigation; remove once
+# resolved (tracked separately, not in this repo's own issue tracker).
+trust_policy_excludes = ["@yarnpkg/libzip@3.2.2"]
 {%- endif %}
 {%- if using_github and zensical_ghpages %}
 

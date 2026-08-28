@@ -44,10 +44,10 @@ run = [
   "gh secret set CODECOV_TOKEN",
 {%- endif %}
 {%- elif using_azdo %}
-  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Maint (Auto): Copier Update Check\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
-  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Release (Auto): Prepare/Publish Release\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
-  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Docs (Auto): Zensical Build & Publish\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
-  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Maint (Auto): Renovate\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Maint (Auto) - Copier Update Check\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Release (Auto) - Prepare & Publish Release\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Maint (Auto) - Renovate\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
 {%- endif %}
 ]
 {%- if using_azdo %}
@@ -64,37 +64,65 @@ run = "python .azurepipelines/migrate_pipeline_names.py"
 run = "pytest tests/"
 
 [tasks.integration-test-gh]
-# Creates a real throwaway repo from this template and verifies it -- see
-# docs/manual-verification.md for what this does and doesn't check. Repo is left in
-# place afterward for inspection; delete it yourself when you're done. Uses the
-# `usage` field (not the deprecated option() Tera function) so --branch is passed to
-# the script as a real env var (usage_branch) rather than templated into the command
-# line -- works identically regardless of the invoking shell/platform.
-usage = '''
-flag "--branch <branch>" help="Template ref to test against" default="HEAD"
-'''
+# Creates two real throwaway repos from this template and runs every automated check
+# it can against Repo A, always at HEAD -- this exists to verify a release candidate
+# on main is good before cutting a release, not to smoke-test an arbitrary branch. See
+# docs/integration-testing.md for what this does and doesn't check, and
+# docs/manual-verification-github.md for what still needs a human. Repo B is copied at
+# the last stable tag and left there -- run `mise run copier-update` against it
+# yourself, then `mise run integration-test-verify-update-gh` to verify it. Both repos
+# are left in place afterward for inspection; delete them yourself when you're done.
 run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}"
+
+[tasks.integration-test-verify-update-gh]
+# Run after manually updating Repo B (see docs/manual-verification-github.md's "Repo
+# B" section) -- verifies the update applied cleanly (no conflict markers, current
+# content) and that PR Validation still works, the same way integration-test-gh
+# already verifies Repo A.
+usage = '''
+flag "--repo <repo>" help="owner/repo of the already-updated Repo B"
+flag "--local-path <path>" help="Local clone path printed when Repo B was created"
+'''
+run = "python scripts/integration_test_github.py"
 
 [tasks.integration-test-azdo]
 {%- set org_default = azdo_org if using_azdo else '' %}
 {%- set project_default = azdo_project if using_azdo else '' %}
-# Creates a real throwaway repo from this template and verifies it -- see
-# docs/manual-verification.md for what this does and doesn't check. Repo is left
-# in place afterward for inspection; delete it yourself when you're done. --org/--project
+# Creates two real throwaway repos from this template and runs every automated check
+# it can against Repo A, always at HEAD -- this exists to verify a release candidate
+# on main is good before cutting a release, not to smoke-test an arbitrary branch. See
+# docs/integration-testing.md for what this does and doesn't check, and
+# docs/manual-verification-azdo.md for what still needs a human. Repo B is copied at
+# the last stable tag and left there -- run `mise run copier-update` (then `mise run
+# migrate-azdo-pipeline-names`) against it yourself, then `mise run
+# integration-test-verify-update-azdo` to verify it. Both repos are left in place
+# afterward for inspection; delete them yourself when you're done. --org/--project
 # default to this project's own Azure DevOps org/project when using_azdo, otherwise
-# there's no natural default and they must be passed explicitly, e.g.
-# `mise run integration-test-azdo -- --org myorg --project myproject`. Uses the
-# `usage` field (not the deprecated option() Tera function) so these are passed to
-# the script as real env vars (usage_branch/usage_org/usage_project) rather than
-# templated into the command line -- works identically regardless of the invoking
-# shell/platform, and (unlike option()) a missing required value doesn't silently
-# vanish from the command line and desync argparse.
+# there's no natural default and they must be passed explicitly, e.g. `mise run
+# integration-test-azdo -- --org myorg --project myproject`. Uses the `usage` field
+# (not the deprecated option() Tera function) so these are passed to the script as
+# real env vars (usage_org/usage_project) rather than templated into the command line
+# -- works identically regardless of the invoking shell/platform, and (unlike
+# option()) a missing required value doesn't silently vanish from the command line and
+# desync argparse.
 usage = '''
-flag "--branch <branch>" help="Template ref to test against" default="HEAD"
 flag "--org <org>" help="Azure DevOps organization"{% if org_default %} default="{{ org_default }}"{% endif %}
 flag "--project <project>" help="Azure DevOps project"{% if project_default %} default="{{ project_default }}"{% endif %}
 '''
 run = "python scripts/integration_test_azdo.py --source {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} --repo-prefix {{ repo_name }}"
+
+[tasks.integration-test-verify-update-azdo]
+# Run after manually updating Repo B (see docs/manual-verification-azdo.md's "Repo B"
+# section) -- verifies the update applied cleanly (no conflict markers, current
+# content, pipelines renamed in place) and that PR Validation still works, the same
+# way integration-test-azdo already verifies Repo A.
+usage = '''
+flag "--org <org>" help="Azure DevOps organization"{% if org_default %} default="{{ org_default }}"{% endif %}
+flag "--project <project>" help="Azure DevOps project"{% if project_default %} default="{{ project_default }}"{% endif %}
+flag "--repo <repo>" help="Name of the already-updated Repo B"
+flag "--local-path <path>" help="Local clone path printed when Repo B was created"
+'''
+run = "python scripts/integration_test_azdo.py"
 {%- endif %}
 
 [tools]
