@@ -1,0 +1,47 @@
+name: "Test (Auto): PR Validation"
+
+on:
+  pull_request:
+    # Explicit -- the implicit default (opened, synchronize, reopened) omits `edited`,
+    # so a title-only edit wouldn't otherwise re-run the PR-title check below.
+    types: [opened, edited, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions: read-all
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
+      - name: Check PR Title is a Conventional Commit
+        shell: bash
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: echo "$PR_TITLE" | mise x -- committed --config .config/committed.toml --commit-file -
+      - name: Run Prek Tests
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch origin "$BASE_REF"
+          CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No changed files detected; skipping prek."
+          else
+            echo "$CHANGED_FILES"
+            mapfile -t FILES <<< "$CHANGED_FILES"
+            mise x -- prek run -c .config/prek.toml --files "${FILES[@]}"
+          fi
+      - name: Run Template Render Tests
+        shell: bash
+        run: |-
+          mise x -- pytest tests/

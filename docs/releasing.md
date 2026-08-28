@@ -1,0 +1,31 @@
+# Releasing
+
+This project uses [Knope](https://knope.tech/) to automate versioning, changelog
+updates, and GitHub Releases from [Conventional
+Commits](https://www.conventionalcommits.org/).
+
+## Normal Releases
+
+Every push to `main` opens or updates a pull request (branch `knope/release`)
+proposing the next release, computed from commit messages since the last release --
+`fix:` bumps the patch version, `feat:` bumps minor, and a `!`/`BREAKING CHANGE:`
+commit bumps major. Merging that PR tags and publishes the release automatically.
+
+If a push has nothing release-worthy in it (e.g. a `docs:`- or `chore:`-only commit),
+the workflow run shows a failed step but stays green overall -- that's expected, not a
+bug, and no PR is opened or updated.
+
+## Prereleases
+
+To cut an ad-hoc prerelease (`alpha`, `beta`, or `rc`), run the "Release (Manual): Create
+Prerelease" workflow from the Actions tab, choosing a label. Each dispatch increments
+that label's number (e.g. `1.1.0-alpha.0`, then `.1`). Cutting the same label again at
+the same commit is blocked -- push a new commit first -- but moving to a new label
+(e.g. `alpha` to `beta`) is always allowed, even without one.
+
+## Graduating to 1.0.0
+
+While your project's lifecycle is Pre-Alpha, Alpha, or Beta, normal commits only ever
+bump the minor/patch version -- Knope won't cross the `1.0.0` line on its own. See
+[Lifecycle Management](lifecycle-management.md) for how to trigger that release when
+you're ready.

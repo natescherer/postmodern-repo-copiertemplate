@@ -2,21 +2,27 @@
 site_name = "Postmodern Repo Copier Template"
 docs_dir = "docs"
 site_dir = ".cache/zensical_serve"
+extra_javascript = ["javascripts/manual-verification-checkboxes.js"]
 nav = [
   { "Getting Started" = "index.md" },
   { "Prerequisites" = "prerequisites.md" },
-  { "Applying to Existing Projects" = "applying_to_existing_projects.md" },
-  { "Template Questions" = "template_questions.md" },
-  { "Lifecycle Management" = "lifecycle_management.md" },
-  { "Token Permissions" = "token_permissions.md" },
-  { "Manual Repo Settings" = "manual_repo_settings.md" },
-  { "Public vs Private Repos" = "public_vs_private_repos.md" },
-  { "Platform Notes" = [
-    "platform_notes/index.md",
-    "platform_notes/github_org.md",
-    "platform_notes/azure_devops.md"
+  { "Applying to Existing Projects" = "applying-to-existing-projects.md" },
+  { "Template Questions" = "template-questions.md" },
+  { "Lifecycle Management" = "lifecycle-management.md" },
+  { "Releasing" = "releasing.md" },
+  { "Integration Testing" = [
+    "integration-testing.md",
+    "manual-verification-github.md",
+    "manual-verification-azdo.md"
   ] },
-  { "Components" = ["components/template_engine.md"] }
+  { "Token Permissions" = "token-permissions.md" },
+  { "Manual Repo Settings" = "manual-repo-settings.md" },
+  { "Public vs Private Repos" = "public-vs-private-repos.md" },
+  { "Platform Notes" = [
+    "platform-notes/index.md",
+    "platform-notes/azure-devops.md"
+  ] },
+  { "Components" = ["components/template-engine.md"] }
 ]
 site_url = "https://natescherer.github.io/postmodern-repo-copiertemplate"
 repo_url = "https://github.com/natescherer/postmodern-repo-copiertemplate"
@@ -27,7 +33,7 @@ alias = true
 
 [project.theme]
 variant = "classic" # Switching to modern blocked until built-in versioning support is added
-custom_dir = ".config/zensical_overrides"
+custom_dir = ".config/zensical-overrides"
 features = [
   "content.code.copy",
   "navigation.indexes",

@@ -13,6 +13,16 @@ repository:
   allow_rebase_merge: false
   delete_branch_on_merge: true
 
+  # Free for public repos; needs a paid GitHub Advanced Security license on private
+  # ones, so scoped to public only. New public repos under a personal account get
+  # this by default already, but org-owned ones don't -- this makes it explicit
+  # either way rather than depending on that default.
+  security_and_analysis:
+    secret_scanning:
+      status: enabled
+    secret_scanning_push_protection:
+      status: enabled
+
 # The Settings App treats this list as authoritative: any label that exists on the
 # repo but isn't listed here gets deleted on sync -- including GitHub's own
 # auto-created defaults (bug, enhancement, etc.), which is why they're listed
@@ -49,28 +59,6 @@ labels:
   - name: wontfix
     color: ffffff
     description: This will not be worked on
-
-  # Release Please -- "release-please" comes from release-please-config.json's
-  # extra-label, applied to every PR it opens; the "autorelease: *" labels are its
-  # own built-in defaults (pending while open, tagged once merged and released,
-  # snooze to manually pause processing for a PR). "autorelease: snapshot" is included
-  # for completeness even though this template's release-type (simple) never triggers
-  # it -- that label's only used by Java/Maven-style snapshot releases.
-  - name: release-please
-    color: "5319e7"
-    description: Applied to every pull request release-please opens
-  - name: "autorelease: pending"
-    color: fbca04
-    description: A release PR is open, waiting to be merged
-  - name: "autorelease: tagged"
-    color: 0e8a16
-    description: This PR was merged and its release has been tagged
-  - name: "autorelease: snapshot"
-    color: 1d76db
-    description: A snapshot (pre-release) version was published
-  - name: "autorelease: snooze"
-    color: c5def5
-    description: Pause release-please processing for this PR
 
   # Custom
   - name: awaiting pr
@@ -115,7 +103,7 @@ rulesets:
           # target branch updates") -- keeps both platforms equally strict.
           strict_required_status_checks_policy: true
           required_status_checks:
-            # Job id from test-pr_validation.yml.jinja's "tests" job (no `name:` set,
+            # Job id from test-auto-prvalidation.yml.jinja's "tests" job (no `name:` set,
             # so its check run name is the job id verbatim).
             - context: tests
 

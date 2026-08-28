@@ -8,6 +8,43 @@
   rationale is fine when it adds real context; don't pad a trivial change with
   one just to have one.
 
+## Render-validation test suite
+
+Location: `template/{% if is_template %}tests{% endif %}/`. Run via:
+
+```sh
+mise x -- pytest "template/{% if is_template %}tests{% endif %}/"
+```
+
+Files: `conftest.py` (shared fixtures), `test_render.py` (structural
+validation across `answer_matrix.py`'s `ANSWER_MATRIX`, including an
+update-from-last-tag path), `test_content.py` (config/content consistency,
+e.g. nav completeness, hook-tool availability), `test_validators.py` (asserts
+`copier.yml.jinja`'s `validator:` blocks actually reject what they claim to,
+via `INVALID_ANSWER_MATRIX`), `test_answer_matrix_coverage.py` (audits
+`answer_matrix.py` itself against the real question set). **Update
+`answer_matrix.py` whenever a Copier question is added, removed, or renamed,
+or a new `validator:` constraint is added.**
+
+## Renovate `schedule` cron syntax is not standard cron
+
+Renovate's `schedule` option (see `renovate.json` / `template/renovate.json.jinja`)
+looks like 5-field cron but isn't interpreted the same way:
+
+- The minutes field **must** be `*` -- Renovate doesn't support minute-level
+  granularity, and a schedule that restricts it is invalid.
+- A cron schedule defines an allowed **time window**, not an exact trigger
+  instant -- Renovate itself runs on its own polling cadence (external to
+  this repo) and only acts during the window the schedule describes.
+
+So `"* 0 1 * *"` is the *correct* idiomatic form for "once a month, on the
+1st, during hour 0" -- it is not a bug, even though it looks like a broken
+"every minute" cron at a glance. Do not change it to `"0 0 1 * *"` (a
+standard-cron-style fix) -- that's invalid for Renovate specifically, since it
+constrains the minutes field.
+
+Reference: <https://docs.renovatebot.com/key-concepts/scheduling/>
+
 ## Dogfooding architecture
 
 This section is hand-maintained, not templated -- `template/AGENTS.md.jinja` doesn't
@@ -50,50 +87,3 @@ baseline tag (e.g. a removed extension module the old tag still references),
 --vcs-ref=HEAD gh:<owner>/<repo> .` is the escape hatch -- but it has no
 "preserve unless template changed" diffing, so treat its output as a rough
 draft and diff every changed file against the pre-copy `HEAD` before staging.
-
-## Render-validation test suite
-
-Location: `template/{% if is_template %}tests{% endif %}/`, not the root
-`tests/` (a dogfooded, stale copy -- see above). **Always run the suite
-against the template source directly, never the root copy, when validating a
-change to the test suite itself:**
-
-```sh
-mise x -- pytest "template/{% if is_template %}tests{% endif %}/"
-```
-
-Running `pytest tests/` from the repo root collects the stale root copy --
-`_assemble_source`'s render-based checks still validate current `template/`
-*content* correctly (it always copies fresh from `template/` regardless of
-which copy of `conftest.py` is executing), but a newly added/edited *test
-function* only exists in the template source and silently never runs from
-root.
-
-Files: `conftest.py` (shared fixtures), `test_render.py` (structural
-validation across `answer_matrix.py`'s `ANSWER_MATRIX`, including an
-update-from-last-tag path), `test_content.py` (config/content consistency,
-e.g. nav completeness, hook-tool availability), `test_validators.py` (asserts
-`copier.yml.jinja`'s `validator:` blocks actually reject what they claim to,
-via `INVALID_ANSWER_MATRIX`), `test_answer_matrix_coverage.py` (audits
-`answer_matrix.py` itself against the real question set). **Update
-`answer_matrix.py` whenever a Copier question is added, removed, or renamed,
-or a new `validator:` constraint is added.**
-
-## Renovate `schedule` cron syntax is not standard cron
-
-Renovate's `schedule` option (see `renovate.json` / `template/renovate.json.jinja`)
-looks like 5-field cron but isn't interpreted the same way:
-
-- The minutes field **must** be `*` -- Renovate doesn't support minute-level
-  granularity, and a schedule that restricts it is invalid.
-- A cron schedule defines an allowed **time window**, not an exact trigger
-  instant -- Renovate itself runs on its own polling cadence (external to
-  this repo) and only acts during the window the schedule describes.
-
-So `"* 0 1 * *"` is the *correct* idiomatic form for "once a month, on the
-1st, during hour 0" -- it is not a bug, even though it looks like a broken
-"every minute" cron at a glance. Do not change it to `"0 0 1 * *"` (a
-standard-cron-style fix) -- that's invalid for Renovate specifically, since it
-constrains the minutes field.
-
-Reference: <https://docs.renovatebot.com/key-concepts/scheduling/>

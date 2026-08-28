@@ -1,0 +1,58 @@
+# Token Permissions
+
+This doc details the minimum scopes/permissions needed to use this template, along with reasons
+why. Neither platform requires a prompted Personal Access Token for repo setup anymore -- both use
+the platform's own CLI session instead (`gh auth login` / `az login`).
+
+Once you've created each secret/token below, run `mise run provision-secrets`: each value is
+entered via that platform's own CLI prompt (`gh secret set` / `az pipelines variable create`),
+masked as you type and never passed as a command-line argument. It's opt-in and safe to re-run
+any time, e.g. to rotate a token.
+
+## Notifications
+
+Both platforms' Copier update-check job needs a secret/variable called **APPRISE_URL**. Azure
+DevOps additionally needs it for the Renovate pipeline and the release/docs pipelines, since
+those merge without a human in the loop and notify on both successful auto-merge and on PR
+validation failing to pass. Unlike the tokens below, it isn't a scope to grant -- it's an
+[Apprise](https://github.com/caronc/apprise) notification URL pointing at wherever you want these
+notifications sent (email, Slack, Discord, ntfy, Pushover, and 80+ others -- see Apprise's own
+docs for the URL format for your service of choice).
+
+## GitHub
+
+### `gh auth login` Scopes
+
+Repo creation and configuration (labels, merge options, branch protection, Actions permissions,
+Pages) uses the [GitHub CLI](https://cli.github.com)'s own authenticated session rather than a
+prompted Personal Access Token -- see [Prerequisites](prerequisites.md). Default scopes (`repo`
+among them) are enough; no need for `gh auth login --scopes ...`. The initial `git push` is a
+separate matter -- `gh auth login`'s scopes don't cover pushing `.github/workflows/` files
+regardless, so that step uses Git Credential Manager's own login instead, not `gh`'s.
+
+### Repo Maintenance PAT (Classic Token)
+
+For best security, create this token via [this link](https://github.com/settings/personal-access-tokens/new)
+and save it as a GitHub Actions secret on the repository called **REPO_MAINTENANCE_PAT**. This is
+separate from `gh auth login` above -- it's used on an ongoing basis by this project's own GitHub
+Actions workflows (Copier update checks, docs builds), not just at setup time.
+
+**Repository Access**: All repositories
+
+| **Scope**                     | **Reason**                        |
+| ----------------------------- | ---------------------------------- |
+| repo                          | Needed for Copier/docs workflows   |
+
+NOTE: Fine-grained tokens are specifically **not** used, as they cannot open pull requests. This can be changed once [this issue](https://github.com/github/roadmap/issues/600) is implemented by GitHub.
+
+## Azure DevOps
+
+### `az login` Permissions
+
+Repo creation and pipeline registration use the
+[Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)'s own authenticated session --
+see [Prerequisites](prerequisites.md). No PAT scopes to configure; the signed-in account just needs
+enough permission in the target project to create repos and pipelines (typically **Project
+Administrator**, or an equivalent custom permission set covering `Code: Full` and
+`Build: Read & Execute`). The initial `git push` is a separate matter -- `az login` doesn't bridge
+into git's credentials, so that step uses Git Credential Manager's own login instead.

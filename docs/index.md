@@ -17,7 +17,7 @@ mise install
 mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/local-repo-path-here
 ```
 
-See [Template Questions](template_questions.md) for what each prompt during that step controls.
+See [Template Questions](template-questions.md) for what each prompt during that step controls.
 
 ## Features
 
@@ -26,14 +26,13 @@ See [Template Questions](template_questions.md) for what each prompt during that
 #### Support for Multiple CI/CD Platforms
 
 - GitHub **Recommended**
-  - Creating repos under both users and orgs is supported
-  - See [GitHub Org Limitations](platform_notes/github_org.md) for details about template features excluded for Orgs
-- Azure DevOps
-  - See [Azure DevOps Limitations](platform_notes/azure_devops.md) for details about features missing for AzDO
+    - Creating repos under both users and orgs is supported
+- Azure DevOps **Deprecated**
+    - See [Azure DevOps Limitations](platform-notes/azure-devops.md) for details about features missing for AzDO, and why this platform is being phased out
 
 #### Support for Public (Open-Source) and Private (Closed-Source) Repositories
 
-This template fully supports both public/open-source and private/closed-source repositories. See [Public vs Private Repos](public_vs_private_repos.md) for the difference.
+This template fully supports both public/open-source and private/closed-source repositories. See [Public vs Private Repos](public-vs-private-repos.md) for the difference.
 
 #### Support for Existing Projects
 
@@ -53,7 +52,9 @@ It is highly encouraged for you to take this template and make your own child te
 - Setting of repo settings & branch protection rules
 - Creation of useful non-default issue labels: `awaiting pr` and `blocked`
 - Contributor management and crediting via [All Contributors](https://allcontributors.org/)
-- Dependency updates via [Renovate](https://github.com/marketplace/renovate/)
+- Dependency updates via [Renovate](https://www.mend.io/renovate/) -- the [GitHub Marketplace
+  App](https://github.com/marketplace/renovate/) on GitHub, a self-hosted scheduled pipeline on
+  Azure DevOps
 - Scheduled checks for updates from parent template
 
 ### Documentation
@@ -61,25 +62,26 @@ It is highly encouraged for you to take this template and make your own child te
 Rich Markdown documentation is pre-configured using [Zensical](https://zensical.org/), the successor to the extremely popular (but end of life) [mkdocs-material](https://squidfunk.github.io/mkdocs-material/).
 
 - Multiple choices of documentation target:
-  - GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
-  - A `docs_site` folder in your repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
+    - GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
+    - A `docs-site` folder in your repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
 
 ### Code Management and Formatting
 
 - Automatic, repository-local dev tool installation via [mise](https://github.com/jdx/mise)
 - Automatic code linting and formatting via [prek](https://prek.j178.dev/):
-  - Commit message linting via [committed](https://github.com/crate-ci/committed)
-  - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
-  - Markdown linting via [rumdl](https://github.com/rvben/rumdl)
-  - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
-  - Spell checking via [typos](https://github.com/crate-ci/typos)
-  - TOML linting and formatting via [Tombi](https://github.com/tombi-toml/tombi)
-  - YAML linting via [ryl](https://github.com/owenlamont/ryl)
+    - Commit message linting via [committed](https://github.com/crate-ci/committed)
+    - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
+    - Markdown linting via [rumdl](https://github.com/rvben/rumdl)
+    - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
+    - Spell checking via [typos](https://github.com/crate-ci/typos)
+    - TOML linting and formatting via [Tombi](https://github.com/tombi-toml/tombi)
+    - YAML linting via [ryl](https://github.com/owenlamont/ryl)
 
 ### CI/CD
 
-- Version number calculation, Changelog updating, releasing, and tagging via [Release Please](https://github.com/googleapis/release-please)
-- Simple/example release workflow via GitHub Actions
+- Version number calculation, changelog updating, releasing, and tagging via
+  [Knope](https://knope.tech/) -- see [Releasing](releasing.md)
+- Simple/example release pipeline via GitHub Actions or Azure Pipelines
 
 ### Support Files
 
