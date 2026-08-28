@@ -32,6 +32,7 @@ jobs:
         # creates under whichever account INTEGRATION_TEST_PAT authenticates as, not
         # necessarily this repo's own owner. GITHUB_REPOSITORY is always set by GitHub
         # regardless of trigger type, so this doesn't need to be templated.
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.INTEGRATION_TEST_PAT }}
         run: |
@@ -68,6 +69,7 @@ jobs:
           key: azure-devops-cli-ext-${{ runner.os }}
           path: ~/.azure/cliextensions
       - name: Install Azure DevOps CLI Extension
+        shell: bash
         run: |
           az extension list -o tsv --query "[?name=='azure-devops'].name" | grep -q azure-devops || \
             az extension add --name azure-devops --only-show-errors
@@ -78,6 +80,7 @@ jobs:
         # why it targets Azure DevOps regardless of this project's own
         # developer_platform. AZURE_DEVOPS_EXT_PAT is the exact env var name the
         # az CLI's azure-devops extension auto-detects for non-interactive auth.
+        shell: bash
         env:
           AZURE_DEVOPS_EXT_PAT: ${{ secrets.AZURE_DEVOPS_EXT_PAT }}
         run: |

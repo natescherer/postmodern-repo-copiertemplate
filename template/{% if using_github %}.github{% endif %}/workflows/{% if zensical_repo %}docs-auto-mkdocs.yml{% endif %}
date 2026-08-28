@@ -28,18 +28,21 @@ jobs:
           secrets: |
             REPO_MAINTENANCE_PAT=${{ secrets.REPO_MAINTENANCE_PAT }}
       - name: Configure Git Credentials
+        shell: bash
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
       - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
-      - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
+      - shell: bash
+        run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           key: zensical-${{ env.cache_id }}
           path: ~/.cache
           restore-keys: |
             zensical-
-      - run: zensical build
+      - shell: bash
+        run: zensical build
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
