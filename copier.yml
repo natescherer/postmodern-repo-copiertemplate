@@ -175,17 +175,6 @@ project_type:
     - Template
   default: Standard
 
-integration_test_scheduled:
-  type: bool
-  help: |
-    {%- if not project_initialized -%}
-      Schedule a maintenance job/pipeline to periodically run integration tests.
-    {%- else -%}
-      Locked value on update, press Enter.
-    {%- endif %}
-  default: false
-  when: "{{ project_type == 'Template' }}"
-
 project_name:
   type: str
   help: The friendly name of this project, which can include captitals, spaces, etc.
@@ -417,9 +406,6 @@ setup_checklist:
     - [ ] Replace docs/images/readme-logo.png with your own logo, or remove that section from README.md.
     - [ ] Replace docs/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
     - [ ] Set required secrets/pipeline variables -- run `mise run provision-secrets` or see docs/token-permissions.md.
-    {%- if is_template and integration_test_scheduled and using_github %}
-    - [ ] Edit the AZDO_INTEGRATION_TEST_ORG/AZDO_INTEGRATION_TEST_PROJECT placeholders in .github/workflows/test-auto-integrationtest.yml with your real Azure DevOps org/project.
-    {%- endif %}
   when: false
 ## End Post-Question Computed Values
 
@@ -724,22 +710,6 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for test-auto-integrationtest
-  - command: >-
-      az pipelines create
-      --name "[{{ repo_name }}] Test (Auto): Integration Test"
-      --repository {{ repo_name }}
-      --repository-type tfsgit
-      --branch main
-      --yml-path .azurepipelines/test-auto-integrationtest.yml
-      --skip-first-run true
-      --org https://dev.azure.com/{{ azdo_org }}/
-      --project "{{ azdo_project }}"
-    when: |-
-      {%- if _copier_operation == 'copy' and should_set_repo_settings and using_azdo and is_template and integration_test_scheduled -%}
-        true
-      {%- endif %}
-
   # Sets up GitHub Pages
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
     when: |-
@@ -802,17 +772,10 @@ _message_after_copy: |-
   {%- if code_coverage %}
     - CODECOV_TOKEN
   {%- endif %}
-  {%- if is_template and integration_test_scheduled %}
-    - INTEGRATION_TEST_PAT
-    - AZURE_DEVOPS_EXT_PAT
-  {%- endif %}
   Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token-permissions.md for what each one needs.
   {%- elif using_azdo -%}
   Before CI works, add these as secret Azure DevOps pipeline variables (Pipelines > Library):
     - APPRISE_URL
-  {%- if is_template and integration_test_scheduled %}
-    - AZURE_DEVOPS_EXT_PAT
-  {%- endif %}
   Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token-permissions.md for what each one needs.
   {%- endif %}
 

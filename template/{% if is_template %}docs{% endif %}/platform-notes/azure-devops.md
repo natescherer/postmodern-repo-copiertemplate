@@ -38,13 +38,6 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
       that triggered this run, rather than a push-type distinction. Ad-hoc alpha/beta/rc builds go
       through the separate, manually-queued `Release (Manual): Create Prerelease` pipeline
       (Pipelines > select it > Run) instead.
-- Can't test (or otherwise create) a GitHub-target repo from Azure DevOps-hosted CI
-    - `.azurepipelines/test-auto-integrationtest.yml` only ever creates and verifies an Azure DevOps-hosted
-      throwaway repo -- it has no `gh` CLI setup or GitHub token, so it can't scaffold a
-      GitHub-target child the way GitHub's own integration test workflow scaffolds an Azure
-      DevOps-target one (it already has `AZURE_DEVOPS_EXT_PAT` wired up for exactly that). This is
-      an intentional, accepted asymmetry, not a gap to close: a regression in GitHub-target
-      scaffolding is still caught, just only by GitHub-hosted CI.
 - No semantic linter for Azure Pipelines YAML
     - `.azurepipelines/*.yml` files get generic YAML syntax checking via `ryl`, but nothing checks
       Azure Pipelines-specific schema/semantics the way `actionlint` does for GitHub Actions
