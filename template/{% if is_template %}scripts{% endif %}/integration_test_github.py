@@ -1,14 +1,21 @@
-"""Create a throwaway repo from this template and verify it.
+"""Create two throwaway repos from this template and verify them.
 
-Run via `mise run integration-test-gh` -- a human's own gh/GCM session, repo left in
-place afterward for inspection (delete it yourself when you're done). Not templated
-itself; the caller passes this repo's own source URL and name as arguments, so there's
-nothing here for Jinja to render.
+Run via `mise run integration-test-gh` -- a human's own gh/GCM session, both repos
+left in place afterward for inspection (delete them yourself when you're done). Not
+templated itself; the caller passes this repo's own source URL and name as arguments,
+so there's nothing here for Jinja to render.
+
+Always runs against HEAD -- this is meant to verify a release candidate on main is
+good before cutting a release, not to smoke-test an arbitrary branch. Covers both
+scenarios every run: a plain `copier copy`, and a separate repo copied at the last
+stable tag then updated to HEAD -- the only way to catch a bug gated on
+`_copier_operation == 'update'` against a real remote, not just a local render (see
+tests/test_render.py's `test_update_from_last_tag` for the render-only equivalent).
 """
 
 import argparse
 import json
-import os
+import re
 import shutil
 
 # S404: drives real CLI tools below; no untrusted input, no shell=True.
@@ -31,7 +38,7 @@ EXPECTED_LABELS = (
 
 
 def run(
-    *args: str, check: bool = True, capture: bool = False
+    *args: str, check: bool = True, capture: bool = False, cwd: str | None = None
 ) -> subprocess.CompletedProcess:
     """Run a CLI command, echoing it first.
 
@@ -47,11 +54,11 @@ def run(
         The completed process, with captured stdout/stderr if `capture` is True.
 
     """
-    print(f"$ {' '.join(args)}")
+    print(f"$ {' '.join(args)}" + (f"  (in {cwd})" if cwd else ""))
     resolved = (shutil.which(args[0]) or args[0], *args[1:])
     # S603: args are always a fixed list built by this module; no shell=True.
     return subprocess.run(  # noqa: S603
-        resolved, check=check, text=True, capture_output=capture
+        resolved, check=check, text=True, capture_output=capture, cwd=cwd
     )
 
 
@@ -147,6 +154,65 @@ def create(source: str, vcs_ref: str, repo_name: str, dest: str, owner: str) -> 
         source,
         dest,
     )
+
+
+def latest_stable_tag(source: str) -> str:
+    """Find this template's most recent stable (non-prerelease) release tag.
+
+    Uses `git ls-remote --tags` so it works directly against `source` without a local
+    clone. Matches strict `vX.Y.Z` tags only (excluding prereleases like
+    `v1.1.0-alpha.0`) and sorts by parsed version, not lexically -- a plain string
+    sort would put `v0.7.9` after `v0.7.20`.
+
+    Returns:
+        The latest matching tag name, e.g. "v0.7.20".
+
+    Raises:
+        SystemExit: if no matching tag is found.
+
+    """
+    result = run("git", "ls-remote", "--tags", source, capture=True)
+    versions = []
+    for line in result.stdout.splitlines():
+        match = re.fullmatch(r"v(\d+)\.(\d+)\.(\d+)", line.rsplit("refs/tags/", 1)[-1])
+        if match:
+            versions.append(tuple(int(g) for g in match.groups()))
+    if not versions:
+        raise SystemExit(f"No stable (vX.Y.Z) tags found at {source!r}")
+    return "v" + ".".join(map(str, max(versions)))
+
+
+def run_update(dest: str, new_ref: str) -> bool:
+    """Update the throwaway repo in `dest` to `new_ref`.
+
+    Deliberately not `--skip-tasks`: unlike the repo-creation/pipeline-registration
+    _tasks (gated `_copier_operation == 'copy'`), the copy-template-files task that
+    keeps a Template project's own template/ in sync with its parent isn't gated that
+    way -- it's meant to run on update too, so this exercises that path for real.
+
+    Returns:
+        Whether the update produced any local changes to commit.
+
+    """
+    run(
+        "copier",
+        "update",
+        "--trust",
+        "--defaults",
+        f"--vcs-ref={new_ref}",
+        "-a",
+        ".config/copier-answers.yml",
+        cwd=dest,
+    )
+    status = run("git", "status", "--porcelain", capture=True, cwd=dest)
+    return bool(status.stdout.strip())
+
+
+def commit_and_push(dest: str) -> None:
+    """Commit and push whatever `copier update` just changed in `dest`."""
+    run("git", "add", "-A", cwd=dest)
+    run("git", "commit", "-m", "chore: copier update", cwd=dest)
+    run("git", "push", cwd=dest)
 
 
 def settings_synced(repo: str, homepage: str) -> bool:
@@ -258,15 +324,31 @@ def verify(repo: str, homepage: str) -> None:
     print("All checks passed.")
 
 
+def homepage_for(owner: str, repo_name: str) -> str:
+    """Compute the GitHub Pages homepage verify() expects for a repo this script made.
+
+    Returns:
+        The homepage URL. project_visibility is always Public below, matching
+        settings.yml.jinja's homepage logic (only set when is_public).
+
+    """
+    return f"https://{owner}.github.io/{repo_name}"
+
+
 def main() -> None:
-    """Parse args, then create and verify a test repo. Delete it yourself when done."""
+    """Create and verify two throwaway repos: a fresh copy, and an updated one.
+
+    Both scenarios run every time, each against its own brand-new repo, always at
+    HEAD (this tool exists to verify a release candidate on main is good before
+    cutting a release, not to smoke-test an arbitrary branch): a plain `copier copy`,
+    and a separate repo copied at the last stable tag then updated to HEAD -- the only
+    way to catch a bug gated on `_copier_operation == 'update'` against a real remote,
+    not just a local render (see tests/test_render.py's `test_update_from_last_tag`
+    for the render-only equivalent). Both repos are left in place afterward for
+    inspection.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", required=True, help="Copier template source URL")
-    # `usage_branch` is set when this runs via `mise run integration-test-gh`, whose
-    # `usage` field defines a --branch flag (mise's own arg-parsing, not this one) --
-    # mise passes it through as a real env var rather than templating it into the
-    # command line, so it works the same regardless of the invoking shell/platform.
-    parser.add_argument("--vcs-ref", default=os.environ.get("usage_branch", "HEAD"))
     parser.add_argument("--repo-prefix", required=True, help="This repo's own name")
     args = parser.parse_args()
 
@@ -274,16 +356,33 @@ def main() -> None:
     check_scopes()
 
     owner = gh_value("api", "user", "--jq", ".login")
-    repo_name = f"{args.repo_prefix}-integration-test-{int(time.time())}"
-    dest = tempfile.mkdtemp(prefix="integration-test-")
-    repo = f"{owner}/{repo_name}"
-    # project_visibility is always Public below, matching settings.yml.jinja's
-    # homepage logic (only set when is_public).
-    homepage = f"https://{owner}.github.io/{repo_name}"
+    timestamp = int(time.time())
 
-    create(args.source, args.vcs_ref, repo_name, dest, owner)
-    verify(repo, homepage)
-    print(f"Leaving {repo} in place ({dest}) -- delete it yourself when you're done.")
+    print("=== Fresh copy at HEAD ===")
+    fresh_repo_name = f"{args.repo_prefix}-integration-test-{timestamp}-fresh"
+    fresh_dest = tempfile.mkdtemp(prefix="integration-test-")
+    fresh_repo = f"{owner}/{fresh_repo_name}"
+    create(args.source, "HEAD", fresh_repo_name, fresh_dest, owner)
+    verify(fresh_repo, homepage_for(owner, fresh_repo_name))
+
+    old_ref = latest_stable_tag(args.source)
+    print(f"=== Update path: {old_ref} -> HEAD ===")
+    update_repo_name = f"{args.repo_prefix}-integration-test-{timestamp}-update"
+    update_dest = tempfile.mkdtemp(prefix="integration-test-")
+    update_repo = f"{owner}/{update_repo_name}"
+    update_homepage = homepage_for(owner, update_repo_name)
+    create(args.source, old_ref, update_repo_name, update_dest, owner)
+    verify(update_repo, update_homepage)
+    if run_update(update_dest, "HEAD"):
+        commit_and_push(update_dest)
+        verify(update_repo, update_homepage)
+    else:
+        print("copier update produced no changes -- nothing to re-verify.")
+
+    print(
+        f"Leaving {fresh_repo} ({fresh_dest}) and {update_repo} ({update_dest}) in "
+        "place -- delete them yourself when you're done."
+    )
 
 
 if __name__ == "__main__":

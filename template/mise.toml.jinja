@@ -64,33 +64,35 @@ run = "python .azurepipelines/migrate_pipeline_names.py"
 run = "pytest tests/"
 
 [tasks.integration-test-gh]
-# Creates a real throwaway repo from this template and verifies it -- see
-# docs/manual-verification.md for what this does and doesn't check. Repo is left in
-# place afterward for inspection; delete it yourself when you're done. Uses the
-# `usage` field (not the deprecated option() Tera function) so --branch is passed to
-# the script as a real env var (usage_branch) rather than templated into the command
-# line -- works identically regardless of the invoking shell/platform.
-usage = '''
-flag "--branch <branch>" help="Template ref to test against" default="HEAD"
-'''
+# Creates two real throwaway repos from this template and verifies both, always at
+# HEAD -- this exists to verify a release candidate on main is good before cutting a
+# release, not to smoke-test an arbitrary branch. See docs/integration-testing.md for
+# what this does and doesn't check. One repo is a plain copy; the other copies at the
+# last stable tag and updates to HEAD, the only way to test the `copier update` path
+# against a real repo, not just a local render. Both are left in place afterward for
+# inspection; delete them yourself when you're done.
 run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}"
 
 [tasks.integration-test-azdo]
 {%- set org_default = azdo_org if using_azdo else '' %}
 {%- set project_default = azdo_project if using_azdo else '' %}
-# Creates a real throwaway repo from this template and verifies it -- see
-# docs/manual-verification.md for what this does and doesn't check. Repo is left
-# in place afterward for inspection; delete it yourself when you're done. --org/--project
-# default to this project's own Azure DevOps org/project when using_azdo, otherwise
-# there's no natural default and they must be passed explicitly, e.g.
-# `mise run integration-test-azdo -- --org myorg --project myproject`. Uses the
-# `usage` field (not the deprecated option() Tera function) so these are passed to
-# the script as real env vars (usage_branch/usage_org/usage_project) rather than
-# templated into the command line -- works identically regardless of the invoking
-# shell/platform, and (unlike option()) a missing required value doesn't silently
-# vanish from the command line and desync argparse.
+# Creates two real throwaway repos from this template and verifies both, always at
+# HEAD -- this exists to verify a release candidate on main is good before cutting a
+# release, not to smoke-test an arbitrary branch. See docs/integration-testing.md for
+# what this does and doesn't check. One repo is a plain copy; the other copies at the
+# last stable tag and updates to HEAD (running migrate_pipeline_names.py in between,
+# same as a real project owner would), the only way to test the `copier update` path
+# against a real org, not just a local render. Both are left in place afterward for
+# inspection; delete them yourself when you're done. --org/--project default to this
+# project's own Azure DevOps org/project when using_azdo, otherwise there's no natural
+# default and they must be passed explicitly, e.g. `mise run integration-test-azdo --
+# --org myorg --project myproject`. Uses the `usage` field (not the deprecated
+# option() Tera function) so these are passed to the script as real env vars
+# (usage_org/usage_project) rather than templated into the command line -- works
+# identically regardless of the invoking shell/platform, and (unlike option()) a
+# missing required value doesn't silently vanish from the command line and desync
+# argparse.
 usage = '''
-flag "--branch <branch>" help="Template ref to test against" default="HEAD"
 flag "--org <org>" help="Azure DevOps organization"{% if org_default %} default="{{ org_default }}"{% endif %}
 flag "--project <project>" help="Azure DevOps project"{% if project_default %} default="{{ project_default }}"{% endif %}
 '''
