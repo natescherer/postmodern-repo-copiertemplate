@@ -2,6 +2,9 @@
 site_name = "{{ project_name }}"
 docs_dir = "docs"
 site_dir = "{% if zensical_ghpages %}.cache/zensical_serve{% else %}docs_site{% endif %}"
+{%- if is_template %}
+extra_javascript = ["javascripts/manual_verification_checkboxes.js"]
+{%- endif %}
 nav = [
 {%- if is_template %}
   { "Getting Started" = "index.md" },
@@ -10,6 +13,7 @@ nav = [
   { "Template Questions" = "template_questions.md" },
   { "Lifecycle Management" = "lifecycle_management.md" },
   { "Releasing" = "releasing.md" },
+  { "Manual Verification Checklist" = "manual_verification.md" },
   { "Token Permissions" = "token_permissions.md" },
   { "Manual Repo Settings" = "manual_repo_settings.md" },
   { "Public vs Private Repos" = "public_vs_private_repos.md" },
