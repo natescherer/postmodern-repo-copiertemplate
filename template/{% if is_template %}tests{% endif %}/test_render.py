@@ -91,12 +91,12 @@ def _check_zensical_build(root: Path) -> list[str]:
 
 
 def _check_lychee(root: Path) -> list[str]:
-    # Mirrors prek.toml's own lychee hook, which excludes docs_site: built HTML's
+    # Mirrors prek.toml's own lychee hook, which excludes docs-site: built HTML's
     # root-relative links (e.g. "/assets/...") resolve against the filesystem root
     # without a running server, producing bogus failures unrelated to the source
     # markdown this check is meant to validate.
     result = _run(
-        ["lychee", "--no-progress", "--offline", "--exclude-path", "docs_site", "."],
+        ["lychee", "--no-progress", "--offline", "--exclude-path", "docs-site", "."],
         cwd=root,
     )
     if result.returncode != 0:
@@ -148,7 +148,14 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
     """
     source, old_tag = update_source
     dest = tmp_path / "out"
-    _render(source, dest, answers, vcs_ref=old_tag)
+
+    # Some answer values are only valid after a specific rename in this repo's own
+    # history -- see answer_matrix.py's "_old_tag_overrides" for which ones and why.
+    # The old tag can't recognize the current value, so the initial copy-at-old-tag
+    # has to use whatever value actually was valid then; the update step below still
+    # uses the current answers, so it also exercises the rename itself.
+    old_tag_answers = {**answers, **answers.get("_old_tag_overrides", {})}
+    _render(source, dest, old_tag_answers, vcs_ref=old_tag)
 
     _git_init_repo(dest)
     _git_commit_all(dest, "initial render")

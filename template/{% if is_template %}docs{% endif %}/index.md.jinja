@@ -17,7 +17,7 @@ mise install
 mise x "--" copier copy --trust {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} ~/local-repo-path-here
 ```
 
-See [Template Questions](template_questions.md) for what each prompt during that step controls.
+See [Template Questions](template-questions.md) for what each prompt during that step controls.
 
 ## Features
 
@@ -28,11 +28,11 @@ See [Template Questions](template_questions.md) for what each prompt during that
 - GitHub **Recommended**
     - Creating repos under both users and orgs is supported
 - Azure DevOps **Deprecated**
-    - See [Azure DevOps Limitations](platform_notes/azure_devops.md) for details about features missing for AzDO, and why this platform is being phased out
+    - See [Azure DevOps Limitations](platform-notes/azure-devops.md) for details about features missing for AzDO, and why this platform is being phased out
 
 #### Support for Public (Open-Source) and Private (Closed-Source) Repositories
 
-This template fully supports both public/open-source and private/closed-source repositories. See [Public vs Private Repos](public_vs_private_repos.md) for the difference.
+This template fully supports both public/open-source and private/closed-source repositories. See [Public vs Private Repos](public-vs-private-repos.md) for the difference.
 
 #### Support for Existing Projects
 
@@ -63,7 +63,7 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 
 - Multiple choices of documentation target:
     - GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
-    - A `docs_site` folder in your repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
+    - A `docs-site` folder in your repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
 
 ### Code Management and Formatting
 

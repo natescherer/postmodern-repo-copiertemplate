@@ -32,14 +32,19 @@ ANSWER_MATRIX = [
         "code_coverage": True,
     },
     {
-        "id": "github-standard-private-none-docs_site-stable",
+        "id": "github-standard-private-none-docs-site-stable",
         **COMMON,
         "developer_platform": "GitHub",
         "github_username": "octocat",
         "project_type": "Standard",
         "project_visibility": "Private",
         "license": "None",
-        "zensical_target": "docs_site Directory in Repo",
+        "zensical_target": "docs-site Directory in Repo",
+        # "docs-site Directory in Repo" was "docs_site Directory in Repo" before this
+        # repo's own hyphenation rename -- the last tag predates that, so
+        # test_update_from_last_tag's initial copy-at-old-tag needs the old value.
+        # Remove once the last tag postdates the rename.
+        "_old_tag_overrides": {"zensical_target": "docs_site Directory in Repo"},
         "lifecycle": "Stable",
     },
     {
@@ -55,7 +60,7 @@ ANSWER_MATRIX = [
         "agent_instructions": False,
     },
     {
-        "id": "azdo-template-private-docs_site-beta",
+        "id": "azdo-template-private-docs-site-beta",
         **COMMON,
         "developer_platform": "Azure DevOps",
         "azdo_org": "test-org",
@@ -64,12 +69,13 @@ ANSWER_MATRIX = [
         "integration_test_scheduled": True,
         "project_visibility": "Private",
         "license": "None",
-        "zensical_target": "docs_site Directory in Repo",
+        "zensical_target": "docs-site Directory in Repo",
+        "_old_tag_overrides": {"zensical_target": "docs_site Directory in Repo"},
         "lifecycle": "Beta",
         "code_coverage": True,
     },
     {
-        "id": "azdo-standard-private-docs_site-alpha",
+        "id": "azdo-standard-private-docs-site-alpha",
         **COMMON,
         "developer_platform": "Azure DevOps",
         "azdo_org": "test-org",
@@ -77,7 +83,8 @@ ANSWER_MATRIX = [
         "project_type": "Standard",
         "project_visibility": "Private",
         "license": "None",
-        "zensical_target": "docs_site Directory in Repo",
+        "zensical_target": "docs-site Directory in Repo",
+        "_old_tag_overrides": {"zensical_target": "docs_site Directory in Repo"},
         "lifecycle": "Alpha",
     },
 ]
@@ -95,7 +102,7 @@ INVALID_ANSWER_MATRIX = [
         "azdo_project": "Test Project",
         "project_visibility": "Public",
         "license": "None",
-        "zensical_target": "docs_site Directory in Repo",
+        "zensical_target": "docs-site Directory in Repo",
         "lifecycle": "Pre-Alpha",
         "expected_error": "Not Supported on Azure DevOps",
     },

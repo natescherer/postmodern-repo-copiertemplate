@@ -30,7 +30,7 @@ run = "copier update --answers-file .config/copier-answers.yml --skip-answered -
 run = "zensical serve"
 
 [tasks.provision-secrets]
-# Opt-in and separate from _tasks on purpose -- see docs/token_permissions.md. `raw`
+# Opt-in and separate from _tasks on purpose -- see docs/token-permissions.md. `raw`
 # gives gh/az direct terminal control so each CLI's own masked prompt (gh's
 # Prompter.Password, az's knack.prompting.prompt_pass) reads the value straight from
 # the terminal -- it never touches a command-line argument, mise's own logging, or a
@@ -71,7 +71,7 @@ run = "python .azurepipelines/migrate_pipeline_names.py"
 run = "pytest tests/"
 
 [tasks.integration-test-gh]
-# Same script test-auto-integration_test.yml runs in CI (--cleanup added there) -- see
+# Same script test-auto-integrationtest.yml runs in CI (--cleanup added there) -- see
 # that file for what this actually verifies and why. Repo is left in place here by
 # default so it can be inspected; pass --cleanup yourself to delete it. Uses the
 # `usage` field (not the deprecated option() Tera function) so --branch is passed to
@@ -85,7 +85,7 @@ run = "python scripts/integration_test_github.py --source https://github.com/{{ 
 [tasks.integration-test-azdo]
 {%- set org_default = azdo_org if using_azdo else '' %}
 {%- set project_default = azdo_project if using_azdo else '' %}
-# Same script test-auto-integration_test.yml runs in CI (--cleanup added there) -- see
+# Same script test-auto-integrationtest.yml runs in CI (--cleanup added there) -- see
 # that file for what this actually verifies and why. Repo is left in place here by
 # default so it can be inspected; pass --cleanup yourself to delete it. --org/--project
 # default to this project's own Azure DevOps org/project when using_azdo, otherwise

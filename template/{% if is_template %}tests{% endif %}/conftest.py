@@ -101,7 +101,7 @@ def _ignore_for_copy(directory, names):
         ".cache",
         ".venv",
         "__pycache__",
-        "docs_site",
+        "docs-site",
         ".ruff_cache",
         ".rumdl_cache",
     }
@@ -237,7 +237,7 @@ def _render(source: Path, dest: Path, answers: dict, vcs_ref: str | None = None)
     if vcs_ref is not None:
         args.append(f"--vcs-ref={vcs_ref}")
     for key, value in answers.items():
-        if key == "id":
+        if key in ("id", "_old_tag_overrides"):
             continue
         args.extend(["-d", f"{key}={value}"])
     args.extend([str(source), str(dest)])
