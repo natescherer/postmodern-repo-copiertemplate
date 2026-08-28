@@ -1,7 +1,7 @@
 """Create a throwaway repo from this template, verify it, then optionally clean it up.
 
 Shared by `mise run integration-test-gh` (a human's own gh/GCM session, repo left in
-place by default so it can be inspected) and test-auto-integration_test.yml
+place by default so it can be inspected) and test-auto-integrationtest.yml
 (INTEGRATION_TEST_PAT, always passes --cleanup) -- not templated itself; both callers
 pass this repo's own source URL and name as arguments, so there's nothing here for
 Jinja to render.
@@ -18,7 +18,7 @@ import sys
 import tempfile
 import time
 
-# Must match docs/token_permissions.md's Integration Test PAT scope table.
+# Must match docs/token-permissions.md's Integration Test PAT scope table.
 REQUIRED_SCOPES = ("repo", "workflow", "delete_repo")
 
 # Must match _tasks' project_description -d flag in create() below.
@@ -100,7 +100,7 @@ def check_scopes() -> None:
     if missing:
         raise SystemExit(
             f"Token is missing required scope(s): {', '.join(missing)}. See "
-            "docs/token_permissions.md for what this token needs."
+            "docs/token-permissions.md for what this token needs."
         )
 
 
@@ -259,7 +259,7 @@ def verify(repo: str, homepage: str) -> None:
     # polls rather than checking once. Requires that app be installed on the
     # authenticated account with access to all repositories (a new repo isn't
     # automatically visible to an app installed on "only select repositories") -- see
-    # docs/token_permissions.md.
+    # docs/token-permissions.md.
     for attempt in range(12):
         if settings_synced(repo, homepage):
             print(f"Settings App sync: OK (after {attempt * 10}s)")

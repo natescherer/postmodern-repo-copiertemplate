@@ -2,7 +2,7 @@
 {#- renovate: datasource=pypi depName=apprise versioning=pep440 #}
 "pipx:apprise" = "1.12.0"
 {%- if using_github %}
-{#- Used by release-manual-create_prerelease.yml's Capture Version step. GitHub-hosted
+{#- Used by release-manual-createprerelease.yml's Capture Version step. GitHub-hosted
    runners ship jq by default, but self-hosted ones aren't guaranteed to. #}
 {#- renovate: datasource=github-releases depName=jqlang/jq #}
 jq = "1.8.2"

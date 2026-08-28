@@ -16,9 +16,9 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
       before a PR can complete), along with a **Project Administrators** bypass permission mirroring GitHub's
       admin `bypass_actors` entry. Unlike GitHub's ruleset, force-push and branch deletion on the
       default branch are **not** blocked -- this is a known, currently-accepted gap. If you chose
-      `repo_setup_actions: None`, see [Manual Repo Settings](../manual_repo_settings.md) for how to
+      `repo_setup_actions: None`, see [Manual Repo Settings](../manual-repo-settings.md) for how to
       set this up by hand.
-- `zensical_target` is always `docs_site Directory in Repo`
+- `zensical_target` is always `docs-site Directory in Repo`
     - `GitHub Pages` isn't offered, so Azure DevOps projects never get the release-versioned docs
       site that target provides — see [Getting Started](../index.md#documentation)
 - Renovate needs a one-time manual permission grant
@@ -39,7 +39,7 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
       through the separate, manually-queued `Release (Manual): Create Prerelease` pipeline
       (Pipelines > select it > Run) instead.
 - Can't test (or otherwise create) a GitHub-target repo from Azure DevOps-hosted CI
-    - `.azurepipelines/test-auto-integration_test.yml` only ever creates and verifies an Azure DevOps-hosted
+    - `.azurepipelines/test-auto-integrationtest.yml` only ever creates and verifies an Azure DevOps-hosted
       throwaway repo -- it has no `gh` CLI setup or GitHub token, so it can't scaffold a
       GitHub-target child the way GitHub's own integration test workflow scaffolds an Azure
       DevOps-target one (it already has `AZURE_DEVOPS_EXT_PAT` wired up for exactly that). This is

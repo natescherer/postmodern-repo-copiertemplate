@@ -246,11 +246,11 @@ zensical_target:
         {%- if developer_platform == 'Azure DevOps' -%}
           Not Supported on Azure DevOps
         {%- endif %}
-    docs_site Directory in Repo:
-      value: docs_site Directory in Repo
+    docs-site Directory in Repo:
+      value: docs-site Directory in Repo
   default: |-
     {%- if developer_platform == 'Azure DevOps' -%}
-      docs_site Directory in Repo
+      docs-site Directory in Repo
     {%- else -%}
       GitHub Pages
     {%- endif %}
@@ -388,7 +388,7 @@ zensical_ghpages:
 zensical_repo:
   type: bool
   default: |-
-    {%- if zensical_target == 'docs_site Directory in Repo' or using_azdo -%}
+    {%- if zensical_target == 'docs-site Directory in Repo' or using_azdo -%}
       true
     {%- endif %}
   when: false
@@ -416,9 +416,9 @@ setup_checklist:
     - [ ] Add more badges to the top of README.md, or remove that section.
     - [ ] Replace docs/images/readme-logo.png with your own logo, or remove that section from README.md.
     - [ ] Replace docs/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
-    - [ ] Set required secrets/pipeline variables -- run `mise run provision-secrets` or see docs/token_permissions.md.
+    - [ ] Set required secrets/pipeline variables -- run `mise run provision-secrets` or see docs/token-permissions.md.
     {%- if is_template and integration_test_scheduled and using_github %}
-    - [ ] Edit the AZDO_INTEGRATION_TEST_ORG/AZDO_INTEGRATION_TEST_PROJECT placeholders in .github/workflows/test-auto-integration_test.yml with your real Azure DevOps org/project.
+    - [ ] Edit the AZDO_INTEGRATION_TEST_ORG/AZDO_INTEGRATION_TEST_PROJECT placeholders in .github/workflows/test-auto-integrationtest.yml with your real Azure DevOps org/project.
     {%- endif %}
   when: false
 ## End Post-Question Computed Values
@@ -530,14 +530,14 @@ _tasks:
             )
     when: *when_copy_create_repo
 
-  # Creates Azure Pipeline for maint-auto-copier_update_check
+  # Creates Azure Pipeline for maint-auto-copierupdatecheck
   - command: >-
       az pipelines create
       --name "[{{ repo_name }}] Maint (Auto): Copier Update Check"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/maint-auto-copier_update_check.yml
+      --yml-path .azurepipelines/maint-auto-copierupdatecheck.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -546,14 +546,14 @@ _tasks:
         true
       {%- endif %}
 
-  # Creates Azure Pipeline for maint-auto-link_check
+  # Creates Azure Pipeline for maint-auto-linkcheck
   - command: >-
       az pipelines create
       --name "[{{ repo_name }}] Maint (Auto): Link Check"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/maint-auto-link_check.yml
+      --yml-path .azurepipelines/maint-auto-linkcheck.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -596,14 +596,14 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for test-auto-pr_validation
+  # Creates Azure Pipeline for test-auto-prvalidation
   - command: >-
       az pipelines create
       --name "[{{ repo_name }}] Test (Auto): PR Validation"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/test-auto-pr_validation.yml
+      --yml-path .azurepipelines/test-auto-prvalidation.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -711,27 +711,27 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for release-manual-create_prerelease
+  # Creates Azure Pipeline for release-manual-createprerelease
   - command: >-
       az pipelines create
       --name "[{{ repo_name }}] Release (Manual): Create Prerelease"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/release-manual-create_prerelease.yml
+      --yml-path .azurepipelines/release-manual-createprerelease.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Creates Azure Pipeline for test-auto-integration_test
+  # Creates Azure Pipeline for test-auto-integrationtest
   - command: >-
       az pipelines create
       --name "[{{ repo_name }}] Test (Auto): Integration Test"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/test-auto-integration_test.yml
+      --yml-path .azurepipelines/test-auto-integrationtest.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -806,14 +806,14 @@ _message_after_copy: |-
     - INTEGRATION_TEST_PAT
     - AZURE_DEVOPS_EXT_PAT
   {%- endif %}
-  Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token_permissions.md for what each one needs.
+  Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token-permissions.md for what each one needs.
   {%- elif using_azdo -%}
   Before CI works, add these as secret Azure DevOps pipeline variables (Pipelines > Library):
     - APPRISE_URL
   {%- if is_template and integration_test_scheduled %}
     - AZURE_DEVOPS_EXT_PAT
   {%- endif %}
-  Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token_permissions.md for what each one needs.
+  Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token-permissions.md for what each one needs.
   {%- endif %}
 
 _message_after_update: |-

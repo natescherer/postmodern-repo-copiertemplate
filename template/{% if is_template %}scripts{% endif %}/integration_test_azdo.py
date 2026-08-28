@@ -33,7 +33,7 @@ import time
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
 # Must match the AZDO_INTEGRATION_TEST_ORG/AZDO_INTEGRATION_TEST_PROJECT placeholder
-# values in test-auto-integration_test.yml's integration-test-azdo job -- there's no way
+# values in test-auto-integrationtest.yml's integration-test-azdo job -- there's no way
 # to auto-detect which org/project a GitHub-hosted workflow should test against.
 PLACEHOLDER = "CHANGE_ME"
 
@@ -151,7 +151,7 @@ def check_access(org_url: str, project: str) -> None:
     if result.returncode != 0:
         raise SystemExit(
             f"Can't see project {project!r} at {org_url} with the current az "
-            "session. See docs/token_permissions.md for what this token needs."
+            "session. See docs/token-permissions.md for what this token needs."
         )
 
 
@@ -463,9 +463,9 @@ def main() -> None:
     if PLACEHOLDER in (args.org, args.project):
         raise SystemExit(
             f"--org/--project are still set to the placeholder {PLACEHOLDER!r}. If "
-            "running via test-auto-integration_test.yml, edit the "
+            "running via test-auto-integrationtest.yml, edit the "
             "integration-test-azdo job's env block with your real Azure DevOps "
-            "org/project. See docs/token_permissions.md."
+            "org/project. See docs/token-permissions.md."
         )
 
     org_url = f"https://dev.azure.com/{args.org}/"

@@ -1,28 +1,28 @@
 [project]
 site_name = "{{ project_name }}"
 docs_dir = "docs"
-site_dir = "{% if zensical_ghpages %}.cache/zensical_serve{% else %}docs_site{% endif %}"
+site_dir = "{% if zensical_ghpages %}.cache/zensical_serve{% else %}docs-site{% endif %}"
 {%- if is_template %}
-extra_javascript = ["javascripts/manual_verification_checkboxes.js"]
+extra_javascript = ["javascripts/manual-verification-checkboxes.js"]
 {%- endif %}
 nav = [
 {%- if is_template %}
   { "Getting Started" = "index.md" },
   { "Prerequisites" = "prerequisites.md" },
-  { "Applying to Existing Projects" = "applying_to_existing_projects.md" },
-  { "Template Questions" = "template_questions.md" },
-  { "Lifecycle Management" = "lifecycle_management.md" },
+  { "Applying to Existing Projects" = "applying-to-existing-projects.md" },
+  { "Template Questions" = "template-questions.md" },
+  { "Lifecycle Management" = "lifecycle-management.md" },
   { "Releasing" = "releasing.md" },
-  { "Manual Verification Checklist" = "manual_verification.md" },
-  { "Token Permissions" = "token_permissions.md" },
-  { "Manual Repo Settings" = "manual_repo_settings.md" },
-  { "Public vs Private Repos" = "public_vs_private_repos.md" },
+  { "Manual Verification Checklist" = "manual-verification.md" },
+  { "Token Permissions" = "token-permissions.md" },
+  { "Manual Repo Settings" = "manual-repo-settings.md" },
+  { "Public vs Private Repos" = "public-vs-private-repos.md" },
   { "Platform Notes" = [
-    "platform_notes/index.md",
-    "platform_notes/azure_devops.md"
+    "platform-notes/index.md",
+    "platform-notes/azure-devops.md"
   ] },
   { "Components" = [
-    "components/template_engine.md"
+    "components/template-engine.md"
   ] }
 {%- else %}
   { "Getting Started" = "index.md" },
@@ -40,7 +40,7 @@ alias = true
 
 [project.theme]
 variant = "classic" # Switching to modern blocked until built-in versioning support is added
-custom_dir = ".config/zensical_overrides"
+custom_dir = ".config/zensical-overrides"
 features = [
   "content.code.copy",
   "navigation.indexes",
