@@ -55,8 +55,24 @@ stages:
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
             displayName: Install Mise
+          - task: Cache@2
+            inputs:
+              key: 'mise | "$(Agent.OS)" | mise.toml | mise.ci.toml'
+              restoreKeys: |
+                mise | "$(Agent.OS)"
+              path: $(HOME)/.local/share/mise
+            displayName: Cache Mise Tools
           - bash: mise install
             displayName: Run 'mise install'
+          - bash: echo "##vso[task.setvariable variable=CACHE_ID]$(date --utc '+%V')"
+            displayName: Compute Cache ID
+          - task: Cache@2
+            inputs:
+              key: 'zensical | "$(CACHE_ID)"'
+              restoreKeys: |
+                zensical
+              path: $(HOME)/.cache
+            displayName: Cache Zensical Build
           - bash: |
               zensical build
               git add --all

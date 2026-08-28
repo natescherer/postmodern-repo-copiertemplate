@@ -49,9 +49,23 @@ stages:
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
             displayName: Install Mise
+          - task: Cache@2
+            inputs:
+              key: 'mise | "$(Agent.OS)" | mise.toml | mise.ci.toml'
+              restoreKeys: |
+                mise | "$(Agent.OS)"
+              path: $(HOME)/.local/share/mise
+            displayName: Cache Mise Tools
           - bash: mise install
             displayName: Run 'mise install'
-          - bash: az extension add --name azure-devops --only-show-errors
+          - task: Cache@2
+            inputs:
+              key: azure-devops-cli-ext-$(Agent.OS)
+              path: $(HOME)/.azure/cliextensions
+            displayName: Cache Azure DevOps CLI Extension
+          - bash: |
+              az extension list -o tsv --query "[?name=='azure-devops'].name" | grep -q azure-devops || \
+                az extension add --name azure-devops --only-show-errors
             displayName: Install Azure DevOps CLI Extension
           - bash: |
               # Same script `mise run integration-test-azdo` runs locally (there,
