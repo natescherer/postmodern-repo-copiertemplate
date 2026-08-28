@@ -2,6 +2,11 @@
 
 The automated integration test (`scripts/integration_test_{% if using_github %}github{% elif using_azdo %}azdo{% endif %}.py`, run in CI by `Test (Auto): Integration Test`{% if is_template and integration_test_scheduled %} on this project{% endif %}) only checks *structure*: that the repo, its pipelines/workflows, and its branch policy exist with the right names. It never triggers most of them, so it can't tell you whether a pipeline actually authenticates, opens a PR, blocks a bad merge, or publishes a release correctly. Run through this checklist by hand after a fresh `copier copy`, and again after any change to CI/CD config, to catch what the automated test structurally can't.
 
+!!! bug "Checkbox state isn't saved"
+    Boxes on this page are clickable so you can tick items off as you go, but nothing
+    persists that -- reloading or leaving the page resets every box to unchecked. Treat
+    it as a scratchpad for one sitting, not a record you can come back to.
+
 ## After First Setup
 
 - [ ] The setup checklist ({% if using_github %}a GitHub Issue titled "Post-Setup Checklist," opened automatically on first copy{% elif using_azdo %}printed to the console at the end of `copier copy`{% endif %}) exists and every item on it has been addressed.
