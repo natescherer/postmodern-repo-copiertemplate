@@ -1,10 +1,9 @@
+min_version = "2026.8.13"
+
 [hooks]
 postinstall = [
   "{% set is_in_ci = get_env(name='CI', default='') %}{% if is_in_ci %}echo 'Not setting up git hooks as mise is running in CI!'{% else %}prek install -f -c .config/prek.toml{% endif %}",
 ]
-
-[settings]
-experimental = true # Needed for hooks as of v2025.6.2
 
 [env]
 # Centralize tool caches under .cache/ instead of scattering them across the repo root.
@@ -28,7 +27,7 @@ run = "copier update --answers-file .config/copier-answers.yml --skip-answered -
 run = "zensical serve"
 
 [tasks.provision-secrets]
-# Opt-in and separate from _tasks on purpose -- see docs/token_permissions.md. `raw`
+# Opt-in and separate from _tasks on purpose -- see docs/token-permissions.md. `raw`
 # gives gh/az direct terminal control so each CLI's own masked prompt (gh's
 # Prompter.Password, az's knack.prompting.prompt_pass) reads the value straight from
 # the terminal -- it never touches a command-line argument, mise's own logging, or a
@@ -37,43 +36,69 @@ raw = true
 run = [
   "gh secret set REPO_MAINTENANCE_PAT",
   "gh secret set APPRISE_URL",
-  "gh secret set INTEGRATION_TEST_PAT",
-  "gh secret set AZURE_DEVOPS_EXT_PAT",
 ]
 
 [tasks.test]
 run = "pytest tests/"
 
 [tasks.integration-test-gh]
-# Same script test-integration_test.yml runs in CI (--cleanup added there) -- see
-# that file for what this actually verifies and why. Repo is left in place here by
-# default so it can be inspected; pass --cleanup yourself to delete it. Uses the
-# `usage` field (not the deprecated option() Tera function) so --branch is passed to
-# the script as a real env var (usage_branch) rather than templated into the command
-# line -- works identically regardless of the invoking shell/platform.
-usage = '''
-flag "--branch <branch>" help="Template ref to test against" default="HEAD"
-'''
+# Creates two real throwaway repos from this template and runs every automated check
+# it can against Repo A, always at HEAD -- this exists to verify a release candidate
+# on main is good before cutting a release, not to smoke-test an arbitrary branch. See
+# docs/integration-testing.md for what this does and doesn't check, and
+# docs/manual-verification-github.md for what still needs a human. Repo B is copied at
+# the last stable tag and left there -- run `mise run copier-update` against it
+# yourself, then `mise run integration-test-verify-update-gh` to verify it. Both repos
+# are left in place afterward for inspection; delete them yourself when you're done.
 run = "python scripts/integration_test_github.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --repo-prefix postmodern-repo-copiertemplate"
 
-[tasks.integration-test-azdo]
-# Same script test-integration_test.yml runs in CI (--cleanup added there) -- see
-# that file for what this actually verifies and why. Repo is left in place here by
-# default so it can be inspected; pass --cleanup yourself to delete it. --org/--project
-# default to this project's own Azure DevOps org/project when using_azdo, otherwise
-# there's no natural default and they must be passed explicitly, e.g.
-# `mise run integration-test-azdo -- --org myorg --project myproject`. Uses the
-# `usage` field (not the deprecated option() Tera function) so these are passed to
-# the script as real env vars (usage_branch/usage_org/usage_project) rather than
-# templated into the command line -- works identically regardless of the invoking
-# shell/platform, and (unlike option()) a missing required value doesn't silently
-# vanish from the command line and desync argparse.
+[tasks.integration-test-verify-update-gh]
+# Run after manually updating Repo B (see docs/manual-verification-github.md's "Repo
+# B" section) -- verifies the update applied cleanly (no conflict markers, current
+# content) and that PR Validation still works, the same way integration-test-gh
+# already verifies Repo A.
 usage = '''
-flag "--branch <branch>" help="Template ref to test against" default="HEAD"
+flag "--repo <repo>" help="owner/repo of the already-updated Repo B"
+flag "--local-path <path>" help="Local clone path printed when Repo B was created"
+'''
+run = "python scripts/integration_test_github.py"
+
+[tasks.integration-test-azdo]
+# Creates two real throwaway repos from this template and runs every automated check
+# it can against Repo A, always at HEAD -- this exists to verify a release candidate
+# on main is good before cutting a release, not to smoke-test an arbitrary branch. See
+# docs/integration-testing.md for what this does and doesn't check, and
+# docs/manual-verification-azdo.md for what still needs a human. Repo B is copied at
+# the last stable tag and left there -- run `mise run copier-update` (then `mise run
+# migrate-azdo-pipeline-names`) against it yourself, then `mise run
+# integration-test-verify-update-azdo` to verify it. Both repos are left in place
+# afterward for inspection; delete them yourself when you're done. --org/--project
+# default to this project's own Azure DevOps org/project when using_azdo, otherwise
+# there's no natural default and they must be passed explicitly, e.g. `mise run
+# integration-test-azdo -- --org myorg --project myproject`. Uses the `usage` field
+# (not the deprecated option() Tera function) so these are passed to the script as
+# real env vars (usage_org/usage_project) rather than templated into the command line
+# -- works identically regardless of the invoking shell/platform, and (unlike
+# option()) a missing required value doesn't silently vanish from the command line and
+# desync argparse.
+usage = '''
 flag "--org <org>" help="Azure DevOps organization"
 flag "--project <project>" help="Azure DevOps project"
 '''
 run = "python scripts/integration_test_azdo.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --repo-prefix postmodern-repo-copiertemplate"
+
+[tasks.integration-test-verify-update-azdo]
+# Run after manually updating Repo B (see docs/manual-verification-azdo.md's "Repo B"
+# section) -- verifies the update applied cleanly (no conflict markers, current
+# content, pipelines renamed in place) and that PR Validation still works, the same
+# way integration-test-azdo already verifies Repo A.
+usage = '''
+flag "--org <org>" help="Azure DevOps organization"
+flag "--project <project>" help="Azure DevOps project"
+flag "--repo <repo>" help="Name of the already-updated Repo B"
+flag "--local-path <path>" help="Local clone path printed when Repo B was created"
+'''
+run = "python scripts/integration_test_azdo.py"
 
 [tools]
 # Backends
@@ -82,6 +107,7 @@ uv = "0.12.2" # Used by pipx tools
 # Tools
 actionlint = "1.7.12"
 "aqua:cli/cli" = "2.97.0"
+"github:knope-dev/knope" = "knope/v0.23.0"
 "aqua:crate-ci/typos" = "1.49.0"
 "aqua:j178/prek" = "0.4.12"
 "aqua:owenlamont/ryl" = "0.21.0"

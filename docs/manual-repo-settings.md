@@ -1,5 +1,7 @@
 # Manual Repo Settings
 
+## GitHub
+
 When you use the [Settings GitHub App](https://github.com/apps/settings), it syncs the repo
 settings, labels, and branch protection ruleset described below from the committed
 `.github/settings.yml` automatically. If you don't want to install that app (or can't, e.g. it's
@@ -7,7 +9,7 @@ not been approved for your organization), here's how to apply the same configura
 through the GitHub UI. `.github/settings.yml` is the source of truth for the exact values below --
 if the two ever disagree, trust the file.
 
-## Labels
+### Labels
 
 Under the repo's **Issues** tab, open **Labels**, and create:
 
@@ -16,14 +18,14 @@ Under the repo's **Issues** tab, open **Labels**, and create:
 | `awaiting pr` | `#668F04` | Awaiting completion of a PR from a contributor |
 | `blocked` | `#B60205` | Blocked by an external dependency |
 
-## Merge Options
+### Merge Options
 
 Under **Settings > General > Pull Requests**, enable:
 
 - **Allow auto-merge**
 - **Automatically delete head branches**
 
-## Branch Protection
+### Branch Protection
 
 Under **Settings > Rules > Rulesets**, create a new ruleset:
 
@@ -41,13 +43,51 @@ Under **Settings > Rules > Rulesets**, create a new ruleset:
         - Require conversation resolution before merging: off
     - **Require status checks to pass**, with:
         - Require branches to be up to date before merging: on
-        - Status check: `tests` (the job in `[Test] PR Validation`)
+        - Status check: `tests` (the job in `Test (Auto): PR Validation`)
 - Bypass list: add **Repository admin**, with bypass mode **Pull requests only** -- this lets
   repo admins use the "Merge without waiting for requirements to be met" button instead of being
   blocked entirely.
 
-## GitHub Pages Environment
+### GitHub Pages Environment
+
+(`zensical_target: GitHub Pages` only.)
 
 After the first successful Pages deployment, an environment named `github-pages` will exist under
 **Settings > Environments**. Open it and ensure **Deployment branches and tags** is set to
 **All branches** (no restriction).
+
+### Security and Analysis
+
+(Public repos only -- private repos need a paid GitHub Advanced Security license.)
+
+Under **Settings > Code security**, enable **Secret scanning** and **Push protection**.
+
+## Azure DevOps
+
+If you chose `repo_setup_actions: None` (or need to reapply this after the fact), here's how to
+recreate what `Create Repo`/`Set Repo Rules` would otherwise set up automatically, through the
+Azure DevOps UI.
+
+### Pipelines
+
+Under **Pipelines > New pipeline**, create one pipeline per file under `.azurepipelines/`,
+pointing each at the matching YAML file in this repo. Name each
+`[postmodern-repo-copiertemplate] <Category> (<Auto|Manual>) - <Name>`
+(e.g. `[postmodern-repo-copiertemplate] Test (Auto) - PR Validation`) to match what this template's own automation
+would have named them.
+
+### PR-Validation Branch Policy
+
+Under **Project Settings > Repositories > (this repo) > Policies > Branch Policies > main**, add
+a **Build Validation** policy:
+
+- Build pipeline: the `Test (Auto) - PR Validation` pipeline created above
+- Trigger: **Automatic**
+- Policy requirement: **Required**
+- Build expiration: **Immediately**
+
+### Bypass Permission
+
+Under **Project Settings > Repositories > (this repo) > Security**, select **Project
+Administrators** and set **Bypass policies when completing pull requests** to **Allow** -- this
+lets project admins use the "Complete" button's bypass option instead of being blocked entirely.

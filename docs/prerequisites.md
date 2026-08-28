@@ -1,5 +1,38 @@
 # Prerequisites
 
+## Azure DevOps
+
+### One-Time Actions Per Azure DevOps Organization
+
+1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) (`az`) via an
+   officially supported method (winget/MSI on Windows, Homebrew on macOS, apt/dnf/zypper on Linux
+   -- installing via pip/pipx is not supported by Microsoft), then run
+   `az extension add --name azure-devops` and `az login`. Unless you choose `None` for the
+   `repo_setup_actions` question, this is used instead of a Personal Access Token to create your
+   repo and register its pipelines. The `repo_setup_actions` question's validator checks that
+   `az`, the `azure-devops` extension, and login are all in place before letting you proceed.
+1. Make sure [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager) is
+   installed (bundled with Git for Windows if you enabled it during install; a separate install on
+   macOS/Linux). The initial `git push` isn't covered by `az login` -- see
+   [Token Permissions](token-permissions.md#az-login-permissions) for why -- so GCM handles that
+   push's authentication with its own (separate) interactive Entra sign-in the first time.
+
+### One-Time Actions per Azure DevOps Project
+
+In order to support the proper parsing of Conventional Commits, the following must be set:
+
+- `Project settings`
+    - `Repositories`
+        - `Settings` tab
+            - `All Repositories Settings` section
+                - Ensure `Include PR ID in the completion commit message title by default` is set to `Off`
+        - `Security` tab
+            - `PROJECTNAME Build Service (PROJECTNAME)`
+                - Set these to `Allow`:
+                    - Contribute
+                    - Contribute to pull requests
+                    - Create branch
+
 ## GitHub
 
 ### One-Time Actions Per GitHub User/Organization
@@ -12,7 +45,7 @@
 1. Make sure [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager) is
    installed (bundled with Git for Windows if you enabled it during install; a separate install on
    macOS/Linux). `gh auth login`'s default scopes don't cover pushing `.github/workflows/` files --
-   see [Token Permissions](token_permissions.md#gh-auth-login-scopes) for why -- so GCM handles the
+   see [Token Permissions](token-permissions.md#gh-auth-login-scopes) for why -- so GCM handles the
    initial push with its own (separate) interactive GitHub sign-in the first time.
 1. Install the [AllContributors GitHub App](https://github.com/apps/allcontributors/installations/new) for your user or organization.
     - This app provides automatic README crediting when other people contribute to your project
@@ -24,11 +57,15 @@
 1. Install the [Settings GitHub App](https://github.com/apps/settings) for your user or organization.
     - This app syncs repo settings (labels, merge options, branch protection) from the committed `.github/settings.yml`, which is always generated for GitHub projects
     - It must have access to a repo *before* that repo is created for its settings to apply, so grant it access to all your repositories up front, same as the apps above
-    - Skipping this is fine -- see [Manual Repo Settings](manual_repo_settings.md) for how to apply the same configuration by hand instead
-1. Ensure `Private vulnerability reporting > Automatically enable for new public repositories` is checked [in the repo settings](https://github.com/settings/security_analysis).
+    - Skipping this is fine -- see [Manual Repo Settings](manual-repo-settings.md) for how to apply the same configuration by hand instead
+1. Install the [Codecov GitHub App](https://github.com/apps/codecov) for your user or organization.
+    - This app powers Codecov's PR comments/checks and connects your repo to codecov.io for uploads
+    - Only needed if you plan to answer Yes to the `code_coverage` question -- skip this if you don't want code coverage reporting
+    - It is recommended that you give it access to all your repositories, which means you only need to do this step once rather than for each new repo.
 
 ## Personal Access Tokens
 
-GitHub no longer needs one for repo setup -- see the `gh auth login` step above. See
-[Token Permissions](token_permissions.md) for the separate, ongoing **Repo Maintenance PAT** used
-by this project's own GitHub Actions workflows.
+Neither platform needs one for repo setup anymore -- see the `az login`/`gh auth login` steps
+above. See [Token Permissions](token-permissions.md) for the permissions the signed-in account
+needs instead on Azure DevOps, and for the separate, ongoing **Repo Maintenance PAT** used by
+this project's own GitHub Actions workflows.

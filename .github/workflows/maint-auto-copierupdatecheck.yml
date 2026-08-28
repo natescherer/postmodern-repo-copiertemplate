@@ -1,0 +1,66 @@
+name: "Maint (Auto): Copier Update Check"
+
+on:
+  schedule:
+    - cron: 0 17 * * 1 # Every Monday at 5pm UTC
+  workflow_dispatch:
+
+env:
+  MISE_ENV: ci
+
+jobs:
+  copier-check-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0 # Ensures tags are checked out
+      - name: Validate Secrets Exist
+        uses: ./.github/actions/require-secrets
+        with:
+          secrets: |
+            APPRISE_URL=${{ secrets.APPRISE_URL }}
+      - name: Check for Copier Template Updates
+        id: copier
+        uses: natescherer/copier-action@b1ee418e5ee2e4334fc26094b9e84be3b93112ac # v0
+        with:
+          subcommand: check-update
+          answers-file: .config/copier-answers.yml
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
+      - name: Notify if Update is Available
+        if: steps.copier.outputs.check-update_update_available == 'true'
+        shell: bash
+        env:
+          APPRISE_URL: ${{ secrets.APPRISE_URL }}
+        run: |
+          mise x -- apprise -i html \
+            -t "${{ github.repository }} Template Update Available" \
+            -b "Repository ${{ github.repository }} has a new template update available.<br><br>Current version is ${{ steps.copier.outputs.check-update_current_version }}, latest version is ${{ steps.copier.outputs.check-update_latest_version }}." \
+            "$APPRISE_URL"
+  workflow-keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+    steps:
+      # Re-enables this workflow if GitHub disabled it for inactivity. Inlined from
+      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh` --
+      # unsupported on Windows runners, unlike bash, which is available there via Git
+      # for Windows.
+      - name: Re-enable Workflow
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          case "${GITHUB_WORKFLOW_REF:?}" in
+            "${GITHUB_REPOSITORY:?}"/.github/workflows/*.y*ml@*) ;;
+            *) false ;;
+          esac
+          workflow="${GITHUB_WORKFLOW_REF%%@*}"
+          workflow="${workflow#"$GITHUB_REPOSITORY"/.github/workflows/}"
+          gh api -X PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/enable"

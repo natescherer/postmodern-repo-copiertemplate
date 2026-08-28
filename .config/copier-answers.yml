@@ -1,12 +1,13 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v0.7.20
+_commit: v0.8.0
 _src_path: gh:natescherer/postmodern-repo-copiertemplate
+agent_instructions: true
 author_name: Nate Scherer
+code_coverage: false
 copyright_year: '2025'
 developer_platform: GitHub
 github_org: ''
 github_username: natescherer
-integration_test_scheduled: true
 license: MIT
 lifecycle: Pre-Alpha
 project_description: A Copier template to create a repo with the hard/boring stuff
