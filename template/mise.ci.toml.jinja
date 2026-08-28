@@ -1,9 +1,15 @@
 [tools]
 {#- renovate: datasource=pypi depName=apprise versioning=pep440 #}
 "pipx:apprise" = "1.12.0"
-# Used by the Renovate pipeline (.azurepipelines/maint-auto-renovate.yml.jinja) -- no other AzDO
-# pipeline needs Node.js or Renovate itself.
+{%- if using_azdo %}
 {#- renovate: datasource=node-version depName=node versioning=node #}
 node = "24.19.0"
 {#- renovate: datasource=npm depName=renovate #}
 "npm:renovate" = "44.39.3"
+{%- endif %}
+{%- if using_github and zensical_ghpages %}
+
+[tools."pipx:git+https://github.com/squidfunk/mike.git"]
+version = "2.2.0+zensical-0.1.0"
+uvx_args = "--with zensical==0.0.53"
+{%- endif %}
