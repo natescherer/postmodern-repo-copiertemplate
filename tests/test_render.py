@@ -91,12 +91,12 @@ def _check_zensical_build(root: Path) -> list[str]:
 
 
 def _check_lychee(root: Path) -> list[str]:
-    # Mirrors prek.toml's own lychee hook, which excludes docs_site: built HTML's
+    # Mirrors prek.toml's own lychee hook, which excludes docs-site: built HTML's
     # root-relative links (e.g. "/assets/...") resolve against the filesystem root
     # without a running server, producing bogus failures unrelated to the source
     # markdown this check is meant to validate.
     result = _run(
-        ["lychee", "--no-progress", "--offline", "--exclude-path", "docs_site", "."],
+        ["lychee", "--no-progress", "--offline", "--exclude-path", "docs-site", "."],
         cwd=root,
     )
     if result.returncode != 0:
@@ -104,8 +104,14 @@ def _check_lychee(root: Path) -> list[str]:
     return []
 
 
-def _check_all(root: Path) -> list[str]:
+def _check_all(root: Path, *, zensical: bool = True) -> list[str]:
     """Run every structural check against a rendered project.
+
+    `zensical` is skippable: `test_update_from_last_tag` renders the same combo
+    `test_render_combination` already builds docs for, just via `copier update`
+    instead of a fresh copy -- re-running the (comparatively slow) zensical build
+    there would only re-confirm docs content that hasn't changed, not exercise
+    anything update-path-specific.
 
     Returns:
         All collected error strings, each prefixed by which check produced it.
@@ -115,7 +121,8 @@ def _check_all(root: Path) -> list[str]:
     errors += [f"[structured-files] {e}" for e in _check_structured_files(root)]
     errors += [f"[actionlint] {e}" for e in _check_actionlint(root)]
     errors += [f"[tombi] {e}" for e in _check_tombi(root)]
-    errors += [f"[zensical] {e}" for e in _check_zensical_build(root)]
+    if zensical:
+        errors += [f"[zensical] {e}" for e in _check_zensical_build(root)]
     errors += [f"[lychee] {e}" for e in _check_lychee(root)]
     return errors
 
@@ -136,12 +143,19 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
 
     Covers the one class of bug the copy-only test above can't see: logic gated on
     `_copier_operation == 'update'` (e.g. the `project_initialized` locked-on-update
-    question text, `current_release_please_version`) is never exercised by a fresh
+    question text, `current_knope_version`) is never exercised by a fresh
     `copier copy`, since that operation is always `'copy'`.
     """
     source, old_tag = update_source
     dest = tmp_path / "out"
-    _render(source, dest, answers, vcs_ref=old_tag)
+
+    # Some answer values are only valid after a specific rename in this repo's own
+    # history -- see answer_matrix.py's "_old_tag_overrides" for which ones and why.
+    # The old tag can't recognize the current value, so the initial copy-at-old-tag
+    # has to use whatever value actually was valid then; the update step below still
+    # uses the current answers, so it also exercises the rename itself.
+    old_tag_answers = {**answers, **answers.get("_old_tag_overrides", {})}
+    _render(source, dest, old_tag_answers, vcs_ref=old_tag)
 
     _git_init_repo(dest)
     _git_commit_all(dest, "initial render")
@@ -164,5 +178,5 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
         f"copier update failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
     )
 
-    errors = _check_all(dest)
+    errors = _check_all(dest, zensical=False)
     assert not errors, "\n\n".join(errors)  # noqa: S101
