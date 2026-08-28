@@ -1,10 +1,9 @@
-"""Create a throwaway repo from this template, verify it, then optionally clean it up.
+"""Create a throwaway repo from this template and verify it.
 
-Shared by `mise run integration-test-gh` (a human's own gh/GCM session, repo left in
-place by default so it can be inspected) and test-auto-integrationtest.yml
-(INTEGRATION_TEST_PAT, always passes --cleanup) -- not templated itself; both callers
-pass this repo's own source URL and name as arguments, so there's nothing here for
-Jinja to render.
+Run via `mise run integration-test-gh` -- a human's own gh/GCM session, repo left in
+place afterward for inspection (delete it yourself when you're done). Not templated
+itself; the caller passes this repo's own source URL and name as arguments, so there's
+nothing here for Jinja to render.
 """
 
 import argparse
@@ -18,8 +17,8 @@ import sys
 import tempfile
 import time
 
-# Must match docs/token-permissions.md's Integration Test PAT scope table.
-REQUIRED_SCOPES = ("repo", "workflow", "delete_repo")
+# Default `gh auth login` scopes cover both -- see docs/token-permissions.md.
+REQUIRED_SCOPES = ("repo", "workflow")
 
 # Must match _tasks' project_description -d flag in create() below.
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
@@ -104,33 +103,21 @@ def check_scopes() -> None:
         )
 
 
-def create(
-    source: str, vcs_ref: str, repo_name: str, dest: str, owner: str, *, ci: bool
-) -> None:
+def create(source: str, vcs_ref: str, repo_name: str, dest: str, owner: str) -> None:
     """Render+run the template to create the test repo.
-
-    `gh auth setup-git` is only run when `ci` is set -- it reconfigures git's *global*
-    credential helper to route through gh, a real side effect on a human's own machine
-    that a local run shouldn't impose. In CI it's required instead, since headless
-    runners can't complete Git Credential Manager's interactive login (the human-run
-    path this template's own _tasks otherwise rely on).
 
     `github_username` is pinned to the already-resolved `owner` rather than left to
     auto-detect from local git config: copier.yml.jinja's `.github/settings.yml`
     content (e.g. `homepage`) is templated from `github_repo_owner`, which defaults to
     `github_username` -- letting that auto-detect could silently diverge from the
-    account gh actually authenticated as (especially in CI, where git config may have
-    no user.email at all), breaking verify() for reasons unrelated to what it's
-    actually trying to test.
+    account gh actually authenticated as, breaking verify() for reasons unrelated to
+    what it's actually trying to test.
 
     `--defaults` falls back to each question's own default for anything not covered
     by an explicit -d below (currently github_org, author_name, zensical_target) --
-    without it, copier drops into an interactive prompt for those, which just hangs
-    in CI and adds unnecessary keypresses locally. Explicit -d values below still take
-    priority over --defaults regardless of order.
+    without it, copier drops into an interactive prompt for those. Explicit -d values
+    below still take priority over --defaults regardless of order.
     """
-    if ci:
-        run("gh", "auth", "setup-git")
     run(
         "copier",
         "copy",
@@ -149,8 +136,6 @@ def create(
         f"project_description={PROJECT_DESCRIPTION}",
         "-d",
         "project_type=Template",
-        "-d",
-        "integration_test_scheduled=true",
         "-d",
         "project_name=Integration Test",
         "-d",
@@ -273,13 +258,8 @@ def verify(repo: str, homepage: str) -> None:
     print("All checks passed.")
 
 
-def cleanup(repo: str) -> None:
-    """Delete the test repo."""
-    run("gh", "repo", "delete", repo, "--yes")
-
-
 def main() -> None:
-    """Parse args, then create, verify, and (if requested) clean up a test repo."""
+    """Parse args, then create and verify a test repo. Delete it yourself when done."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", required=True, help="Copier template source URL")
     # `usage_branch` is set when this runs via `mise run integration-test-gh`, whose
@@ -288,20 +268,6 @@ def main() -> None:
     # command line, so it works the same regardless of the invoking shell/platform.
     parser.add_argument("--vcs-ref", default=os.environ.get("usage_branch", "HEAD"))
     parser.add_argument("--repo-prefix", required=True, help="This repo's own name")
-    parser.add_argument(
-        "--cleanup",
-        action="store_true",
-        help="Delete the repo when done (always used in CI)",
-    )
-    parser.add_argument(
-        "--ci",
-        action="store_true",
-        help=(
-            "Reconfigure git's global credential helper via 'gh auth setup-git' "
-            "(always used in CI; skipped locally since it would alter a human's own "
-            "git config as a side effect)"
-        ),
-    )
     args = parser.parse_args()
 
     check_gh_installed()
@@ -315,17 +281,9 @@ def main() -> None:
     # homepage logic (only set when is_public).
     homepage = f"https://{owner}.github.io/{repo_name}"
 
-    try:
-        create(args.source, args.vcs_ref, repo_name, dest, owner, ci=args.ci)
-        verify(repo, homepage)
-    finally:
-        if args.cleanup:
-            cleanup(repo)
-        else:
-            print(
-                f"Leaving {repo} in place ({dest}) -- pass --cleanup to delete "
-                "it automatically."
-            )
+    create(args.source, args.vcs_ref, repo_name, dest, owner)
+    verify(repo, homepage)
+    print(f"Leaving {repo} in place ({dest}) -- delete it yourself when you're done.")
 
 
 if __name__ == "__main__":

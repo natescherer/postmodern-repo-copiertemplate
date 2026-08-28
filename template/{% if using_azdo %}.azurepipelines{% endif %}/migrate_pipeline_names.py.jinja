@@ -61,11 +61,6 @@ MIGRATIONS = (
         "Release (Manual): Create Prerelease",
         ".azurepipelines/release-manual-createprerelease.yml",
     ),
-    (
-        "integration_test",
-        "Test (Auto): Integration Test",
-        ".azurepipelines/test-auto-integrationtest.yml",
-    ),
 )
 
 
@@ -144,7 +139,7 @@ def migrate(org: str, project: str, *, dry_run: bool) -> None:
     Whether a given entry even applies to this project is decided by whether its new
     `.azurepipelines/*.yml` file exists on disk -- the ground truth for "this project
     needs this pipeline," since that file only exists if the project's own answers
-    (e.g. `integration_test_scheduled`) caused copier to render it.
+    caused copier to render it.
     """
     pipelines = json.loads(
         az_value(

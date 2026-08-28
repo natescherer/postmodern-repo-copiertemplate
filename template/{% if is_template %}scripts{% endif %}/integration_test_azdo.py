@@ -1,25 +1,14 @@
-"""Create a throwaway repo from this template, verify it, then optionally clean it up.
+"""Create a throwaway repo from this template and verify it.
 
 Azure DevOps counterpart to integration_test_github.py -- see that file for the shared
-shape (create/verify/cleanup, --cleanup/--ci flags). Diverges in a few real ways:
-
-- No Settings App equivalent here, so nothing to poll for asynchronously.
-- `az` has no scope-introspection command the way `gh auth status` does, so this does
-  a basic access check (can the token see the target project at all) instead of
-  asserting specific scopes.
-- There's no az-native bridge from an authenticated session into git push credentials
-  -- `az login`'s Entra session doesn't carry over to git the way `gh auth setup-git`
-  does for GitHub. CI push auth here instead uses a PAT-based Basic-Auth header scoped
-  to dev.azure.com specifically (Microsoft's own documented pattern for scripted git
-  operations against Azure Repos: https://learn.microsoft.com/azure/devops/repos/git/auth-overview),
-  not a stored credential helper.
-- Repo and pipeline deletion both need az-resolved IDs, not just names, and pipeline
-  definitions aren't confirmed to be cleaned up automatically when their repo is
-  deleted, so this deletes them explicitly first rather than assuming they cascade.
+shape (create/verify, repo left in place afterward for you to delete yourself).
+Diverges in one real way: no Settings App equivalent here, so nothing to poll for
+asynchronously. `az` also has no scope-introspection command the way `gh auth status`
+does, so this does a basic access check (can the token see the target project at all)
+instead of asserting specific scopes.
 """
 
 import argparse
-import base64
 import json
 import os
 import shutil
@@ -32,22 +21,14 @@ import time
 
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
-# Must match the AZDO_INTEGRATION_TEST_ORG/AZDO_INTEGRATION_TEST_PROJECT placeholder
-# values in test-auto-integrationtest.yml's integration-test-azdo job -- there's no way
-# to auto-detect which org/project a GitHub-hosted workflow should test against.
-PLACEHOLDER = "CHANGE_ME"
-
 # Must match template/{% if is_template %}copier.yml{% endif %}.jinja's hardcoded
-# `az pipelines create --name "[<repo_name>] <name>"` _tasks entries. "Test (Auto):
-# Integration Test" only registers because create() below passes
-# integration_test_scheduled=true.
+# `az pipelines create --name "[<repo_name>] <name>"` _tasks entries.
 PIPELINE_DISPLAY_NAMES = (
     "Maint (Auto): Copier Update Check",
     "Docs (Auto): Zensical Build & Publish",
     "Test (Auto): PR Validation",
     "Release (Auto): Prepare/Publish Release",
     "Maint (Auto): Renovate",
-    "Test (Auto): Integration Test",
 )
 
 
@@ -155,22 +136,6 @@ def check_access(org_url: str, project: str) -> None:
         )
 
 
-def configure_git_push_auth() -> None:
-    """Scope a PAT-based Basic-Auth header to dev.azure.com for non-interactive push.
-
-    See module docstring for why this is needed instead of a credential helper.
-    """
-    token = os.environ["AZURE_DEVOPS_EXT_PAT"]
-    header = "Authorization: Basic " + base64.b64encode(f":{token}".encode()).decode()
-    run(
-        "git",
-        "config",
-        "--global",
-        "http.https://dev.azure.com/.extraheader",
-        header,
-    )
-
-
 def create(
     source: str,
     vcs_ref: str,
@@ -178,19 +143,14 @@ def create(
     dest: str,
     org: str,
     project: str,
-    *,
-    ci: bool,
 ) -> None:
     """Render+run the template to create the test repo and register its pipelines.
 
     `--defaults` falls back to each question's own default for anything not covered
     by an explicit -d below (currently author_name, zensical_target) -- without it,
-    copier drops into an interactive prompt for those, which just hangs in CI and
-    adds unnecessary keypresses locally. Explicit -d values below still take priority
-    over --defaults regardless of order.
+    copier drops into an interactive prompt for those. Explicit -d values below still
+    take priority over --defaults regardless of order.
     """
-    if ci:
-        configure_git_push_auth()
     run(
         "copier",
         "copy",
@@ -211,8 +171,6 @@ def create(
         f"project_description={PROJECT_DESCRIPTION}",
         "-d",
         "project_type=Template",
-        "-d",
-        "integration_test_scheduled=true",
         "-d",
         "project_name=Integration Test",
         "-d",
@@ -342,77 +300,12 @@ def verify(repo_name: str, org_url: str, project: str) -> None:
     print("All checks passed.")
 
 
-def cleanup(repo_name: str, org_url: str, project: str) -> None:
-    """Delete the test repo's pipelines, then the repo itself.
-
-    Pipeline definitions aren't confirmed to be cleaned up automatically when their
-    repo is deleted, so this deletes them explicitly first rather than assume so.
-    """
-    pipeline_ids = json.loads(
-        az_value(
-            "pipelines",
-            "list",
-            "--org",
-            org_url,
-            "--project",
-            project,
-            "--repository",
-            repo_name,
-            "--query",
-            "[].id",
-        )
-        or "[]"
-    )
-    for pipeline_id in pipeline_ids:
-        run(
-            "az",
-            "pipelines",
-            "delete",
-            "--id",
-            str(pipeline_id),
-            "--org",
-            org_url,
-            "--project",
-            project,
-            "--yes",
-            check=False,
-        )
-
-    repo_id = az_value(
-        "repos",
-        "show",
-        "--repository",
-        repo_name,
-        "--org",
-        org_url,
-        "--project",
-        project,
-        "--query",
-        "id",
-        "-o",
-        "tsv",
-    )
-    if repo_id:
-        run(
-            "az",
-            "repos",
-            "delete",
-            "--id",
-            repo_id,
-            "--org",
-            org_url,
-            "--project",
-            project,
-            "--yes",
-        )
-
-
 def main() -> None:
-    """Parse args, then create, verify, and (if requested) clean up a test repo.
+    """Parse args, then create and verify a test repo. Delete it yourself when done.
 
     Raises:
         SystemExit: if `az` or its azure-devops extension aren't installed, or
-            --org/--project are missing or left at their placeholder value.
+            --org/--project are missing.
 
     """
     parser = argparse.ArgumentParser(description=__doc__)
@@ -433,21 +326,6 @@ def main() -> None:
         default=os.environ.get("usage_project"),
         help="Azure DevOps project",
     )
-    parser.add_argument(
-        "--cleanup",
-        action="store_true",
-        help="Delete the repo/pipelines when done (always used in CI)",
-    )
-    parser.add_argument(
-        "--ci",
-        action="store_true",
-        help=(
-            "Configure a PAT-based git push credential scoped to dev.azure.com "
-            "(always used in CI; skipped locally since az login's session doesn't "
-            "bridge into git credentials the way gh auth setup-git does for GitHub, "
-            "so a human just gets Git Credential Manager's own interactive prompt)"
-        ),
-    )
     args = parser.parse_args()
 
     check_az_installed()
@@ -460,39 +338,17 @@ def main() -> None:
             "`mise run integration-test-azdo -- --org X --project Y`."
         )
 
-    if PLACEHOLDER in (args.org, args.project):
-        raise SystemExit(
-            f"--org/--project are still set to the placeholder {PLACEHOLDER!r}. If "
-            "running via test-auto-integrationtest.yml, edit the "
-            "integration-test-azdo job's env block with your real Azure DevOps "
-            "org/project. See docs/token-permissions.md."
-        )
-
     org_url = f"https://dev.azure.com/{args.org}/"
     check_access(org_url, args.project)
 
     repo_name = f"{args.repo_prefix}-integration-test-{int(time.time())}"
     dest = tempfile.mkdtemp(prefix="integration-test-")
 
-    try:
-        create(
-            args.source,
-            args.vcs_ref,
-            repo_name,
-            dest,
-            args.org,
-            args.project,
-            ci=args.ci,
-        )
-        verify(repo_name, org_url, args.project)
-    finally:
-        if args.cleanup:
-            cleanup(repo_name, org_url, args.project)
-        else:
-            print(
-                f"Leaving {repo_name} in place ({dest}) -- pass --cleanup to delete "
-                "it automatically."
-            )
+    create(args.source, args.vcs_ref, repo_name, dest, args.org, args.project)
+    verify(repo_name, org_url, args.project)
+    print(
+        f"Leaving {repo_name} in place ({dest}) -- delete it yourself when you're done."
+    )
 
 
 if __name__ == "__main__":

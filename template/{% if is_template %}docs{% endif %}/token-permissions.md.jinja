@@ -45,48 +45,6 @@ Actions workflows (Copier update checks, docs builds), not just at setup time.
 
 NOTE: Fine-grained tokens are specifically **not** used, as they cannot open pull requests. This can be changed once [this issue](https://github.com/github/roadmap/issues/600) is implemented by GitHub.
 
-### Integration Test PAT (Classic Token)
-
-(Template projects with `integration_test_scheduled` only.)
-
-Create this token the same way as the Repo Maintenance PAT above and save it as a GitHub Actions
-secret called **INTEGRATION_TEST_PAT**. Used by `test-auto-integrationtest.yml`, which creates a
-real, throwaway repo on a schedule to verify repo setup actually works end to end, then deletes
-it -- `delete_repo` is needed specifically for that cleanup step and isn't part of any other
-token this project uses.
-
-**Repository Access**: All repositories
-
-| **Scope**   | **Reason**                                                  |
-| ----------- | ------------------------------------------------------------ |
-| repo        | Needed to create the test repo and read back its settings   |
-| workflow    | Needed to push the test repo's initial commit (includes `.github/workflows/`) |
-| delete_repo | Needed to delete the test repo during cleanup                |
-
-The account this token belongs to also needs the [Settings GitHub App](https://github.com/apps/settings)
-installed with access to **all** repositories, not just selected ones -- the workflow's
-verification step checks that the app actually synced `.github/settings.yml` (labels, branch
-ruleset) to the freshly-created test repo, and an app installed on "only select repositories"
-never automatically gains access to a repo created after the fact.
-
-### Integration Test PAT for Azure DevOps
-
-(Template projects with `integration_test_scheduled` only.)
-
-`test-auto-integrationtest.yml` also runs a second job that creates a throwaway repo with
-`developer_platform=Azure DevOps` to verify that path end to end, regardless of which platform
-this project itself uses. Create an Azure DevOps PAT covering **Code (Full)** and **Build (Read &
-execute)** for the target org/project -- the same permissions a signed-in `az login` session would
-need for repo/pipeline creation, just via a PAT since CI can't do an interactive login -- and save
-it as a GitHub Actions secret called **AZURE_DEVOPS_EXT_PAT** -- this exact name is what the `azure-devops` `az` CLI
-extension auto-detects for non-interactive auth, so it's reused as-is for both `az` calls and the
-test repo's initial `git push`. There's no way to auto-detect which Azure DevOps org/project the
-throwaway repo should be created in (unlike the AzDO-hosted pipeline below, which reads that from
-its own pipeline variables), so also edit the `integration-test-azdo` job's `env:` block directly
-in `test-auto-integrationtest.yml`, replacing the `AZDO_INTEGRATION_TEST_ORG`/`AZDO_INTEGRATION_TEST_PROJECT`
-placeholder values with your real org/project -- left as placeholders, the job fails fast with an
-explanatory error instead of a confusing `az` CLI one.
-
 ## Azure DevOps
 
 ### `az login` Permissions
@@ -98,14 +56,3 @@ enough permission in the target project to create repos and pipelines (typically
 Administrator**, or an equivalent custom permission set covering `Code: Full` and
 `Build: Read & Execute`). The initial `git push` is a separate matter -- `az login` doesn't bridge
 into git's credentials, so that step uses Git Credential Manager's own login instead.
-
-### Integration Test Pipeline Variable
-
-(Template projects with `integration_test_scheduled` only.)
-
-The `integration_test` pipeline needs a secret pipeline variable called **AZURE_DEVOPS_EXT_PAT**,
-covering **Code (Full)** and **Build (Read & execute)** for the org/project it runs in -- the same
-permissions a signed-in `az login` session would need for repo/pipeline creation, just via a PAT
-since CI can't do an interactive login. This is the Azure DevOps counterpart to the GitHub
-Integration Test PAT above: it verifies the `developer_platform=Azure DevOps` path end to end,
-regardless of which platform this project itself uses.
