@@ -24,8 +24,6 @@ jobs:
           secrets: |
             INTEGRATION_TEST_PAT=${{ secrets.INTEGRATION_TEST_PAT }}
       - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
-        with:
-          experimental: true
       - name: Create, Verify, and Clean Up Test Repo
         # Same script `mise run integration-test-gh` runs locally (there, --cleanup is
         # left off so the repo stays around for inspection) -- see
@@ -65,8 +63,6 @@ jobs:
           secrets: |
             AZURE_DEVOPS_EXT_PAT=${{ secrets.AZURE_DEVOPS_EXT_PAT }}
       - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
-        with:
-          experimental: true
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           key: azure-devops-cli-ext-${{ runner.os }}
