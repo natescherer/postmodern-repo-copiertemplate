@@ -1,5 +1,75 @@
 # Changelog
 
+## [0.8.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.20...v0.8.0) (2026-08-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* mark Azure DevOps support as deprecated  ([#1021](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1021))
+
+### Features
+
+* Add a Best-README-Template-style header to README.md ([#1072](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1072)) ([08bbd56](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/08bbd56392a03a25ee18d23e016746586dd95dff))
+* Add a monthly link-checking workflow/pipeline ([#1067](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1067)) ([80df84d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/80df84db9cf677bed202284849018b713f43c0ff))
+* Add a scheduled Renovate pipeline for Azure DevOps ([#1020](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1020)) ([188f4a6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/188f4a67b3017e3b96b44f09f9b8028845f2df8d))
+* Add an integration-test checkbox to the Knope release PR body ([#1074](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1074)) ([647bbf6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/647bbf62f1920e9cc6b4ab0a1b761dc60fe0cb8f))
+* Block lifecycle from regressing through its stages ([#1061](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1061)) ([7492ff2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7492ff2f22d1b822188eb7f545801859188d2a11))
+* Cache CI tool installs and migrate off knope-dev/action ([#1077](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1077)) ([a3bb276](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a3bb2767089ece2b21ca3c1422f14f57fddca7ec))
+* Enable CodeQL code scanning for public GitHub repos ([#1049](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1049)) ([cb917ad](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cb917adfe0f5cc82d9100ad1c6003294b32fb1ec))
+* Enable private vulnerability reporting for public GitHub repos ([#1050](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1050)) ([29e9be6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/29e9be699b14b066ad1ec3c4474a3d7249df7dde))
+* Enable secret scanning for public GitHub repos ([#1051](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1051)) ([fe019a2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/fe019a23fcb4a0d992cce3f40f4b3f5435d08427))
+* Gate AGENTS.md/CLAUDE.md behind a new agent_instructions question ([#1045](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1045)) ([7f6b40b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7f6b40b2662b60337bd856a4dac55ac73e3a8e75))
+* Improve template integration tests ([#1091](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1091)) ([d943db4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d943db49735c1ead22f524153ab01601956a88fc))
+* Improve template test performance ([#1062](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1062)) ([a849652](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a849652c2387a8f8496372bba6cd76d24790f90d))
+* Mark Azure DevOps support as deprecated  ([#1021](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1021)) ([a6102ec](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a6102ec54574e48779b1266cdf8b312f61d907b5))
+* Pin and Renovate-track copier.yml's min_copier_version ([#1052](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1052)) ([b4f8e10](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b4f8e1088a440d4040dec1a72e795cbd4623ff64))
+* Remove scheduled integration-test CI and all automatic repo deletion ([#1085](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1085)) ([f3c2440](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f3c2440a35f1c4036dd2e1d7a474e87514ad6040))
+* Replace commitizen with knope ([#1060](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1060)) ([bd12132](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/bd121320c26d47f4b0c74af87223b616d80bae8f))
+* Replace release-please with knope ([#1058](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1058)) ([9bf565f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9bf565f4eddf4a50a068b7da84d11d50aed4e933))
+* Require PR titles to be a Conventional Commit ([#1070](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1070)) ([72f417b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/72f417b7247e333633f7d4ea21848ccf3eb470ea))
+* Scaffold code coverage reporting infrastructure ([#1046](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1046)) ([a2d11d3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a2d11d30e7a4681802e53b8fee1bcfdd6ec1a396))
+* Track post-copy setup items as a GitHub Issue or printed checklist ([#1073](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1073)) ([4ccbaf9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4ccbaf9552f6722ca7167051e9a43366bec3ba1f))
+* Unified workflow naming scheme ([#1075](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1075)) ([7efa432](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7efa432032286d8ba254854ed97b77fd3596c1be))
+
+
+### Bug Fixes
+
+* Align AzDO pipeline timeouts with their GitHub counterparts ([#1036](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1036)) ([bfee3aa](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/bfee3aad54c2f67dca7812d8a95689501d29afac))
+* Cancel superseded PR-validation runs on new pushes ([#1033](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1033)) ([35f7646](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/35f7646718accef13a4a962bedeba7b9d845f3da))
+* Correct and minimize is_template gating in renovate.json.jinja ([#1064](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1064)) ([041d89c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/041d89c8e09850e3a909c2cbe2069086622fc68b))
+* Correct copier-update-check's display name and schedule ([#1038](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1038)) ([051104c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/051104c0079e1ea1160a2738b0d7934f4a44fdc3))
+* Correct knope's mise pin to its per-crate monorepo tag format ([#1059](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1059)) ([0a7dd1b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0a7dd1bb9d6e74ba9ea2a347b7515befa20ca006))
+* Correct the after-copy message's repo-setup guidance ([#1030](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1030)) ([9c4c60a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9c4c60a6bc7a756eb1ff7faee3c1333bd40f71d1))
+* Current_knope_version's _copier_operation guard never evaluates ([#1066](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1066)) ([8bec0db](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8bec0db9f195c0653aeb20af202f26636e67eabb))
+* Drop unneeded experimental flag from jdx/mise-action ([#1078](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1078)) ([e579b48](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e579b4893a010def5916b63699f9c353e38ee497))
+* Extend AzDO integration test coverage to renovate + PR policy ([#1031](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1031)) ([f81409d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f81409d25eb724338e774d149e43734e0a0d434f))
+* Group GitHub CLI's two Renovate package names ([#1019](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1019)) ([11249e0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/11249e00a598428f0c37e2027741d7976971ecc4))
+* Inline gh-workflow-keepalive to fix Windows compatibility ([#1081](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1081)) ([4ada95d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4ada95db0e164260b314fc677fa10cd79f53846f))
+* Make Renovate see .jinja-suffixed template workflow files ([#1010](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1010)) ([145e213](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/145e213cefbd1247ea3c2f633610421b8eb82b2d))
+* Make Renovate see .jinja-suffixed template workflow files ([#1012](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1012)) ([90270d9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/90270d98031013c62c24509a9150c8077409fdf9))
+* Make Renovate see conditionally-named mise.*.toml files ([#1023](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1023)) ([695a768](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/695a76895cef34362bb529b8185548cbfa1d15ab))
+* Pin a minimum required mise version ([#1044](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1044)) ([2a53757](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2a53757ae6b1a470131faaccca6fe59df723030e))
+* Pin the mise install script in Azure Pipelines to a known version ([#1026](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1026)) ([09a56fd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/09a56fdfd7fc51f9f0ab1656ab6290f0fcab6899))
+* Provision APPRISE_URL for the Azure DevOps Renovate pipeline ([#1028](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1028)) ([1633d58](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1633d58a18bcccab028a879d0469af77a7d7a91d))
+* Quote changed-file paths passed to prek in CI ([#1048](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1048)) ([df26ded](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/df26ded14306090bf92ad9ca341fd42edb66393f))
+* Remove unneeded experimental=true mise setting ([#1043](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1043)) ([2717468](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2717468e3e6c482e44235f712982c056ebe2471e))
+* Replace .gitattributes eol=lf with a prek hook ([#1053](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1053)) ([396f37b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/396f37b077afe8e944cd270967802d308714277b))
+* Replace unmaintained file-exists-action with an inline check ([#1063](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1063)) ([33b5ad3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/33b5ad32cd18e4847cdb8893c0a3a33ec1edd0ab))
+* Scope AzDO PR validation's lint to changed files only ([#1035](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1035)) ([07af9da](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/07af9da7019cf307d904ca4aa721870f62ffaff6))
+* Standardize GitHub workflows on Bash for runner portability ([#1083](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1083)) ([bef90cd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/bef90cdd68be5c9392aa45845d60fa35efe5a61c))
+* Sync template's rumdl config with root's MD007 override ([#1076](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1076)) ([be1029c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/be1029ceab1db87e293120da102404d402cc7016))
+* Wait for PR validation to pass before auto-merging release/docs PRs ([#1025](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1025)) ([2ba1d93](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2ba1d937e49c517578a9c99fa2f9d75dd49a6942))
+
+
+### Miscellaneous
+
+* **deps:** Pin dependencies ([#1014](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1014)) ([bedc94b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/bedc94b15367b1389aad77a519e6d3d41a69cbbb))
+* **deps:** Update cstuder/apprise-ga digest to bf5b598 ([#1015](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1015)) ([26a087b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/26a087b6861284e506e7b583d5f59f112dc2eb93))
+* **deps:** Update googleapis/release-please-action digest to 45996ed ([#1016](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1016)) ([f6178fc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f6178fc9017eebdfaf1b0d7bc636fb8be58d1c54))
+* **deps:** Update jdx/mise-action digest to 3c2e0cf ([#1017](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1017)) ([d5acded](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d5acded4b298f2c41220ef2f293c6719ffed86c2))
+* **deps:** Update liskin/gh-workflow-keepalive digest to f72ff1a ([#1018](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1018)) ([7e07135](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7e0713529c97cb2c1dcbc62f078a9b27bbf2b47a))
+* Remove dead docker/devcontainer config from renovate.json.jinja ([#1065](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1065)) ([cee1ac8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cee1ac82a3e7b9b604a18962226c87ebd6412015))
+
 ## [0.7.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.19...v0.7.20) (2026-08-23)
 
 
