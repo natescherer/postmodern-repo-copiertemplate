@@ -57,6 +57,118 @@ _migrations:
                 print(f"Reformatted {count} changelog heading(s) for Knope.")
     version: v0.8.1
     when: "{{ _stage == 'after' }}"
+
+  # No `version:` -- this runs on every update, not just once, so upstream changes
+  # actually show up in this project's own changelog instead of vanishing into an
+  # opaque "chore: apply parent template" commit. Computes the real bump/changelog
+  # content by running Knope's own compute-upstream-bump workflow for real (not
+  # --dry-run) inside a throwaway clone of the template, with every tag but this
+  # project's old template version hidden so Knope's own "most recent tag" baseline
+  # lands on the actual delta -- see that workflow's comment in knope.toml for why.
+  # Silently does nothing if there's no qualifying commit to bump (e.g. an
+  # internal-only template change) or if the old version isn't a real tag in the
+  # template's history.
+  - command:
+      - mise
+      - x
+      - --
+      - python
+      - -c
+      - |
+        import json
+        import re
+        import shutil
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+
+        version_from, version_to, src_path, answers_file = (
+            sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4],
+        )
+        if version_from == version_to:
+            sys.exit(0)
+
+        # The recorded source, not a hardcoded repo name -- a grandchild updating
+        # from a child template that itself descends from this one has its own
+        # upstream, not this repo.
+        upstream = src_path
+        answers_path = Path(answers_file)
+        if answers_path.is_file():
+            match = re.search(
+                r"^_src_path:\s*(\S+)", answers_path.read_text(encoding="utf-8"),
+                re.MULTILINE,
+            )
+            if match:
+                upstream = match.group(1)
+
+        def run(*args, cwd=None, check=True):
+            return subprocess.run(
+                args, cwd=cwd, check=check, capture_output=True, text=True
+            )
+
+        scratch = Path(tempfile.mkdtemp())
+        try:
+            run("git", "clone", "--quiet", src_path, str(scratch))
+            tags = run("git", "tag", cwd=scratch).stdout.split()
+            if version_from not in tags:
+                sys.exit(0)
+            run("git", "checkout", "--quiet", version_to, cwd=scratch)
+            for tag in tags:
+                if tag != version_from:
+                    run("git", "tag", "-d", tag, cwd=scratch, check=False)
+
+            result = run(
+                "mise", "x", "--", "knope", "compute-upstream-bump",
+                cwd=scratch, check=False,
+            )
+            if result.returncode != 0:
+                sys.exit(0)
+
+            new_version = json.loads(
+                (scratch / ".config" / "knope-current-version.json").read_text(
+                    encoding="utf-8"
+                )
+            )["version"]
+            changelog = (scratch / "CHANGELOG.md").read_text(
+                encoding="utf-8", newline=""
+            )
+            headings = [
+                m.start() for m in re.finditer(r"^## ", changelog, re.MULTILINE)
+            ]
+            end = headings[1] if len(headings) > 1 else len(changelog)
+            entry = changelog[headings[0]:end].strip()
+            body = entry.split("\n", 1)[1].strip() if "\n" in entry else ""
+
+            def parts(v):
+                return tuple(int(x) for x in v.lstrip("v").split("."))
+
+            old_parts, new_parts = parts(version_from), parts(new_version)
+            if new_parts[0] != old_parts[0]:
+                bump = "major"
+            elif new_parts[1] != old_parts[1]:
+                bump = "minor"
+            else:
+                bump = "patch"
+
+            changeset_dir = Path(".changeset")
+            changeset_dir.mkdir(exist_ok=True)
+            filename = f"template-update-{version_to.lstrip('v')}.md"
+            (changeset_dir / filename).write_text(
+                f"---\ndefault: {bump}\n---\n\n"
+                f"# Update from {upstream} {version_to}\n\n"
+                f"{body}\n",
+                encoding="utf-8",
+                newline="",
+            )
+            print(f"Added changeset .changeset/{filename} ({bump}).")
+        finally:
+            shutil.rmtree(scratch, ignore_errors=True)
+      - "{{ _version_from }}"
+      - "{{ _version_to }}"
+      - "{{ _copier_conf.src_path }}"
+      - "{{ _copier_conf.answers_file }}"
+    when: "{{ _stage == 'after' }}"
 ## End Migrations
 
 ## Start Pre-Question Computed Values
@@ -828,5 +940,14 @@ _message_after_update: |-
 
   knope autoupdate-knope-pr --override-version 1.0.0
   {%- endif %}
+  {%- endif %}
+  {%- set changesets = ('python -c "import glob; print(chr(10).join(glob.glob(\'.changeset/*.md\')))"' | shell()) -%}
+  {%- if changesets.strip() %}
+
+  This project has pending changeset(s) describing upstream template updates:
+  {{ changesets }}
+  Some of what changed upstream (platform-specific fixes, template-internal
+  tooling, etc.) may not be relevant here -- review and trim them before your
+  next release.
   {%- endif %}
 ## End Messages
