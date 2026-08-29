@@ -262,9 +262,21 @@
         "/mise\\..*toml(?:\\.jinja)?/"
       ],
       "matchStrings": [
-        ".*?(--with\\s(?<depName>.+?)(\\[\\S+])*==(?<currentValue>[^\"\\s]*))"
+        ".*?(--with\\s(?<depName>.+?)(\\[\\S+])*==(?<currentValue>[^\"\\s{]*))"
       ],
       "versioningTemplate": "pep440"
+    },
+    {
+      "description": "Manager for npm-backed mise tools with options -- mirrors \"Manager for pipx tools with options\" above, but for the npm: backend prefix (datasource npm instead of pypi). A separate manager because that one's datasource is hardcoded to pypi.",
+      "customType": "regex",
+      "datasourceTemplate": "npm",
+      "managerFilePatterns": [
+        "/mise\\..*toml(?:\\.jinja)?/"
+      ],
+      "matchStrings": [
+        "\\[tools\\.\"?npm:(?<depName>[A-Za-z0-9_.-]+)\"?\\]\\sversion = \"(?<currentValue>[^\\s]*)\""
+      ],
+      "versioningTemplate": "npm"
     }
   ]
 }
