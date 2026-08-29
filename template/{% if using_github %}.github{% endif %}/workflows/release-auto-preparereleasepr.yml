@@ -14,9 +14,22 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout Repository
+        # token: a PAT, not the default GITHUB_TOKEN. Since June 2026, GitHub gates
+        # pull_request-triggered runs (e.g. PR Validation on the release PR below)
+        # behind manual approval whenever the PR traces back to the default token's
+        # github-actions[bot] identity -- see
+        # https://github.blog/changelog/2026-06-11-bot-created-pull-requests-can-run-workflows-if-approved/,
+        # whose documented workaround is a trusted identity (PAT or GitHub App)
+        # instead of GITHUB_TOKEN. Confirmed live across 4 configurations: both this
+        # token and the "Prepare Release PR" step's own GITHUB_TOKEN below must be the
+        # PAT for the run to go through clean -- defaulting either one alone (checkout
+        # only, or the knope step only) still gets gated, even though the other
+        # already has the PAT. It's not about git CLI vs API-based tooling; every
+        # credential touching this branch and PR needs to be the PAT.
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          token: ${{ secrets.REPO_MAINTENANCE_PAT }}
       - name: Validate Secrets Exist
         uses: ./.github/actions/require-secrets
         with:
@@ -28,31 +41,9 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email github-actions@github.com
       - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
-      - name: Prepare Release
+      - name: Prepare Release PR
         shell: bash
-        run: mise x -- knope prepare-release-only --verbose
+        run: mise x -- knope autoupdate-knope-pr --verbose
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_MAINTENANCE_PAT }}
         continue-on-error: true
-      - name: Capture Version and Changelog
-        id: prepared
-        shell: bash
-        run: |
-          version=$(mise x -- jq -r '.version' .config/knope-current-version.json)
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          {
-            echo "changelog<<CHANGELOG_EOF"
-            awk '/^## /{n++} n==1{print} n==2{exit}' CHANGELOG.md
-            echo "CHANGELOG_EOF"
-          } >> "$GITHUB_OUTPUT"
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
-        with:
-          token: ${{ secrets.REPO_MAINTENANCE_PAT }}
-          commit-message: "chore: prepare release ${{ steps.prepared.outputs.version }}"
-          branch: knope/release
-          title: "chore: prepare release ${{ steps.prepared.outputs.version }}"
-          body: |
-            This PR was created by Knope. Merging it will create a new release (v${{ steps.prepared.outputs.version }}).
-
-            ${{ steps.prepared.outputs.changelog }}
-
-            - [ ] Integration tests have been run and passed (or N/A)
