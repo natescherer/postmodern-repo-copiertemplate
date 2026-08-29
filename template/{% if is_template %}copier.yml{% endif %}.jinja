@@ -37,6 +37,41 @@ parent_template_url:
 ## End Parent Template Values - DO NOT EDIT
 {%- raw %}
 
+## Start Migrations
+_migrations:
+  # release-please wrote CHANGELOG.md headings as `## [X.Y.Z](url) (date)`, which
+  # Knope's changelog writer can't parse -- it silently appends new releases at the
+  # end of the file instead of the top once it can't find a heading it recognizes. A
+  # project that adopted this template before the Knope switch has that same stale
+  # formatting, so it needs the same one-time reformat this repo's own CHANGELOG.md
+  # got when this fix landed. Idempotent: a heading already in Knope's format doesn't
+  # match the pattern below, so re-running this is a no-op.
+  - command:
+      - mise
+      - x
+      - --
+      - python
+      - -c
+      - |
+        import re
+        from pathlib import Path
+
+        path = Path("CHANGELOG.md")
+        if path.is_file():
+            content = path.read_text(encoding="utf-8", newline="")
+            new_content, count = re.subn(
+                r"^## \[(\d+\.\d+\.\d+)\]\([^)]+\) (\(\d{4}-\d{2}-\d{2}\))$",
+                r"## \1 \2",
+                content,
+                flags=re.MULTILINE,
+            )
+            if count:
+                path.write_text(new_content, encoding="utf-8", newline="")
+                print(f"Reformatted {count} changelog heading(s) for Knope.")
+    version: v0.8.1
+    when: "{{ _stage == 'after' }}"
+## End Migrations
+
 ## Start Pre-Question Computed Values
 lifecycle_previous:
   # Records the value of lifecycle before it is asked, so that it can be used as
