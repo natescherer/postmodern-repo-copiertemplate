@@ -692,14 +692,14 @@ _tasks:
         true
       {%- endif %}
 
-  # Creates Azure Pipeline for maint-auto-linkcheck
+  # Creates Azure Pipeline for maint-auto-repohealthcheck
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Maint (Auto) - Link Check"
+      --name "[{{ repo_name }}] Maint (Auto) - Repo Health Check"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/maint-auto-linkcheck.yml
+      --yml-path .azurepipelines/maint-auto-repohealthcheck.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"

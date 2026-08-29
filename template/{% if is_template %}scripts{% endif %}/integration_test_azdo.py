@@ -747,16 +747,18 @@ def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
     )
 
 
-def check_link_check(
+def check_repo_health_check(
     org_url: str, project: str, repo_name: str, failures: list[str]
 ) -> None:
-    """Dispatch Maint (Auto) - Link Check and confirm it completes clean."""
-    print("Checking Maint (Auto) - Link Check...")
+    """Dispatch Maint (Auto) - Repo Health Check and confirm it completes clean."""
+    print("Checking Maint (Auto) - Repo Health Check...")
     run_id = dispatch_pipeline(
-        org_url, project, f"[{repo_name}] Maint (Auto) - Link Check"
+        org_url, project, f"[{repo_name}] Maint (Auto) - Repo Health Check"
     )
     result = wait_for_pipeline_run(org_url, project, run_id)
-    check(failures, "Link Check pipeline succeeds", result == "succeeded", result)
+    check(
+        failures, "Repo Health Check pipeline succeeds", result == "succeeded", result
+    )
 
 
 def check_renovate(
@@ -1521,7 +1523,7 @@ def main() -> None:
     provision_test_secrets(org_url, args.project, repo_a_name)
     check_copier_update_check(org_url, args.project, repo_a_name, failures_a)
     check_noop_update(dest_a, "HEAD", failures_a)
-    check_link_check(org_url, args.project, repo_a_name, failures_a)
+    check_repo_health_check(org_url, args.project, repo_a_name, failures_a)
     check_renovate(org_url, args.project, repo_a_name, failures_a)
     check_bad_title_blocks_merge(org_url, args.project, repo_a_name, dest_a, failures_a)
     check_failing_tests_block_merge(

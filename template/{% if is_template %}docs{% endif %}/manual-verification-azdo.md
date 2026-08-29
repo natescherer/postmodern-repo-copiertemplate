@@ -26,7 +26,7 @@ Fresh copy at `HEAD`, `code_coverage` on.
 
 - [ ] Confirm it correctly reports **no update available** -- this repo is already at `HEAD`.
 
-### Maint (Auto) - Link Check
+### Maint (Auto) - Repo Health Check
 
 *Dispatching it and confirming it completes clean is automated.*
 
