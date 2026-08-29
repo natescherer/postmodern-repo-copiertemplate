@@ -48,10 +48,12 @@ PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 # `az pipelines create --name "[<repo_name>] <name>"` _tasks entries.
 PIPELINE_DISPLAY_NAMES = (
     "Maint (Auto) - Copier Update Check",
+    "Maint (Auto) - Link Check",
+    "Maint (Auto) - Renovate",
     "Docs (Auto) - Zensical Build & Publish",
     "Test (Auto) - PR Validation",
     "Release (Auto) - Prepare & Publish Release",
-    "Maint (Auto) - Renovate",
+    "Release (Manual) - Create Prerelease",
 )
 
 SCRATCH_FILE_CONTENT = "# Integration Test Scratch File\n\nSafe to ignore or delete.\n"
