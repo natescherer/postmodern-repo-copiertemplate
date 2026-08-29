@@ -26,11 +26,12 @@ Fresh copy at `HEAD`, `zensical_target: GitHub Pages`, `code_coverage` on.
 
 Nothing left here for Repo A.
 
-### Maint (Auto): Link Check
+### Maint (Auto): Repo Health Check
 
 *Dispatching it and confirming it completes clean is automated.*
 
 - [ ] Temporarily introduce a broken link (e.g. a typo'd URL in a doc) and confirm the next run catches it, then revert.
+- [ ] Temporarily set `REPO_MAINTENANCE_PAT` to a real token expiring within 30 days (a throwaway PAT created just for this test, not the real one) and confirm the run sends a notification to `APPRISE_URL`, then restore the real PAT.
 
 ### Maint (Auto): Renovate
 
