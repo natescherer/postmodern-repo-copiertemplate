@@ -7,6 +7,13 @@
   under 72 characters). A short body paragraph explaining non-obvious
   rationale is fine when it adds real context; don't pad a trivial change with
   one just to have one.
+- Never push a git tag to this repo without explicit user approval for that
+  specific tag, and never push one shaped like a version number (e.g.
+  `v99.0.0`) even as a throwaway testing workaround -- this repo's tags are
+  visible to any downstream project that copies from it, and a real one could
+  resolve against a stray tag. A non-version-shaped tag for local testing is
+  fine to create without asking, but delete it immediately once the test that
+  needed it is done.
 
 ## Render-validation test suite
 

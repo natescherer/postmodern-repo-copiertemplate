@@ -893,6 +893,17 @@ def open_pr_wait_and_merge(
         "completed",
         "--squash",
         "true",
+        # Without this, Azure DevOps writes a generic "Merge pull request N from
+        # <branch> into main" squash commit message instead of the PR title -- unlike
+        # GitHub, which defaults a squash merge's commit message to the PR title.
+        # knope's PrepareRelease step parses Conventional Commits from real git commit
+        # messages, so a squashed test commit that loses its "fix:"/"feat:" prefix this
+        # way silently stops counting as a qualifying commit once a tag already exists
+        # (confirmed live: after the first release, this caused knope's own
+        # create-prerelease-via-knope workflow to fail with "No packages are ready to
+        # release" even though a real fix commit had just been merged).
+        "--merge-commit-message",
+        commit_message,
         "--delete-source-branch",
         "true",
         "--org",

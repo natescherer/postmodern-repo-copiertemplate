@@ -39,11 +39,6 @@ ANSWER_MATRIX = [
         "project_visibility": "Private",
         "license": "None",
         "zensical_target": "docs-site Directory in Repo",
-        # "docs-site Directory in Repo" was "docs_site Directory in Repo" before this
-        # repo's own hyphenation rename -- the last tag predates that, so
-        # test_update_from_last_tag's initial copy-at-old-tag needs the old value.
-        # Remove once the last tag postdates the rename.
-        "_old_tag_overrides": {"zensical_target": "docs_site Directory in Repo"},
         "lifecycle": "Stable",
     },
     {
@@ -68,7 +63,6 @@ ANSWER_MATRIX = [
         "project_visibility": "Private",
         "license": "None",
         "zensical_target": "docs-site Directory in Repo",
-        "_old_tag_overrides": {"zensical_target": "docs_site Directory in Repo"},
         "lifecycle": "Beta",
         "code_coverage": True,
     },
@@ -82,7 +76,6 @@ ANSWER_MATRIX = [
         "project_visibility": "Private",
         "license": "None",
         "zensical_target": "docs-site Directory in Repo",
-        "_old_tag_overrides": {"zensical_target": "docs_site Directory in Repo"},
         "lifecycle": "Alpha",
     },
 ]
