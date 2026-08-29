@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.8.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.20...v0.8.0) (2026-08-28)
+## 0.8.0 (2026-08-28)
 
 
 ### ⚠ BREAKING CHANGES
@@ -70,7 +70,7 @@
 * **deps:** Update liskin/gh-workflow-keepalive digest to f72ff1a ([#1018](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1018)) ([7e07135](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7e0713529c97cb2c1dcbc62f078a9b27bbf2b47a))
 * Remove dead docker/devcontainer config from renovate.json.jinja ([#1065](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1065)) ([cee1ac8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cee1ac82a3e7b9b604a18962226c87ebd6412015))
 
-## [0.7.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.19...v0.7.20) (2026-08-23)
+## 0.7.20 (2026-08-23)
 
 
 ### Features
@@ -82,7 +82,7 @@
 
 * Resolve az via shutil.which() in the AzDO PR-policy task ([#1008](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1008)) ([6cc453b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6cc453ba6ab218f617c7539d27fd522706d8d864))
 
-## [0.7.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.18...v0.7.19) (2026-08-23)
+## 0.7.19 (2026-08-23)
 
 
 ### Features
@@ -95,21 +95,21 @@
 
 * Fail fast when az/gh CLI or the azure-devops extension are missing ([#1000](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1000)) ([53ee91f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/53ee91f908d0af3068b82f194787f342ab63cd6b))
 
-## [0.7.18](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.17...v0.7.18) (2026-08-23)
+## 0.7.18 (2026-08-23)
 
 
 ### Bug Fixes
 
 * Fix azdo integration test ([#995](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/995)) ([a5fdda8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a5fdda805e5f4bdbd1221ac43df8dbf561bd8474))
 
-## [0.7.17](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.16...v0.7.17) (2026-08-23)
+## 0.7.17 (2026-08-23)
 
 
 ### Bug Fixes
 
 * Fix integration test structure ([#992](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/992)) ([8a961cd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8a961cd989bf3f1ad4427aad4ff22a028deab51d))
 
-## [0.7.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.15...v0.7.16) (2026-08-23)
+## 0.7.16 (2026-08-23)
 
 
 ### Features
@@ -121,7 +121,7 @@
 
 * Fix integration test interactivity ([#990](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/990)) ([b826361](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b826361a6f69ae1a88e8811c28bf9d3a9c046fbd))
 
-## [0.7.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.14...v0.7.15) (2026-08-22)
+## 0.7.15 (2026-08-22)
 
 
 ### Features
@@ -133,7 +133,7 @@
 
 * Restore GitHub default labels deleted by Settings App sync ([#977](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/977)) ([eebf2e4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/eebf2e482474e441c85748494eeb7e113e2fb2c2))
 
-## [0.7.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.13...v0.7.14) (2026-08-22)
+## 0.7.14 (2026-08-22)
 
 
 ### Features
@@ -155,7 +155,7 @@
 
 * **deps:** Update jiangxin/file-exists-action digest to 81a413f ([#958](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/958)) ([9eb754d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9eb754d7d2d8d9b1703ac33dd0b6ba8ac0e9ae74))
 
-## [0.7.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.12...v0.7.13) (2026-08-07)
+## 0.7.13 (2026-08-07)
 
 
 ### Features
@@ -167,7 +167,7 @@
 
 * Fix dead link ([dab8d1e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/dab8d1ede95ae33fc710881c58b61a4d5f978aa3))
 
-## [0.7.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.11...v0.7.12) (2026-08-07)
+## 0.7.12 (2026-08-07)
 
 
 ### Features
@@ -187,14 +187,14 @@
 * **deps:** Update rumdl to v0.2.52 ([#957](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/957)) ([b922502](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b9225028c16ae4f254ed360fa5220018557e1b43))
 * **deps:** Update uv to v0.12.2 ([#955](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/955)) ([8124c01](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8124c010949b74c40cac21b7a5f853ce733193ad))
 
-## [0.7.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.10...v0.7.11) (2026-08-07)
+## 0.7.11 (2026-08-07)
 
 
 ### Bug Fixes
 
 * Sync repo root with template v0.7.10 ([1f46166](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1f461662fa54e3b50c36274b85ea9b8f259f8eb8))
 
-## [0.7.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.9...v0.7.10) (2026-08-06)
+## 0.7.10 (2026-08-06)
 
 
 ### Features
@@ -253,35 +253,35 @@
 * Scope workflow permissions to job level least-privilege ([863fd7d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/863fd7d7a2e9246367076a411a3664ecd6d258d6))
 * Urlencode azdo_project_encoded instead of manual replace ([a7131be](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a7131be8b31d987ade8508323900d526683dbd21))
 
-## [0.7.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.8...v0.7.9) (2026-08-05)
+## 0.7.9 (2026-08-05)
 
 
 ### Features
 
 * Apply 0.7.8 and correct drift from inner template ([#944](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/944)) ([9dc6d04](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9dc6d04ca64326f16ac05127086a5a80d8c68a1a))
 
-## [0.7.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.7...v0.7.8) (2026-08-05)
+## 0.7.8 (2026-08-05)
 
 
 ### Features
 
 * Apply parent template 0.7.7 and refactor between levels ([#942](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/942)) ([3f22c53](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3f22c53a49e599b65e76837c5c4ade0baf601673))
 
-## [0.7.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.6...v0.7.7) (2026-08-05)
+## 0.7.7 (2026-08-05)
 
 
 ### Bug Fixes
 
 * Fix github_repo_owner calculation ([#940](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/940)) ([21afc2c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/21afc2c2ac9d50953f92d7fa972b9d7494298b46))
 
-## [0.7.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.5...v0.7.6) (2026-08-05)
+## 0.7.6 (2026-08-05)
 
 
 ### Bug Fixes
 
 * Restore missing endraw ([#938](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/938)) ([b061476](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b06147644c9385cd3880579b982f594d0996a77f))
 
-## [0.7.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.4...v0.7.5) (2026-08-05)
+## 0.7.5 (2026-08-05)
 
 
 ### Features
@@ -317,14 +317,14 @@
 * **deps:** Update uv to v0.12.1 ([#922](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/922)) ([57f8f35](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/57f8f350a2bd025a0d9a71d646ef8503aa7186c3))
 * **deps:** Update zensical to v0.0.53 ([#923](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/923)) ([7bd606d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7bd606d70c6ba69c98bbeeba5cd8cd19825286fc))
 
-## [0.7.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.3...v0.7.4) (2026-04-09)
+## 0.7.4 (2026-04-09)
 
 
 ### Bug Fixes
 
 * Ensure there are defaults for all questions with choices ([020c253](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/020c2536330226007e0a581fb465360726624d0a))
 
-## [0.7.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.2...v0.7.3) (2026-04-09)
+## 0.7.3 (2026-04-09)
 
 
 ### Bug Fixes
@@ -347,14 +347,14 @@
 * **deps:** Update yamlfmt to v0.21.0 ([#906](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/906)) ([9347d29](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9347d298bc9e69031811e84ccff8c950a4a79b31))
 * **deps:** Update zensical to v0.0.32 ([#903](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/903)) ([143b490](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/143b490c4ca6d79ac9a09785a4e4d566b03a6f0f))
 
-## [0.7.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.1...v0.7.2) (2026-04-09)
+## 0.7.2 (2026-04-09)
 
 
 ### Bug Fixes
 
 * Fix handling of github_org question ([d645e28](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d645e2852c999ec1d213914da33ad67075b35d15))
 
-## [0.7.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.7.0...v0.7.1) (2026-04-09)
+## 0.7.1 (2026-04-09)
 
 
 ### Features
@@ -371,7 +371,7 @@
 * Fix zensical_repo computed value for template ([0b2fdb5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0b2fdb59c02d7af87e66141bded31b60c6eb1759))
 * Remove ambiguity in renovate parsing ([4c6a5ef](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4c6a5ef1f454b7c18c040e8c21fa0027f868644c))
 
-## [0.7.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.6.0...v0.7.0) (2026-04-09)
+## 0.7.0 (2026-04-09)
 
 
 ### ⚠ BREAKING CHANGES
@@ -388,7 +388,7 @@
 * Move typos from prek to mise ([4352f62](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4352f62be604ff1bf2cf00b031d9d3146b29981b))
 * Replace mkdocs with zensical ([#893](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/893)) ([c3e8b07](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c3e8b07d1c8ea219ce21e58b0472385891f17272))
 
-## [0.6.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.25...v0.6.0) (2026-04-07)
+## 0.6.0 (2026-04-07)
 
 
 ### ⚠ BREAKING CHANGES
@@ -455,42 +455,42 @@
 * **deps:** Update uv to v0.11.3 ([#890](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/890)) ([1dc8454](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1dc84543728f3d820a519beb24a30e386fdab5c3))
 * **deps:** Update yamlfmt to v0.21.0 ([#885](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/885)) ([d297d0e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d297d0ebbf10e72064a9eefd338617243b1d5da1))
 
-## [0.5.25](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.24...v0.5.25) (2025-09-10)
+## 0.5.25 (2025-09-10)
 
 
 ### Features
 
 * Switch to squash merges for azdo pipelines ([#817](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/817)) ([9acddad](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9acddadb70eaab304576ff2727c851acc1709ae2))
 
-## [0.5.24](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.23...v0.5.24) (2025-09-10)
+## 0.5.24 (2025-09-10)
 
 
 ### Bug Fixes
 
 * Move .versionrc.json back to root ([#814](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/814)) ([ad33980](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ad33980efd7e96c150fd6541af82423b1267b88d))
 
-## [0.5.23](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.22...v0.5.23) (2025-09-10)
+## 0.5.23 (2025-09-10)
 
 
 ### Bug Fixes
 
 * Fix azdo versioning ([#811](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/811)) ([80ab965](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/80ab965160e16b8e5348114edcf15ce69479403f))
 
-## [0.5.22](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.21...v0.5.22) (2025-09-08)
+## 0.5.22 (2025-09-08)
 
 
 ### Bug Fixes
 
 * Fix versionrc formatting ([#807](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/807)) ([b15c6b9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b15c6b9bc8b397c37b26c251ad2a19668c4c0b12))
 
-## [0.5.21](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.20...v0.5.21) (2025-09-08)
+## 0.5.21 (2025-09-08)
 
 
 ### Features
 
 * Use src directory for standard repos ([#804](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/804)) ([48ac808](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/48ac808535fe199dda3735deb330e60088e131b4))
 
-## [0.5.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.19...v0.5.20) (2025-09-08)
+## 0.5.20 (2025-09-08)
 
 
 ### Bug Fixes
@@ -498,7 +498,7 @@
 * Fix changelog path ([#799](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/799)) ([7f3d5d8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7f3d5d8ae23aebde5e985d2d06496d403acc3c6d))
 * Fix changelog path to be absolute ([#800](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/800)) ([1e37fda](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1e37fda3cf673c9d377ec5b030592fcb5332f6ac))
 
-## [0.5.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.18...v0.5.19) (2025-09-08)
+## 0.5.19 (2025-09-08)
 
 
 ### Bug Fixes
@@ -506,7 +506,7 @@
 * Adjust release please config to only target template dir ([#796](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/796)) ([df1ca99](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/df1ca994f88e7ac0529f719876678063ae9f503a))
 * Fix release please manifest ([#797](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/797)) ([897dc5f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/897dc5f790aae2654ba0927bb4a49287ba57dde2))
 
-## [0.5.18](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.17...v0.5.18) (2025-09-08)
+## 0.5.18 (2025-09-08)
 
 
 ### Features
@@ -538,28 +538,28 @@
 * **deps:** Update jdx/mise-action action to v3 ([#788](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/788)) ([f41fef8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f41fef8bbbb1df1f8865bbb60cc7fe08e9e5f0af))
 * **deps:** Update node.js to v22.19.0 ([#786](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/786)) ([119313c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/119313cdaf570cdbfd51adafdccd8ed86e9a18bc))
 
-## [0.5.17](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.16...v0.5.17) (2025-09-03)
+## 0.5.17 (2025-09-03)
 
 
 ### Bug Fixes
 
 * Fix computed question azdo_project_encoded ([#771](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/771)) ([3124582](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/312458277d3e9024f51c9a9354293d82f81381cf))
 
-## [0.5.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.15...v0.5.16) (2025-09-03)
+## 0.5.16 (2025-09-03)
 
 
 ### Bug Fixes
 
 * Fix support for azure devops projects with spaces ([#769](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/769)) ([3bb001d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3bb001d578831607396a25c59ff022c8780864e4))
 
-## [0.5.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.14...v0.5.15) (2025-08-27)
+## 0.5.15 (2025-08-27)
 
 
 ### Bug Fixes
 
 * Adjust copier dependencies ([#764](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/764)) ([27e5e66](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/27e5e6605ba816b1b4032d8e2713c105763e4e56))
 
-## [0.5.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.13...v0.5.14) (2025-08-27)
+## 0.5.14 (2025-08-27)
 
 
 ### Bug Fixes
@@ -573,14 +573,14 @@
 
 * Apply template v0.5.13 ([#760](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/760)) ([26cec3e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/26cec3e5d768cc481d2546a95f7bc31c7dcea86d))
 
-## [0.5.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.12...v0.5.13) (2025-08-26)
+## 0.5.13 (2025-08-26)
 
 
 ### Bug Fixes
 
 * Adjust question structure to unbreak updating ([#758](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/758)) ([bf4ad0a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/bf4ad0a488058aebc14a493a8d4b749755e99fc7))
 
-## [0.5.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.11...v0.5.12) (2025-08-23)
+## 0.5.12 (2025-08-23)
 
 
 ### Features
@@ -588,63 +588,63 @@
 * Apply template v0.5.11 ([#755](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/755)) ([eeab295](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/eeab295fb9541616eb7af64c43157b38d1461bd9))
 * Switch to using mise for ghpages mkdocs workflow ([#757](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/757)) ([f9c0801](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f9c0801e180c10a11d9aa0abe0bbd408595b21a8))
 
-## [0.5.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.10...v0.5.11) (2025-08-23)
+## 0.5.11 (2025-08-23)
 
 
 ### Bug Fixes
 
 * Adjust conditions for setup-mkdocs-ghpages ([#752](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/752)) ([848ff3e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/848ff3e55f33784e6dcd66f55aed0be222f2b5ea))
 
-## [0.5.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.9...v0.5.10) (2025-08-23)
+## 0.5.10 (2025-08-23)
 
 
 ### Bug Fixes
 
 * Fix azdo_token question ([#750](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/750)) ([1a2f424](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1a2f42452d70a62ebff4cffdbb4a7e687c3ca4b9))
 
-## [0.5.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.8...v0.5.9) (2025-08-23)
+## 0.5.9 (2025-08-23)
 
 
 ### Bug Fixes
 
 * Fix bad token criteria ([#748](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/748)) ([3bf92df](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3bf92df1e930edaf8905f3d008abe77e8a69bf8f))
 
-## [0.5.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.7...v0.5.8) (2025-08-23)
+## 0.5.8 (2025-08-23)
 
 
 ### Bug Fixes
 
 * Fix token criteria ([#746](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/746)) ([4ecba7d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4ecba7da256ce6cd26643446d5ec8c902c3fbc89))
 
-## [0.5.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.6...v0.5.7) (2025-08-23)
+## 0.5.7 (2025-08-23)
 
 
 ### Bug Fixes
 
 * Restore the None option for repo_setup_actions ([#744](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/744)) ([042edef](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/042edef78c1170179d510b5bc5da7d16493c7833))
 
-## [0.5.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.5...v0.5.6) (2025-08-22)
+## 0.5.6 (2025-08-22)
 
 
 ### Bug Fixes
 
 * Fix azdo update check ([#742](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/742)) ([535ff77](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/535ff7749079ac222b4f5a2c64af4f6794d6ac24))
 
-## [0.5.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.4...v0.5.5) (2025-08-22)
+## 0.5.5 (2025-08-22)
 
 
 ### Features
 
 * Refactor license question ([#740](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/740)) ([5895839](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5895839b424f9c8012ae96d7eb0a66fbf5ca5d0a))
 
-## [0.5.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.3...v0.5.4) (2025-08-22)
+## 0.5.4 (2025-08-22)
 
 
 ### Features
 
 * Refactor github_repo_description to project_description ([#738](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/738)) ([ff8a9f3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ff8a9f3195d0bf88de57fdd28786cd07bfcc59b7))
 
-## [0.5.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.2...v0.5.3) (2025-08-22)
+## 0.5.3 (2025-08-22)
 
 
 ### Features
@@ -653,14 +653,14 @@
 * Implement copyright_year computed value ([#732](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/732)) ([c08a7ab](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c08a7ab7d824be48e90167fb5071871c44a909a2))
 * Remove context.py in favor of _copier_operation ([#734](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/734)) ([4d02a22](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4d02a22aed21b5093de56b45b93567358782ed1b))
 
-## [0.5.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.1...v0.5.2) (2025-08-15)
+## 0.5.2 (2025-08-15)
 
 
 ### Bug Fixes
 
 * Properly make vcs_ref optional for copy_template_files ([#730](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/730)) ([6dcfcf4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6dcfcf4c57585a7d61a5f621ae5b67240f4484c5))
 
-## [0.5.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.5.0...v0.5.1) (2025-08-15)
+## 0.5.1 (2025-08-15)
 
 
 ### Features
@@ -675,7 +675,7 @@
 * Fix template-update-check azdo pipeline ([#728](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/728)) ([dbc7d9a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/dbc7d9ad706d4fdf462de66baf00af68aa81fab8))
 * Rename to copier-update-check ([#729](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/729)) ([4a066ef](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4a066ef9ef1feb7ced6f33f27ab1c5a82289b872))
 
-## [0.5.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.4...v0.5.0) (2025-08-14)
+## 0.5.0 (2025-08-14)
 
 
 ### ⚠ BREAKING CHANGES
@@ -768,28 +768,28 @@
 * **deps:** Update peter-evans/create-pull-request action to v7 ([#701](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/701)) ([f87eb7b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f87eb7bc20956cf481ae24c70e9df8513cb082e2))
 * Remove mise.init.toml ([#721](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/721)) ([55676e5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/55676e57fa146001ebbfc540e768f50d0682d92c))
 
-## [0.4.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.3...v0.4.4) (2025-06-24)
+## 0.4.4 (2025-06-24)
 
 
 ### Bug Fixes
 
 * Wrap custom manager code in raw tags ([#640](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/640)) ([5f6cd4b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5f6cd4b89ce36e573b829f600351847bdd3824e8))
 
-## [0.4.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.2...v0.4.3) (2025-06-24)
+## 0.4.3 (2025-06-24)
 
 
 ### Bug Fixes
 
 * Backport config changes into template ([#638](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/638)) ([fc64a6b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/fc64a6b45781de02c628ad3a389c6132ed263078))
 
-## [0.4.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.1...v0.4.2) (2025-06-24)
+## 0.4.2 (2025-06-24)
 
 
 ### Bug Fixes
 
 * Wrap double brackets in raw tag ([#636](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/636)) ([f563902](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f56390247b5fc48f1410a258121df8323029dc19))
 
-## [0.4.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.4.0...v0.4.1) (2025-06-20)
+## 0.4.1 (2025-06-20)
 
 
 ### Features
@@ -808,7 +808,7 @@
 * Fix jinja syntax in mise.toml.jinja ([#614](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/614)) ([6d0fcb7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6d0fcb71601afec4d610f647a5a5edef7971bcdb))
 * Fix renovate pipx custom manager ([#630](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/630)) ([2808c39](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2808c39aad2b967f40d4949f0d826d4a6d82095f))
 
-## [0.4.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.47...v0.4.0) (2025-06-18)
+## 0.4.0 (2025-06-18)
 
 
 ### ⚠ BREAKING CHANGES
@@ -857,14 +857,14 @@
 * **deps:** Update dependency yamlfmt to v0.17.0 ([#591](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/591)) ([d0b23d9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d0b23d97cbce184c9f486c3f429ad238db8b0c3c))
 * **deps:** Update node.js to v22.16.0 ([#601](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/601)) ([f88ead3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f88ead31ec702fa290a57c25c5a3f44e2a8b6049))
 
-## [0.3.47](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.46...v0.3.47) (2025-06-02)
+## 0.3.47 (2025-06-02)
 
 
 ### Bug Fixes
 
 * Set fetch-depth to 0 to support hk ([#561](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/561)) ([1dd03c2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1dd03c294a8d061d627d6e4a64a27262c78a75ce))
 
-## [0.3.46](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.45...v0.3.46) (2025-06-02)
+## 0.3.46 (2025-06-02)
 
 
 ### Bug Fixes
@@ -874,7 +874,7 @@
 * Fix azdo copier updating pipeline ([12471b0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/12471b05ca5aa5cc8f82fc67c9246fcad4a875d6))
 * Fix hk to properly run on PRs ([#559](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/559)) ([6c581a6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6c581a659ae56f2c747d2906147cf3f2cee24705))
 
-## [0.3.45](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.44...v0.3.45) (2025-06-02)
+## 0.3.45 (2025-06-02)
 
 
 ### Features
@@ -882,7 +882,7 @@
 * Improve logging for mise postinstall hooks ([fe2eed3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/fe2eed344153fab4319b41ab5b6be465852662d2))
 * Improve logging for mise postinstall hooks ([9a8f4ac](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9a8f4ac6f7e55d64c5f99e1b99c19aa5023fcf8c))
 
-## [0.3.44](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.43...v0.3.44) (2025-06-02)
+## 0.3.44 (2025-06-02)
 
 
 ### Bug Fixes
@@ -892,7 +892,7 @@
 * Clean up git credentials settings ([5b5220d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5b5220d7899120ca4820ce8d0d20d0d7d09425ee))
 * Clean up git credentials settings ([5d4cab0](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5d4cab02405b940ea4ff6bd7218e9f427e265996))
 
-## [0.3.43](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.42...v0.3.43) (2025-06-02)
+## 0.3.43 (2025-06-02)
 
 
 ### Features
@@ -902,7 +902,7 @@
 * Replace phase_extension.py with _copier_operation ([73519d8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/73519d8c0d58a9d0548b5ced708d9c642189b316))
 * Replace phase_extension.py with _copier_operation ([f26646d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f26646d4654fd46e0ed6874de7542cc5e39927c6))
 
-## [0.3.42](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.41...v0.3.42) (2025-06-02)
+## 0.3.42 (2025-06-02)
 
 
 ### Bug Fixes
@@ -910,7 +910,7 @@
 * Fix template structure issues ([beae721](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/beae72174637cd8207f81927bdbe350e73f599c5))
 * Fix template structure issues ([609a61b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/609a61b28e9dbbdd91e0b092e8768cb85a2c31e9))
 
-## [0.3.41](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.40...v0.3.41) (2025-06-02)
+## 0.3.41 (2025-06-02)
 
 
 ### Bug Fixes
@@ -920,7 +920,7 @@
 * Switch copier workflows to pure bash ([3a81c49](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3a81c498c95563d2fa34c4188d234910713ac52a))
 * Switch copier workflows to pure bash ([81b4b15](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/81b4b1502d271d4bdfc045c10b142aeef455025d))
 
-## [0.3.40](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.39...v0.3.40) (2025-06-02)
+## 0.3.40 (2025-06-02)
 
 
 ### Features
@@ -936,7 +936,7 @@
 * Fix errors in template ([90479ad](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/90479ad0c57d1432d5da25a673f5cc855f1c50f6))
 * Fix errors in template ([335d910](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/335d910e1fd26a1dadca9169bfbc7a4b1c298f97))
 
-## [0.3.39](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.38...v0.3.39) (2025-06-02)
+## 0.3.39 (2025-06-02)
 
 
 ### Bug Fixes
@@ -944,7 +944,7 @@
 * Fix jinja errors in template ([52060a6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/52060a646a3ad303b8e3cfcb7995a862a4bfbf7b))
 * Fix jinja errors in template ([5916961](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5916961b04c0f84897f4a755d3124d901c2a71e3))
 
-## [0.3.38](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.37...v0.3.38) (2025-06-02)
+## 0.3.38 (2025-06-02)
 
 
 ### Features
@@ -1001,7 +1001,7 @@
 * **deps:** Update yamlfix in template ([5db60ea](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5db60ea1982ace75e0704414e31184fd743e17e1))
 * Remove cruft ([ad2f03d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ad2f03dde900b1414a55d455e717a9f64595dfd2))
 
-## [0.3.37](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.36...v0.3.37) (2025-01-09)
+## 0.3.37 (2025-01-09)
 
 
 ### Features
@@ -1010,7 +1010,7 @@
 * Overhaul trunk linters ([4d4f485](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4d4f4852d55c100a9f14e013db4e20304c002507))
 * Update cspell words ([6129917](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/61299171d516c1214f618969455434ee9c2a7c8e))
 
-## [0.3.36](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.35...v0.3.36) (2025-01-09)
+## 0.3.36 (2025-01-09)
 
 
 ### Features
@@ -1022,14 +1022,14 @@
 
 * Fix azdo_org question ([7887895](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7887895d9dd069d3ba5d96c0db2b3f71596849b7))
 
-## [0.3.35](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.34...v0.3.35) (2025-01-09)
+## 0.3.35 (2025-01-09)
 
 
 ### Features
 
 * Add repo_actions validators ([1736b3f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1736b3f7f97ec13617c8eadc17213aca9338a661))
 
-## [0.3.34](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.33...v0.3.34) (2025-01-09)
+## 0.3.34 (2025-01-09)
 
 
 ### Features
@@ -1041,14 +1041,14 @@
 
 * Fix credential file creation ([0bbd0f3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0bbd0f33aeaebe529a4e221311af5a8780f55752))
 
-## [0.3.33](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.32...v0.3.33) (2025-01-09)
+## 0.3.33 (2025-01-09)
 
 
 ### Features
 
 * Improve question help ([4fc9be2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4fc9be2ad612a4e1cf6a11be780f47adfb0555a2))
 
-## [0.3.32](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.31...v0.3.32) (2025-01-09)
+## 0.3.32 (2025-01-09)
 
 
 ### Bug Fixes
@@ -1056,56 +1056,56 @@
 * Fix other yaml validity issue ([3dd58f8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3dd58f8a3371756aee49e8eede3f6a25f3e96e99))
 * Fix yaml validity issue ([d6f8ed4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d6f8ed4803f88bab35843c22205d8cf913858ea2))
 
-## [0.3.31](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.30...v0.3.31) (2025-01-09)
+## 0.3.31 (2025-01-09)
 
 
 ### Features
 
 * Improve structure of questions ([a40f7ab](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a40f7abd1db3f860708daafd52a2b29eaf74117b))
 
-## [0.3.30](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.29...v0.3.30) (2025-01-09)
+## 0.3.30 (2025-01-09)
 
 
 ### Bug Fixes
 
 * Fix path extension copies ([db5ba3c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/db5ba3c2e992623b45d1d177e7ec6795c8fbee5a))
 
-## [0.3.29](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.28...v0.3.29) (2025-01-09)
+## 0.3.29 (2025-01-09)
 
 
 ### Bug Fixes
 
 * Refactor cwd_name function ([008cb79](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/008cb79e34cc2428b404f7419cf75ebc52be0b72))
 
-## [0.3.28](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.27...v0.3.28) (2025-01-09)
+## 0.3.28 (2025-01-09)
 
 
 ### Bug Fixes
 
 * Fix bad extensions definition ([7f06478](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7f06478bdf62b056ece2ee856f056060312b90cc))
 
-## [0.3.27](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.26...v0.3.27) (2025-01-09)
+## 0.3.27 (2025-01-09)
 
 
 ### Bug Fixes
 
 * Fix cwd_name ([e69bf2f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e69bf2f995a2d2c901e214fd106eacf9c8919912))
 
-## [0.3.26](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.25...v0.3.26) (2025-01-09)
+## 0.3.26 (2025-01-09)
 
 
 ### Features
 
 * Move repo name question first ([d19a289](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d19a289ed4a19429810b315074a8ee8916e2b36b))
 
-## [0.3.25](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.24...v0.3.25) (2025-01-09)
+## 0.3.25 (2025-01-09)
 
 
 ### Bug Fixes
 
 * Fix cwd_name function ([84c5215](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/84c521524a91352cb9da1bd06fd15a83895a9167))
 
-## [0.3.24](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.23...v0.3.24) (2025-01-09)
+## 0.3.24 (2025-01-09)
 
 
 ### Features
@@ -1117,7 +1117,7 @@
 
 * **deps:** Update ghcr.io/natescherer/postmodern-tools-container:latest docker digest to f56e2b1 ([18587e1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/18587e19870503b0b7174b9734b78af413e1c559))
 
-## [0.3.23](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.22...v0.3.23) (2025-01-09)
+## 0.3.23 (2025-01-09)
 
 
 ### Features
@@ -1125,14 +1125,14 @@
 * Add default for repo_name question ([29dbfa9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/29dbfa940396d167cb8570690c8703050131b84a))
 * Copier update to parent template v0.3.22 ([e70de2c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e70de2cb0aa47b232a04daf336a46f37f6994e3e))
 
-## [0.3.22](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.21...v0.3.22) (2025-01-09)
+## 0.3.22 (2025-01-09)
 
 
 ### Bug Fixes
 
 * Fix template devcontainer.json ([0ac2f81](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0ac2f8143148c2d2efdb769d802f9395090a7f69))
 
-## [0.3.21](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.20...v0.3.21) (2025-01-09)
+## 0.3.21 (2025-01-09)
 
 
 ### Bug Fixes
@@ -1141,7 +1141,7 @@
 * Fix copier update workflow ([#462](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/462)) ([e3fe6f6](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e3fe6f6a55859eb8afbd4ec15b0fdab488ff1365))
 * Make release please config a template ([9e0b7e2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9e0b7e259dfbf5605afded37e81e8f7037581522))
 
-## [0.3.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.19...v0.3.20) (2025-01-08)
+## 0.3.20 (2025-01-08)
 
 
 ### Features
@@ -1156,21 +1156,21 @@
 * **deps:** Pin dependencies ([63c51a4](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/63c51a400648dcc3b779f2ddb4b32afe58392274))
 * Fix merge conflict ([44d0d09](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/44d0d099e9dfa3b838009ceb1040738cc77ea024))
 
-## [0.3.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.18...v0.3.19) (2024-12-31)
+## 0.3.19 (2024-12-31)
 
 
 ### Features
 
 * Have release please run with pat ([4a65522](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4a655228a5ad797c794fc65416af34a67e02c892))
 
-## [0.3.18](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.17...v0.3.18) (2024-12-31)
+## 0.3.18 (2024-12-31)
 
 
 ### Features
 
 * Copier update to parent template v0.3.17 ([9e43de8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9e43de88470df98e33c6058f2937c7929cef28b2))
 
-## [0.3.17](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.16...v0.3.17) (2024-12-31)
+## 0.3.17 (2024-12-31)
 
 
 ### Features
@@ -1178,7 +1178,7 @@
 * Add infisical to cspell dictionary ([c9686ab](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c9686ab0e1be97d1eb80360eba0cac1b08c102e9))
 * Switch to using REPO_MAINTENANCE_PAT secret ([dedc2f7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/dedc2f758432c8a69d68580ea064e313a032c9a6))
 
-## [0.3.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.15...v0.3.16) (2024-12-31)
+## 0.3.16 (2024-12-31)
 
 
 ### Features
@@ -1186,7 +1186,7 @@
 * Copier update to parent template v0.3.15 ([e6e1e32](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e6e1e32e4d8cf2ff2d51980562b37d933b2ce332))
 * Update cron schedules for workflows ([8c6fffc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8c6fffceadbf54bd5a52c5e4a4577814877bd02b))
 
-## [0.3.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.14...v0.3.15) (2024-12-31)
+## 0.3.15 (2024-12-31)
 
 
 ### Features
@@ -1198,7 +1198,7 @@
 
 * Fix os.getenv ([2a6f711](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2a6f7115fb3297a1c4da7e64ab2a634510e4ed82))
 
-## [0.3.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.13...v0.3.14) (2024-12-31)
+## 0.3.14 (2024-12-31)
 
 
 ### Features
@@ -1215,7 +1215,7 @@
 * Force pr tests to save trunk annotations ([217e1bb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/217e1bb20dd5c6be11057deb7065446f3bbb9acb))
 * Update trunk check workflows ([f585c7d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f585c7d8b0cbcb3817f267452b7273e91a07ccb6))
 
-## [0.3.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.12...v0.3.13) (2024-12-31)
+## 0.3.13 (2024-12-31)
 
 
 ### Bug Fixes
@@ -1224,7 +1224,7 @@
 * Fix checkout action version ([65e2300](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/65e23004a70df2f83ddd5e136976ad587bc3cc57))
 * Fix trunk testing on PRs ([75abbfb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/75abbfb27a4ec0a80d83c758fc8014e8e3a4ebc3))
 
-## [0.3.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.11...v0.3.12) (2024-12-31)
+## 0.3.12 (2024-12-31)
 
 
 ### Bug Fixes
@@ -1232,14 +1232,14 @@
 * Disable renovate dependency dashboard ([51c941f](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/51c941f5ae5efc3265e5038dae6575857b02d42b))
 * Fix bad jinja syntax ([5517bbb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5517bbbf917e6c4714e629fa063198635bf8303e))
 
-## [0.3.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.10...v0.3.11) (2024-12-31)
+## 0.3.11 (2024-12-31)
 
 
 ### Features
 
 * Add renovate config to downstream templates ([2eef993](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2eef9932ab471b84ba71f2039dbdd9e5fc572c32))
 
-## [0.3.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.9...v0.3.10) (2024-12-31)
+## 0.3.10 (2024-12-31)
 
 
 ### Features
@@ -1259,28 +1259,28 @@
 * Switch renovate config to json5 ([7f1a6fb](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7f1a6fbff025a51764e3710c73a346ce842997b2))
 * Update devcontainer files for renovate compatibility ([3ee8163](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3ee816363930e884cca0b1a3d8fac88e4916eb1c))
 
-## [0.3.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.8...v0.3.9) (2024-11-04)
+## 0.3.9 (2024-11-04)
 
 
 ### Bug Fixes
 
 * Don't use encoded git tokens ([4451416](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4451416fc31245e9ac285cc1362b99252b4ba219))
 
-## [0.3.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.7...v0.3.8) (2024-11-04)
+## 0.3.8 (2024-11-04)
 
 
 ### Bug Fixes
 
 * Fix git cred file path ([bc3f06a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/bc3f06a518e5fdaf64a6b23b41fdcb60004eaa1b))
 
-## [0.3.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.6...v0.3.7) (2024-11-04)
+## 0.3.7 (2024-11-04)
 
 
 ### Bug Fixes
 
 * Fix open mode for credential file ([1994441](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/19944413cfc84c78863dec33a83ad7ea2109b451))
 
-## [0.3.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.5...v0.3.6) (2024-11-04)
+## 0.3.6 (2024-11-04)
 
 
 ### Features
@@ -1293,28 +1293,28 @@
 
 * Fix yaml formatting on azdo cron schedule ([414a245](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/414a2455afd11a87187d1ba6176f1ba0f3b04521))
 
-## [0.3.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.4...v0.3.5) (2024-11-01)
+## 0.3.5 (2024-11-01)
 
 
 ### Features
 
 * Add copier update workflow for Azure DevOps ([b448721](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b448721e261fd165ccb09f0dec016b42e05ac928))
 
-## [0.3.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.3...v0.3.4) (2024-11-01)
+## 0.3.4 (2024-11-01)
 
 
 ### Bug Fixes
 
 * Fix payload for azdo pipeline creation ([ee2ddf7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ee2ddf7212ab62b420bf7579086d28b15d183352))
 
-## [0.3.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.2...v0.3.3) (2024-11-01)
+## 0.3.3 (2024-11-01)
 
 
 ### Bug Fixes
 
 * Fix pipeline naming for azdo ([9a00ce8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9a00ce8ff7a0738b766c6c4465724b891af664a2))
 
-## [0.3.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.1...v0.3.2) (2024-11-01)
+## 0.3.2 (2024-11-01)
 
 
 ### Features
@@ -1323,7 +1323,7 @@
 * Allow create_pipelines_azdo task to dynamically register multiple pipelines ([0ab6b1d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0ab6b1d3904939f611a03bb23838e1e5bac71d17))
 * Copier update to parent template v0.3.1 ([0c85845](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0c8584504f07a095b7da969dfe9c98fe183d0143))
 
-## [0.3.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.3.0...v0.3.1) (2024-11-01)
+## 0.3.1 (2024-11-01)
 
 
 ### Features
@@ -1336,7 +1336,7 @@
 
 * Port azdo workflow improvements from test repo ([983558d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/983558d35c163d2a841c79eb6b82ab46327c23af))
 
-## [0.3.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.47...v0.3.0) (2024-10-23)
+## 0.3.0 (2024-10-23)
 
 
 ### ⚠ BREAKING CHANGES
@@ -1352,7 +1352,7 @@
 
 * Fix formatting issues in template ([2cf9df2](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2cf9df23ef6f243f6df539a30b54d3d9475bfe74))
 
-## [0.2.47](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.46...v0.2.47) (2024-10-23)
+## 0.2.47 (2024-10-23)
 
 
 ### Features
@@ -1365,7 +1365,7 @@
 * Don't create public workflows for private gh repos ([c4279da](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/c4279da97e8804e33567b7bdaf016690ea985f08))
 * Fix trunk check prs (closes [#316](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/316)) ([0191943](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0191943b9e2bad400a22d83ab240c77d42c2bfe9))
 
-## [0.2.46](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.45...v0.2.46) (2024-10-23)
+## 0.2.46 (2024-10-23)
 
 
 ### Features
@@ -1377,21 +1377,21 @@
 
 * Fix extension recs in template ([7fe3770](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/7fe3770f597a695a5ee6188f742134241091632d))
 
-## [0.2.45](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.44...v0.2.45) (2024-10-18)
+## 0.2.45 (2024-10-18)
 
 
 ### Bug Fixes
 
 * Add extension definition ([1fc1b1e](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1fc1b1e1530b2ee15320c92295fa45e67e05cb68))
 
-## [0.2.44](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.43...v0.2.44) (2024-10-18)
+## 0.2.44 (2024-10-18)
 
 
 ### Bug Fixes
 
 * Add missing extension file ([f1ec90c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f1ec90c17517917d0de274783a73c1e17b016353))
 
-## [0.2.43](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.42...v0.2.43) (2024-10-18)
+## 0.2.43 (2024-10-18)
 
 
 ### Features
@@ -1403,7 +1403,7 @@
 
 * Make parent_template_name question input-safe ([a32c6b3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a32c6b3fe6fcfdebc51d268100132a36b77c2ebb))
 
-## [0.2.42](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.41...v0.2.42) (2024-10-18)
+## 0.2.42 (2024-10-18)
 
 
 ### Features
@@ -1414,7 +1414,7 @@
 * Improve spell checking ([5942041](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/59420419134ee9a24a93ed0ca35572c95d5af012))
 * Update trunk, cspell, and ruff ([500e594](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/500e59419306ec93d0cc358700456a908231c9a1))
 
-## [0.2.41](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.40...v0.2.41) (2024-10-18)
+## 0.2.41 (2024-10-18)
 
 
 ### Bug Fixes
@@ -1422,7 +1422,7 @@
 * Ensure CHANGELOG.md exists for created projects so trunk doesn't error out ([b5e3048](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b5e304881a81cdfad3bd4be6064d3157727b3afd))
 * Fix yamllint config for templates ([4a472e8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4a472e83fe0ba0c3a0d69386ad24cd4bd7369662))
 
-## [0.2.40](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.39...v0.2.40) (2024-10-13)
+## 0.2.40 (2024-10-13)
 
 
 ### Features
@@ -1434,7 +1434,7 @@
 
 * Clean up template to not deploy template-only settings for regular projects ([b696349](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b696349e1526e256a44d674a93ec004b17692b87))
 
-## [0.2.39](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.38...v0.2.39) (2024-10-12)
+## 0.2.39 (2024-10-12)
 
 
 ### Features
@@ -1446,7 +1446,7 @@
 
 * Only use actionlint on github projects ([37dce71](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/37dce71701ce3a862d6065bdefb3cf3628c79a8d))
 
-## [0.2.38](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.37...v0.2.38) (2024-10-12)
+## 0.2.38 (2024-10-12)
 
 
 ### Features
@@ -1454,14 +1454,14 @@
 * Copier update to parent template v0.2.37 ([b71857c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b71857cc0f65d399a3776955480888b5c503bdcf))
 * Remove unneeded node feature ([5937100](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/59371005dc9315ed3c5c2a3fc45f3426e48bb9c8))
 
-## [0.2.37](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.36...v0.2.37) (2024-10-12)
+## 0.2.37 (2024-10-12)
 
 
 ### Bug Fixes
 
 * Fix dynamic plugin logic ([4c9e37c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4c9e37c7ff60d05aed6eca2aa9bc507021708454))
 
-## [0.2.36](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.35...v0.2.36) (2024-10-12)
+## 0.2.36 (2024-10-12)
 
 
 ### Features
@@ -1474,7 +1474,7 @@
 
 * Add natescherer back to cspell ([fd466ba](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/fd466ba060f73add8fdc1b9ebf63c33e23b3ad9a))
 
-## [0.2.35](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.34...v0.2.35) (2024-10-12)
+## 0.2.35 (2024-10-12)
 
 
 ### Features
@@ -1487,7 +1487,7 @@
 
 * Fix devcontainer home mount ([1e58765](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/1e58765afd7eae8a1d1525c342551a44a414f722))
 
-## [0.2.34](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.33...v0.2.34) (2024-10-12)
+## 0.2.34 (2024-10-12)
 
 
 ### Features
@@ -1495,28 +1495,28 @@
 * Add built-in slugify extension (closes [#300](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/300)) ([9feadb5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9feadb5b1f1463b7c0f3c0a0f89c8449bc935d4d))
 * Copier update to parent template v0.2.33 ([b03ee51](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/b03ee51865cde019b0af3cf615f8f523535d9e6b))
 
-## [0.2.33](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.32...v0.2.33) (2024-10-12)
+## 0.2.33 (2024-10-12)
 
 
 ### Bug Fixes
 
 * Fix copier update workflow formatting ([eab7839](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/eab78391cf3fadf12d1e753a6c350707aef28129))
 
-## [0.2.32](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.31...v0.2.32) (2024-10-12)
+## 0.2.32 (2024-10-12)
 
 
 ### Bug Fixes
 
 * Fix NEW_VERSION calculation in copier update workflow ([5ee3e2d](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5ee3e2d37932ffedd5a94787a8fccd289e5bbfd1))
 
-## [0.2.31](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.30...v0.2.31) (2024-10-12)
+## 0.2.31 (2024-10-12)
 
 
 ### Bug Fixes
 
 * Fix branch name ([064f75a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/064f75a568121a7ced480054948ce08a85c9d9f1))
 
-## [0.2.30](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.29...v0.2.30) (2024-10-12)
+## 0.2.30 (2024-10-12)
 
 
 ### Features
@@ -1524,112 +1524,112 @@
 * Fix mount permission issues on windows hosts ([0d12cc9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0d12cc901cbc7e7240fec8039f281cc819b2dc63))
 * Improve template update workflow ([0a497ff](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/0a497ff28abded831b80a81fe9b52d982db7434e))
 
-## [0.2.29](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.28...v0.2.29) (2024-10-12)
+## 0.2.29 (2024-10-12)
 
 
 ### Bug Fixes
 
 * Update base image in template ([e75ca21](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e75ca2103b98cb074d30b20d5ff875cf9c9bbabb))
 
-## [0.2.28](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.27...v0.2.28) (2024-10-12)
+## 0.2.28 (2024-10-12)
 
 
 ### Features
 
 * Bump devcontainer base image ([9ff6950](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9ff695093c16b44517bc68b2b5127e4e772dc049))
 
-## [0.2.27](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.26...v0.2.27) (2024-09-25)
+## 0.2.27 (2024-09-25)
 
 
 ### Features
 
 * Add more cSpell dictionaries ([a3e81c5](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/a3e81c5aebe17468e480f08db1c50b06249a8852))
 
-## [0.2.26](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.25...v0.2.26) (2024-09-25)
+## 0.2.26 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix readme format ([d2a84c1](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/d2a84c1ed0b1785c615a3080ba71a8c18c1e15c5))
 
-## [0.2.25](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.24...v0.2.25) (2024-09-25)
+## 0.2.25 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix formatting issues from downstream ([e6d899a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e6d899aecba8ab0afe8bd751d759028196382766))
 
-## [0.2.24](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.23...v0.2.24) (2024-09-25)
+## 0.2.24 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix versionrc formatting ([e20724c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e20724c9200fbacaad6bb1da2e572ea0fa3cfcfd))
 
-## [0.2.23](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.22...v0.2.23) (2024-09-25)
+## 0.2.23 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix readme formatting ([69a1bbd](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/69a1bbdd0e6fac30c4dd86765481b135072ef76f))
 
-## [0.2.22](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.21...v0.2.22) (2024-09-25)
+## 0.2.22 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix formatting issues found downstream ([838a5db](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/838a5db116de3f4b85423711c75f3a0bdfa37c7a))
 
-## [0.2.21](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.20...v0.2.21) (2024-09-25)
+## 0.2.21 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Dynamic trunk ignores ([4e01eb9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/4e01eb9a6fd53a58fc818bcbcd696486db5c93f3))
 
-## [0.2.20](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.19...v0.2.20) (2024-09-25)
+## 0.2.20 (2024-09-25)
 
 
 ### Features
 
 * Apply parent template v0.2.19 ([199bef3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/199bef320336cc67d2ca20d7ffbe305cbf5b01b5))
 
-## [0.2.19](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.18...v0.2.19) (2024-09-25)
+## 0.2.19 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Bump minimum copier version ([2d0bd03](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/2d0bd030c337f10bf66a584df55d1cd19c7bb4e5))
 
-## [0.2.18](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.17...v0.2.18) (2024-09-25)
+## 0.2.18 (2024-09-25)
 
 
 ### Features
 
 * Skip linting/formatting on release please manifest ([8eae6f3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8eae6f34b2c30fa6b5f9a51fc768b372714f6dc6))
 
-## [0.2.17](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.16...v0.2.17) (2024-09-25)
+## 0.2.17 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix release please formatting ([32b0c7a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/32b0c7af654dde897639b2b343d46a11a76cb5d1))
 
-## [0.2.16](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.15...v0.2.16) (2024-09-25)
+## 0.2.16 (2024-09-25)
 
 
 ### Features
 
 * Add pscore to dictionary ([ec0d937](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ec0d937d3cf22e7306546dae6238144772d63e02))
 
-## [0.2.15](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.14...v0.2.15) (2024-09-25)
+## 0.2.15 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix link format ([f98121a](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f98121aec0c2dff73e300af21de57df6404fe133))
 
-## [0.2.14](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.13...v0.2.14) (2024-09-25)
+## 0.2.14 (2024-09-25)
 
 
 ### Features
@@ -1637,35 +1637,35 @@
 * Apply v0.2.13 ([f81b0b9](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f81b0b929d71fb48cebfff1efa9498bc636ca600))
 * Improve formatting ([f3cf8f3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f3cf8f3875334edf342ca8eaf305f08b8bd474a1))
 
-## [0.2.13](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.12...v0.2.13) (2024-09-25)
+## 0.2.13 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix readme formatting ([e6fdd30](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e6fdd30d86a9b6df82cc3d585e59a4911997c271))
 
-## [0.2.12](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.11...v0.2.12) (2024-09-25)
+## 0.2.12 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix doc templates ([f3227c3](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f3227c3ce605cf37665346240f335ee596fbee1c))
 
-## [0.2.11](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.10...v0.2.11) (2024-09-25)
+## 0.2.11 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Remove unneeded ignore ([5425d18](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5425d18c8db7d9a3a69342ad77e554aa2f8e774c))
 
-## [0.2.10](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.9...v0.2.10) (2024-09-25)
+## 0.2.10 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix bad formatting on dependabot template ([e00510c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e00510c21d3e3c6f21dbddc1b350ff973804d782))
 
-## [0.2.9](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.8...v0.2.9) (2024-09-25)
+## 0.2.9 (2024-09-25)
 
 
 ### Features
@@ -1679,14 +1679,14 @@
 * Add commitlint config to template ([3f2684b](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/3f2684be64b974f11ba100955efb517cafe75d83))
 * Fix yaml format ([9cb2bb8](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/9cb2bb87cbcd04938e45769f8d9955f5597c9358))
 
-## [0.2.8](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.7...v0.2.8) (2024-09-25)
+## 0.2.8 (2024-09-25)
 
 
 ### Features
 
 * Add toml vscode plugin ([ed3c986](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/ed3c986e4949c52e886e3a884186025a0c7a91fa))
 
-## [0.2.7](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.6...v0.2.7) (2024-09-25)
+## 0.2.7 (2024-09-25)
 
 
 ### Features
@@ -1698,14 +1698,14 @@
 
 * Fix trunk nits ([49f36bc](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/49f36bc981cd1d1aa6b516cee7c869ad956a94eb))
 
-## [0.2.6](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.5...v0.2.6) (2024-09-25)
+## 0.2.6 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix jinja conditionals ([8144c49](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/8144c498beb7826f2be9e283767ce322760c55b8))
 
-## [0.2.5](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.4...v0.2.5) (2024-09-25)
+## 0.2.5 (2024-09-25)
 
 
 ### Features
@@ -1717,14 +1717,14 @@
 
 * Fix task conditionals in root copier.yml ([cdc3d4c](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/cdc3d4c89e9653da714c8767f4d2147a5e17dab4))
 
-## [0.2.4](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.3...v0.2.4) (2024-09-25)
+## 0.2.4 (2024-09-25)
 
 
 ### Bug Fixes
 
 * Fix conditionals on copier tasks ([5d7baad](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/5d7baad1154b7ad2ce532503c7ea7e8a055fbc21))
 
-## [0.2.3](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.2...v0.2.3) (2024-09-25)
+## 0.2.3 (2024-09-25)
 
 
 ### Features
@@ -1733,14 +1733,14 @@
 * Change devcontainer mount (closes [#211](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/211)) ([78e3353](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/78e335346322ba10d9df5202122287c4ee808154))
 * Implement trunk ([e711206](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e711206352ae9fdc9f792a3cb6eb88a117ee6366))
 
-## [0.2.2](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.1...v0.2.2) (2024-09-24)
+## 0.2.2 (2024-09-24)
 
 
 ### Features
 
 * Ensure devcontainer folder is made for all projects ([e5ae1c7](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/e5ae1c7dd6014bc8f78c371735fd0c78eb7eb5b9))
 
-## [0.2.1](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.2.0...v0.2.1) (2024-09-24)
+## 0.2.1 (2024-09-24)
 
 
 ### Features
@@ -1753,7 +1753,7 @@
 * Fix license file ([6fc1d10](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/6fc1d10c628cc1843abd7e55ac0dc31dbf8847fe))
 * Fix pull request ruleset settings (closes [#221](https://github.com/natescherer/postmodern-repo-copiertemplate/issues/221)) ([f882058](https://github.com/natescherer/postmodern-repo-copiertemplate/commit/f882058927b4b73c437857fd1f2814bd23aab3cf))
 
-## [0.2.0](https://github.com/natescherer/postmodern-repo-copiertemplate/compare/v0.0.1...v0.2.0) (2024-09-23)
+## 0.2.0 (2024-09-23)
 
 
 ### ⚠ BREAKING CHANGES
