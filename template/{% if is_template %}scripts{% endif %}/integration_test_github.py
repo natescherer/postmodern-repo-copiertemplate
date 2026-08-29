@@ -888,7 +888,7 @@ def knope_release_pr_title(repo: str) -> str | None:
 
     The title (e.g. "chore: prepare release 0.0.1") encodes the version knope
     computed -- unlike the PR's head commit SHA, it doesn't change just because
-    `peter-evans/create-pull-request` rebases the branch onto a new main HEAD, so
+    `autoupdate-knope-pr` recreates the branch from a fresh main HEAD every run, so
     it's the right signal for "did this merge actually change what's proposed."
 
     Returns:
