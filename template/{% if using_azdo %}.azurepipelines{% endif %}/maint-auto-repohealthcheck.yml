@@ -22,8 +22,8 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-  - stage: link_check
-    displayName: Link Check
+  - stage: repo_health_check
+    displayName: Repo Health Check
     jobs:
       - job: link_check
         timeoutInMinutes: 15

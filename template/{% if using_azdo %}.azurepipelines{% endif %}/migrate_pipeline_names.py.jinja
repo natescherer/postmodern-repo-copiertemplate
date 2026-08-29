@@ -63,6 +63,19 @@ MIGRATIONS = (
     ),
 )
 
+# Renamed "Maint (Auto) - Link Check" to "Maint (Auto) - Repo Health Check" when a
+# REPO_MAINTENANCE_PAT expiration check (GitHub-only) got folded into the equivalent
+# GitHub workflow -- kept separate from MIGRATIONS above per that table's own note:
+# its "old" names are the pre-unified-naming-scheme originals, not a name a previous
+# migration already produced, so mixing this rename into it would be misleading.
+MIGRATIONS_REPO_HEALTH_CHECK = (
+    (
+        "Maint (Auto) - Link Check",
+        "Maint (Auto) - Repo Health Check",
+        ".azurepipelines/maint-auto-repohealthcheck.yml",
+    ),
+)
+
 
 def run(
     *args: str, check: bool = True, capture: bool = False
@@ -159,7 +172,7 @@ def migrate(org: str, project: str, *, dry_run: bool) -> None:
     by_name = {p["name"]: p["id"] for p in pipelines}
     recognized_names = set()
 
-    for old, new, yml_path in MIGRATIONS:
+    for old, new, yml_path in (*MIGRATIONS, *MIGRATIONS_REPO_HEALTH_CHECK):
         old_full = f"[{REPO_NAME}] {old}"
         new_full = f"[{REPO_NAME}] {new}"
         recognized_names.update((old_full, new_full))

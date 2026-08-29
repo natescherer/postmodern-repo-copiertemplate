@@ -1,0 +1,88 @@
+name: "Maint (Auto): Repo Health Check"
+
+on:
+  schedule:
+    - cron: 0 18 * * 1 # Every Monday at 6pm UTC (offset from the other Monday jobs)
+  workflow_dispatch:
+
+env:
+  MISE_ENV: ci
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
+      - name: Check for Broken Links
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mise x -- lychee --no-progress -c .config/lychee.toml .
+  pat-expiration-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions: {}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Validate Secrets Exist
+        uses: ./.github/actions/require-secrets
+        with:
+          secrets: |
+            REPO_MAINTENANCE_PAT=${{ secrets.REPO_MAINTENANCE_PAT }}
+            APPRISE_URL=${{ secrets.APPRISE_URL }}
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
+      - name: Check REPO_MAINTENANCE_PAT Expiration
+        shell: bash
+        env:
+          # GH_TOKEN (not GITHUB_TOKEN): must authenticate as REPO_MAINTENANCE_PAT
+          # itself so the response header below reports *its* expiration, not the
+          # default token's (which is always short-lived and irrelevant here).
+          GH_TOKEN: ${{ secrets.REPO_MAINTENANCE_PAT }}
+          APPRISE_URL: ${{ secrets.APPRISE_URL }}
+        run: |
+          # GitHub returns this response header only when the authenticating token
+          # (classic PATs, which is what REPO_MAINTENANCE_PAT must be -- see
+          # docs/token-permissions.md) has an expiration date set; it's absent for a
+          # token with no expiration, in which case there's nothing to warn about.
+          expiration=$(gh api user -i | grep -i '^github-authentication-token-expiration:' | cut -d: -f2- | xargs)
+          if [ -z "$expiration" ]; then
+            echo "REPO_MAINTENANCE_PAT has no expiration set -- nothing to warn about."
+            exit 0
+          fi
+          days_left=$(( ($(date -d "$expiration" +%s) - $(date +%s)) / 86400 ))
+          echo "REPO_MAINTENANCE_PAT expires $expiration ($days_left day(s) from now)."
+          if [ "$days_left" -le 30 ]; then
+            mise x -- apprise -i html \
+              -t "REPO_MAINTENANCE_PAT Expiring Soon" \
+              -b "REPO_MAINTENANCE_PAT for ${{ github.repository }} expires in $days_left day(s) ($expiration).<br><br>Create a new one at https://github.com/settings/tokens (see docs/token-permissions.md for required scope), then run 'mise run provision-secrets' to store it." \
+              "$APPRISE_URL"
+          fi
+  workflow-keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+    steps:
+      # Re-enables this workflow if GitHub disabled it for inactivity. Inlined from
+      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh` --
+      # unsupported on Windows runners, unlike bash, which is available there via Git
+      # for Windows.
+      - name: Re-enable Workflow
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          case "${GITHUB_WORKFLOW_REF:?}" in
+            "${GITHUB_REPOSITORY:?}"/.github/workflows/*.y*ml@*) ;;
+            *) false ;;
+          esac
+          workflow="${GITHUB_WORKFLOW_REF%%@*}"
+          workflow="${workflow#"$GITHUB_REPOSITORY"/.github/workflows/}"
+          gh api -X PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/enable"

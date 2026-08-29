@@ -767,12 +767,23 @@ def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
     )
 
 
-def check_link_check(repo: str, failures: list[str]) -> None:
-    """Dispatch Maint (Auto): Link Check and confirm it completes clean."""
-    print("Checking Maint (Auto): Link Check...")
-    run_id = dispatch_workflow(repo, "maint-auto-linkcheck.yml")
+def check_repo_health_check(repo: str, failures: list[str]) -> None:
+    """Dispatch Maint (Auto): Repo Health Check and confirm it completes clean.
+
+    Covers both jobs (link-check and the REPO_MAINTENANCE_PAT expiration check) via
+    the overall run conclusion -- a real near-expiry PAT to exercise the actual
+    warning/notification path isn't something this throwaway repo has, so that part
+    stays on the manual verification checklist.
+    """
+    print("Checking Maint (Auto): Repo Health Check...")
+    run_id = dispatch_workflow(repo, "maint-auto-repohealthcheck.yml")
     conclusion = wait_for_run(repo, run_id)
-    check(failures, "Link Check workflow succeeds", conclusion == "success", conclusion)
+    check(
+        failures,
+        "Repo Health Check workflow succeeds",
+        conclusion == "success",
+        conclusion,
+    )
 
 
 def assert_pr_blocked(repo: str, pr_url: str, reason: str, failures: list[str]) -> str:
@@ -1057,8 +1068,8 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
 
         # Publishing a release fires a `release: published` event that
         # docs-auto-zensical.yml listens for (it publishes the "latest" Pages docs
-        # alias) -- wait for it here so check_link_check(), which runs later, isn't
-        # racing a Pages deployment that hasn't happened yet.
+        # alias) -- wait for it here so check_repo_health_check(), which runs later,
+        # isn't racing a Pages deployment that hasn't happened yet.
         zensical_run_id = wait_for_new_run(
             repo, "docs-auto-zensical.yml", zensical_before
         )
@@ -1310,7 +1321,7 @@ def main() -> None:
     # first Pages deployment finishes propagating -- by now enough real wall-clock
     # time and several PR/merge cycles have passed for that to be reliably live,
     # rather than racing it right after repo creation.
-    check_link_check(repo_a, failures_a)
+    check_repo_health_check(repo_a, failures_a)
     check_prerelease_flow(repo_a, dest_a, failures_a)
     report(f"Repo A ({repo_a})", failures_a)
 
