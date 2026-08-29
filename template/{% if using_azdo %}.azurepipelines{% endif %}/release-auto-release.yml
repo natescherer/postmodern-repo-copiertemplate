@@ -43,6 +43,12 @@ stages:
           - bash: mise install
             displayName: Run 'mise install'
           - bash: az extension add --name azure-devops
+            # Deliberately unpinned as of 2026-08 -- no Renovate-trackable version
+            # source could be found. Its GitHub releases are date-tagged (don't match
+            # the real version number), and the matching-named PyPI package is an
+            # unrelated SDK. The real version list lives in Azure/azure-cli-extensions'
+            # src/index.json, which would need a custom JSONata datasource to track;
+            # revisit if Renovate gains native support for Azure CLI extensions.
             displayName: Install azure-devops CLI Extension
           - bash: az devops configure --defaults organization=$(System.CollectionUri) project="$(System.TeamProject)"
             displayName: Configure az CLI Defaults
