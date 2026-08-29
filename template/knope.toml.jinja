@@ -54,6 +54,19 @@ command = "git push --tags"
 {%- endif %}
 
 [[workflows]]
+# Used only by copier.yml's _migrations, inside a scratch clone of the template repo
+# with every tag but the project's old template version hidden -- PrepareRelease
+# always bumps from "the most recent reachable tag", so hiding the rest is what makes
+# it compute the real delta across a multi-version jump instead of just the last hop.
+# Run for real (not --dry-run): the scratch clone is thrown away either way, and
+# reading the version file and CHANGELOG.md it actually writes is far more robust than
+# scraping human-readable dry-run log output.
+name = "compute-upstream-bump"
+
+[[workflows.steps]]
+type = "PrepareRelease"
+
+[[workflows]]
 name = "create-prerelease-via-knope"
 
 [[workflows.steps]]

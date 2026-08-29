@@ -82,7 +82,13 @@ Two exceptions:
   staleness causes an active problem right now (not just "missing a new
   feature until the next update") -- e.g. `renovate.json`, which Renovate
   reads directly on its own schedule regardless of `copier update`. Treat
-  syncing those as a deliberate, flagged exception, not the default.
+  syncing those as a deliberate, flagged exception, not the default. Root
+  `knope.toml` joins this list specifically for any workflow that
+  `copier.yml`'s `_migrations` scripts invoke by cloning this repo (e.g.
+  `compute-upstream-bump`) -- that clone gets whatever's actually committed to
+  root `knope.toml`, not `template/knope.toml.jinja`, so a workflow that only
+  exists in the template source silently fails with "unrecognized subcommand"
+  in every child's migration until root catches up.
 
 When validating template changes (e.g. testing uncommitted edits), don't copy
 this repo's root as a Copier source -- either render fresh from `template/` or
