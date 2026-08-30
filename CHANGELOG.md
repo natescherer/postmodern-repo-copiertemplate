@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.8.1 (2026-08-30)
+
+### Features
+
+- generate changesets from upstream template updates (#1099)
+- fold REPO_MAINTENANCE_PAT expiration check into a repo health check (#1100)
+- add extending-the-template guide and a docs preview tool (#1106)
+
+### Fixes
+
+- remove now-obsolete _old_tag_overrides from answer_matrix.py (#1094)
+- fix knope current version (#1096)
+- reformat CHANGELOG.md headings for Knope compatibility (#1097)
+- cover Release (Manual) - Create Prerelease in AzDO pipeline check (#1101)
+- rename Link Check to Repo Health Check in AzDO pipeline check (#1102)
+- sync root workflow/copier.yml with the knope-native PR revert (#1103)
+- close two Renovate coverage gaps and document a third (#1105)
+
 ## 0.8.0 (2026-08-28)
 
 
