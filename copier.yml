@@ -83,6 +83,7 @@ _migrations:
         import subprocess
         import sys
         import tempfile
+        import tomllib
         from pathlib import Path
         from urllib.parse import unquote
 
@@ -108,6 +109,14 @@ _migrations:
                 if tag != version_from:
                     run("git", "tag", "-d", tag, cwd=scratch, check=False)
 
+            # Truncated before running: compute-upstream-bump computes the bump
+            # from git tags/commits, not from existing changelog content, so
+            # nothing is lost. It does mean the freshly-written entry ends up
+            # the only thing in the file, so there's no older (possibly
+            # hand-edited) entry left for the extraction below to mistake for
+            # part of it.
+            (scratch / "CHANGELOG.md").write_text("", encoding="utf-8")
+
             result = run(
                 "mise", "x", "--", "knope", "compute-upstream-bump",
                 cwd=scratch, check=False,
@@ -115,23 +124,40 @@ _migrations:
             if result.returncode != 0:
                 sys.exit(0)
 
-            changelog = (scratch / "CHANGELOG.md").read_text(
+            entry = (scratch / "CHANGELOG.md").read_text(
                 encoding="utf-8", newline=""
-            )
-            headings = [
-                m.start() for m in re.finditer(r"^## ", changelog, re.MULTILINE)
-            ]
-            end = headings[1] if len(headings) > 1 else len(changelog)
-            entry = changelog[headings[0]:end].strip()
+            ).strip()
             body = entry.split("\n", 1)[1].strip() if "\n" in entry else ""
 
-            sections = (
-                ("major", "Breaking Changes"),
-                ("minor", "Features"),
-                ("patch", "Fixes"),
-            )
+            # Knope's default changelog section names (Breaking Changes/Features/
+            # Fixes) can be overridden per-package via `extra_changelog_sections`
+            # in knope.toml, so this reads the upstream's own config instead of
+            # assuming its defaults still hold.
+            section_names = {
+                "major": "Breaking Changes",
+                "minor": "Features",
+                "patch": "Fixes",
+            }
+            knope_toml_path = scratch / "knope.toml"
+            if knope_toml_path.is_file():
+                knope_config = tomllib.loads(
+                    knope_toml_path.read_text(encoding="utf-8")
+                )
+                for override in knope_config.get("package", {}).get(
+                    "extra_changelog_sections", []
+                ):
+                    name = override.get("name")
+                    if not name:
+                        continue
+                    for bump in section_names:
+                        if bump in override.get("types", []):
+                            section_names[bump] = name
+
+            sections = tuple(section_names.items())
             section_pattern = re.compile(
-                r"^### (Breaking Changes|Features|Fixes)\s*\n(.*?)(?=^### |\Z)",
+                r"^### ("
+                + "|".join(re.escape(name) for name in section_names.values())
+                + r")\s*\n(.*?)(?=^### |\Z)",
                 re.MULTILINE | re.DOTALL,
             )
             found = {
