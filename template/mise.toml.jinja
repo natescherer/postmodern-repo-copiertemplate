@@ -38,7 +38,6 @@ run = "zensical serve"
 raw = true
 run = [
 {%- if using_github %}
-  "gh secret set REPO_MAINTENANCE_PAT",
   "gh secret set APPRISE_URL",
 {%- if code_coverage %}
   "gh secret set CODECOV_TOKEN",

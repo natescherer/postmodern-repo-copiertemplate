@@ -671,16 +671,6 @@ def provision_test_secrets(repo: str) -> None:
     logic even runs (see .github/actions/require-secrets). Points at a real, harmless
     HTTPS endpoint, not a fake host, so the "Notify if Update is Available" step, when
     it does run, doesn't fail the whole workflow on an unrelated delivery error.
-
-    REPO_MAINTENANCE_PAT: Release (Auto): Prepare Release PR pushes to `knope/release`
-    and opens/updates a PR against it. A push authenticated as the default
-    `GITHUB_TOKEN` (i.e. actor `github-actions[bot]`) leaves that PR's required `tests`
-    status check permanently stuck in GitHub's `action_required` state; pending a
-    human manually approving the run in the Actions tab; which blocks branch
-    protection from ever letting it merge. Reuses this script's own `gh` auth token
-    (the same real-user identity already pushing the other test branches, which never
-    hit this gate) so the release flow can be exercised the same way a real repo's own
-    REPO_MAINTENANCE_PAT would behave.
     """
     run(
         "gh",
@@ -692,8 +682,53 @@ def provision_test_secrets(repo: str) -> None:
         "--body",
         "json://httpbin.org/post",
     )
-    pat = gh_value("auth", "token")
-    run("gh", "secret", "set", "REPO_MAINTENANCE_PAT", "--repo", repo, "--body", pat)
+
+
+def approve_pending_run(repo: str, branch: str, *, timeout: int = 60) -> None:
+    """Approve a pull_request run on `branch` stuck in GitHub's action_required state.
+
+    A push authenticated as the default GITHUB_TOKEN (actor github-actions[bot]) to a
+    PR it opened/updated leaves that PR's pull_request-triggered runs pending manual
+    approval in the Actions tab; this is the release PR getting a new commit from
+    Release (Auto): Prepare Release PR. Approving via the API is the same action a
+    human takes clicking "Approve and run workflow", done here so the automated flow
+    can proceed the same way a real maintainer keeps it moving in practice. Polls
+    briefly since the gated run may not exist yet the instant the triggering push
+    completes.
+
+    Raises:
+        SystemExit: if no action_required run appears on `branch` within `timeout`.
+
+    """
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        runs = json.loads(
+            gh_value(
+                "run",
+                "list",
+                "--repo",
+                repo,
+                "--branch",
+                branch,
+                "--json",
+                "databaseId,conclusion",
+            )
+            or "[]"
+        )
+        for r in runs:
+            if r.get("conclusion") == "action_required":
+                run(
+                    "gh",
+                    "api",
+                    "-X",
+                    "POST",
+                    f"repos/{repo}/actions/runs/{r['databaseId']}/approve",
+                )
+                return
+        time.sleep(3)
+    raise SystemExit(
+        f"Timed out waiting for an action_required run on {branch} in {repo}"
+    )
 
 
 def check_copier_update_check(
@@ -770,10 +805,9 @@ def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
 def check_repo_health_check(repo: str, failures: list[str]) -> None:
     """Dispatch Maint (Auto): Repo Health Check and confirm it completes clean.
 
-    Covers both jobs (link-check and the REPO_MAINTENANCE_PAT expiration check) via
-    the overall run conclusion; a real near-expiry PAT to exercise the actual
-    warning/notification path isn't something this throwaway repo has, so that part
-    stays on the manual verification checklist.
+    workflow-keepalive is gated `if: github.event_name == 'schedule'`, so a manual
+    dispatch here only actually exercises link-check; that's covered by the overall
+    run conclusion.
     """
     print("Checking Maint (Auto): Repo Health Check...")
     run_id = dispatch_workflow(repo, "maint-auto-repohealthcheck.yml")
@@ -1020,6 +1054,7 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     before_tags = list_tags(repo)
     publish_before = latest_run_id(repo, "release-auto-publishrelease.yml")
     zensical_before = latest_run_id(repo, "docs-auto-zensical.yml")
+    approve_pending_run(repo, "knope/release")
     wait_for_pr_checks(repo, str(pr_number))
     run(
         "gh",

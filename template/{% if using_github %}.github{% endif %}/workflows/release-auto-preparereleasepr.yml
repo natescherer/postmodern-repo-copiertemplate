@@ -14,27 +14,21 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout Repository
-        # token: a PAT, not the default GITHUB_TOKEN. Since June 2026, GitHub gates
-        # pull_request-triggered runs (e.g. PR Validation on the release PR below)
-        # behind manual approval whenever the PR traces back to the default token's
-        # github-actions[bot] identity; see
-        # https://github.blog/changelog/2026-06-11-bot-created-pull-requests-can-run-workflows-if-approved/,
-        # whose documented workaround is a trusted identity (PAT or GitHub App)
-        # instead of GITHUB_TOKEN. Confirmed live across 4 configurations: both this
-        # token and the "Prepare Release PR" step's own GITHUB_TOKEN below must be the
-        # PAT for the run to go through clean; defaulting either one alone (checkout
-        # only, or the knope step only) still gets gated, even though the other
-        # already has the PAT. It's not about git CLI vs API-based tooling; every
-        # credential touching this branch and PR needs to be the PAT.
+        # token: the default GITHUB_TOKEN, explicitly, not a PAT. Since June 2026,
+        # GitHub gates pull_request-triggered runs (e.g. PR Validation on the release
+        # PR below) behind manual approval whenever the PR traces back to the default
+        # token's github-actions[bot] identity; see
+        # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow.
+        # That means every push here requires a human to click "Approve and run
+        # workflow" on the resulting PR Validation run before branch protection lets
+        # the release PR merge; confirmed live, including that the gate reapplies on
+        # every subsequent push to the same PR, not just once. Accepted deliberately:
+        # a PAT (or GitHub App) avoids the approval step but doesn't work in an
+        # enterprise context where PATs are commonly restricted.
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-          token: ${{ secrets.REPO_MAINTENANCE_PAT }}
-      - name: Validate Secrets Exist
-        uses: ./.github/actions/require-secrets
-        with:
-          secrets: |
-            REPO_MAINTENANCE_PAT=${{ secrets.REPO_MAINTENANCE_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Configure Git
         shell: bash
         run: |
@@ -45,5 +39,5 @@ jobs:
         shell: bash
         run: mise x -- knope autoupdate-knope-pr --verbose
         env:
-          GITHUB_TOKEN: ${{ secrets.REPO_MAINTENANCE_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true

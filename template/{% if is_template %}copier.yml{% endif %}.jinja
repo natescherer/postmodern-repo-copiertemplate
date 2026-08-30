@@ -126,6 +126,35 @@ _migrations:
     when: "{{ _stage == 'after' }}"
   # endregion Knope Changelog Reformatter (0.8.1)
 
+  # region Reminder to Remove REPO_MAINTENANCE_PAT (0.8.2)
+  # v0.8.2 dropped REPO_MAINTENANCE_PAT: every GitHub workflow that used it now runs
+  # under the default GITHUB_TOKEN instead (see docs/releasing.md for the tradeoff --
+  # a one-time manual approval per bot-authored push). A project updating past this
+  # point may still have the secret set from before; checks via `gh secret list`
+  # rather than printing unconditionally, since a project that never set it (or
+  # already removed it) shouldn't be nagged.
+  - command:
+      - "{{ _copier_python }}"
+      - -c
+      - |
+        import subprocess
+
+        result = subprocess.run(
+            ["gh", "secret", "list", "--json", "name"],
+            capture_output=True, text=True, check=False,
+        )
+        if result.returncode == 0 and '"REPO_MAINTENANCE_PAT"' in result.stdout:
+            print(
+                "REPO_MAINTENANCE_PAT is no longer used by this template's GitHub "
+                "workflows. Delete it from Settings > Secrets and variables > "
+                "Actions, and revoke the token itself at "
+                "https://github.com/settings/tokens if you're not using it "
+                "elsewhere. See docs/releasing.md for what changed."
+            )
+    version: v0.8.2
+    when: "{{ _stage == 'after' and using_github }}"
+  # endregion Reminder to Remove REPO_MAINTENANCE_PAT (0.8.2)
+
   # region Upstream Change to Changeset Generator (all versions)
   # This runs on every update, so upstream changes can be easily added to this
   # project's changelog instead of vanishing into an opaque "chore: apply parent template"
@@ -1000,6 +1029,21 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
+  # Lets the default GITHUB_TOKEN open/update pull requests (off by default on a new
+  # repo); Release (Auto): Prepare Release PR and Docs (Auto): Zensical Build & Commit
+  # both need this to run without a Personal Access Token. Doesn't grant approving
+  # reviews, just opening/updating PRs, despite the API field's name. Leaves
+  # default_workflow_permissions at GitHub's own secure "read" default: every job in
+  # this template already declares its own explicit `permissions:` block, so nothing
+  # depends on a permissive repo-wide fallback.
+  - command: >-
+      gh api repos/{{ github_repo_owner }}/{{ repo_name }}/actions/permissions/workflow
+      -X PUT -F can_approve_pull_request_reviews=true
+    when: &when_copy_github |-
+      {%- if _copier_operation == 'copy' and using_github and repo_setup_actions != 'None' -%}
+        true
+      {%- endif %}
+
   # Sets up GitHub Pages
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
     when: |-
@@ -1057,7 +1101,6 @@ _message_after_copy: |-
   {% endif -%}
   {%- if using_github -%}
   Before CI works, add these as GitHub Actions secrets (Settings > Secrets and variables > Actions):
-    - REPO_MAINTENANCE_PAT
     - APPRISE_URL
   {%- if code_coverage %}
     - CODECOV_TOKEN
