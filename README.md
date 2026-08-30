@@ -1,3 +1,4 @@
+<!-- rumdl-disable-file MD033 MD041 -->
 <p align="center">
   <a href="https://conventionalcommits.org"><img alt="Conventional Commits" src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white"></a>
   <a href="#contributors"><img alt="All Contributors" src="https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449&style=flat-square"></a>
