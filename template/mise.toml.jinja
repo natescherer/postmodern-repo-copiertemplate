@@ -63,6 +63,15 @@ run = "python .azurepipelines/migrate_pipeline_names.py"
 [tasks.test]
 run = "pytest tests/"
 
+[tasks.template-docs-server]
+# Previews template/'s docs through a real zensical render, under every
+# ANSWER_MATRIX entry (deduped): there's no single answer set that renders the
+# whole docs/ tree correctly, since conditional content and conditional file paths
+# both depend on it. See the script's own docstring for the full reasoning.
+# Run via `uv run`, not plain `python`; its PEP 723 header pulls in rich,
+# tomlkit, and watchdog, none of which are otherwise a project dependency.
+run = "uv run scripts/template_docs_server.py"
+
 [tasks.integration-test-gh]
 # Creates two real throwaway repos from this template and runs every automated check
 # it can against Repo A, always at HEAD -- this exists to verify a release candidate
