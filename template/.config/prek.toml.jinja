@@ -16,7 +16,7 @@ description = "Runs actionlint to lint GitHub Actions workflow files"
 language = "system"
 entry = "mise x -- actionlint"
 types = ["yaml"]
-# Also matches template/.../workflows/ -- a Template-type project embeds a full,
+# Also matches template/.../workflows/; a Template-type project embeds a full,
 # unrendered copy of template/ (via copy-template-files) for its own children to use,
 # regardless of *this* project's own developer_platform.
 files = "(^\\.github/workflows/|^template/.*workflows/)"
@@ -139,7 +139,7 @@ id = "fix-byte-order-marker"
 [[repos.hooks]]
 id = "mixed-line-ending"
 # Replaces a repo-wide `* text eol=lf` .gitattributes rule, which can corrupt binary
-# files (e.g. images) that Git's own text-detection heuristic misclassifies -- this
+# files (e.g. images) that Git's own text-detection heuristic misclassifies; this
 # hook's `types: [text]` filter (from pre-commit-hooks' own default) uses the more
 # reliable `identify` library instead, and never touches a file it can't confirm is text.
 args = ["--fix=lf"]

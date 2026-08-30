@@ -1,7 +1,7 @@
 """Shared fixtures and helpers for rendering this template against real Copier.
 
 Generic by design: nothing here hardcodes this repo's specific doc set or question
-values -- see answer_matrix.py for the repo-specific piece, which a child template
+values; see answer_matrix.py for the repo-specific piece, which a child template
 should edit alongside its own copier.yml changes.
 """
 
@@ -48,7 +48,7 @@ def _run(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProces
     """Run subprocess.run with output always captured as UTF-8 text.
 
     Windows' default console encoding (cp1252) can't decode tool output containing
-    e.g. emoji or box-drawing characters (lychee's summary, for one) -- that mismatch
+    e.g. emoji or box-drawing characters (lychee's summary, for one); that mismatch
     crashes the background reader thread and leaves stdout/stderr as None instead of
     raising cleanly.
 
@@ -81,7 +81,7 @@ def _git_init_repo(path: Path) -> None:
     """Init a throwaway git repo at `path` with a fixed local identity.
 
     Needed because `copier update` requires both the source and the destination to be
-    git repositories -- it records `_commit` from the source at copy time and uses git
+    git repositories; it records `_commit` from the source at copy time and uses git
     to detect local destination changes when applying an update.
     """
     path.mkdir(parents=True, exist_ok=True)
@@ -113,11 +113,11 @@ def _assemble_source(repo_root: Path, dest: Path) -> None:
 
     Deliberately does not copy this repo's own root copier.yml: that file is dogfooded
     output, refreshed only by an occasional `copier update`, so it lags behind
-    uncommitted or just-committed edits under template/ -- exactly the edits this suite
+    uncommitted or just-committed edits under template/; exactly the edits this suite
     exists to catch. When template/ contains a self-hosting conditional copier.yml (a
     template that, like this one, supports generating child templates), that file's
-    non-raw header is rendered with stub values -- nothing in these tests inspects
-    parent_template_name/url -- while its `{% raw %}...{% endraw %}` body (the real
+    non-raw header is rendered with stub values; nothing in these tests inspects
+    parent_template_name/url; while its `{% raw %}...{% endraw %}` body (the real
     question set) passes through unprocessed, exactly as Copier itself would render it
     into a child's copier.yml.
     """
@@ -167,7 +167,7 @@ def _assemble_update_scratch_repo(repo_root: Path, old_tag: str, dest: Path) -> 
     """Build a 2-commit copier source for testing the update path: old_tag -> current.
 
     Commit 1 is `repo_root`'s real, historical state at `old_tag` (its actual root
-    copier.yml as released, not synthesized) -- exactly what a real user updating from
+    copier.yml as released, not synthesized); exactly what a real user updating from
     that release would have used as their template source. Commit 2 (HEAD) is the
     current on-disk template/ contents, assembled the same way _assemble_source builds
     it for the copy-only tests, so uncommitted edits are covered here too.
@@ -226,7 +226,7 @@ def update_source(tmp_path_factory):
     """
     old_tag = _latest_tag(REPO_ROOT)
     if old_tag is None:
-        pytest.skip("No git tags found -- nothing to update from yet.")
+        pytest.skip("No git tags found; nothing to update from yet.")
     src = tmp_path_factory.mktemp("update-source")
     _assemble_update_scratch_repo(REPO_ROOT, old_tag, src)
     return src, old_tag

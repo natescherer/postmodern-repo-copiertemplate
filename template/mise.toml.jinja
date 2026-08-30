@@ -21,7 +21,7 @@ run = "copier update --answers-file .config/copier-answers.yml --skip-answered -
 [tasks.set-lifecycle]
 # Re-prompts just the `lifecycle` question (--ask overrides --skip-answered for it,
 # showing its normal choice menu with the current value pre-selected) without pulling
-# in a template update alongside it -- `--vcs-ref=:current:` pins the update to the
+# in a template update alongside it; `--vcs-ref=:current:` pins the update to the
 # currently-installed template version instead of the latest one. Both flags' minimum
 # copier versions are enforced by this project's own _min_copier_version.
 run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust --vcs-ref=:current: --ask lifecycle"
@@ -30,10 +30,10 @@ run = "copier update --answers-file .config/copier-answers.yml --skip-answered -
 run = "zensical serve"
 
 [tasks.provision-secrets]
-# Opt-in and separate from _tasks on purpose -- see docs/token-permissions.md. `raw`
+# Opt-in and separate from _tasks on purpose; see docs/token-permissions.md. `raw`
 # gives gh/az direct terminal control so each CLI's own masked prompt (gh's
 # Prompter.Password, az's knack.prompting.prompt_pass) reads the value straight from
-# the terminal -- it never touches a command-line argument, mise's own logging, or a
+# the terminal; it never touches a command-line argument, mise's own logging, or a
 # script of ours.
 raw = true
 run = [
@@ -54,7 +54,7 @@ run = [
 
 [tasks.migrate-azdo-pipeline-names]
 # One-time fixup for an *existing* project after a copier update that renamed
-# .azurepipelines/*.yml files -- see that script's own docstring for why this can't
+# .azurepipelines/*.yml files; see that script's own docstring for why this can't
 # just be a _tasks entry (those only ever run on a fresh `copier copy`).
 run = "python .azurepipelines/migrate_pipeline_names.py"
 {%- endif %}
@@ -74,18 +74,18 @@ run = "uv run scripts/template_docs_server.py"
 
 [tasks.integration-test-gh]
 # Creates two real throwaway repos from this template and runs every automated check
-# it can against Repo A, always at HEAD -- this exists to verify a release candidate
+# it can against Repo A, always at HEAD; this exists to verify a release candidate
 # on main is good before cutting a release, not to smoke-test an arbitrary branch. See
 # docs/integration-testing.md for what this does and doesn't check, and
 # docs/manual-verification-github.md for what still needs a human. Repo B is copied at
-# the last stable tag and left there -- run `mise run copier-update` against it
+# the last stable tag and left there; run `mise run copier-update` against it
 # yourself, then `mise run integration-test-verify-update-gh` to verify it. Both repos
 # are left in place afterward for inspection; delete them yourself when you're done.
 run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}"
 
 [tasks.integration-test-verify-update-gh]
 # Run after manually updating Repo B (see docs/manual-verification-github.md's "Repo
-# B" section) -- verifies the update applied cleanly (no conflict markers, current
+# B" section); verifies the update applied cleanly (no conflict markers, current
 # content) and that PR Validation still works, the same way integration-test-gh
 # already verifies Repo A.
 usage = '''
@@ -98,11 +98,11 @@ run = "python scripts/integration_test_github.py"
 {%- set org_default = azdo_org if using_azdo else '' %}
 {%- set project_default = azdo_project if using_azdo else '' %}
 # Creates two real throwaway repos from this template and runs every automated check
-# it can against Repo A, always at HEAD -- this exists to verify a release candidate
+# it can against Repo A, always at HEAD; this exists to verify a release candidate
 # on main is good before cutting a release, not to smoke-test an arbitrary branch. See
 # docs/integration-testing.md for what this does and doesn't check, and
 # docs/manual-verification-azdo.md for what still needs a human. Repo B is copied at
-# the last stable tag and left there -- run `mise run copier-update` (then `mise run
+# the last stable tag and left there; run `mise run copier-update` (then `mise run
 # migrate-azdo-pipeline-names`) against it yourself, then `mise run
 # integration-test-verify-update-azdo` to verify it. Both repos are left in place
 # afterward for inspection; delete them yourself when you're done. --org/--project
@@ -111,7 +111,7 @@ run = "python scripts/integration_test_github.py"
 # integration-test-azdo -- --org myorg --project myproject`. Uses the `usage` field
 # (not the deprecated option() Tera function) so these are passed to the script as
 # real env vars (usage_org/usage_project) rather than templated into the command line
-# -- works identically regardless of the invoking shell/platform, and (unlike
+# this works identically regardless of the invoking shell/platform, and (unlike
 # option()) a missing required value doesn't silently vanish from the command line and
 # desync argparse.
 usage = '''
@@ -122,7 +122,7 @@ run = "python scripts/integration_test_azdo.py --source {% if using_github %}htt
 
 [tasks.integration-test-verify-update-azdo]
 # Run after manually updating Repo B (see docs/manual-verification-azdo.md's "Repo B"
-# section) -- verifies the update applied cleanly (no conflict markers, current
+# section); verifies the update applied cleanly (no conflict markers, current
 # content, pipelines renamed in place) and that PR Validation still works, the same
 # way integration-test-azdo already verifies Repo A.
 usage = '''
@@ -150,7 +150,7 @@ actionlint = "1.7.12"
 {%- endif %}
 {%- if using_github %}
 {#- Used by _tasks in copier.yml for repo creation/setup. Note this doesn't help during
-   the questionnaire itself (this file doesn't exist yet at that point) -- the
+   the questionnaire itself (this file doesn't exist yet at that point); the
    developer_platform question's validator checks whatever gh is already on PATH. #}
 {#- renovate: datasource=github-releases depName=cli/cli #}
 "aqua:cli/cli" = "2.97.0"
@@ -159,9 +159,9 @@ actionlint = "1.7.12"
    workflows on both platforms. ubi is deprecated in mise and knope isn't in the aqua
    registry, so this uses the github backend directly. knope-dev/knope is a monorepo
    that tags each crate's releases separately (e.g. "knope/vX.Y.Z", not a bare
-   "vX.Y.Z") -- tracked by the dedicated "Manager for the knope mise tool pin"
+   "vX.Y.Z"); tracked by the dedicated "Manager for the knope mise tool pin"
    customManager in renovate.json.jinja, not the generic "simple mise tools" one,
-   since that can't filter a monorepo's mixed-prefix tags -- deliberately no
+   since that can't filter a monorepo's mixed-prefix tags; deliberately no
    `renovate:` comment marker here, since that generic manager would also match it. #}
 "github:knope-dev/knope" = "knope/v0.23.0"
 {#- renovate: datasource=github-releases depName=crate-ci/typos #}
@@ -194,7 +194,7 @@ uvx_args = "--with jinja2-shell-extension==2.1.1"
 version = "9.1.1"
 # pytest-github-actions-annotate-failures / pytest-azurepipelines surface pytest
 # failures and warnings as native platform annotations (::warning::/::error:: on
-# GitHub, ##vso[task.logissue] on Azure DevOps) with zero config -- they auto-detect
+# GitHub, ##vso[task.logissue] on Azure DevOps) with zero config; they auto-detect
 # their CI via the env vars each platform already sets.
 uvx_args = "--with pyyaml==6.0.3 --with jinja2==3.1.6 --with jinja2-ansible-filters==1.3.2 --with pytest-xdist==3.8.0{% if using_github %} --with pytest-github-actions-annotate-failures==0.4.2{% elif using_azdo %} --with pytest-azurepipelines==1.0.5{% endif %}"
 {%- endif %}

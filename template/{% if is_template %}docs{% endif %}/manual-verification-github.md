@@ -1,10 +1,10 @@
 # Manual Verification Checklist (GitHub)
 
-Run through this **in full**, by hand, as the last step before cutting a release. See [Integration Testing](integration-testing.md) for what `mise run integration-test-gh` creates and why the update step below isn't automated. Most of Repo A's checks are now automated -- each `mise run integration-test-*-gh` invocation prints its own PASS/FAIL per check, plus a summary; what's below is what's left for a human.
+Run through this **in full**, by hand, as the last step before cutting a release. See [Integration Testing](integration-testing.md) for what `mise run integration-test-gh` creates and why the update step below isn't automated. Most of Repo A's checks are now automated; each `mise run integration-test-*-gh` invocation prints its own PASS/FAIL per check, plus a summary; what's below is what's left for a human.
 
 !!! bug "Checkbox state isn't saved"
     Boxes on this page are clickable so you can tick items off as you go, but nothing
-    persists that -- reloading or leaving the page resets every box to unchecked. Treat
+    persists that; reloading or leaving the page resets every box to unchecked. Treat
     it as a scratchpad for one sitting, not a record you can come back to.
 
 ## Repo A
@@ -13,12 +13,12 @@ Fresh copy at `HEAD`, `zensical_target: GitHub Pages`, `code_coverage` on.
 
 ### After First Setup
 
-*Branch protection actually blocking a bad PR is automated -- see "a bad-title PR fails Test (Auto): PR Validation" and "branch protection blocks merging a PR with a bad PR title" in the script's own output.*
+*Branch protection actually blocking a bad PR is automated; see "a bad-title PR fails Test (Auto): PR Validation" and "branch protection blocks merging a PR with a bad PR title" in the script's own output.*
 
 - [ ] The setup checklist (a GitHub Issue titled "Post-Setup Checklist," opened automatically on first copy) exists and every item on it has been addressed.
 - [ ] Badges at the top of README.md render correctly (no broken image icons).
 - [ ] `docs/images/readme-logo.png` and `docs/images/readme-screenshot.png` display correctly in README.md, or that section has been removed if unused.
-- [ ] Required secrets/pipeline variables are provisioned (`mise run provision-secrets`, or see [Token Permissions](token-permissions.md)) -- confirmed by the pipelines below not failing with authentication errors.
+- [ ] Required secrets/pipeline variables are provisioned (`mise run provision-secrets`, or see [Token Permissions](token-permissions.md)); confirmed by the pipelines below not failing with authentication errors.
 
 ### Maint (Auto): Copier Update Check
 
@@ -35,7 +35,7 @@ Nothing left here for Repo A.
 
 ### Maint (Auto): Renovate
 
-Renovate on GitHub runs as the externally-hosted [Renovate GitHub App](https://github.com/apps/renovate), not a workflow in this repo -- there's nothing to dispatch or verify from inside this repo's own CI.
+Renovate on GitHub runs as the externally-hosted [Renovate GitHub App](https://github.com/apps/renovate), not a workflow in this repo; there's nothing to dispatch or verify from inside this repo's own CI.
 
 - [ ] Confirm the app is installed with access to this repo (Settings > Integrations, or your account/org's installed GitHub Apps).
 - [ ] Wait for its own schedule (or check its dashboard for how to trigger an out-of-schedule run) and confirm it authenticates successfully.
@@ -43,7 +43,7 @@ Renovate on GitHub runs as the externally-hosted [Renovate GitHub App](https://g
 
 ### Maint (Auto): All Contributors
 
-(Public repos only -- both repos are Public, so either would do; this repo is as good a place as any.)
+(Public repos only; both repos are Public, so either would do; this repo is as good a place as any.)
 
 - [ ] Comment `@all-contributors please add @<username> for <contribution>` on an issue or PR, and confirm the bot opens a PR adding that person to the Contributors section of README.md.
 
@@ -56,7 +56,7 @@ Renovate on GitHub runs as the externally-hosted [Renovate GitHub App](https://g
 
 *A bad-title PR failing, and a PR with a failing test suite failing and being blocked from merging, are both automated.*
 
-- [ ] Confirm `coverage.xml` uploads to Codecov successfully and the report/badge reflects it -- `code_coverage` is on for this repo.
+- [ ] Confirm `coverage.xml` uploads to Codecov successfully and the report/badge reflects it; `code_coverage` is on for this repo.
 
 ### Release (Auto): Prepare/Publish Release
 
@@ -72,7 +72,7 @@ Nothing left here for Repo A.
 
 ## Repo B
 
-Copied at the last stable release tag, `zensical_target: docs-site Directory in Repo`, `code_coverage` off. Still at that tag -- nothing here has been updated for you.
+Copied at the last stable release tag, `zensical_target: docs-site Directory in Repo`, `code_coverage` off. Still at that tag; nothing here has been updated for you.
 
 ### Before Updating
 
@@ -91,4 +91,4 @@ Run `mise run integration-test-verify-update-gh -- --repo <repo> --local-path <p
 
 ## Cleaning Up
 
-- [ ] Delete both throwaway repos (`gh repo delete <repo> --yes`, or via the web UI) -- deleting a GitHub repo removes everything registered against it, workflows included.
+- [ ] Delete both throwaway repos (`gh repo delete <repo> --yes`, or via the web UI); deleting a GitHub repo removes everything registered against it, workflows included.

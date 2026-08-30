@@ -200,7 +200,7 @@
       "versioningTemplate": {% raw %}"{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"{% endraw %}
     },
     {
-      "description": "Manager for the knope mise tool pin -- knope-dev/knope is a monorepo that tags each crate's releases separately (e.g. knope/vX.Y.Z), so the generic \"simple mise tools\" manager above can't be used: extractVersionTemplate is what filters the mixed-prefix tags down to just knope's own",
+      "description": "Manager for the knope mise tool pin: knope-dev/knope is a monorepo that tags each crate's releases separately (e.g. knope/vX.Y.Z), so the generic \"simple mise tools\" manager above can't be used: extractVersionTemplate is what filters the mixed-prefix tags down to just knope's own",
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "knope-dev/knope",
@@ -304,7 +304,7 @@
       "versioningTemplate": "pep440"
     }{% if is_template %},
     {
-      "description": "Manager for npm-backed mise tools with options -- mirrors \"Manager for pipx tools with options\" above, but for the npm: backend prefix (datasource npm instead of pypi). A separate manager because that one's datasource is hardcoded to pypi.",
+      "description": "Manager for npm-backed mise tools with options: mirrors \"Manager for pipx tools with options\" above, but for the npm: backend prefix (datasource npm instead of pypi). A separate manager because that one's datasource is hardcoded to pypi.",
       "customType": "regex",
       "datasourceTemplate": "npm",
       "managerFilePatterns": [

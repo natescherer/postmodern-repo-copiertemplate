@@ -1,7 +1,7 @@
 name: $(BuildId)-pr_validation
 
 # Azure Repos Git doesn't support YAML `pr:` triggers at all (they only work for GitHub/
-# Bitbucket Cloud sources) -- this pipeline is triggered solely by the "PR Validation"
+# Bitbucket Cloud sources); this pipeline is triggered solely by the "PR Validation"
 # build-validation branch policy set up in copier.yml.jinja's repo-setup tasks, so there's
 # no `pr:` block here and no `autoCancel` (a `pr:`-trigger-only feature) to rely on.
 trigger:
@@ -89,7 +89,7 @@ stages:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - bash: |
               # Scopes the lint run to files actually changed on this PR, matching
-              # GitHub's counterpart (which runs the same git diff) -- identical PR
+              # GitHub's counterpart (which runs the same git diff); identical PR
               # content could otherwise pass on GitHub and fail on Azure DevOps (or vice
               # versa) depending on unrelated pre-existing lint state elsewhere in the repo.
               git fetch origin $(System.PullRequest.TargetBranchName)

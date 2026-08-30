@@ -1,4 +1,4 @@
-# Managed by the "Settings" GitHub App (https://github.com/apps/settings) -- do not
+# Managed by the "Settings" GitHub App (https://github.com/apps/settings); do not
 # edit repo settings in the GitHub UI, edit this file instead. Install the app with
 # access to this repo for changes here to take effect; see docs/prerequisites.md.
 
@@ -16,7 +16,7 @@ repository:
 
   # Free for public repos; needs a paid GitHub Advanced Security license on private
   # ones, so scoped to public only. New public repos under a personal account get
-  # this by default already, but org-owned ones don't -- this makes it explicit
+  # this by default already, but org-owned ones don't; this makes it explicit
   # either way rather than depending on that default.
   security_and_analysis:
     secret_scanning:
@@ -26,7 +26,7 @@ repository:
 {%- endif %}
 
 # The Settings App treats this list as authoritative: any label that exists on the
-# repo but isn't listed here gets deleted on sync -- including GitHub's own
+# repo but isn't listed here gets deleted on sync; including GitHub's own
 # auto-created defaults (bug, enhancement, etc.), which is why they're listed
 # explicitly below rather than left for GitHub to create on its own.
 labels:
@@ -77,7 +77,7 @@ rulesets:
     # actor_id 5 = the built-in "admin" repository role (undocumented by GitHub, but
     # widely confirmed: https://github.com/github/rest-api-description/issues/4406).
     # bypass_mode "pull_request" only lets an admin skip requirements when merging a
-    # PR (the "Merge without waiting for requirements" button) -- it doesn't grant a
+    # PR (the "Merge without waiting for requirements" button); it doesn't grant a
     # direct push past this ruleset the way "always" would.
     bypass_actors:
       - actor_type: RepositoryRole
@@ -102,7 +102,7 @@ rulesets:
           do_not_enforce_on_create: true
           # Matches the AzDO side's forced behavior (queue-on-source-update-only
           # false requires valid-duration 0, i.e. "recheck immediately when the
-          # target branch updates") -- keeps both platforms equally strict.
+          # target branch updates"); keeps both platforms equally strict.
           strict_required_status_checks_policy: true
           required_status_checks:
             # Job id from test-auto-prvalidation.yml.jinja's "tests" job (no `name:` set,

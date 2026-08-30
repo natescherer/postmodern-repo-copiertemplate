@@ -2,7 +2,7 @@ name: "Test (Auto): PR Validation"
 
 on:
   pull_request:
-    # Explicit -- the implicit default (opened, synchronize, reopened) omits `edited`,
+    # Explicit; the implicit default (opened, synchronize, reopened) omits `edited`,
     # so a title-only edit wouldn't otherwise re-run the PR-title check below.
     types: [opened, edited, synchronize, reopened]
 

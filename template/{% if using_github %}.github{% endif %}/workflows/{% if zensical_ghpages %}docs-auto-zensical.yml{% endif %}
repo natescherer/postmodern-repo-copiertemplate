@@ -38,7 +38,7 @@ jobs:
       - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4
         with:
           # mike is a git dependency, so uv builds it from source using a python
-          # interpreter under the runner's ephemeral _temp dir -- a path that's never
+          # interpreter under the runner's ephemeral _temp dir; a path that's never
           # part of this cache. A cached mike from a different job's run references an
           # interpreter path that no longer exists, failing with "cannot execute:
           # required file not found". This is the only workflow that actually invokes
@@ -54,7 +54,7 @@ jobs:
             zensical-
       - name: Check for gh-pages Index
         id: index-check
-        # jiangxin/file-exists-action is unmaintained (GitHub flags it) -- this is
+        # jiangxin/file-exists-action is unmaintained (GitHub flags it); this is
         # simple enough to inline. fetch-depth: 0 above fetches all branches, so
         # origin/gh-pages is resolvable locally without a separate checkout.
         shell: bash

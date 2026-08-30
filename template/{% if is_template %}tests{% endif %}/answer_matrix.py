@@ -1,6 +1,6 @@
 """Boundary answer combinations shared by every test module in this directory.
 
-Edit this file when you add, remove, or rename a Copier question in copier.yml -- each
+Edit this file when you add, remove, or rename a Copier question in copier.yml; each
 entry should be a real, reachable combination (respecting copier.yml's
 `when:`/`validator:` constraints, e.g. `Public` + `MIT` isn't valid on Azure DevOps)
 that exercises a distinct rendering path. This file is repo-specific by design; the
@@ -126,7 +126,7 @@ INVALID_ANSWER_MATRIX = [
 # with the reason it's a deliberate gap rather than an oversight.
 COVERAGE_EXEMPT_QUESTIONS = {
     # "Create Repo"/"Set Repo Rules" only gate which _tasks run (real GitHub/Azure
-    # DevOps API calls via should_create_repo/should_set_repo_settings) -- they never
+    # DevOps API calls via should_create_repo/should_set_repo_settings); they never
     # affect rendered file content, and this suite always renders with --skip-tasks.
     # COMMON pins this to "None" everywhere specifically to keep tests offline.
     "repo_setup_actions",

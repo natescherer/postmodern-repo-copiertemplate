@@ -20,9 +20,9 @@ entirely. Prefer GitHub for new projects unless you specifically need Azure DevO
 ## `repo_setup_actions`: Create Repo / Set Repo Rules / None
 
 Controls which setup automation runs after the template is copied. `.github/settings.yml` (GitHub
-only) is always generated regardless of this answer -- see below. Choosing anything but `None`
+only) is always generated regardless of this answer; see below. Choosing anything but `None`
 triggers this question's validator, which checks the relevant platform CLI (`gh` or `az`) is
-installed and authenticated *before* letting you proceed -- see [Prerequisites](prerequisites.md).
+installed and authenticated *before* letting you proceed; see [Prerequisites](prerequisites.md).
 
 - **Create Repo** — creates the remote repo; on GitHub also sets Actions workflow permissions,
   sets up GitHub Pages if applicable, and (for public repos) enables CodeQL code scanning's
@@ -84,7 +84,7 @@ both files entirely.
 
 Whether to wire up code coverage reporting: the Codecov GitHub Action on GitHub, or Azure
 Pipelines' built-in coverage publishing on Azure DevOps. This only plumbs the upload/publish
-step -- it expects a `coverage.xml` (Cobertura format) at the repo root, and doesn't produce
+step; it expects a `coverage.xml` (Cobertura format) at the repo root, and doesn't produce
 one itself. Your own test command (or a language-specific child template built from this one)
 needs to actually generate that file, e.g. `pytest-cov`'s `--cov-report=xml` for Python or
 Pester's `-CodeCoverage` for PowerShell.

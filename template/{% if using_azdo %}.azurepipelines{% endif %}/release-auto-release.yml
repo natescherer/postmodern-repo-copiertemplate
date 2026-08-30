@@ -43,7 +43,7 @@ stages:
           - bash: mise install
             displayName: Run 'mise install'
           - bash: az extension add --name azure-devops
-            # Deliberately unpinned as of 2026-08 -- no Renovate-trackable version
+            # Deliberately unpinned as of 2026-08; no Renovate-trackable version
             # source could be found. Its GitHub releases are date-tagged (don't match
             # the real version number), and the matching-named PyPI package is an
             # unrelated SDK. The real version list lives in Azure/azure-cli-extensions'
@@ -57,7 +57,7 @@ stages:
           - bash: |
               # Commit-message sniffing isn't reliable here: AzDO's regular (non-squash)
               # merge commit message is "Merge pull request NNN from knope/release into
-              # main" -- it doesn't reproduce the PR title at all, unlike a squash merge.
+              # main"; it doesn't reproduce the PR title at all, unlike a squash merge.
               # Ask the API directly instead: is the most recently *completed* PR from
               # knope/release into main's merge commit the same commit that triggered
               # this run? That's true exactly once, for the run immediately after that

@@ -1,11 +1,11 @@
 """Fix up this repo's Azure Pipeline registrations after a naming-scheme rename.
 
 `copier update` renames `.azurepipelines/*.yml` files on disk (ordinary template-diff
-behavior), but it can't touch pipeline *registrations* already living in Azure DevOps --
+behavior), but it can't touch pipeline *registrations* already living in Azure DevOps:
 those are live objects the original `_tasks` bootstrap created via `az pipelines
 create`, and `_tasks` only ever run on a fresh `copier copy`, never on `update`. Run
 this once after a `copier update` that renamed pipelines, to repoint each existing
-registration at its new name and YAML path in place -- preserving its ID, run history,
+registration at its new name and YAML path in place; preserving its ID, run history,
 and any manually-set variables (e.g. APPRISE_URL, set via `mise run provision-secrets`)
 instead of losing them to a delete-and-recreate.
 
@@ -27,7 +27,7 @@ REPO_NAME = "{{ repo_name }}"
 
 # (old display name, new display name, new yml-path relative to the repo root). Pulled
 # directly from copier.yml's `az pipelines create` _tasks entries as of the rename that
-# introduced this script -- a future rename should add its own migration rather than
+# introduced this script; a future rename should add its own migration rather than
 # extend this table.
 MIGRATIONS = (
     (
@@ -65,7 +65,7 @@ MIGRATIONS = (
 
 # Renamed "Maint (Auto) - Link Check" to "Maint (Auto) - Repo Health Check" when a
 # REPO_MAINTENANCE_PAT expiration check (GitHub-only) got folded into the equivalent
-# GitHub workflow -- kept separate from MIGRATIONS above per that table's own note:
+# GitHub workflow; kept separate from MIGRATIONS above per that table's own note:
 # its "old" names are the pre-unified-naming-scheme originals, not a name a previous
 # migration already produced, so mixing this rename into it would be misleading.
 MIGRATIONS_REPO_HEALTH_CHECK = (
@@ -128,7 +128,7 @@ def check_azure_devops_extension() -> None:
     """Verify the azure-devops CLI extension is installed.
 
     `az devops`/`az repos`/`az pipelines` commands, if the extension isn't installed,
-    prompt interactively to install it -- which just hangs with no stdin attached.
+    prompt interactively to install it; which just hangs with no stdin attached.
     Checking via `az extension list` first (a core command that doesn't itself need
     the extension) avoids ever triggering that prompt.
 
@@ -150,7 +150,7 @@ def migrate(org: str, project: str, *, dry_run: bool) -> None:
     """Repoint each existing pipeline registration at its renamed name and yml-path.
 
     Whether a given entry even applies to this project is decided by whether its new
-    `.azurepipelines/*.yml` file exists on disk -- the ground truth for "this project
+    `.azurepipelines/*.yml` file exists on disk; the ground truth for "this project
     needs this pipeline," since that file only exists if the project's own answers
     caused copier to render it.
     """
@@ -185,7 +185,7 @@ def migrate(org: str, project: str, *, dry_run: bool) -> None:
 
         if old_id and new_id:
             print(
-                f"WARNING: both {old_full!r} and {new_full!r} are registered -- "
+                f"WARNING: both {old_full!r} and {new_full!r} are registered; "
                 "skipping, fix manually."
             )
         elif old_id:
@@ -211,7 +211,7 @@ def migrate(org: str, project: str, *, dry_run: bool) -> None:
         else:
             print(
                 f"WARNING: {yml_path} exists locally but no pipeline is registered "
-                f"under {old_full!r} or {new_full!r} -- create it manually, e.g. via "
+                f"under {old_full!r} or {new_full!r}; create it manually, e.g. via "
                 "'az pipelines create'."
             )
 
@@ -219,7 +219,7 @@ def migrate(org: str, project: str, *, dry_run: bool) -> None:
     if cruft:
         print(
             "\nPipelines registered for this repo that don't match any known old or "
-            "new name -- review manually, not auto-deleted:"
+            "new name; review manually, not auto-deleted:"
         )
         for name in cruft:
             print(f"  {name!r} (id {by_name[name]})")

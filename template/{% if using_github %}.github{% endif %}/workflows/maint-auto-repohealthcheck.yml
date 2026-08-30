@@ -47,12 +47,12 @@ jobs:
           APPRISE_URL: ${{ secrets.APPRISE_URL }}
         run: |
           # GitHub returns this response header only when the authenticating token
-          # (classic PATs, which is what REPO_MAINTENANCE_PAT must be -- see
+          # (classic PATs, which is what REPO_MAINTENANCE_PAT must be; see
           # docs/token-permissions.md) has an expiration date set; it's absent for a
           # token with no expiration, in which case there's nothing to warn about.
           expiration=$(gh api user -i | grep -i '^github-authentication-token-expiration:' | cut -d: -f2- | xargs)
           if [ -z "$expiration" ]; then
-            echo "REPO_MAINTENANCE_PAT has no expiration set -- nothing to warn about."
+            echo "REPO_MAINTENANCE_PAT has no expiration set; nothing to warn about."
             exit 0
           fi
           days_left=$(( ($(date -d "$expiration" +%s) - $(date +%s)) / 86400 ))
@@ -71,7 +71,7 @@ jobs:
       actions: write
     steps:
       # Re-enables this workflow if GitHub disabled it for inactivity. Inlined from
-      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh` --
+      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh`,
       # unsupported on Windows runners, unlike bash, which is available there via Git
       # for Windows.
       - name: Re-enable Workflow
