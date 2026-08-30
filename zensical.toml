@@ -22,6 +22,7 @@ nav = [
     "platform-notes/index.md",
     "platform-notes/azure-devops.md"
   ] },
+  { "Extending This Template" = "extending-the-template.md" },
   { "Components" = ["components/template-engine.md"] }
 ]
 site_url = "https://natescherer.github.io/postmodern-repo-copiertemplate"
