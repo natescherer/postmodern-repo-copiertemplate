@@ -17,6 +17,12 @@ If a push has nothing release-worthy in it (e.g. a `docs:`- or `chore:`-only com
 the workflow run shows a failed step but stays green overall; that's expected, not a
 bug, and no PR is opened or updated.
 
+Each push to `main` also pushes a new commit to the release PR, authored as
+`github-actions[bot]`. GitHub requires a human to click "Approve and run workflow" in
+the Actions tab before that PR's required check can run on each of those pushes; branch
+protection won't let the PR merge until it does. This is deliberate: it avoids needing a
+repo-wide Personal Access Token, which commonly isn't usable in an enterprise context.
+
 ## Upstream Template Update Changesets
 
 A `copier update` that pulls in template changes may drop one or more files into

@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 env:
   MISE_ENV: ci
@@ -22,11 +23,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - name: Validate Secrets Exist
-        uses: ./.github/actions/require-secrets
-        with:
-          secrets: |
-            REPO_MAINTENANCE_PAT=${{ secrets.REPO_MAINTENANCE_PAT }}
       - name: Configure Git Credentials
         shell: bash
         run: |
@@ -45,9 +41,13 @@ jobs:
         run: zensical build
       - name: Create Pull Request
         id: cpr
+        # This PR is authored as github-actions[bot] (the default GITHUB_TOKEN), so
+        # its required status check sits in GitHub's action_required state until a
+        # human clicks "Approve and run workflow" in the Actions tab; automerge below
+        # only completes once that check passes. See
+        # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow.
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
-          token: ${{ secrets.REPO_MAINTENANCE_PAT }}
           commit-message: "docs: build zensical"
           branch: zensical-build
           delete-branch: true
@@ -56,6 +56,5 @@ jobs:
         if: steps.cpr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3
         with:
-          token: ${{ secrets.REPO_MAINTENANCE_PAT }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: squash

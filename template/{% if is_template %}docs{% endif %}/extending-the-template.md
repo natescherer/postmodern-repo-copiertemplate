@@ -75,7 +75,7 @@ This is the exercise that prompted this page; see [Token Permissions](token-perm
 2. Add it to the `provision-secrets` task (masked-prompt entry via `gh secret set` / `az pipelines variable create`) so setup stays a single guided step.
 3. Validate its presence in every consuming workflow/pipeline (the `require-secrets`-composite-action pattern on GitHub; an equivalent guard step on Azure DevOps) so a missing secret fails with a clear message instead of a confusing downstream error.
 4. Add it to `_message_after_copy`'s setup checklist.
-5. Consider whether it can expire, and if so, whether an expiration check belongs somewhere: this template's own `REPO_MAINTENANCE_PAT` check (folded into the monthly repo health check) is a working example of that pattern: authenticate as the credential itself, read whatever the platform's API reports about its expiration, and notify ahead of time rather than letting it fail silently later.
+5. Consider whether it can expire, and if so, whether an expiration check belongs somewhere (e.g. the monthly repo health check): authenticate as the credential itself, read whatever the platform's API reports about its expiration, and notify ahead of time rather than letting it fail silently later.
 
 ### Renaming or removing something
 

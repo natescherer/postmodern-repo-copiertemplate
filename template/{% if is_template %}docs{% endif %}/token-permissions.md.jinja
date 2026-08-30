@@ -30,23 +30,11 @@ docs for the URL format for your service of choice).
     separate matter; `gh auth login`'s scopes don't cover pushing `.github/workflows/` files
     regardless, so that step uses Git Credential Manager's own login instead, not `gh`'s.
 
-    ### Repo Maintenance PAT (Classic Token)
-
-    For best security, create this token via [this link](https://github.com/settings/personal-access-tokens/new)
-    and save it as a GitHub Actions secret on the repository called **REPO_MAINTENANCE_PAT**. This is
-    separate from `gh auth login` above; it's used on an ongoing basis by this project's own GitHub
-    Actions workflows (Copier update checks, docs builds), not just at setup time.
-
-    **Repository Access**: All repositories
-
-    | **Scope** | **Reason**                        |
-    | --------- | ---------------------------------- |
-    | `repo`    | Needed for Copier/docs workflows   |
-
-    !!! note
-        Fine-grained tokens are specifically **not** used, since they cannot open pull requests.
-        This can be changed once [this issue](https://github.com/github/roadmap/issues/600) is
-        implemented by GitHub.
+    No repository-level PAT is needed either. This project's automated workflows (release
+    PRs, docs builds) run under the repository's own default `GITHUB_TOKEN`. Because those
+    runs are authored as `github-actions[bot]`, GitHub requires a one-time manual approval
+    per push before their checks can run; see [Releasing](releasing.md) for what that looks
+    like in practice.
 
 === "Azure DevOps"
 
