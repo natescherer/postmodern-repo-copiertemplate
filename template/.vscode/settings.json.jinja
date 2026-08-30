@@ -1,4 +1,7 @@
 {
+  "[jinja-json]": {
+    "editor.tabSize": 2
+  },
   "[jinja-md]": {
     "editor.tabSize": 2
   },
@@ -24,6 +27,19 @@
     "**.y*ml[{]% endif %[}]": "yaml",
     "**.py[{]% endif %[}]": "python",
     "**.toml[{]% endif %[}]": "toml"{% endif %}
+  },
+{%- if is_template %}
+  "maptz.regionfolder": {
+    "[jinja-yaml]": {
+      "foldStart": "# region [NAME]",
+      "foldStartRegex": "#\\s*region\\s*(.*)",
+      "foldEnd": "# endregion",
+      "foldEndRegex": "#\\s*endregion\\b"
+    }
+  },
+{%- endif %}
+  "json.schemaDownload.trustedDomains": {
+    "https://docs.renovatebot.com/renovate-schema.json": true
   },
   "markdown.validate.ignoredLinks": [
     // START Ignore allcontributors links

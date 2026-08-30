@@ -2,8 +2,9 @@
 yaml = [
   "*.yaml",
   "*.yml",
-  "*.yaml{% endif %}",
-  "*.yml{% endif %}",
+{%- if is_template %}
+  "*.yaml{% raw %}{% endif %}{% endraw %}",
+  "*.yml{% raw %}{% endif %}{% endraw %}",{% endif %}
 ]
 
 [rules]
@@ -34,6 +35,7 @@ min-spaces-from-content = 1
 
 [rules.comments-indentation]
 level = "warning"
+allow-any-open-indent = true
 
 [rules.truthy]
 level = "warning"

@@ -1,14 +1,21 @@
 {
   "recommendations": [
 {%- if is_template %}
+    "astral-sh.ty",
     "charliermarsh.ruff",{% endif %}
 {%- if is_template or (is_standard and using_github) %}
     "github.vscode-github-actions",{% endif %}
     "hverlin.mise-vscode",
+{%- if is_template or (is_standard and using_github) %}
+    "jimeh.actionlint",{% endif %}
+    "maptz.regionfolder",
 {%- if is_template or (is_standard and using_azdo) %}
     "ms-azure-devops.azure-pipelines",{% endif %}
 {%- if is_template %}
-    "ms-python.python",{% endif %}
+    "ms-python.debugpy",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.vscode-python-envs",{% endif %}
     "owenlamont.ryl",
     "redhat.vscode-yaml",
     "rvben.rumdl",
