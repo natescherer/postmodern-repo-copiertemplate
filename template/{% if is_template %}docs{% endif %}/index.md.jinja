@@ -1,5 +1,44 @@
 # Getting Started
 
+{{ project_name }} is a [Copier](https://copier.readthedocs.io/) template: running it against a
+destination path generates a ready-to-use repository with the "hard/boring stuff" (CI/CD,
+linting, releasing, documentation, repo settings) already wired up, so whoever uses it can get
+straight to building whatever the project is actually for.
+
+## The Two Decisions That Shape Everything
+
+Every question this template asks branches off two choices, made once at the very start and
+locked in from then on:
+
+- **`developer_platform`** (GitHub or Azure DevOps): which CI/CD system, secrets store, and repo
+  host the generated project targets. Most features exist in parallel on both; see [Platform
+  Notes](platform-notes/index.md) for where they don't.
+- **`project_type`** (Standard or Template): whether the generated project is a finished,
+  ready-to-code-in repo (**Standard**), or is itself another Copier template that others can copy
+  from in turn (**Template**, which is what produced the very docs you're reading right now). See
+  [Extending This Template](extending-the-template.md) if you're building a Template-type project
+  of your own; that page's "leaf vs. extensible" framing is the natural next decision after this
+  one.
+
+This project inherited its own base layer of automation the same way, from
+[{{ parent_template_name }}]({{ parent_template_url }}). If you build a Template-type project on
+top of it, that child inherits from *you* next, the same relationship one level down. `copier
+update` is what keeps that inheritance flowing: run periodically against a generated project, it
+pulls in whatever changed upstream (new features, fixes, security patches) without discarding
+what's been customized locally. See [Releasing](releasing.md) for what shows up in a project's
+own changelog when that happens.
+
+## What To Read Next
+
+- **Setting this up for the first time?** Keep reading below for installation, then see [Template
+  Questions](template-questions.md) for what each prompt controls.
+- **Adding this to a codebase that already exists?** Skip ahead to [Applying to Existing
+  Projects](applying-to-existing-projects.md).
+- **Extending this template into one of your own?** See [Extending This
+  Template](extending-the-template.md) once you've got it copied and running.
+
+## Installing It
+
 Here's how to use this template:
 
 1. Ensure you have [mise](https://mise.jdx.dev/getting-started.html) installed on your workstation (Linux/macOS/Windows are all supported).
