@@ -6,7 +6,7 @@ When you use the [Settings GitHub App](https://github.com/apps/settings), it syn
 settings, labels, and branch protection ruleset described below from the committed
 `.github/settings.yml` automatically. If you don't want to install that app (or can't, e.g. it's
 not been approved for your organization), here's how to apply the same configuration by hand
-through the GitHub UI. `.github/settings.yml` is the source of truth for the exact values below --
+through the GitHub UI. `.github/settings.yml` is the source of truth for the exact values below;
 if the two ever disagree, trust the file.
 
 ### Labels
@@ -44,7 +44,7 @@ Under **Settings > Rules > Rulesets**, create a new ruleset:
     - **Require status checks to pass**, with:
         - Require branches to be up to date before merging: on
         - Status check: `tests` (the job in `Test (Auto): PR Validation`)
-- Bypass list: add **Repository admin**, with bypass mode **Pull requests only** -- this lets
+- Bypass list: add **Repository admin**, with bypass mode **Pull requests only**; this lets
   repo admins use the "Merge without waiting for requirements to be met" button instead of being
   blocked entirely.
 
@@ -58,7 +58,7 @@ After the first successful Pages deployment, an environment named `github-pages`
 
 ### Security and Analysis
 
-(Public repos only -- private repos need a paid GitHub Advanced Security license.)
+(Public repos only; private repos need a paid GitHub Advanced Security license.)
 
 Under **Settings > Code security**, enable **Secret scanning** and **Push protection**.
 
@@ -89,5 +89,5 @@ a **Build Validation** policy:
 ### Bypass Permission
 
 Under **Project Settings > Repositories > (this repo) > Security**, select **Project
-Administrators** and set **Bypass policies when completing pull requests** to **Allow** -- this
+Administrators** and set **Bypass policies when completing pull requests** to **Allow**; this
 lets project admins use the "Complete" button's bypass option instead of being blocked entirely.

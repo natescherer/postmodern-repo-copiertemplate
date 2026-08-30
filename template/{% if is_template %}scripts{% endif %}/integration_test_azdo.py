@@ -1,6 +1,6 @@
 """Create two throwaway repos from this template and verify them.
 
-Azure DevOps counterpart to integration_test_github.py -- see that file for the shared
+Azure DevOps counterpart to integration_test_github.py; see that file for the shared
 shape (create/verify, both repos left in place afterward for you to delete yourself).
 Diverges in a few real ways: no Settings App equivalent here, so nothing to poll for
 asynchronously; `az` also has no scope-introspection command the way `gh auth status`
@@ -11,19 +11,19 @@ GitHub, where deleting the repo deletes everything registered against it) has no
 bulk-delete UI for pipelines; and `az` has no cheap way to read a pipeline run's own
 step-level output the way `gh run view --json jobs` does, so Maint (Auto) - Copier
 Update Check is only checked for a successful run here, not whether it correctly
-detected an update -- that nuance stays on the manual checklist for this platform.
+detected an update; that nuance stays on the manual checklist for this platform.
 
-Always runs against HEAD -- this is meant to verify a release candidate on main is
+Always runs against HEAD; this is meant to verify a release candidate on main is
 good before cutting a release, not to smoke-test an arbitrary branch. Creates two
 repos every run, each covering a different scenario so a single run exercises more of
 the answer space, not the same fixed answers twice: Repo A is a plain `copier copy`
-with `code_coverage` on -- every automated check this script can run happens against
+with `code_coverage` on; every automated check this script can run happens against
 it. Repo B is copied at the last stable tag with `code_coverage` off, left there for
 you to run `mise run copier-update` (then `mise run migrate-azdo-pipeline-names`)
-against yourself -- deliberately not automated, see main()'s own docstring for why.
+against yourself; deliberately not automated, see main()'s own docstring for why.
 
 Every check this script runs prints its own PASS/FAIL line as it happens, plus a
-summary per repo at the end -- it never stops at the first failure, so one run gives
+summary per repo at the end; it never stops at the first failure, so one run gives
 the full picture. It only checks things that need a real Azure DevOps API call or a
 real pipeline run; anything `tests/` already covers by rendering locally (structure,
 Jinja/YAML validity, links, nav) isn't repeated here.
@@ -113,7 +113,7 @@ def check_azure_devops_extension() -> None:
     """Verify the azure-devops CLI extension is installed.
 
     `az devops`/`az repos`/`az pipelines` commands, if the extension isn't installed,
-    prompt interactively to install it ("Do you want to install it now? (Y/n):") --
+    prompt interactively to install it ("Do you want to install it now? (Y/n):"),
     which just hangs forever with no stdin attached (e.g. under `mise run` or in CI).
     Checking via `az extension list` first (a core command that doesn't itself need
     the extension) avoids ever triggering that prompt.
@@ -135,7 +135,7 @@ def check_azure_devops_extension() -> None:
 def check_access(org_url: str, project: str) -> None:
     """Verify the active az session can actually see the target project.
 
-    Not a scope check (az has no equivalent to `gh auth status`'s scope list) -- just
+    Not a scope check (az has no equivalent to `gh auth status`'s scope list); just
     confirms the token/session is valid and has at least read access, so a bad
     AZURE_DEVOPS_EXT_PAT fails here with a clear message instead of deep inside
     `copier copy`.
@@ -167,13 +167,13 @@ def check(failures: list[str], name: str, ok: bool, detail: str = "") -> None:
     """Record and print one named check's result immediately, without halting.
 
     Every automated check in this script goes through here so failures accumulate
-    instead of stopping the run at the first one -- a full run reports the complete
+    instead of stopping the run at the first one; a full run reports the complete
     picture, not just whatever happened to fail first.
     """
     if ok:
         print(f"  [PASS] {name}")
     else:
-        print(f"  [FAIL] {name}" + (f" -- {detail}" if detail else ""))
+        print(f"  [FAIL] {name}" + (f": {detail}" if detail else ""))
         failures.append(name)
 
 
@@ -204,7 +204,7 @@ def create(
     getting the question's own (always off) default.
 
     `--defaults` falls back to each question's own default for anything not covered
-    by an explicit -d below (currently author_name, zensical_target) -- without it,
+    by an explicit -d below (currently author_name, zensical_target); without it,
     copier drops into an interactive prompt for those. Explicit -d values below still
     take priority over --defaults regardless of order.
     """
@@ -248,7 +248,7 @@ def latest_stable_tag(source: str) -> str:
 
     Uses `git ls-remote --tags` so it works directly against `source` without a local
     clone. Matches strict `vX.Y.Z` tags only (excluding prereleases like
-    `v1.1.0-alpha.0`) and sorts by parsed version, not lexically -- a plain string
+    `v1.1.0-alpha.0`) and sorts by parsed version, not lexically; a plain string
     sort would put `v0.7.9` after `v0.7.20`.
 
     Returns:
@@ -303,7 +303,7 @@ def list_tags(org_url: str, project: str, repo_name: str) -> set[str]:
 
 CLEANUP_PIPELINES_SCRIPT = '''"""Delete every Azure Pipeline registered for {repo_name}.
 
-Written by integration_test_azdo.py -- not part of the template itself, and never
+Written by integration_test_azdo.py; not part of the template itself, and never
 committed to the repo it's dropped into. Azure DevOps has no bulk-delete UI for
 pipelines; each one otherwise has to be removed by hand through its own settings page.
 Run this before deleting {repo_name} itself.
@@ -364,7 +364,7 @@ def write_cleanup_script(dest: str, org_url: str, project: str, repo_name: str) 
     """Drop a standalone script into `dest` that deletes every pipeline for this repo.
 
     Self-contained (no import from this module) so it still works after this process
-    exits, whenever you're actually ready to delete the throwaway repo -- and never
+    exits, whenever you're actually ready to delete the throwaway repo; and never
     committed, since it has no reason to exist once the repo itself is gone.
     """
     Path(dest, "cleanup_pipelines.py").write_text(
@@ -386,7 +386,7 @@ def report_pr_validation_policy(
     """Report whether the PR-validation build-validation policy was actually applied.
 
     Only checks the policy configuration itself (existence, blocking, enabled, and
-    that it targets the pr_validation pipeline) -- not the Project Administrators
+    that it targets the pr_validation pipeline); not the Project Administrators
     bypass-permission grant alongside it. `az devops security permission`'s JSON
     output shape isn't documented clearly enough (no example response in Microsoft's
     own docs) to assert against confidently without a live org to verify against, so
@@ -460,7 +460,7 @@ def verify(
         one by name without looking it up again.
 
     Raises:
-        SystemExit: only if the repo itself can't be found -- every other assertion
+        SystemExit: only if the repo itself can't be found; every other assertion
             is recorded via check() instead, since a real value here doesn't prevent
             the rest of this script's checks from being meaningful.
 
@@ -481,7 +481,7 @@ def verify(
         "tsv",
     )
     if not repo_id:
-        raise SystemExit(f"Repo {repo_name!r} not found -- did create() fail?")
+        raise SystemExit(f"Repo {repo_name!r} not found; did create() fail?")
 
     pipelines = json.loads(
         az_value(
@@ -551,7 +551,7 @@ def wait_for_pipeline_run(
     """Poll a pipeline run until it finishes and return its result.
 
     Returns:
-        The run's result, e.g. "succeeded" or "failed" -- "timed out" if `timeout`
+        The run's result, e.g. "succeeded" or "failed"; "timed out" if `timeout`
         seconds pass without the run completing.
 
     """
@@ -638,7 +638,7 @@ def wait_for_new_pipeline_run(
 ) -> str:
     """Poll for a new run of a pipeline to appear after `before_id`.
 
-    A push-triggered Azure Pipeline run doesn't always register immediately --
+    A push-triggered Azure Pipeline run doesn't always register immediately:
     observed taking longer than a 60s budget in live testing, well before any
     step of the run itself even starts.
 
@@ -664,7 +664,7 @@ def provision_test_secrets(org_url: str, project: str, repo_name: str) -> None:
     """Set a placeholder APPRISE_URL variable on every pipeline that requires it.
 
     Mirrors `mise run provision-secrets`'s own `az pipelines variable create` calls
-    (see mise.toml.jinja) -- each pipeline needs its own copy, since Azure Pipelines
+    (see mise.toml.jinja); each pipeline needs its own copy, since Azure Pipelines
     variables are scoped per-pipeline, not project-wide the way GitHub secrets are.
     Points at a real, harmless HTTPS endpoint, not a fake host, so a pipeline that
     actually sends a notification doesn't fail on an unrelated delivery error.
@@ -702,7 +702,7 @@ def check_copier_update_check(
 ) -> None:
     """Dispatch Maint (Auto) - Copier Update Check and confirm it runs successfully.
 
-    Doesn't check whether it correctly detected an update either way -- see this
+    Doesn't check whether it correctly detected an update either way; see this
     module's own docstring for why that stays manual on this platform.
     """
     print("Checking Maint (Auto) - Copier Update Check...")
@@ -719,14 +719,14 @@ def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
     """Run `copier update` against an already-current repo and confirm it's a no-op.
 
     `--defaults` is safe here specifically because nothing changed since this repo was
-    copied -- there's no template diff to introduce a new question, so there's no risk
+    copied; there's no template diff to introduce a new question, so there's no risk
     of silently defaulting past a real prompt the way there would be for Repo B.
 
     `vcs_ref` must match whatever `create()` used for this repo: without an explicit
     ref, `copier update`/`check-update` falls back to resolving "the latest tag," and
     if there's no clean tag at the exact commit being tested, copier synthesizes a
     `git describe`-style pseudo-version string and then tries to `git clone --branch`
-    using that same string as if it were a real ref -- which fails outright.
+    using that same string as if it were a real ref; which fails outright.
     """
     print("Checking `copier update` is a no-op on an already-current repo...")
     run(
@@ -783,7 +783,7 @@ def check_renovate(
 def wait_for_pr_policy(org_url: str, pr_id: str) -> str:
     """Poll a PR's build-validation policy until it settles past queued/running.
 
-    `az repos pr policy list` takes no `--project` -- a PR ID is unique within the
+    `az repos pr policy list` takes no `--project`; a PR ID is unique within the
     whole organization, not scoped per-project the way a repo name is.
 
     Returns:
@@ -839,7 +839,7 @@ def open_pr_wait_and_merge(
     commit_message: str,
     filename: str,
 ) -> None:
-    """Open a normal, passing PR and merge it -- the only way real commits reach main.
+    """Open a normal, passing PR and merge it; the only way real commits reach main.
 
     Branch protection rejects a direct `git push` to main outright, even for the
     project owner (confirmed the hard way: TF402455 "Pushes to this branch are not
@@ -898,7 +898,7 @@ def open_pr_wait_and_merge(
         "--squash",
         "true",
         # Without this, Azure DevOps writes a generic "Merge pull request N from
-        # <branch> into main" squash commit message instead of the PR title -- unlike
+        # <branch> into main" squash commit message instead of the PR title; unlike
         # GitHub, which defaults a squash merge's commit message to the PR title.
         # knope's PrepareRelease step parses Conventional Commits from real git commit
         # messages, so a squashed test commit that loses its "fix:"/"feat:" prefix this
@@ -1029,7 +1029,7 @@ def knope_release_pr_title(org_url: str, project: str, repo_name: str) -> str | 
     """Look up the open knope/release PR's title, if one is open.
 
     The title (e.g. "chore: prepare release 0.0.1") encodes the version knope
-    computed -- unlike relying on "is a PR open at all" (one may already be open from
+    computed; unlike relying on "is a PR open at all" (one may already be open from
     the bootstrap-time v0.1.0 PR), it's the right signal for "did this merge actually
     change what's proposed."
 
@@ -1064,7 +1064,7 @@ def check_release_flow(
     """Exercise the real release flow: a no-op merge, then a real release and tag.
 
     Azure DevOps has a single Release (Auto) - Prepare & Publish Release pipeline
-    (unlike GitHub's split prepare/publish workflows) -- one pipeline handles both the
+    (unlike GitHub's split prepare/publish workflows); one pipeline handles both the
     push-to-main prepare step and the merge-triggered publish step, telling them apart
     via its own API check.
     """
@@ -1077,7 +1077,7 @@ def check_release_flow(
     # *first* automated run after that always recomputes the version from knope's own
     # default rules, changing the PR's content regardless of what triggered that run.
     # Absorb that one-time transition with a throwaway merge before testing that a
-    # docs-only merge is a true no-op -- otherwise the correction gets misattributed
+    # docs-only merge is a true no-op; otherwise the correction gets misattributed
     # to whichever commit happens to trigger the first automated run.
     prepare_before = latest_pipeline_run_id(org_url, project, pid)
     open_pr_wait_and_merge(
@@ -1093,7 +1093,7 @@ def check_release_flow(
     wait_for_pipeline_run(org_url, project, warmup_run_id)
 
     # A release PR may already be open here (e.g. the bootstrap-time v0.1.0 one), so
-    # "no PR is open" isn't the right no-op signal -- what actually matters is that a
+    # "no PR is open" isn't the right no-op signal; what actually matters is that a
     # docs-only merge doesn't change what version it proposes.
     docs_noop_before = knope_release_pr_title(org_url, project, repo_name)
     prepare_before = latest_pipeline_run_id(org_url, project, pid)
@@ -1112,7 +1112,7 @@ def check_release_flow(
         failures,
         "a docs-only merge keeps the release pipeline green",
         # `az repos pr create` always fails with TF401179 ("an active pull request
-        # ... already exists") once the first knope/release PR is open -- see the feat
+        # ... already exists") once the first knope/release PR is open; see the feat
         # merge check below for the full explanation. A docs-only commit that finds
         # nothing release-worthy can *also* legitimately surface as partiallySucceeded
         # (matching releasing.md's "shows a failed step but stays green overall" note
@@ -1144,10 +1144,10 @@ def check_release_flow(
         failures,
         "a feat merge's release pipeline succeeds",
         # `az repos pr create` always fails with TF401179 ("an active pull request
-        # ... already exists") once the first knope/release PR is open -- every push
+        # ... already exists") once the first knope/release PR is open; every push
         # after the first hits this, regardless of commit type. Azure DevOps still
         # refreshes the PR's title from the new commit despite that failed step (the
-        # final title -- and the eventual release -- come out correct), so this is a
+        # final title and the eventual release come out correct), so this is a
         # real but non-blocking imperfection, not a failure worth hard-failing on.
         result in ("succeeded", "partiallySucceeded"),
         result,
@@ -1231,11 +1231,11 @@ def check_release_flow(
 def check_prerelease_flow(
     org_url: str, project: str, repo_name: str, dest: str, failures: list[str]
 ) -> None:
-    """Exercise Release (Manual) - Create Prerelease -- a label, a dup, a new label."""
+    """Exercise Release (Manual) - Create Prerelease; a label, a dup, a new label."""
     print("Checking Release (Manual) - Create Prerelease...")
     name = f"[{repo_name}] Release (Manual) - Create Prerelease"
 
-    # PrepareRelease refuses to run with nothing to bump -- without a real commit
+    # PrepareRelease refuses to run with nothing to bump; without a real commit
     # since the last release, every dispatch below would fail with knope's own
     # "No packages are ready to release", not the behavior this is meant to check.
     open_pr_wait_and_merge(
@@ -1299,7 +1299,7 @@ def check_post_update(
 
     This is the second entry point (`--verify-update`): the update itself happens by
     hand, on your own schedule, so this script can't chain straight from creating the
-    repo into checking it -- see main()'s own docstring.
+    repo into checking it; see main()'s own docstring.
     """
     print(f"Checking {repo_name}'s update applied cleanly...")
     run("git", "fetch", cwd=dest)
@@ -1313,7 +1313,7 @@ def check_post_update(
         log,
     )
     # Copier's own update conflicts come from `git merge-file`, so they use the same
-    # markers as any other git conflict -- one grep catches both.
+    # markers as any other git conflict; one grep catches both.
     grep = run(
         "git",
         "grep",
@@ -1424,10 +1424,10 @@ def main() -> None:
 
     Both run every time, always at HEAD (this tool exists to verify a release
     candidate on main is good before cutting a release, not to smoke-test an
-    arbitrary branch). Repo A is a plain `copier copy` with `code_coverage` on --
+    arbitrary branch). Repo A is a plain `copier copy` with `code_coverage` on;
     every automated check this script can run happens against it. Repo B is copied at
     the last stable tag with `code_coverage` off, for you to run `mise run
-    copier-update` (then `mise run migrate-azdo-pipeline-names`) against yourself --
+    copier-update` (then `mise run migrate-azdo-pipeline-names`) against yourself,
     deliberately not automated: those are the exact commands, with the exact prompts,
     a real user gets, and running them by hand is the only way to see a new
     question's prompt land the way it actually would for them, not however this
@@ -1436,13 +1436,13 @@ def main() -> None:
 
     Once you've updated Repo B by hand, re-run this script with `--verify-update
     <repo> --local-path <path>` (also available as `mise run
-    integration-test-verify-update-azdo`) to check it applied cleanly -- see
+    integration-test-verify-update-azdo`) to check it applied cleanly; see
     docs/manual-verification-azdo.md's "Repo B" section.
 
     Raises:
         SystemExit: if `az` or its azure-devops extension aren't installed, if
             --org/--project are missing, or if any automated check failed (after
-            printing every check's result -- see check()).
+            printing every check's result; see check()).
 
     """
     parser = argparse.ArgumentParser(description=__doc__)
@@ -1450,7 +1450,7 @@ def main() -> None:
     parser.add_argument("--repo-prefix", help="This repo's own name")
     # usage_org/usage_project are set when this runs via `mise run
     # integration-test-azdo`, whose `usage` field defines matching flags (mise's own
-    # arg-parsing, not this one) -- mise passes them through as real env vars rather
+    # arg-parsing, not this one); mise passes them through as real env vars rather
     # than templating them into the command line, so it works the same regardless of
     # the invoking shell/platform (unlike e.g. POSIX `${var}` expansion, which cmd.exe
     # can't parse).
@@ -1563,7 +1563,7 @@ def main() -> None:
     print(
         f"\nLeaving {repo_a_name} ({dest_a}) and {repo_b_name} ({dest_b}) in place. "
         "Run `python cleanup_pipelines.py` in each directory before deleting the "
-        f"repos -- Azure DevOps has no bulk-delete UI for pipelines. {repo_b_name} "
+        f"repos; Azure DevOps has no bulk-delete UI for pipelines. {repo_b_name} "
         f"is still at {old_ref}; cd into {dest_b} and run `mise run copier-update` "
         "yourself to test the update path, then `mise run "
         f"integration-test-verify-update-azdo -- --repo {repo_b_name} --local-path "

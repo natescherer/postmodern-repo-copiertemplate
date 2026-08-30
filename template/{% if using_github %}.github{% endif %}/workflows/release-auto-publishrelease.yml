@@ -28,7 +28,7 @@ jobs:
         run: mise x -- knope release-on-knope-pr-merge --verbose
         env:
           # A release created with the default GITHUB_TOKEN doesn't fire a `release:
-          # published` event that other workflows can react to -- GitHub explicitly
+          # published` event that other workflows can react to; GitHub explicitly
           # doesn't cascade-trigger workflows from GITHUB_TOKEN-authenticated actions,
           # to prevent recursive runs. docs-auto-zensical.yml's `on: release:
           # published` listener (which publishes the "latest" Pages docs alias) would

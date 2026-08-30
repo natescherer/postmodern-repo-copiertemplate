@@ -1,7 +1,7 @@
 """Checks content/config consistency in the rendered template, not the rendering itself.
 
 Generic by design: every check here operates on whatever actually got rendered, rather
-than hardcoding this repo's specific doc set -- see answer_matrix.py for the
+than hardcoding this repo's specific doc set; see answer_matrix.py for the
 repo-specific piece, which a child template should edit alongside its own copier.yml
 changes.
 """
@@ -117,7 +117,7 @@ def _entry_tool(entry: str) -> str | None:
         that isn't backed by a mise-managed CLI at all).
 
     """
-    prefix = "mise x -- "
+    prefix = "mise x; "
     if not entry.startswith(prefix):
         return None
     return entry[len(prefix) :].split()[0]
@@ -129,7 +129,7 @@ def _check_hook_tools_available(prek_toml: Path, mise_toml: Path) -> list[str]:
     prek.toml.jinja gates each hook behind the same conditions as its tool's entry in
     mise.toml.jinja (e.g. ruff-check/ruff-format and `is_template`, actionlint and
     `is_template or using_github`) specifically so this holds unconditionally for every
-    hook that's actually present in a given render -- no need to guess whether a hook
+    hook that's actually present in a given render; no need to guess whether a hook
     would find a matching file first. This is exactly the shape of bug that once let
     `actionlint` go missing from mise.toml for an Azure DevOps-hosted Template project.
 
@@ -178,7 +178,7 @@ def _task_command_text(task: dict | str) -> str:
     """Flatten one _tasks entry's command into a single searchable string.
 
     A `command:` value is either a plain string or a list of argv parts (Copier runs
-    the latter with shell=False) -- either way, joining into one string is enough for
+    the latter with shell=False); either way, joining into one string is enough for
     substring checks, without needing to know which form a given task uses.
 
     Returns:
@@ -193,7 +193,7 @@ def _check_azdo_pipelines_registered(dest: Path) -> list[str]:
     """Verify every .azurepipelines/*.yml file has a matching az pipelines create task.
 
     copier.yml.jinja hardcodes one explicit `az pipelines create --yml-path
-    .azurepipelines/<file>` _tasks entry per pipeline file -- a dynamic loop isn't
+    .azurepipelines/<file>` _tasks entry per pipeline file; a dynamic loop isn't
     possible in Copier's static _tasks list, so nothing else stops a newly-added
     pipeline file from silently never getting registered.
 

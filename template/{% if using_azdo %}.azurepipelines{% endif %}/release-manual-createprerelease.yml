@@ -57,7 +57,7 @@ stages:
               $Tags = git tag --points-at HEAD
               $Duplicate = $Tags | Where-Object { $_ -match "-$([regex]::Escape($Label))\.\d+$" }
               if ($Duplicate) {
-                Write-Host "##vso[task.logissue type=error]This commit is already tagged as $Duplicate -- push a new commit before cutting another $Label prerelease."
+                Write-Host "##vso[task.logissue type=error]This commit is already tagged as $Duplicate; push a new commit before cutting another $Label prerelease."
                 throw "Duplicate prerelease"
               }
             displayName: Block Duplicate Prerelease
@@ -69,5 +69,5 @@ stages:
             displayName: Capture Version
           - pwsh: |
               $TagUrl = "$(System.CollectionUri)$(System.TeamProject)/_git/$(Build.Repository.Name)?version=GTv$(VERSION)"
-              Write-Host "##vso[task.logissue type=warning]Prerelease published: v$(VERSION) -- $TagUrl"
+              Write-Host "##vso[task.logissue type=warning]Prerelease published: v$(VERSION) ($TagUrl)"
             displayName: Emit Release Notice

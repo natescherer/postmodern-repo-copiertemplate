@@ -49,7 +49,7 @@ jobs:
       actions: write
     steps:
       # Re-enables this workflow if GitHub disabled it for inactivity. Inlined from
-      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh` --
+      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh`,
       # unsupported on Windows runners, unlike bash, which is available there via Git
       # for Windows.
       - name: Re-enable Workflow

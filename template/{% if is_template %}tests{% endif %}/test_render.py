@@ -2,7 +2,7 @@
 
 Generic by design: every check here operates on whatever actually got rendered (globbing
 for file types, checking for known top-level files) rather than hardcoding this repo's
-specific doc set or question values -- see answer_matrix.py for the repo-specific piece,
+specific doc set or question values; see answer_matrix.py for the repo-specific piece,
 which a child template should edit alongside its own copier.yml changes.
 """
 
@@ -16,7 +16,7 @@ from answer_matrix import ANSWER_MATRIX
 from conftest import _git_commit_all, _git_init_repo, _render, _run
 
 # VS Code parses these specific files as JSONC (comments and trailing commas allowed),
-# never as strict JSON -- see
+# never as strict JSON; see
 # https://code.visualstudio.com/docs/languages/json#_json-with-comments.
 _VSCODE_JSONC_FILES = {
     "settings.json",
@@ -109,7 +109,7 @@ def _check_all(root: Path, *, zensical: bool = True) -> list[str]:
 
     `zensical` is skippable: `test_update_from_last_tag` renders the same combo
     `test_render_combination` already builds docs for, just via `copier update`
-    instead of a fresh copy -- re-running the (comparatively slow) zensical build
+    instead of a fresh copy; re-running the (comparatively slow) zensical build
     there would only re-confirm docs content that hasn't changed, not exercise
     anything update-path-specific.
 
@@ -150,7 +150,7 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
     dest = tmp_path / "out"
 
     # Some answer values are only valid after a specific rename in this repo's own
-    # history -- see answer_matrix.py's "_old_tag_overrides" for which ones and why.
+    # history; see answer_matrix.py's "_old_tag_overrides" for which ones and why.
     # The old tag can't recognize the current value, so the initial copy-at-old-tag
     # has to use whatever value actually was valid then; the update step below still
     # uses the current answers, so it also exercises the rename itself.

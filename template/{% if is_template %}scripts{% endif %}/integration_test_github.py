@@ -1,21 +1,21 @@
 """Create two throwaway repos from this template and verify them.
 
-Run via `mise run integration-test-gh` -- a human's own gh/GCM session, both repos
+Run via `mise run integration-test-gh`; a human's own gh/GCM session, both repos
 left in place afterward for inspection (delete them yourself when you're done). Not
 templated itself; the caller passes this repo's own source URL and name as arguments,
 so there's nothing here for Jinja to render.
 
-Always runs against HEAD -- this is meant to verify a release candidate on main is
+Always runs against HEAD; this is meant to verify a release candidate on main is
 good before cutting a release, not to smoke-test an arbitrary branch. Creates two
 repos every run, each covering a different scenario so a single run exercises more of
 the answer space, not the same fixed answers twice: Repo A is a plain `copier copy`
 with `zensical_target: GitHub Pages` and `code_coverage` on; Repo B is copied at the
 last stable tag with `zensical_target: docs-site Directory in Repo` and
 `code_coverage` off, left there for you to run `mise run copier-update` against
-yourself -- deliberately not automated, see main()'s own docstring for why.
+yourself; deliberately not automated, see main()'s own docstring for why.
 
 Every check this script runs prints its own PASS/FAIL line as it happens, plus a
-summary per repo at the end -- it never stops at the first failure, so one run gives
+summary per repo at the end; it never stops at the first failure, so one run gives
 the full picture. It only checks things that need a real GitHub API call or a real
 pipeline run; anything `tests/` already covers by rendering locally (structure,
 Jinja/YAML validity, links, nav) isn't repeated here.
@@ -34,7 +34,7 @@ import tempfile
 import time
 from pathlib import Path
 
-# Default `gh auth login` scopes cover both -- see docs/token-permissions.md.
+# Default `gh auth login` scopes cover both; see docs/token-permissions.md.
 REQUIRED_SCOPES = ("repo", "workflow")
 
 # Must match _tasks' project_description -d flag in create() below.
@@ -104,8 +104,8 @@ def check_scopes() -> None:
     """Verify the active gh token has every scope this script needs.
 
     `gh auth status` reports a classic token's granted scopes (sourced from GitHub's
-    own X-OAuth-Scopes API response) as a human-readable "Token scopes: 'a', 'b'" line
-    -- there's no dedicated --json field for this, so this greps that line instead of
+    own X-OAuth-Scopes API response) as a human-readable "Token scopes: 'a', 'b'" line;
+    there's no dedicated --json field for this, so this greps that line instead of
     querying the API directly a second time.
 
     Raises:
@@ -126,13 +126,13 @@ def check(failures: list[str], name: str, ok: bool, detail: str = "") -> None:
     """Record and print one named check's result immediately, without halting.
 
     Every automated check in this script goes through here so failures accumulate
-    instead of stopping the run at the first one -- a full run reports the complete
+    instead of stopping the run at the first one; a full run reports the complete
     picture, not just whatever happened to fail first.
     """
     if ok:
         print(f"  [PASS] {name}")
     else:
-        print(f"  [FAIL] {name}" + (f" -- {detail}" if detail else ""))
+        print(f"  [FAIL] {name}" + (f": {detail}" if detail else ""))
         failures.append(name)
 
 
@@ -161,7 +161,7 @@ def create(
     `github_username` is pinned to the already-resolved `owner` rather than left to
     auto-detect from local git config: copier.yml.jinja's `.github/settings.yml`
     content (e.g. `homepage`) is templated from `github_repo_owner`, which defaults to
-    `github_username` -- letting that auto-detect could silently diverge from the
+    `github_username`; letting that auto-detect could silently diverge from the
     account gh actually authenticated as, breaking verify() for reasons unrelated to
     what it's actually trying to test.
 
@@ -170,7 +170,7 @@ def create(
     silently both getting whatever the question's own default is.
 
     `--defaults` falls back to each question's own default for anything not covered
-    by an explicit -d below (currently github_org, author_name) -- without it, copier
+    by an explicit -d below (currently github_org, author_name); without it, copier
     drops into an interactive prompt for those. Explicit -d values below still take
     priority over --defaults regardless of order.
     """
@@ -214,7 +214,7 @@ def latest_stable_tag(source: str) -> str:
 
     Uses `git ls-remote --tags` so it works directly against `source` without a local
     clone. Matches strict `vX.Y.Z` tags only (excluding prereleases like
-    `v1.1.0-alpha.0`) and sorts by parsed version, not lexically -- a plain string
+    `v1.1.0-alpha.0`) and sorts by parsed version, not lexically; a plain string
     sort would put `v0.7.9` after `v0.7.20`.
 
     Returns:
@@ -320,10 +320,10 @@ def dispatch_workflow(
 def open_pr_wait_and_merge(
     repo: str, dest: str, branch: str, commit_message: str, filename: str
 ) -> None:
-    """Open a normal, passing PR and merge it -- the only way real commits reach main.
+    """Open a normal, passing PR and merge it; the only way real commits reach main.
 
     Branch protection requires every change to go through a PR, even for the repo
-    owner -- a direct `git push` to main is rejected outright once the ruleset is
+    owner; a direct `git push` to main is rejected outright once the ruleset is
     live (confirmed the hard way: an earlier version of this script tried exactly
     that). This also mirrors how release-auto-preparereleasepr.yml actually gets
     triggered in practice: by the push GitHub generates when a PR merges, not by
@@ -363,13 +363,13 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
 
     A force-push in quick succession (e.g. a branch updated twice back-to-back) can
     leave a stale `CANCELLED` entry alongside the newer run's result for the same
-    check name -- `test-auto-prvalidation.yml`'s own concurrency group cancels the
+    check name; `test-auto-prvalidation.yml`'s own concurrency group cancels the
     superseded run. Only the most recent entry per check name reflects the PR's
     actual current state, so older duplicates are dropped before evaluating success.
 
     A dedupe pass alone isn't enough: a check can be observed as COMPLETED
     (cancelled) in the brief window before its superseding run has even been
-    created, let alone registered in the rollup -- a cancelled run and its
+    created, let alone registered in the rollup; a cancelled run and its
     replacement's SUCCESS have been observed completing within the same second. So
     this only accepts an "all complete" result once the exact same snapshot is
     observed on two consecutive polls, giving a just-created superseding run a
@@ -414,7 +414,7 @@ def wait_for_run(repo: str, run_id: int) -> str:
 
     `check=False`: a failing run makes `gh run watch --exit-status` exit non-zero,
     which is an expected outcome for some callers (e.g. a deliberately-broken PR), not
-    a bug in this script -- the caller decides what conclusion was actually wanted.
+    a bug in this script; the caller decides what conclusion was actually wanted.
 
     Returns:
         The run's conclusion, e.g. "success" or "failure".
@@ -457,9 +457,9 @@ def report_settings_checks(
 ) -> None:
     """Report each part of .github/settings.yml the Settings App should have applied.
 
-    Covers the `repository`, `labels`, `rulesets`, and `environments` blocks -- every
+    Covers the `repository`, `labels`, `rulesets`, and `environments` blocks; every
     top-level key that file actually sets, not just a sample of them. The
-    `github-pages` environment only exists when `zensical_ghpages` is true --
+    `github-pages` environment only exists when `zensical_ghpages` is true:
     settings.yml.jinja only declares it in that case.
     """
     repo_data = json.loads(
@@ -530,7 +530,7 @@ def report_settings_checks(
 def settings_synced(repo: str, homepage: str, *, zensical_ghpages: bool) -> bool:
     """Check whether the Settings App has applied every part of .github/settings.yml.
 
-    Used only to decide when the polling loop in verify() can stop -- the actual
+    Used only to decide when the polling loop in verify() can stop; the actual
     per-field results get reported once, afterward, by report_settings_checks().
 
     Returns:
@@ -603,7 +603,7 @@ def verify(
     `zensical_target: GitHub Pages`.
 
     Raises:
-        SystemExit: only if the repo itself can't be found -- every other assertion
+        SystemExit: only if the repo itself can't be found; every other assertion
             is recorded via check() instead, since a real value here doesn't prevent
             the rest of this script's checks from being meaningful.
 
@@ -613,7 +613,7 @@ def verify(
         "gh", "repo", "view", repo, "--json", "visibility", check=False, capture=True
     )
     if repo_view.returncode != 0:
-        raise SystemExit(f"Repo {repo!r} not found -- did create() fail?")
+        raise SystemExit(f"Repo {repo!r} not found; did create() fail?")
     visibility = json.loads(repo_view.stdout)["visibility"]
     check(
         failures,
@@ -635,10 +635,10 @@ def verify(
 
     # Labels and the branch ruleset come from .github/settings.yml, applied
     # asynchronously by the Settings GitHub App (https://github.com/apps/settings)
-    # reacting to the push above -- not something this script sets directly, so this
+    # reacting to the push above; not something this script sets directly, so this
     # polls rather than checking once. Requires that app be installed on the
     # authenticated account with access to all repositories (a new repo isn't
-    # automatically visible to an app installed on "only select repositories") -- see
+    # automatically visible to an app installed on "only select repositories"); see
     # docs/token-permissions.md.
     for attempt in range(12):
         if settings_synced(repo, homepage, zensical_ghpages=zensical_ghpages):
@@ -647,7 +647,7 @@ def verify(
         time.sleep(10)
     else:
         print(
-            "Settings App sync: not observed within 120s -- is it installed on this "
+            "Settings App sync: not observed within 120s; is it installed on this "
             "account with access to all repositories?"
         )
     report_settings_checks(repo, homepage, failures, zensical_ghpages=zensical_ghpages)
@@ -675,8 +675,8 @@ def provision_test_secrets(repo: str) -> None:
     REPO_MAINTENANCE_PAT: Release (Auto): Prepare Release PR pushes to `knope/release`
     and opens/updates a PR against it. A push authenticated as the default
     `GITHUB_TOKEN` (i.e. actor `github-actions[bot]`) leaves that PR's required `tests`
-    status check permanently stuck in GitHub's `action_required` state -- pending a
-    human manually approving the run in the Actions tab -- which blocks branch
+    status check permanently stuck in GitHub's `action_required` state; pending a
+    human manually approving the run in the Actions tab; which blocks branch
     protection from ever letting it merge. Reuses this script's own `gh` auth token
     (the same real-user identity already pushing the other test branches, which never
     hit this gate) so the release flow can be exercised the same way a real repo's own
@@ -717,7 +717,7 @@ def check_copier_update_check(
     )
     notify_step = step_conclusion(repo, run_id, "Notify if Update is Available")
     # Whether the step *ran* (its `if:` is gated on update_available), not whether
-    # its own delivery succeeded -- a real notification failure (bad endpoint, etc.)
+    # its own delivery succeeded; a real notification failure (bad endpoint, etc.)
     # would otherwise look identical to "no update was detected".
     detected_available = notify_step not in (None, "skipped")
     check(
@@ -737,11 +737,11 @@ def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
     """Run `copier update` against an already-current repo and confirm it's a no-op.
 
     `--defaults` is safe here specifically because nothing changed since this repo was
-    copied -- there's no template diff to introduce a new question, so there's no risk
+    copied; there's no template diff to introduce a new question, so there's no risk
     of silently defaulting past a real prompt the way there would be for Repo B.
 
     `vcs_ref` must match whatever `create()` used for this repo: without an explicit
-    `--vcs-ref`, `copier update` targets the latest release *tag*, not HEAD -- if
+    `--vcs-ref`, `copier update` targets the latest release *tag*, not HEAD; if
     main has commits past the last release (the normal case), that's an earlier point
     than what this repo was actually created at, and copier has no sane way to
     "update" backwards to it.
@@ -771,7 +771,7 @@ def check_repo_health_check(repo: str, failures: list[str]) -> None:
     """Dispatch Maint (Auto): Repo Health Check and confirm it completes clean.
 
     Covers both jobs (link-check and the REPO_MAINTENANCE_PAT expiration check) via
-    the overall run conclusion -- a real near-expiry PAT to exercise the actual
+    the overall run conclusion; a real near-expiry PAT to exercise the actual
     warning/notification path isn't something this throwaway repo has, so that part
     stays on the manual verification checklist.
     """
@@ -898,7 +898,7 @@ def knope_release_pr_title(repo: str) -> str | None:
     """Look up the open knope/release PR's title, if one is open.
 
     The title (e.g. "chore: prepare release 0.0.1") encodes the version knope
-    computed -- unlike the PR's head commit SHA, it doesn't change just because
+    computed; unlike the PR's head commit SHA, it doesn't change just because
     `autoupdate-knope-pr` recreates the branch from a fresh main HEAD every run, so
     it's the right signal for "did this merge actually change what's proposed."
 
@@ -932,7 +932,7 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     # *first* automated run after that always recomputes the version from knope's own
     # default rules, changing the PR's content regardless of what triggered that run.
     # Absorb that one-time transition with a throwaway merge before testing that a
-    # docs-only merge is a true no-op -- otherwise the correction gets misattributed
+    # docs-only merge is a true no-op; otherwise the correction gets misattributed
     # to whichever commit happens to trigger the first automated run.
     prepare_before = latest_run_id(repo, "release-auto-preparereleasepr.yml")
     open_pr_wait_and_merge(
@@ -948,7 +948,7 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     wait_for_run(repo, warmup_run_id)
 
     # A release PR may already be open here (e.g. the bootstrap-time v0.1.0 one), so
-    # "no PR is open" isn't the right no-op signal -- what actually matters is that a
+    # "no PR is open" isn't the right no-op signal; what actually matters is that a
     # docs-only merge doesn't change what version it proposes.
     docs_noop_before = knope_release_pr_title(repo)
     prepare_before = latest_run_id(repo, "release-auto-preparereleasepr.yml")
@@ -1068,7 +1068,7 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
 
         # Publishing a release fires a `release: published` event that
         # docs-auto-zensical.yml listens for (it publishes the "latest" Pages docs
-        # alias) -- wait for it here so check_repo_health_check(), which runs later,
+        # alias); wait for it here so check_repo_health_check(), which runs later,
         # isn't racing a Pages deployment that hasn't happened yet.
         zensical_run_id = wait_for_new_run(
             repo, "docs-auto-zensical.yml", zensical_before
@@ -1083,10 +1083,10 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
 
 
 def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
-    """Exercise Release (Manual): Create Prerelease -- a label, a dup, a new label."""
+    """Exercise Release (Manual): Create Prerelease; a label, a dup, a new label."""
     print("Checking Release (Manual): Create Prerelease...")
 
-    # PrepareRelease refuses to run with nothing to bump -- without a real commit
+    # PrepareRelease refuses to run with nothing to bump; without a real commit
     # since the last release, every dispatch below would fail with knope's own
     # "No packages are ready to release", not the behavior this is meant to check.
     open_pr_wait_and_merge(
@@ -1152,7 +1152,7 @@ def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
 
     This is the second entry point (`--verify-update`): the update itself happens by
     hand, on your own schedule, so this script can't chain straight from creating the
-    repo into checking it -- see main()'s own docstring.
+    repo into checking it; see main()'s own docstring.
     """
     print(f"Checking {repo}'s update applied cleanly...")
     run("git", "fetch", cwd=dest)
@@ -1166,7 +1166,7 @@ def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
         log,
     )
     # Copier's own update conflicts come from `git merge-file`, so they use the same
-    # markers as any other git conflict -- one grep catches both.
+    # markers as any other git conflict; one grep catches both.
     grep = run(
         "git",
         "grep",
@@ -1236,10 +1236,10 @@ def main() -> None:
     Both run every time, always at HEAD (this tool exists to verify a release
     candidate on main is good before cutting a release, not to smoke-test an
     arbitrary branch). Repo A is a plain `copier copy` with `zensical_target: GitHub
-    Pages` and `code_coverage` on -- every automated check this script can run
+    Pages` and `code_coverage` on; every automated check this script can run
     happens against it. Repo B is copied at the last stable tag with
     `zensical_target: docs-site Directory in Repo` and `code_coverage` off, for you to
-    run `mise run copier-update` against yourself -- deliberately not automated:
+    run `mise run copier-update` against yourself; deliberately not automated:
     that's the exact command, with the exact prompts, a real user gets, and running it
     by hand is the only way to see a new question's prompt land the way it actually
     would for them, not however this script happened to answer it. Both repos are
@@ -1247,12 +1247,12 @@ def main() -> None:
 
     Once you've updated Repo B by hand, re-run this script with `--verify-update
     <repo> --local-path <path>` (also available as `mise run
-    integration-test-verify-update-gh`) to check it applied cleanly -- see
+    integration-test-verify-update-gh`) to check it applied cleanly; see
     docs/manual-verification-github.md's "Repo B" section.
 
     Raises:
         SystemExit: if required arguments are missing, or if any automated check
-            failed (after printing every check's result -- see check()).
+            failed (after printing every check's result; see check()).
 
     """
     parser = argparse.ArgumentParser(description=__doc__)
@@ -1318,7 +1318,7 @@ def main() -> None:
     check_failing_tests_block_merge(repo_a, dest_a, failures_a)
     check_release_flow(repo_a, dest_a, failures_a)
     # Run last: a GitHub Pages repo's own homepage link (in README.md) 404s until the
-    # first Pages deployment finishes propagating -- by now enough real wall-clock
+    # first Pages deployment finishes propagating; by now enough real wall-clock
     # time and several PR/merge cycles have passed for that to be reliably live,
     # rather than racing it right after repo creation.
     check_repo_health_check(repo_a, failures_a)
@@ -1349,7 +1349,7 @@ def main() -> None:
     report(f"Repo B ({repo_b}, before updating)", failures_b)
 
     print(
-        f"\nLeaving {repo_a} ({dest_a}) and {repo_b} ({dest_b}) in place -- delete "
+        f"\nLeaving {repo_a} ({dest_a}) and {repo_b} ({dest_b}) in place; delete "
         f"them yourself when you're done. {repo_b} is still at {old_ref}; cd into "
         f"{dest_b} and run `mise run copier-update` yourself to test the update path, "
         "then `mise run integration-test-verify-update-gh -- --repo "

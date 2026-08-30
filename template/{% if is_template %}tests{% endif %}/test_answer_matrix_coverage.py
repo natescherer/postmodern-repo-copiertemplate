@@ -1,7 +1,7 @@
 """Checks answer_matrix.py's own completeness against copier.yml's real question set.
 
 Generic by design: parses whatever copier.yml actually defines, rather than hardcoding
-this repo's specific question names -- see answer_matrix.py for the repo-specific
+this repo's specific question names; see answer_matrix.py for the repo-specific
 answer data these checks audit, including COVERAGE_EXEMPT_QUESTIONS for any question
 that has a real, deliberate reason not to be fully exercised here.
 """
@@ -55,7 +55,7 @@ def test_answer_matrix_covers_all_choices(template_source):
 
     A question with N choices but only ever answered with one of them means the other
     N-1 code paths it gates (`when:`/Jinja `{% if %}` branches keyed on that value)
-    never get rendered by this suite at all -- silently, since nothing else here would
+    never get rendered by this suite at all; silently, since nothing else here would
     notice a whole branch just never ran.
     """
     questions = _load_questions(template_source)
@@ -79,7 +79,7 @@ def test_answer_matrix_covers_all_choices(template_source):
 def test_warn_on_unanswered_required_questions(template_source):
     """Warn about a no-default question that answer_matrix.py never explicitly answers.
 
-    Copier questions without a `default:` are required -- `copier copy --defaults`
+    Copier questions without a `default:` are required; `copier copy --defaults`
     (used throughout this suite) raises `ValueError: Question "X" is required` if such
     a question isn't supplied via `-d`. The render tests already fail hard when that
     happens; this is a faster, more specific pointer at *which* question is the gap,
@@ -94,7 +94,7 @@ def test_warn_on_unanswered_required_questions(template_source):
         if "default" not in question and name not in answered_keys:
             warnings.warn(
                 f"Copier question {name!r} has no default and isn't explicitly "
-                "answered by any answer_matrix.py combination -- `copier copy "
+                "answered by any answer_matrix.py combination; `copier copy "
                 '--defaults` will fail with "Question is required" until it is.',
                 stacklevel=1,
             )

@@ -205,7 +205,7 @@ stages:
           - pwsh: |
               if ("$(PR_VALIDATION_STATUS)" -ne "approved") {
                 apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Docs PR Needs Manual Attention" -b "PR #$(PULL_REQUEST_ID) ($(PR_TITLE)) did not pass PR validation (status: $(PR_VALIDATION_STATUS)) and was not merged automatically. Please review it manually." $env:APPRISE_URL
-                throw "PR validation did not succeed (status: $(PR_VALIDATION_STATUS)) -- leaving PR #$(PULL_REQUEST_ID) open for manual review."
+                throw "PR validation did not succeed (status: $(PR_VALIDATION_STATUS)); leaving PR #$(PULL_REQUEST_ID) open for manual review."
               }
 
               $MergeCommitMessage = "$(PR_TITLE)"

@@ -7,7 +7,7 @@ trigger:
 
 schedules:
   # Matches renovate.json's own "schedule": ["* 0 1 * *"] window (once a month, day 1,
-  # hour 0 UTC) -- unlike Renovate's schedule syntax, Azure Pipelines cron is standard
+  # hour 0 UTC); unlike Renovate's schedule syntax, Azure Pipelines cron is standard
   # cron with real minute granularity, so this fires once, directly in that window,
   # rather than needing to poll daily.
   - cron: 0 0 1 * *

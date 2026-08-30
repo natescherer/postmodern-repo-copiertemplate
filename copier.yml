@@ -27,7 +27,7 @@ parent_template_url:
 ## Start Migrations
 _migrations:
   # release-please wrote CHANGELOG.md headings as `## [X.Y.Z](url) (date)`, which
-  # Knope's changelog writer can't parse -- it silently appends new releases at the
+  # Knope's changelog writer can't parse; it silently appends new releases at the
   # end of the file instead of the top once it can't find a heading it recognizes. A
   # project that adopted this template before the Knope switch has that same stale
   # formatting, so it needs the same one-time reformat this repo's own CHANGELOG.md
@@ -58,13 +58,13 @@ _migrations:
     version: v0.8.1
     when: "{{ _stage == 'after' }}"
 
-  # No `version:` -- this runs on every update, not just once, so upstream changes
-  # actually show up in this project's own changelog instead of vanishing into an
+  # This runs on every update, not on one version transition, so upstream changes
+  # show in this project's own changelog instead of vanishing into an
   # opaque "chore: apply parent template" commit. Computes the real bump/changelog
   # content by running Knope's own compute-upstream-bump workflow for real (not
   # --dry-run) inside a throwaway clone of the template, with every tag but this
   # project's old template version hidden so Knope's own "most recent tag" baseline
-  # lands on the actual delta -- see that workflow's comment in knope.toml for why.
+  # lands on the actual delta; see that workflow's comment in knope.toml for why.
   # Silently does nothing if there's no qualifying commit to bump (e.g. an
   # internal-only template change) or if the old version isn't a real tag in the
   # template's history.
@@ -239,7 +239,7 @@ developer_platform:
   help: |
     {%- if not project_initialized -%}
       The platform where you are going to host your Git repo and CI/CD. Azure DevOps
-      support is deprecated and will eventually be removed -- prefer GitHub unless you
+      support is deprecated and will eventually be removed; prefer GitHub unless you
       specifically need Azure DevOps.
     {%- else -%}
       Locked value on update, press Enter.
@@ -276,7 +276,7 @@ repo_setup_actions:
           {%- elif repo_setup_actions == 'Create Repo' -%}
             {%- set knope_check = ('knope --version && echo KNOPE_INSTALLED' | shell()) -%}
             {%- if 'KNOPE_INSTALLED' not in knope_check -%}
-              Knope ('knope') is not installed or not on PATH -- it's used to stage this project's first release. Install it (see https://knope.tech/), then try again.
+              Knope ('knope') is not installed or not on PATH. Install it (see https://knope.tech/), then try again.
             {%- endif -%}
           {%- endif -%}
         {%- endif -%}
@@ -295,7 +295,7 @@ repo_setup_actions:
             {%- elif repo_setup_actions == 'Create Repo' -%}
               {%- set knope_check = ('knope --version && echo KNOPE_INSTALLED' | shell()) -%}
               {%- if 'KNOPE_INSTALLED' not in knope_check -%}
-                Knope ('knope') is not installed or not on PATH -- it's used to stage this project's first release. Install it (see https://knope.tech/), then try again.
+                Knope ('knope') is not installed or not on PATH. Install it (see https://knope.tech/), then try again.
               {%- endif -%}
             {%- endif -%}
           {%- endif -%}
@@ -456,7 +456,7 @@ lifecycle:
   validator: |-
     {%- set _rank = {"Pre-Alpha": 0, "Alpha": 1, "Beta": 2, "Stable": 3} -%}
     {%- if lifecycle_previous in _rank and lifecycle in _rank and _rank[lifecycle] < _rank[lifecycle_previous] -%}
-      Can't move from '{{ lifecycle_previous }}' back to '{{ lifecycle }}' -- lifecycle only moves forward (Pre-Alpha -> Alpha -> Beta -> Stable). 'Inactive' is a separate state, reachable from any of these.
+      Can't move from '{{ lifecycle_previous }}' back to '{{ lifecycle }}': lifecycle only moves forward (Pre-Alpha -> Alpha -> Beta -> Stable). 'Inactive' is a separate state, reachable from any of these.
     {%- endif -%}
 
 agent_instructions:
@@ -466,7 +466,7 @@ agent_instructions:
 
 code_coverage:
   type: bool
-  help: Report code coverage via Codecov (GitHub) or Azure Pipelines' built-in publishing (Azure DevOps) -- wires up reporting only, your test command needs to produce coverage.xml (Cobertura) at the repo root.
+  help: Report code coverage via Codecov (GitHub) or Azure Pipelines' built-in publishing (Azure DevOps). This wires up reporting only, your test command needs to produce coverage.xml (Cobertura) at the repo root.
   default: false
 ## End Questions
 
@@ -602,10 +602,10 @@ current_knope_version_is_pre_1:
 setup_checklist:
   type: str
   default: |-
-    - [ ] Add more badges to the top of README.md, or remove that section.
+    - [ ] Add/remove badges to the top of README.md.
     - [ ] Replace docs/images/readme-logo.png with your own logo, or remove that section from README.md.
     - [ ] Replace docs/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
-    - [ ] Set required secrets/pipeline variables -- run `mise run provision-secrets` or see docs/token-permissions.md.
+    - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see docs/token-permissions.md.
   when: false
 ## End Post-Question Computed Values
 
@@ -772,7 +772,7 @@ _tasks:
     when: *when_copy_set_repo_settings_azdo
 
   # A freshly-registered AzDO YAML pipeline's push-based CI trigger doesn't reliably
-  # activate until the pipeline has run at least once -- confirmed via live testing (a
+  # activate until the pipeline has run at least once; confirmed via live testing (a
   # real push produced zero pipeline runs until a manual run was queued first). This
   # one-time warm-up run activates it for every push after.
   - command: >-
@@ -798,7 +798,7 @@ _tasks:
   # Requires the pr_validation build to pass before a PR can be completed, and lets
   # Project Administrators override that when completing a PR (mirrors GitHub's
   # admin bypass_actors entry in settings.yml.jinja). `az repos policy` has no flag
-  # for the override part -- it's a branch-level security permission instead, set
+  # for the override part; it's a branch-level security permission instead, set
   # via the raw security-namespace API since `az repos`/`az devops` has no
   # higher-level command for it. Namespace ID, permission bit, and token format
   # aren't in Microsoft's own CLI docs; cross-checked against
@@ -812,7 +812,7 @@ _tasks:
 
         ORG = "https://dev.azure.com/{{ azdo_org }}/"
         PROJECT = "{{ azdo_project }}"
-        # az is an az.cmd batch wrapper on Windows, not a real .exe -- subprocess with
+        # az is an az.cmd batch wrapper on Windows, not a real .exe; subprocess with
         # shell=False (the default, used throughout below) won't find it from the bare
         # name alone, failing with FileNotFoundError: [WinError 2]. which() finds the
         # actual resolvable path on any platform, sidestepping that gap without
@@ -860,7 +860,7 @@ _tasks:
             for g in groups["graphGroups"]
             if g["displayName"] == "Project Administrators"
         )
-        # refs/heads/main, UTF-16LE hex-encoded per character -- Azure DevOps's Git
+        # refs/heads/main, UTF-16LE hex-encoded per character; Azure DevOps's Git
         # ACL token format for a specific branch.
         token = f"repoV2/{project_id}/{repo_id}/refs/heads/6d00610069006e00"
         subprocess.run(
@@ -917,7 +917,7 @@ _tasks:
         true
       {%- endif %}
 
-  # Enables CodeQL code scanning's default setup -- free for public repos, needs
+  # Enables CodeQL code scanning's default setup; free for public repos, needs
   # GitHub Advanced Security (paid) on private ones, so scoped to public only.
   - command: >-
       gh api repos/{{ github_repo_owner }}/{{ repo_name }}/code-scanning/default-setup
@@ -928,7 +928,7 @@ _tasks:
       {%- endif %}
 
   # Lets anyone privately report a security vulnerability (Security > Advisories)
-  # instead of only via a public issue -- meaningful for public repos specifically,
+  # instead of only via a public issue; meaningful for public repos specifically,
   # since a private repo's issues are already restricted to invited collaborators.
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/private-vulnerability-reporting -X PUT
     when: *when_copy_public_github
@@ -972,11 +972,11 @@ _message_after_copy: |-
   {%- if code_coverage %}
     - CODECOV_TOKEN
   {%- endif %}
-  Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token-permissions.md for what each one needs.
+  Run `mise run provision-secrets`, or see docs/token-permissions.md for manual provisioning details.
   {%- elif using_azdo -%}
   Before CI works, add these as secret Azure DevOps pipeline variables (Pipelines > Library):
     - APPRISE_URL
-  Run `mise run provision-secrets` for a guided, masked prompt, or set them by hand -- see docs/token-permissions.md for what each one needs.
+  Run `mise run provision-secrets`, or see docs/token-permissions.md for manual provisioning details.
   {%- endif %}
 
 _message_after_update: |-
