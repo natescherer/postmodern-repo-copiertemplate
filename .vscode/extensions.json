@@ -1,10 +1,16 @@
 {
   "recommendations": [
+    "astral-sh.ty",
     "charliermarsh.ruff",
     "github.vscode-github-actions",
     "hverlin.mise-vscode",
+    "jimeh.actionlint",
+    "maptz.regionfolder",
     "ms-azure-devops.azure-pipelines",
+    "ms-python.debugpy",
     "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.vscode-python-envs",
     "owenlamont.ryl",
     "redhat.vscode-yaml",
     "rvben.rumdl",

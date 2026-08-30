@@ -6,7 +6,7 @@
     {{- value -}}
   {%- endif -%}
 {%- endmacro -%}
-## Initial Settings
+# region Copier Settings
 _answers_file: .config/copier-answers.yml
 
 _jinja_extensions:
@@ -18,8 +18,9 @@ _min_copier_version: "9.17.2"
 _message_before_copy: Thanks for using this template! Please consult the 'Template Questions' page in documentation for deeper explanation of each question.
 
 _subdirectory: template
+# endregion Copier Settings
 
-## Start Parent Template Values - DO NOT EDIT
+# region Parent Template Values - DO NOT EDIT
 parent_template_name:
   type: str
   default: {{ double_quote_for_yaml_if_needed(project_name) }}
@@ -34,11 +35,12 @@ parent_template_url:
       https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}
     {%- endif %}
   when: false
-## End Parent Template Values - DO NOT EDIT
+# endregion Parent Template Values - DO NOT EDIT
 {%- raw %}
 
-## Start Migrations
+# region Migrations
 _migrations:
+  # region Knope Changelog Reformatter (0.8.1)
   # release-please wrote CHANGELOG.md headings as `## [X.Y.Z](url) (date)`, which
   # Knope's changelog writer can't parse; it silently appends new releases at the
   # end of the file instead of the top once it can't find a heading it recognizes. A
@@ -70,17 +72,17 @@ _migrations:
                 print(f"Reformatted {count} changelog heading(s) for Knope.")
     version: v0.8.1
     when: "{{ _stage == 'after' }}"
+  # endregion Knope Changelog Reformatter (0.8.1)
 
-  # This runs on every update, not on one version transition, so upstream changes
-  # show in this project's own changelog instead of vanishing into an
-  # opaque "chore: apply parent template" commit. Computes the real bump/changelog
-  # content by running Knope's own compute-upstream-bump workflow for real (not
-  # --dry-run) inside a throwaway clone of the template, with every tag but this
-  # project's old template version hidden so Knope's own "most recent tag" baseline
+  # region Upstream Change to Changeset Generator (all versions)
+  # This runs on every update, so upstream changes can be easily added to this
+  # project's changelog instead of vanishing into an opaque "chore: apply parent template"
+  # commit. Computes the content by running Knope's compute-upstream-bump workflow
+  # inside a throwaway clone of the template, prepared by removing all tags after this
+  # project's pre-update version so Knope's own "most recent tag" baseline
   # lands on the actual delta; see that workflow's comment in knope.toml for why.
   # Silently does nothing if there's no qualifying commit to bump (e.g. an
-  # internal-only template change) or if the old version isn't a real tag in the
-  # template's history.
+  # internal-only template change).
   - command:
       - mise
       - x
@@ -235,18 +237,19 @@ _migrations:
       - "{{ _copier_conf.src_path }}"
       - "{{ _src_path }}"
     when: "{{ _stage == 'after' }}"
-## End Migrations
+  # endregion Upstream Change to Changeset Generator (all versions)
+# endregion Migrations
 
-## Start Pre-Question Computed Values
+# region Pre-Question Computed Values
 lifecycle_previous:
   # Records the value of lifecycle before it is asked, so that it can be used as
   # part of the validator on the lifecycle question itself.
   type: str
   default: "{{ lifecycle | default('') }}"
   when: false
-## End Pre-Question Computed Values
+# endregion Pre-Question Computed Values
 
-## Start Questions
+# region Questions
 developer_platform:
   type: str
   help: |
@@ -481,9 +484,9 @@ code_coverage:
   type: bool
   help: Report code coverage via Codecov (GitHub) or Azure Pipelines' built-in publishing (Azure DevOps). This wires up reporting only, your test command needs to produce coverage.xml (Cobertura) at the repo root.
   default: false
-## End Questions
+# endregion Questions
 
-## Start Post-Question Computed Values
+# region Post-Question Computed Values
 using_github:
   type: bool
   default: |-
@@ -620,16 +623,16 @@ setup_checklist:
     - [ ] Replace docs/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
     - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see docs/token-permissions.md.
   when: false
-## End Post-Question Computed Values
+# endregion Post-Question Computed Values
 
-## Start Locked Values
+# region Locked Values
 copyright_year:
   type: str
   default: "{{ copyright_year | default('%Y' | strftime) }}"
   when: false
-## End Locked Values
+# endregion Locked Values
 
-## Start Tasks
+# region Tasks
 _tasks:
   # This is the secret sauce that makes nested templates work. Every template gets
   # a copy of the parent template's 'template' directory added back unrendered
@@ -784,10 +787,9 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # A freshly-registered AzDO YAML pipeline's push-based CI trigger doesn't reliably
-  # activate until the pipeline has run at least once; confirmed via live testing (a
-  # real push produced zero pipeline runs until a manual run was queued first). This
-  # one-time warm-up run activates it for every push after.
+  # This ensures that a built copy of the docs will exist immediately after the
+  # pipeline is created, so that "docs-site" will be available even if the first
+  # PR to add docs hasn't been merged yet.
   - command: >-
       az pipelines run
       --name "[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish"
@@ -961,9 +963,9 @@ _tasks:
       {%- if _copier_operation == 'copy' and using_github and repo_setup_actions != 'None' -%}
         true
       {%- endif %}
-## End Tasks
+# endregion Tasks
 
-## Start Messages
+# region Messages
 _message_after_copy: |-
   {%- if using_azdo or (using_github and repo_setup_actions == 'None') %}
 
@@ -1014,5 +1016,5 @@ _message_after_update: |-
   Some of what changed upstream (platform-specific fixes, template-internal
   tooling, etc.) may not be relevant here, review and remove irrelevant files before merging.
   {%- endif %}
-## End Messages
+# endregion Messages
 {%- endraw %}

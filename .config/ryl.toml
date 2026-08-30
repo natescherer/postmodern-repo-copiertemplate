@@ -34,6 +34,7 @@ min-spaces-from-content = 1
 
 [rules.comments-indentation]
 level = "warning"
+allow-any-open-indent = true
 
 [rules.truthy]
 level = "warning"
