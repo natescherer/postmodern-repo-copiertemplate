@@ -600,10 +600,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#maint-auto-link-check" class="md-nav__link">
+  <a href="#maint-auto-repo-health-check" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Maint (Auto): Link Check
+        Maint (Auto): Repo Health Check
       </span>
     </span>
   </a>
@@ -970,6 +970,32 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../extending-the-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Extending This Template
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
     
     
       
@@ -988,10 +1014,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="">
             
   
   
@@ -1008,8 +1034,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1115,10 +1141,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#maint-auto-link-check" class="md-nav__link">
+  <a href="#maint-auto-repo-health-check" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Maint (Auto): Link Check
+        Maint (Auto): Repo Health Check
       </span>
     </span>
   </a>
@@ -1357,10 +1383,11 @@ it as a scratchpad for one sitting, not a record you can come back to.</p>
 <h3 id="maint-auto-copier-update-check">Maint (Auto): Copier Update Check<a class="headerlink" href="#maint-auto-copier-update-check" title="Permanent link">&para;</a></h3>
 <p><em>Dispatching it, confirming it completes without error, and confirming it correctly reports no update available are all automated.</em></p>
 <p>Nothing left here for Repo A.</p>
-<h3 id="maint-auto-link-check">Maint (Auto): Link Check<a class="headerlink" href="#maint-auto-link-check" title="Permanent link">&para;</a></h3>
+<h3 id="maint-auto-repo-health-check">Maint (Auto): Repo Health Check<a class="headerlink" href="#maint-auto-repo-health-check" title="Permanent link">&para;</a></h3>
 <p><em>Dispatching it and confirming it completes clean is automated.</em></p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Temporarily introduce a broken link (e.g. a typo'd URL in a doc) and confirm the next run catches it, then revert.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Temporarily set <code>REPO_MAINTENANCE_PAT</code> to a real token expiring within 30 days (a throwaway PAT created just for this test, not the real one) and confirm the run sends a notification to <code>APPRISE_URL</code>, then restore the real PAT.</li>
 </ul>
 <h3 id="maint-auto-renovate">Maint (Auto): Renovate<a class="headerlink" href="#maint-auto-renovate" title="Permanent link">&para;</a></h3>
 <p>Renovate on GitHub runs as the externally-hosted <a href="https://github.com/apps/renovate">Renovate GitHub App</a>, not a workflow in this repo -- there's nothing to dispatch or verify from inside this repo's own CI.</p>
