@@ -3,14 +3,14 @@
 ## Git workflow
 
 - Commit message style: `type: summary` as the first line (Conventional
-  Commits, enforced by `.config/committed.toml` -- keep the subject at or
+  Commits, enforced by `.config/committed.toml`; keep the subject at or
   under 72 characters). A short body paragraph explaining non-obvious
   rationale is fine when it adds real context; don't pad a trivial change with
   one just to have one.
 {%- if is_template %}
 - Never push a git tag to this repo without explicit user approval for that
   specific tag, and never push one shaped like a version number (e.g.
-  `v99.0.0`) even as a throwaway testing workaround -- this repo's tags are
+  `v99.0.0`) even as a throwaway testing workaround; this repo's tags are
   visible to any downstream project that copies from it, and a real one could
   resolve against a stray tag. A non-version-shaped tag for local testing is
   fine to create without asking, but delete it immediately once the test that
@@ -34,6 +34,26 @@ via `INVALID_ANSWER_MATRIX`), `test_answer_matrix_coverage.py` (audits
 `answer_matrix.py` whenever a Copier question is added, removed, or renamed,
 or a new `validator:` constraint is added.**
 
+Always run it via the command above, against `template/`'s own path, not a
+plain {% raw %}`pytest tests/`{% endraw %}: if this project also renders a
+copy of itself at its own root (the way this template's own upstream does),
+that root copy lags behind `template/` the same way any other dogfooded root
+file does, so a newly added or edited test *function* only exists under
+`template/` and silently never runs from root until the next full sync, even
+though root's copy still executes without error.
+
+A hook's `mise.toml.jinja` tool entry and its `prek.toml.jinja` gating
+condition must match exactly: `test_hook_tools_available` verifies every
+local prek hook's tool is installed for that answer combination, and it only
+works because each hook is gated behind the identical condition as its tool.
+{% raw %}`actionlint`{% endraw %} specifically needs `is_template or
+using_github`, not just `using_github`: `copy-template-files` embeds a full,
+unrendered copy of `template/` (workflows included) into every Template-type
+project regardless of *that* project's own `developer_platform`, so an Azure
+DevOps-hosted Template project still needs actionlint available. Narrowing
+that condition to just `using_github` is a real regression this template has
+hit before.
+
 ## Setup checklist
 
 `setup_checklist` in `copier.yml.jinja` (opened as a GitHub Issue, or printed, on
@@ -44,7 +64,7 @@ the end user to manually configure, replace, or complete something after copying
 ## Manual verification checklist
 
 `docs/manual-verification-github.md` and `docs/manual-verification-azdo.md` (both
-static, unconditional -- a template author tests every feature this template offers on
+static, unconditional; a template author tests every feature this template offers on
 both platforms, not just whichever one this repo's own answers happen to use) cover
 what a fresh `copier copy` can't verify on its own: whether a pipeline/workflow
 actually authenticates, triggers, and does what it claims, not just that it's
@@ -57,19 +77,19 @@ the setup checklist above.
 ## Renovate `schedule` cron syntax is not standard cron
 
 Renovate's `schedule` option (see `renovate.json`{% if is_template %} / `template/renovate.json.jinja`{% endif %})
-looks like 5-field cron but isn't interpreted the same way -- this applies to
+looks like 5-field cron but isn't interpreted the same way; this applies to
 any platform Renovate runs on:
 
-- The minutes field **must** be `*` -- Renovate doesn't support minute-level
+- The minutes field **must** be `*`: Renovate doesn't support minute-level
   granularity, and a schedule that restricts it is invalid.
 - A cron schedule defines an allowed **time window**, not an exact trigger
-  instant -- Renovate itself runs on its own polling cadence (external to
+  instant: Renovate itself runs on its own polling cadence (external to
   this project) and only acts during the window the schedule describes.
 
 So `"* 0 1 * *"` is the *correct* idiomatic form for "once a month, on the
-1st, during hour 0" -- it is not a bug, even though it looks like a broken
+1st, during hour 0"; it is not a bug, even though it looks like a broken
 "every minute" cron at a glance. Do not change it to `"0 0 1 * *"` (a
-standard-cron-style fix) -- that's invalid for Renovate specifically, since it
+standard-cron-style fix): that's invalid for Renovate specifically, since it
 constrains the minutes field.
 
 Reference: <https://docs.renovatebot.com/key-concepts/scheduling/>
