@@ -20,7 +20,7 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
       set this up by hand.
 - `zensical_target` is always `docs-site Directory in Repo`
     - `GitHub Pages` isn't offered, so Azure DevOps projects never get the release-versioned docs
-      site that target provides — see [Getting Started](../index.md#documentation)
+      site that target provides; see [Getting Started](../index.md#documentation)
 - Renovate needs a one-time manual permission grant
     - Unlike GitHub (which uses the Renovate GitHub App), Renovate runs here as a self-hosted
       scheduled pipeline (`.azurepipelines/maint-auto-renovate.yml`), authenticated via the pipeline's own
