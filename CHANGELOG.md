@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.8.2 (2026-08-30)
+
+### Features
+
+- vscode ux improvements (#1117)
+- add badges to READMEs (#1122)
+
+### Fixes
+
+- generate one attributed changeset per upstream changelog entry (#1110)
+- make changeset generation resilient to changelog edits and custom sections (#1118)
+- backfill legacy version numbers into knope-current-version.json (#1119)
+- apply linting corrections (closes #1092, #975) (#1120)
+- remove REPO_MAINTENANCE_PAT in favor of default GITHUB_TOKEN (#1126)
+
 ## 0.8.1 (2026-08-30)
 
 ### Features
