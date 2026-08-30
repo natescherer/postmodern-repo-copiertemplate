@@ -38,10 +38,7 @@ _migrations:
   # moment a project first receives it, same as any other new template
   # file, so this only overwrites that placeholder, never a real version.
   - command:
-      - mise
-      - x
-      - --
-      - python
+      - "{{ _copier_python }}"
       - -c
       - |
         import json
@@ -94,10 +91,7 @@ _migrations:
   # got when this fix landed. Idempotent: a heading already in Knope's format doesn't
   # match the pattern below, so re-running this is a no-op.
   - command:
-      - mise
-      - x
-      - --
-      - python
+      - "{{ _copier_python }}"
       - -c
       - |
         import re
@@ -129,10 +123,7 @@ _migrations:
   # Silently does nothing if there's no qualifying commit to bump (e.g. an
   # internal-only template change).
   - command:
-      - mise
-      - x
-      - --
-      - python
+      - "{{ _copier_python }}"
       - -c
       - |
         import hashlib
@@ -708,7 +699,7 @@ _tasks:
   # This is the secret sauce that makes nested templates work. Every template gets
   # a copy of the parent template's 'template' directory added back unrendered
   - command:
-      - python
+      - "{{ _copier_python }}"
       - -c
       - |
         import os, shutil, subprocess, sys, tempfile, time
@@ -780,7 +771,7 @@ _tasks:
 
   # Stages First Release PR
   - command:
-      - python
+      - "{{ _copier_python }}"
       - -c
       - |
         import os, subprocess
@@ -891,7 +882,7 @@ _tasks:
   # https://github.com/Azure/azure-devops-cli-extension/blob/master/doc/security_tokens.md
   # and https://devblogs.microsoft.com/devops/git-repo-tokens-for-the-security-service/.
   - command:
-      - python
+      - "{{ _copier_python }}"
       - -c
       - |
         import json, shutil, subprocess
