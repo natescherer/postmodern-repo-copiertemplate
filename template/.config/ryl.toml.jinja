@@ -3,8 +3,8 @@ yaml = [
   "*.yaml",
   "*.yml",
 {%- if is_template %}
-  "*.yaml{% endif %}",
-  "*.yml{% endif %}",{% endif %}
+  "*.yaml{% raw %}{% endif %}{% endraw %}",
+  "*.yml{% raw %}{% endif %}{% endraw %}",{% endif %}
 ]
 
 [rules]
