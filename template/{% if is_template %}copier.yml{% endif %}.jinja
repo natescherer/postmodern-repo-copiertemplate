@@ -88,32 +88,20 @@ _migrations:
       - python
       - -c
       - |
-        import json
+        import hashlib
         import re
         import shutil
         import subprocess
         import sys
         import tempfile
         from pathlib import Path
+        from urllib.parse import unquote
 
-        version_from, version_to, src_path, answers_file = (
+        version_from, version_to, src_path, upstream = (
             sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4],
         )
         if version_from == version_to:
             sys.exit(0)
-
-        # The recorded source, not a hardcoded repo name -- a grandchild updating
-        # from a child template that itself descends from this one has its own
-        # upstream, not this repo.
-        upstream = src_path
-        answers_path = Path(answers_file)
-        if answers_path.is_file():
-            match = re.search(
-                r"^_src_path:\s*(\S+)", answers_path.read_text(encoding="utf-8"),
-                re.MULTILINE,
-            )
-            if match:
-                upstream = match.group(1)
 
         def run(*args, cwd=None, check=True):
             return subprocess.run(
@@ -138,11 +126,6 @@ _migrations:
             if result.returncode != 0:
                 sys.exit(0)
 
-            new_version = json.loads(
-                (scratch / ".config" / "knope-current-version.json").read_text(
-                    encoding="utf-8"
-                )
-            )["version"]
             changelog = (scratch / "CHANGELOG.md").read_text(
                 encoding="utf-8", newline=""
             )
@@ -153,34 +136,104 @@ _migrations:
             entry = changelog[headings[0]:end].strip()
             body = entry.split("\n", 1)[1].strip() if "\n" in entry else ""
 
-            def parts(v):
-                return tuple(int(x) for x in v.lstrip("v").split("."))
+            sections = (
+                ("major", "Breaking Changes"),
+                ("minor", "Features"),
+                ("patch", "Fixes"),
+            )
+            section_pattern = re.compile(
+                r"^### (Breaking Changes|Features|Fixes)\s*\n(.*?)(?=^### |\Z)",
+                re.MULTILINE | re.DOTALL,
+            )
+            found = {
+                heading: content.strip()
+                for heading, content in section_pattern.findall(body)
+            }
 
-            old_parts, new_parts = parts(version_from), parts(new_version)
-            if new_parts[0] != old_parts[0]:
-                bump = "major"
-            elif new_parts[1] != old_parts[1]:
-                bump = "minor"
-            else:
-                bump = "patch"
+            # Knope promotes a changeset's first line to a "###" heading
+            # when the file has more than one line, so one changeset file per
+            # change keeps everything a flat list.
+            #
+            # Each bullet is also attributed to where it came from: GitHub's
+            # bare "(#1234)" squash-merge suffix is
+            # rewritten to a repo-qualified link ("owner/repo#1234") instead.
+            # Azure DevOps has no such suffix, its bullets get a
+            # link to the source repo instead. A bullet that
+            # already ends in a markdown link is left alone: it was already
+            # attributed correctly at an earlier hop (e.g. a grandparent
+            # template), and relinking it here would misattribute it to the
+            # immediate parent.
+            github_match = re.match(
+                r"^gh:([^/\s]+)/([^/\s]+)$", upstream
+            ) or re.search(r"github\.com[:/]+([^/\s]+)/([^/\s.]+)", upstream)
+            azdo_match = re.search(
+                r"dev\.azure\.com/([^/\s]+)/([^/\s]+)/_git/([^/\s]+)", upstream
+            )
+            already_attributed = re.compile(r"\]\([^)]+\)\)?\s*$")
+            pr_ref_pattern = re.compile(r"\(#(\d+)\)\s*$")
+
+            def attribute(text):
+                if already_attributed.search(text):
+                    return text
+                if github_match:
+                    owner, repo = github_match.group(1), github_match.group(2)
+                    ref = pr_ref_pattern.search(text)
+                    if ref:
+                        n = ref.group(1)
+                        return pr_ref_pattern.sub(
+                            f"([{owner}/{repo}#{n}]"
+                            f"(https://github.com/{owner}/{repo}/issues/{n}))",
+                            text,
+                        )
+                    return (
+                        f"{text} ([{owner}/{repo}]"
+                        f"(https://github.com/{owner}/{repo}))"
+                    )
+                if azdo_match:
+                    org, project, repo = azdo_match.groups()
+                    display = f"{unquote(project)}/{repo}"
+                    url = f"https://dev.azure.com/{org}/{project}/_git/{repo}"
+                    return f"{text} ([{display}]({url}))"
+                return text
 
             changeset_dir = Path(".changeset")
             changeset_dir.mkdir(exist_ok=True)
-            filename = f"template-update-{version_to.lstrip('v')}.md"
-            (changeset_dir / filename).write_text(
-                f"---\ndefault: {bump}\n---\n\n"
-                f"# Update from {upstream} {version_to}\n\n"
-                f"{body}\n",
-                encoding="utf-8",
-                newline="",
-            )
-            print(f"Added changeset .changeset/{filename} ({bump}).")
+            written = 0
+            for bump, heading in sections:
+                content = found.get(heading)
+                if not content:
+                    continue
+                entries = []
+                for line in content.splitlines():
+                    if line.startswith("- "):
+                        entries.append(line[2:])
+                    elif entries:
+                        entries[-1] += " " + line.strip()
+                for entry in entries:
+                    entry = attribute(entry.strip())
+                    ref = re.search(r"#(\d+)", entry)
+                    ident = (
+                        ref.group(1) if ref
+                        else hashlib.sha1(entry.encode()).hexdigest()[:8]
+                    )
+                    filename = (
+                        f"template-update-{version_to.lstrip('v')}-{bump}-{ident}.md"
+                    )
+                    (changeset_dir / filename).write_text(
+                        f"---\ndefault: {bump}\n---\n\n{entry}\n",
+                        encoding="utf-8",
+                        newline="",
+                    )
+                    written += 1
+
+            if written:
+                print(f"Added {written} changeset(s) from {upstream} {version_to}.")
         finally:
             shutil.rmtree(scratch, ignore_errors=True)
       - "{{ _version_from }}"
       - "{{ _version_to }}"
       - "{{ _copier_conf.src_path }}"
-      - "{{ _copier_conf.answers_file }}"
+      - "{{ _src_path }}"
     when: "{{ _stage == 'after' }}"
 ## End Migrations
 
@@ -957,11 +1010,9 @@ _message_after_update: |-
   {%- set changesets = ('python -c "import glob; print(chr(10).join(glob.glob(\'.changeset/*.md\')))"' | shell()) -%}
   {%- if changesets.strip() %}
 
-  This project has pending changeset(s) describing upstream template updates:
-  {{ changesets }}
+  This project has pending changesets describing upstream template updates in the '.changeset' folder.
   Some of what changed upstream (platform-specific fixes, template-internal
-  tooling, etc.) may not be relevant here -- review and trim them before your
-  next release.
+  tooling, etc.) may not be relevant here, review and remove irrelevant files before merging.
   {%- endif %}
 ## End Messages
 {%- endraw %}
