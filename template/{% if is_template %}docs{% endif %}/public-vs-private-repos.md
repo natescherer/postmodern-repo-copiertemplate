@@ -27,3 +27,14 @@ Private repos omit the following features that would not be relevant to them, wi
     - Likely not needed for a private project, but you can always provide your own custom file which will be ignored by template updates
 - `LICENSE`
     - No need to license something not available to others, but you can always provide your own custom file which will be ignored by template updates
+
+### Security Scanning (GitHub)
+
+Private repos omit these because they require a paid GitHub Advanced Security license there;
+they're free and automatic on Public repos.
+
+- CodeQL code scanning's default setup
+- Private vulnerability reporting, so a security issue can be reported confidentially instead of
+  only via a public issue
+- Secret scanning and push protection; see [Manual Repo Settings](manual-repo-settings.md) if you
+  need to enable these by hand

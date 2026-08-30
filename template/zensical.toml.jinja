@@ -1,5 +1,6 @@
 [project]
 site_name = "{{ project_name }}"
+site_description = "{{ project_description }}"
 docs_dir = "docs"
 site_dir = "{% if zensical_ghpages %}.cache/zensical_serve{% else %}docs-site{% endif %}"
 {%- if is_template %}
@@ -47,7 +48,9 @@ alias = true
 variant = "classic" # Switching to modern blocked until built-in versioning support is added
 custom_dir = ".config/zensical-overrides"
 features = [
+  "content.code.annotate",
   "content.code.copy",
+  "content.tabs.link",
   "navigation.indexes",
   "navigation.footer",
   "navigation.path",
@@ -55,6 +58,8 @@ features = [
   "navigation.top",
   "navigation.tracking",
   "search.highlight",
+  "search.share",
+  "search.suggest",
   "toc.follow",
 ]
 font.text = "Lato"
