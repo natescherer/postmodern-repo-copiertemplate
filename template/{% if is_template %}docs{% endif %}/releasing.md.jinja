@@ -9,26 +9,37 @@ Commits](https://www.conventionalcommits.org/).
 ## Normal Releases
 
 Every push to `main` opens or updates a pull request (branch `knope/release`)
-proposing the next release, computed from commit messages since the last release --
+proposing the next release, computed from commit messages since the last release:
 `fix:` bumps the patch version, `feat:` bumps minor, and a `!`/`BREAKING CHANGE:`
 commit bumps major. Merging that PR tags and publishes the release automatically.
 
 If a push has nothing release-worthy in it (e.g. a `docs:`- or `chore:`-only commit),
-the workflow run shows a failed step but stays green overall -- that's expected, not a
+the workflow run shows a failed step but stays green overall; that's expected, not a
 bug, and no PR is opened or updated.
+
+## Upstream Template Update Changesets
+
+A `copier update` that pulls in template changes may drop one or more files into
+`.changeset/`, one per relevant upstream change. No action is required beyond a quick
+review: Knope folds each one into your very next release the same way it folds in your
+own commits, combining bump types (major beats minor beats patch) and filing each entry
+under the matching changelog section. Delete any that don't actually apply to your
+project (a fix for the other platform, template-internal tooling) before that release
+runs. Each entry links back to the PR it actually came from upstream, not this project,
+so you can always check the source before deciding.
 
 ## Prereleases
 
 To cut an ad-hoc prerelease (`alpha`, `beta`, or `rc`), run the "Release (Manual): Create
 Prerelease" workflow from the Actions tab, choosing a label. Each dispatch increments
 that label's number (e.g. `1.1.0-alpha.0`, then `.1`). Cutting the same label again at
-the same commit is blocked -- push a new commit first -- but moving to a new label
+the same commit is blocked (push a new commit first), but moving to a new label
 (e.g. `alpha` to `beta`) is always allowed, even without one.
 
 ## Graduating to 1.0.0
 
 While your project's lifecycle is Pre-Alpha, Alpha, or Beta, normal commits only ever
-bump the minor/patch version -- Knope won't cross the `1.0.0` line on its own. See
+bump the minor/patch version; Knope won't cross the `1.0.0` line on its own. See
 [Lifecycle Management](lifecycle-management.md) for how to trigger that release when
 you're ready.
 {%- elif using_azdo %}
@@ -40,26 +51,37 @@ Commits](https://www.conventionalcommits.org/).
 ## Normal Releases
 
 Every push to `main` opens or updates a pull request (branch `knope/release`)
-proposing the next release, computed from commit messages since the last release --
+proposing the next release, computed from commit messages since the last release:
 `fix:` bumps the patch version, `feat:` bumps minor, and a `!`/`BREAKING CHANGE:`
 commit bumps major. Merging that PR tags and publishes the release automatically.
 
 If a push has nothing release-worthy in it (e.g. a `docs:`- or `chore:`-only commit),
-the pipeline run shows a failed step but stays green overall -- that's expected, not a
+the pipeline run shows a failed step but stays green overall; that's expected, not a
 bug, and no PR is opened or updated.
+
+## Upstream Template Update Changesets
+
+A `copier update` that pulls in template changes may drop one or more files into
+`.changeset/`, one per relevant upstream change. No action is required beyond a quick
+review: Knope folds each one into your very next release the same way it folds in your
+own commits, combining bump types (major beats minor beats patch) and filing each entry
+under the matching changelog section. Delete any that don't actually apply to your
+project (a fix for the other platform, template-internal tooling) before that release
+runs. Each entry links back to the repo it actually came from upstream, not this
+project, so you can always check the source before deciding.
 
 ## Prereleases
 
 To cut an ad-hoc prerelease (`alpha`, `beta`, or `rc`), run the "Release (Manual) - Create
 Prerelease" pipeline manually from Azure Pipelines, choosing a label. Each dispatch increments that label's
 number (e.g. `1.1.0-alpha.0`, then `.1`). Cutting the same label again at the same
-commit is blocked -- push a new commit first -- but moving to a new label (e.g. `alpha`
+commit is blocked (push a new commit first), but moving to a new label (e.g. `alpha`
 to `beta`) is always allowed, even without one.
 
 ## Graduating to 1.0.0
 
 While your project's lifecycle is Pre-Alpha, Alpha, or Beta, normal commits only ever
-bump the minor/patch version -- Knope won't cross the `1.0.0` line on its own. See
+bump the minor/patch version; Knope won't cross the `1.0.0` line on its own. See
 [Lifecycle Management](lifecycle-management.md) for how to trigger that release when
 you're ready.
 {%- endif %}
