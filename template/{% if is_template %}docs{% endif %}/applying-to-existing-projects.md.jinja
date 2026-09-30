@@ -9,10 +9,6 @@ To apply this template to an existing project, follow these steps:
    1. Default branch (usually `main` or `master`) is checked out
 1. Create a new branch (`copier-template-apply`, for example) from your default branch
 1. Make sure your shell is in the project root, then run the command below:
-{%- if is_private %}
-
-   - NOTE: Because this is a private template, you will be prompted to authenticate to Git at the start of the Copier run
-{%- endif %}
 
    ```bash
    mise x "--" copier copy --trust {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} ~/local-repo-path-here

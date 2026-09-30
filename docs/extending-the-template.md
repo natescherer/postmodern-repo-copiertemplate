@@ -1,14 +1,29 @@
 # Extending This Template
 
-This template is deliberately universal: it provides the settings, CI/CD, release automation, and repo hygiene that apply to *any* Git-tracked project, regardless of what's actually in it. It's meant to be a common ancestor: a Python library template, a PowerShell module template, a Terraform-config template, and others all start from a `copier copy` of this one (with `project_type: Template`, which gives you your own copy of `template/` to build on) and then add whatever's specific to their own domain.
+The `postmodern-repo-copiertemplate` is designed to provide the maximum amount of general, non-domain-specific features and structure as it can in order to serve as the parent for any kind of code or workload where tracking in Git makes sense. Lofty goals aside, that realistically means (unless you need to publish a Zensical site or release static content in a versioned way) you will probably want to use this as the parent of a child that does *something*.
 
-That inheritance is the whole point, but it also means the discipline that keeps *this* template correct has to travel with you. Every mechanism this template relies on (the render tests, Renovate coverage, dual-platform CI, the migration story for existing downstream projects) is generic. None of it is specific to what this template happens to contain today. This page walks through applying that same discipline to whatever *you* add, starting with the one decision that shapes everything else.
+This document will provide general guidance on how you can extend this template in order to serve a more specific purpose. Before starting, you should check the Postmodern Template Directory to make sure there isn't already one for what you want to do.
 
 ## Start here: will other templates build on yours?
 
-Resolve this before anything else: it decides how much of the rest of this page even applies to you.
+If you've used this template already, you may have already noticed that you have the option of making "Standard" or "Template" repos as children of this template. That is a key difference with most other templates: each Postmodern template can have children, grandchildren, great-grandchildren, etc.
 
-=== "Leaf template (most common)"
+Here's a real-world example of the value this design offers:
+
+```mermaid
+flowchart TD
+    r([postmodern-repo-copieremplate]) --> |Provides Pre-Commit Hooks, Linting, etc|hd & py
+    hd([postmodern-helmdeploy-copiertemplate]) --> |Provides Helm Chart Deploy Workflows|phdt
+    py([postmodern-python-copiertemplate]) --> |Provides Testing & Publishing|bp
+    bp([Python Library])
+    phdt([Private Helm Deploy Template]) -->|Provides Pre-Defined k8s Clusters| a1 & a2
+    a1([Chart A Deploy Repo])
+    a2([Chart B Deploy Repo])
+```
+
+It is up to you, the potential template author, to decide which type of template you want to make, a **Basic template** or an **Extensible template**. Each are explained here to help you decide.
+
+=== "Leaf Template"
 
     Your template produces finished projects and nothing ever copies *from* it again: it's the end of the chain. This is the lower-maintenance path, and the right default unless you specifically know otherwise:
 
@@ -16,7 +31,7 @@ Resolve this before anything else: it decides how much of the rest of this page 
     - Skip the `template/`-subtree-gated-by-`is_template` convention entirely. You have exactly one branch, not two.
     - None of the obligations below about *your own* extensibility apply: you're not handing anyone else a template to extend.
 
-=== "Extensible template"
+=== "Extensible Template"
 
     Your template can itself be copied with `project_type: Template` to become the parent of a further template, exactly the relationship this repo has to yours. That inheritance keeps costing you maintenance for as long as the template exists:
 
@@ -75,7 +90,7 @@ This is the exercise that prompted this page; see [Token Permissions](token-perm
 2. Add it to the `provision-secrets` task (masked-prompt entry via `gh secret set` / `az pipelines variable create`) so setup stays a single guided step.
 3. Validate its presence in every consuming workflow/pipeline (the `require-secrets`-composite-action pattern on GitHub; an equivalent guard step on Azure DevOps) so a missing secret fails with a clear message instead of a confusing downstream error.
 4. Add it to `_message_after_copy`'s setup checklist.
-5. Consider whether it can expire, and if so, whether an expiration check belongs somewhere: this template's own `REPO_MAINTENANCE_PAT` check (folded into the monthly repo health check) is a working example of that pattern: authenticate as the credential itself, read whatever the platform's API reports about its expiration, and notify ahead of time rather than letting it fail silently later.
+5. Consider whether it can expire, and if so, whether an expiration check belongs somewhere (e.g. the monthly repo health check): authenticate as the credential itself, read whatever the platform's API reports about its expiration, and notify ahead of time rather than letting it fail silently later.
 
 ### Renaming or removing something
 
