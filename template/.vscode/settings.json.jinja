@@ -1,4 +1,5 @@
 {
+{%- if is_template %}
   "[jinja-json]": {
     "editor.tabSize": 2
   },
@@ -8,13 +9,13 @@
   "[jinja-toml]": {
     "editor.tabSize": 2
   },
+{%- endif %}
   "[markdown]": {
     "editor.tabSize": 2
   },
-  "files.associations": {
 {%- if is_template or using_azdo %}
-    "**/.azurepipelines/*.yml": "azure-pipelines",{% endif %}
-{%- if is_template %}
+  "files.associations": {
+    "**/.azurepipelines/*.yml": "azure-pipelines"{% if is_template %},
     "**LICENSE*.jinja": "jinja",
     "**.all-contributorsrc*.jinja": "jinja-json",
     "**.json*.jinja": "jinja-json",
@@ -28,6 +29,7 @@
     "**.py[{]% endif %[}]": "python",
     "**.toml[{]% endif %[}]": "toml"{% endif %}
   },
+{%- endif %}
 {%- if is_template %}
   "maptz.regionfolder": {
     "[jinja-yaml]": {
