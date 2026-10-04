@@ -1,5 +1,7 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-{#- project_initialized is injected here (not a real question) so it's absent on the very first
-   `copier copy` but present on every `copier update` after. copier.yml.jinja's questions check
-   it to swap their help text to "Locked value on update, press Enter." once it's set. #}
+
+{#- About the injected answers:
+   copyright_year is frozen to the year you first use the template
+   project_initialized is hardcoded to True as a universal way to detect if a Copier run is the first run or not
+   #}
 {{ dict(_copier_answers, copyright_year=copyright_year, project_initialized=True) | to_nice_yaml -}}
