@@ -710,8 +710,8 @@ setup_checklist:
   type: str
   default: |-
     - [ ] Add/remove badges to the top of README.md.
-    - [ ] Replace docs/images/readme-logo.png with your own logo, or remove that section from README.md.
-    - [ ] Replace docs/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
+    - [ ] Replace docs/assets/images/readme-logo.png with your own logo, or remove that section from README.md.
+    - [ ] Replace docs/assets/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
     - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see docs/reference/token-permissions.md.
   when: false
 # endregion Post-Question Computed Values
