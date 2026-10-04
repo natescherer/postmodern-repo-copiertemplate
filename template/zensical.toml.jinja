@@ -2,10 +2,19 @@
 site_name = "{{ project_name }}"
 site_description = "{{ project_description }}"
 docs_dir = "docs"
-site_dir = "{% if zensical_ghpages %}.cache/zensical_serve{% else %}docs-site{% endif %}"
+{%- if zensical_ghpages %}
+# mike builds and deploys each version to the gh-pages branch itself, so local
+# build output is throwaway and lives in a gitignored cache dir
+site_dir = ".cache/zensical_serve"
+{%- else %}
+# CI builds into docs-site/ and commits it to the repo for offline browsing
+site_dir = "docs-site"
+{%- endif %}
 {%- if is_template %}
+# Makes the manual verification checklists clickable (scoped to those pages)
 extra_javascript = ["javascripts/manual-verification-checkboxes.js"]
 {%- endif %}
+# Every page under docs_dir must be listed here; test_content.py enforces it
 nav = [
 {%- if is_template %}
   { "Getting Started" = "index.md" },
@@ -37,8 +46,11 @@ nav = [
 ]
 {%- if zensical_ghpages %}
 site_url = "https://{{ github_repo_owner }}.github.io/{{ repo_name }}"
+# Adds a link to the repo in the header
 repo_url = "https://github.com/{{ github_repo_owner }}/{{ repo_name }}"
 
+# Shows a version selector backed by mike's versions.json on gh-pages; alias
+# lists aliases (latest, dev) next to the version they point at
 [project.extra.version]
 provider = "mike"
 alias = true
@@ -46,21 +58,22 @@ alias = true
 
 [project.theme]
 variant = "classic" # Switching to modern blocked until built-in versioning support is added
+# Template overrides (e.g. main.html's outdated-version banner on GitHub)
 custom_dir = ".config/zensical-overrides"
 features = [
-  "content.code.annotate",
+  "content.code.annotate", # (1)-style numbered annotations inside code blocks
   "content.code.copy",
-  "content.tabs.link",
-  "navigation.indexes",
-  "navigation.footer",
-  "navigation.path",
-  "navigation.sections",
-  "navigation.top",
-  "navigation.tracking",
-  "search.highlight",
-  "search.share",
-  "search.suggest",
-  "toc.follow",
+  "content.tabs.link", # Selecting a tab switches all tabs with the same label site-wide
+  "navigation.indexes", # A section's index.md becomes the section's own page
+  "navigation.footer", # Previous/next page links
+  "navigation.path", # Breadcrumbs above the page title
+  "navigation.sections", # Renders top-level nav sections as groups, not collapsibles
+  "navigation.top", # Back-to-top button
+  "navigation.tracking", # Updates the URL anchor to the heading in view
+  "search.highlight", # Highlights search terms on the page a result opens
+  "search.share", # Button to copy a link to the current search
+  "search.suggest", # Autocompletes the last search word
+  "toc.follow", # Keeps the active heading scrolled into view in the TOC sidebar
 ]
 font.text = "Lato"
 font.code = "Cascadia Mono"
@@ -74,6 +87,8 @@ repo = "fontawesome/brands/github"
 
 # ── Color palette (system → light → dark toggle) ───────────────────────────────
 # Docs: https://zensical.org/docs/setup/colors/#automatic-light-dark-mode
+# The toggle cycles through these in order; each toggle.name describes what
+# clicking does (i.e. the next entry), not the current scheme.
 
 # System Color Scheme
 [[project.theme.palette]]
@@ -105,13 +120,15 @@ toggle.name = "Switch to system preference"
 
 {%- if zensical_ghpages %}
 [project.plugins.mike]
-canonical_version = "latest"
-deploy_prefix = ""
-redirect_template = ""
-alias_type = "symlink"
+canonical_version = "latest" # Canonical URLs point at latest, so search engines index only current docs
+deploy_prefix = "" # Deploys versions at the root of gh-pages
+redirect_template = "" # Empty uses mike's built-in redirect page
+alias_type = "symlink" # Aliases (latest, dev) are symlinks to a version, not copies
 {%- endif %}
 {%- if zensical_repo %}
 
+# Makes the committed docs-site/ browsable from file:// (search included)
+# without a web server
 [project.plugins.offline]
 {%- endif %}
 
@@ -134,45 +151,58 @@ alias_type = "symlink"
 
 [project.markdown_extensions.tables]
 
+# Adds a ¶ anchor link next to each heading
 [project.markdown_extensions.toc]
 permalink = true
 
 [project.markdown_extensions.pymdownx.blocks.caption]
 
+# ^^insert^^ and ^superscript^
 [project.markdown_extensions.pymdownx.caret]
 
+# CriticMarkup for marking up suggested edits ({++add++}, {--delete--}, ...)
 [project.markdown_extensions.pymdownx.critic]
 
+# Collapsible admonitions (??? note)
 [project.markdown_extensions.pymdownx.details]
 
 [project.markdown_extensions.pymdownx.inlinehilite]
 
+# Keyboard keys (++ctrl+c++)
 [project.markdown_extensions.pymdownx.keys]
 
+# ==highlight==
 [project.markdown_extensions.pymdownx.mark]
 
+# Converts (c), -->, 1/2, etc. to their symbols
 [project.markdown_extensions.pymdownx.smartsymbols]
 
+# Embeds other files with --8<-- "path"
 [project.markdown_extensions.pymdownx.snippets]
 
+# ~~strikethrough~~ and ~subscript~
 [project.markdown_extensions.pymdownx.tilde]
 
 [project.markdown_extensions.pymdownx.highlight]
-anchor_linenums = true
-line_spans = "__span"
-pygments_lang_class = true
+anchor_linenums = true # Makes each line number a linkable anchor
+line_spans = "__span" # Wraps each line in a span, needed for line highlighting
+pygments_lang_class = true # Adds a language CSS class, used by code annotations
 
+# Emoji and icon shortcodes (:smile:, :material-github:) rendered as inline SVG
 [project.markdown_extensions.pymdownx.emoji]
 emoji_index = "zensical.extensions.emoji.twemoji"
 emoji_generator = "zensical.extensions.emoji.to_svg"
 
+# Renders ```mermaid fenced blocks as diagrams
 [project.markdown_extensions.pymdownx.superfences]
 custom_fences = [
   { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" }
 ]
 
+# alternate_style is the only content tabs style the 'classic' theme supports
 [project.markdown_extensions.pymdownx.tabbed]
 alternate_style = true
 
+# Themed checkboxes in task lists instead of the browser's default
 [project.markdown_extensions.pymdownx.tasklist]
 custom_checkbox = true
