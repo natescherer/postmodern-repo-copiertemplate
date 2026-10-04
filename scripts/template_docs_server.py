@@ -408,13 +408,17 @@ def build_section(
         entries = []
         for group in groups:
             representative = group[0]
-            if path_prefix is None and representative.dest == primary_dest:
-                page_rel = docs_rel  # Already synced above.
-            else:
-                variant_rel = secondary_page_path(
+            # The primary variant keeps the unsuffixed path, so sibling pages'
+            # plain relative links (e.g. "releasing.md") still resolve.
+            is_primary = representative.dest == primary_dest
+            page_rel = Path("docs") / (
+                target_nav_path
+                if is_primary
+                else secondary_page_path(
                     Path(target_nav_path), representative.entry["id"]
                 )
-                page_rel = Path("docs") / variant_rel
+            )
+            if not (is_primary and path_prefix is None):  # Else synced above.
                 (dest / page_rel).parent.mkdir(parents=True, exist_ok=True)
                 (dest / page_rel).write_text(representative.content, encoding="utf-8")
             entries.append(
