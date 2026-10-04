@@ -1,7 +1,7 @@
 [global]
 disable = [
   "MD013", # Disable line length checking
-  "MD046", # Disable code block style (Zensical)
+  "MD046", # Disable code block style (incompatible with Zensical)
   "MD057", # Disable link checking in favor of Lychee
 ]
 
@@ -9,4 +9,4 @@ disable = [
 indent = 4 # Set list indentation to 4 spaces
 
 [MD077]
-indent = 4 # Set the indent for unordered list items to 4 spaces (Zensical)
+indent = 4 # Set the indent for unordered list items to 4 spaces
