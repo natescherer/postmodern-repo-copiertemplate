@@ -639,7 +639,7 @@ def verify(
     # polls rather than checking once. Requires that app be installed on the
     # authenticated account with access to all repositories (a new repo isn't
     # automatically visible to an app installed on "only select repositories"); see
-    # docs/token-permissions.md.
+    # docs/prerequisites.md.
     for attempt in range(12):
         if settings_synced(repo, homepage, zensical_ghpages=zensical_ghpages):
             print(f"Settings App sync: OK (after {attempt * 10}s)")
