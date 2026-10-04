@@ -34,7 +34,7 @@ import tempfile
 import time
 from pathlib import Path
 
-# Default `gh auth login` scopes cover both; see docs/token-permissions.md.
+# Default `gh auth login` scopes cover both; see docs/reference/token-permissions.md.
 REQUIRED_SCOPES = ("repo", "workflow")
 
 # Must match _tasks' project_description -d flag in create() below.
@@ -118,7 +118,7 @@ def check_scopes() -> None:
     if missing:
         raise SystemExit(
             f"Token is missing required scope(s): {', '.join(missing)}. See "
-            "docs/token-permissions.md for what this token needs."
+            "docs/reference/token-permissions.md for what this token needs."
         )
 
 
@@ -639,7 +639,7 @@ def verify(
     # polls rather than checking once. Requires that app be installed on the
     # authenticated account with access to all repositories (a new repo isn't
     # automatically visible to an app installed on "only select repositories"); see
-    # docs/prerequisites.md.
+    # docs/getting-started/prerequisites.md.
     for attempt in range(12):
         if settings_synced(repo, homepage, zensical_ghpages=zensical_ghpages):
             print(f"Settings App sync: OK (after {attempt * 10}s)")
@@ -1282,8 +1282,8 @@ def main() -> None:
 
     Once you've updated Repo B by hand, re-run this script with `--verify-update
     <repo> --local-path <path>` (also available as `mise run
-    integration-test-verify-update-gh`) to check it applied cleanly; see
-    docs/manual-verification-github.md's "Repo B" section.
+    integration-test-verify-update-gh`) to check it applied cleanly; see the "Repo B"
+    section of docs/maintaining/integration-testing/manual-verification-github.md.
 
     Raises:
         SystemExit: if required arguments are missing, or if any automated check
@@ -1389,7 +1389,8 @@ def main() -> None:
         f"{dest_b} and run `mise run copier-update` yourself to test the update path, "
         "then `mise run integration-test-verify-update-gh -- --repo "
         f"{repo_b} --local-path {dest_b}` to verify it applied cleanly "
-        '(see "Repo B" in docs/manual-verification-github.md).'
+        '(see "Repo B" in '
+        "docs/maintaining/integration-testing/manual-verification-github.md)."
     )
 
     if failures_a or failures_b:

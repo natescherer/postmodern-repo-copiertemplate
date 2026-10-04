@@ -4,7 +4,7 @@ This page walks through what each Copier question controls, and what it triggers
 scenes. Questions not listed here (`repo_name`, `author_name`, `project_name`,
 `project_description`) are self-explanatory and only affect their own value. Neither platform
 prompts for a token anymore: repo setup uses `gh auth login` (GitHub) or `az login` (Azure
-DevOps) instead; see [Prerequisites](prerequisites.md) and [Token Permissions](token-permissions.md).
+DevOps) instead; see [Prerequisites](../getting-started/prerequisites.md) and [Secrets and Tokens](token-permissions.md).
 
 ## `developer_platform`: GitHub / Azure DevOps
 
@@ -22,7 +22,7 @@ entirely. Prefer GitHub for new projects unless you specifically need Azure DevO
 Controls which setup automation runs after the template is copied. `.github/settings.yml` (GitHub
 only) is always generated regardless of this answer; see below. Choosing anything but `None`
 triggers this question's validator, which checks the relevant platform CLI (`gh` or `az`) is
-installed and authenticated *before* letting you proceed; see [Prerequisites](prerequisites.md).
+installed and authenticated *before* letting you proceed; see [Prerequisites](../getting-started/prerequisites.md).
 
 - **Create Repo**: creates the remote repo; on GitHub also sets Actions workflow permissions,
   sets up GitHub Pages if applicable, and (for public repos) enables CodeQL code scanning's
@@ -34,13 +34,13 @@ installed and authenticated *before* letting you proceed; see [Prerequisites](pr
 
 Whichever you choose, GitHub projects still get a generated `.github/settings.yml`, applied
 automatically if you've installed the [Settings GitHub App](https://github.com/apps/settings) (see
-[Prerequisites](prerequisites.md)) or by hand per [Manual Repo Settings](manual-repo-settings.md)
+[Prerequisites](../getting-started/prerequisites.md)) or by hand per [Manual Repo Settings](manual-repo-settings.md)
 if you haven't. Choosing `None` prints a reminder about this at the end of the run.
 
 ## `project_type`: Standard / Template
 
-The other foundational decision, alongside `developer_platform`; see [Getting
-Started](index.md#the-two-decisions-that-shape-everything) for why it matters before you even get
+The other foundational decision, alongside `developer_platform`; see [the home
+page](../index.md#the-two-decisions-that-shape-everything) for why it matters before you even get
 to this question.
 
 **Standard** generates a normal project repo: a finished starting point to build whatever the
@@ -48,7 +48,7 @@ project is actually for. **Template** additionally generates a `copier.yml` of i
 project can itself be used as a Copier template: this is how this repo works), a fuller `docs/`
 set explaining the template's own features (the page you're reading right now is part of it), and
 template-authoring tasks like `mise run integration-test-gh`/`integration-test-azdo`. See
-[Extending This Template](extending-the-template.md) for what comes after choosing Template here:
+[Extending This Template](../maintaining/extending-the-template.md) for what comes after choosing Template here:
 whether your template will itself be extended further, and the checklists for adding to it safely.
 
 ## `project_visibility`: Public / Private
@@ -96,7 +96,7 @@ set-lifecycle` (or a `copier update`) updates or removes the notice automaticall
 - **Inactive**: the project is no longer under active development.
 
 Moving to Stable for the first time also prompts a one-time command to open a pull request
-proposing the `1.0.0` release; see [Releasing](releasing.md#graduating-to-100).
+proposing the `1.0.0` release; see [Releasing](../maintaining/releasing.md#graduating-to-100).
 
 ## `agent_instructions`: Yes / No
 

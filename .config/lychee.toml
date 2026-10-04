@@ -4,6 +4,9 @@ exclude = [
   'https://github\.com/\$', # Shell/GH-Actions-expression placeholder in a URL (e.g. a $VAR or a templated repository expression), not a real URL
   'https://dev\.azure\.com', # This errors frequently, easier to just ignore
   'https://img\.shields\.io/github/all-contributors/', # Part of template code
+  # Relative links between template/docs/ sources can't resolve before rendering (targets
+  # carry Jinja-conditional or .jinja names); test_render.py link-checks every rendered combo
+  "^file://.*/template/docs/",
 ]
 exclude_path = [
   ".config/lychee.toml",

@@ -159,7 +159,8 @@ def check_access(org_url: str, project: str) -> None:
     if result.returncode != 0:
         raise SystemExit(
             f"Can't see project {project!r} at {org_url} with the current az "
-            "session. See docs/token-permissions.md for what this token needs."
+            "session. See docs/reference/token-permissions.md for what this token "
+            "needs."
         )
 
 
@@ -1437,7 +1438,7 @@ def main() -> None:
     Once you've updated Repo B by hand, re-run this script with `--verify-update
     <repo> --local-path <path>` (also available as `mise run
     integration-test-verify-update-azdo`) to check it applied cleanly; see
-    docs/manual-verification-azdo.md's "Repo B" section.
+    docs/maintaining/integration-testing/manual-verification-azdo.md's "Repo B" section.
 
     Raises:
         SystemExit: if `az` or its azure-devops extension aren't installed, if
@@ -1568,7 +1569,7 @@ def main() -> None:
         "yourself to test the update path, then `mise run "
         f"integration-test-verify-update-azdo -- --repo {repo_b_name} --local-path "
         f'{dest_b}` to verify it applied cleanly (see "Repo B" in '
-        "docs/manual-verification-azdo.md)."
+        "docs/maintaining/integration-testing/manual-verification-azdo.md)."
     )
 
     if failures_a or failures_b:

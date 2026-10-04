@@ -1,6 +1,6 @@
 # Manual Verification Checklist (Azure DevOps)
 
-Run through this **in full**, by hand, as the last step before cutting a release. See [Integration Testing](integration-testing.md) for what `mise run integration-test-azdo` creates and why the update step below isn't automated. Most of Repo A's checks are now automated; each `mise run integration-test-*-azdo` invocation prints its own PASS/FAIL per check, plus a summary; what's below is what's left for a human.
+Run through this **in full**, by hand, as the last step before cutting a release. See [Integration Testing](index.md) for what `mise run integration-test-azdo` creates and why the update step below isn't automated. Most of Repo A's checks are now automated; each `mise run integration-test-*-azdo` invocation prints its own PASS/FAIL per check, plus a summary; what's below is what's left for a human.
 
 !!! bug "Checkbox state isn't saved"
     Boxes on this page are clickable so you can tick items off as you go, but nothing
@@ -18,7 +18,7 @@ Fresh copy at `HEAD`, `code_coverage` on.
 - [ ] The setup checklist (printed to the console at the end of `copier copy`) exists and every item on it has been addressed.
 - [ ] Badges at the top of README.md render correctly (no broken image icons).
 - [ ] `docs/images/readme-logo.png` and `docs/images/readme-screenshot.png` display correctly in README.md, or that section has been removed if unused.
-- [ ] Required secrets/pipeline variables are provisioned (`mise run provision-secrets`, or see [Token Permissions](token-permissions.md)); confirmed by the pipelines below not failing with authentication errors.
+- [ ] Required secrets/pipeline variables are provisioned (`mise run provision-secrets`, or see [Secrets and Tokens](../../reference/token-permissions.md)); confirmed by the pipelines below not failing with authentication errors.
 
 ### Maint (Auto) - Copier Update Check
 
@@ -37,7 +37,7 @@ Fresh copy at `HEAD`, `code_coverage` on.
 *Dispatching it and confirming it authenticates successfully are automated.*
 
 - [ ] With at least one outdated dependency present, confirm it opens (or updates) a real pull request proposing the bump.
-- [ ] Confirm the one-time **Project Collection Build Service** permission grant described in [Azure DevOps Limitations](azure-devops.md) is actually in place; a missing grant surfaces as a push/PR-creation failure here, not a clear permissions error.
+- [ ] Confirm the one-time **Project Collection Build Service** permission grant described in [Azure DevOps Limitations](../../reference/azure-devops.md) is actually in place; a missing grant surfaces as a push/PR-creation failure here, not a clear permissions error.
 
 ### Docs (Auto) - Zensical Build & Publish
 
