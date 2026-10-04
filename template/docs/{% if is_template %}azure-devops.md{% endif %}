@@ -16,11 +16,11 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
       before a PR can complete), along with a **Project Administrators** bypass permission mirroring GitHub's
       admin `bypass_actors` entry. Unlike GitHub's ruleset, force-push and branch deletion on the
       default branch are **not** blocked; this is a known, currently-accepted gap. If you chose
-      `repo_setup_actions: None`, see [Manual Repo Settings](../manual-repo-settings.md) for how to
+      `repo_setup_actions: None`, see [Manual Repo Settings](manual-repo-settings.md) for how to
       set this up by hand.
 - `zensical_target` is always `docs-site Directory in Repo`
     - `GitHub Pages` isn't offered, so Azure DevOps projects never get the release-versioned docs
-      site that target provides; see [Getting Started](../index.md#documentation)
+      site that target provides; see [Features](features.md#documentation)
 - Renovate needs a one-time manual permission grant
     - Unlike GitHub (which uses the Renovate GitHub App), Renovate runs here as a self-hosted
       scheduled pipeline (`.azurepipelines/maint-auto-renovate.yml`), authenticated via the pipeline's own
@@ -31,7 +31,7 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
       repeat per repo.
 - `Release (Auto) - Prepare & Publish Release` pipeline detects PR merges via the API, not a native trigger
     - The release flow matches GitHub's: every push to `main` opens or updates a preview PR
-      (`knope/release`), and merging it publishes the release; see [Releasing](../releasing.md).
+      (`knope/release`), and merging it publishes the release; see [Releasing](releasing.md).
       Azure Pipelines has no "PR completed" trigger, only branch-push triggers, so the pipeline
       tells "a normal push" apart from "this push is that PR's own merge" by asking the API
       whether the most recently completed PR from `knope/release` into `main` matches the commit

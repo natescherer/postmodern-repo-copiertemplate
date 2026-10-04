@@ -37,7 +37,7 @@ Fresh copy at `HEAD`, `code_coverage` on.
 *Dispatching it and confirming it authenticates successfully are automated.*
 
 - [ ] With at least one outdated dependency present, confirm it opens (or updates) a real pull request proposing the bump.
-- [ ] Confirm the one-time **Project Collection Build Service** permission grant described in [Azure DevOps Limitations](platform-notes/azure-devops.md) is actually in place; a missing grant surfaces as a push/PR-creation failure here, not a clear permissions error.
+- [ ] Confirm the one-time **Project Collection Build Service** permission grant described in [Azure DevOps Limitations](azure-devops.md) is actually in place; a missing grant surfaces as a push/PR-creation failure here, not a clear permissions error.
 
 ### Docs (Auto) - Zensical Build & Publish
 

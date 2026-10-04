@@ -12,7 +12,7 @@ Determines which platform-specific files get generated: GitHub gets `.github/wor
 Azure DevOps gets `.azurepipelines/`. This choice also locks out some other options: Azure DevOps
 projects can't use `GitHub Pages` for `zensical_target`, and `project_visibility` defaults to
 `Private` since Azure DevOps doesn't support public projects the same way. See
-[Azure DevOps Limitations](platform-notes/azure-devops.md) for platform-specific details.
+[Azure DevOps Limitations](azure-devops.md) for platform-specific details.
 
 **Azure DevOps support is deprecated** and will eventually be removed from this template
 entirely. Prefer GitHub for new projects unless you specifically need Azure DevOps.
@@ -53,17 +53,27 @@ whether your template will itself be extended further, and the checklists for ad
 
 ## `project_visibility`: Public / Private
 
-Public repos get contributor-facing files that don't make sense for private code: the
-`CONTRIBUTING.md` "Ground Rules" section, `.all-contributorsrc`, and the All Contributors
-workflow. See [Public vs Private Repos](public-vs-private-repos.md) for the full breakdown.
+A Public repo is an open-source project, visible to the internet and open to contributions. A
+Private repo is closed-source and requires authentication to access. Private repos omit what
+only makes sense for public code:
+
+- **All Contributors**: `.all-contributorsrc` and its workflow, which credit contributors in the
+  README.
+- **`CODE_OF_CONDUCT.md`** and **`CONTRIBUTING.md`**: likely unneeded for a private project, but
+  you can add your own; template updates leave files the template doesn't generate alone.
+- **`LICENSE`**: see `license` below.
+- **Security scanning (GitHub)**: CodeQL code scanning's default setup, private vulnerability
+  reporting, and secret scanning with push protection. These are free and automatic on Public
+  repos but need a paid GitHub Advanced Security license on Private ones; see [Manual Repo
+  Settings](manual-repo-settings.md) to enable secret scanning by hand.
 
 ## `license`: MIT / None
 
 Controls whether a `LICENSE` file is generated and whether the README claims MIT licensing. If you
 pick `None` on a Public repo, the README instead shows a notice that the project currently has no
-license set (meaning nobody may legally use, copy, or contribute to it without your permission);
-see [Public vs Private Repos](public-vs-private-repos.md#support-files). `MIT` isn't offered for Private
-repos, since a license only matters once code is visible to others.
+license set (meaning nobody may legally use, copy, or contribute to it without your permission).
+`MIT` isn't offered for Private repos, since a license only matters once code is visible to
+others.
 
 ## `zensical_target`: GitHub Pages / docs-site Directory in Repo
 
@@ -77,9 +87,16 @@ Chooses where rendered documentation ends up:
 
 ## `lifecycle`: Pre-Alpha / Alpha / Beta / Stable / Inactive
 
-Controls the status banner shown at the top of the README, and (for GitHub projects moving to
-Stable) prompts a one-time command to open a pull request bumping the version to `1.0.0`. See
-[Lifecycle Management](lifecycle-management.md) for the full behavior.
+Controls the status notice shown at the top of the README. Changing it via `mise run
+set-lifecycle` (or a `copier update`) updates or removes the notice automatically:
+
+- **Pre-Alpha** / **Alpha**: the project is not ready for public use.
+- **Beta**: the project should be used with caution.
+- **Stable**: no notice; the project is considered production-ready.
+- **Inactive**: the project is no longer under active development.
+
+Moving to Stable for the first time also prompts a one-time command to open a pull request
+proposing the `1.0.0` release; see [Releasing](releasing.md#graduating-to-100).
 
 ## `agent_instructions`: Yes / No
 

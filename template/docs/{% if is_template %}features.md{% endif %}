@@ -1,0 +1,75 @@
+# Features
+
+## Core
+
+### Support for Multiple CI/CD Platforms
+
+- GitHub **Recommended**
+    - Creating repos under both users and orgs is supported
+- Azure DevOps **Deprecated**
+    - See [Azure DevOps Limitations](azure-devops.md) for details about features missing for AzDO, and why this platform is being phased out
+
+### Support for Public (Open-Source) and Private (Closed-Source) Repositories
+
+This template fully supports both public/open-source and private/closed-source repositories. See [`project_visibility`](template-questions.md#project_visibility-public-private) for what differs.
+
+### Support for Existing Projects
+
+Postmodern templates are designed to allow either the creation of new templates from scratch or adoption for existing projects with existing code repos.
+
+### Support for Template Updates
+
+Keeping projects in sync with their parent template is a core feature of [Copier](https://github.com/copier-org/copier), and this template will deploy a GitHub Actions Workflow/Azure DevOps Pipeline that will automate the update process.
+
+### Support for Child/Recursive Templates
+
+It is highly encouraged for you to take this template and make your own child template that meets your needs. Your child template can (optionally) receive updates from this template.
+
+## Repository Management
+
+- Creation of new repos and branches
+- Setting of repo settings & branch protection rules
+- Creation of useful non-default issue labels: `awaiting pr` and `blocked`
+- Contributor management and crediting via [All Contributors](https://allcontributors.org/)
+- Dependency updates via [Renovate](https://www.mend.io/renovate/); the [GitHub Marketplace
+  App](https://github.com/marketplace/renovate/) on GitHub, a self-hosted scheduled pipeline on
+  Azure DevOps
+- Scheduled checks for updates from parent template
+
+## Documentation
+
+Rich Markdown documentation is pre-configured using [Zensical](https://zensical.org/), the successor to the extremely popular (but end of life) [mkdocs-material](https://squidfunk.github.io/mkdocs-material/).
+
+- Multiple choices of documentation target:
+    - GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
+    - A `docs-site` folder in your repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
+
+## Code Management and Formatting
+
+- Automatic, repository-local dev tool installation via [mise](https://github.com/jdx/mise)
+- Automatic code linting and formatting via [prek](https://prek.j178.dev/):
+    - Commit message linting via [committed](https://github.com/crate-ci/committed)
+    - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
+    - Markdown linting via [rumdl](https://github.com/rvben/rumdl)
+    - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
+    - Spell checking via [typos](https://github.com/crate-ci/typos)
+    - TOML linting and formatting via [Tombi](https://github.com/tombi-toml/tombi)
+    - YAML linting via [ryl](https://github.com/owenlamont/ryl)
+
+## CI/CD
+
+- Version number calculation, changelog updating, releasing, and tagging via
+  [Knope](https://knope.tech/); see [Releasing](releasing.md)
+- Simple/example release pipeline via GitHub Actions or Azure Pipelines
+
+## Support Files
+
+- `.gitignore`, set to ignore macOS `.DS_Store` files and Windows `Thumbs.db` files
+- `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant](https://www.contributor-covenant.org/)
+- `CONTRIBUTING.md`, designed to help novices make their first contribution
+- `LICENSE`, a copy of the [MIT License](https://choosealicense.com/licenses/mit/)
+- `README.md`, designed for general products
+
+## Editor Configuration
+
+Optimal settings and plugin recommendations are included for [Visual Studio Code](http://code.visualstudio.com/).
