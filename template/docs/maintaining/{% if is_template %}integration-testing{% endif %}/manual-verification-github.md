@@ -17,7 +17,7 @@ Fresh copy at `HEAD`, `zensical_target: GitHub Pages`, `code_coverage` on.
 
 - [ ] The setup checklist (a GitHub Issue titled "Post-Setup Checklist," opened automatically on first copy) exists and every item on it has been addressed.
 - [ ] Badges at the top of README.md render correctly (no broken image icons).
-- [ ] `docs/images/readme-logo.png` and `docs/images/readme-screenshot.png` display correctly in README.md, or that section has been removed if unused.
+- [ ] `docs/assets/images/readme-logo.png` and `docs/assets/images/readme-screenshot.png` display correctly in README.md, or that section has been removed if unused.
 - [ ] Required secrets/pipeline variables are provisioned (`mise run provision-secrets`, or see [Secrets and Tokens](../../reference/token-permissions.md)); confirmed by the pipelines below not failing with authentication errors.
 
 ### Maint (Auto): Copier Update Check
