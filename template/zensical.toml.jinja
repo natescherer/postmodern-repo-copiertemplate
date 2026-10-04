@@ -16,31 +16,42 @@ extra_javascript = ["javascripts/manual-verification-checkboxes.js"]
 {%- endif %}
 # Every page under docs_dir must be listed here; test_content.py enforces it
 nav = [
+  { "Home" = "index.md" },
 {%- if is_template %}
-  { "Getting Started" = "index.md" },
-  { "Prerequisites" = "prerequisites.md" },
-  { "Creating a New Project" = "new-project.md" },
-  { "Applying to Existing Projects" = "applying-to-existing-projects.md" },
-  { "Template Questions" = "template-questions.md" },
-  { "Features" = "features.md" },
-  { "Updating from the Template" = "updating-from-template.md" },
-  { "Releasing" = "releasing.md" },
-  { "Integration Testing" = [
-    "integration-testing.md",
-    "manual-verification-github.md",
-    "manual-verification-azdo.md"
+  { "Getting Started" = [
+    { "Prerequisites" = "getting-started/prerequisites.md" },
+    { "Creating a New Project" = "getting-started/new-project.md" },
+    { "Applying to an Existing Project" = "getting-started/existing-project.md" }
   ] },
-  { "Token Permissions" = "token-permissions.md" },
-  { "Manual Repo Settings" = "manual-repo-settings.md" },
-  { "Azure DevOps Limitations" = "azure-devops.md" },
-  { "Extending This Template" = "extending-the-template.md" },
+  { "Maintaining This Template" = [
+    { "Extending This Template" = "maintaining/extending-the-template.md" },
+    { "Updating from the Parent Template" = "maintaining/updating-from-template.md" },
+    { "Releasing" = "maintaining/releasing.md" },
+    { "Integration Testing" = [
+      "maintaining/integration-testing/index.md",
+      { "Manual Checklist: GitHub" = "maintaining/integration-testing/manual-verification-github.md" },
+      { "Manual Checklist: Azure DevOps" = "maintaining/integration-testing/manual-verification-azdo.md" }
+    ] }
+  ] },
+  { "Reference" = [
+    { "Template Questions" = "reference/template-questions.md" },
+    { "Features" = "reference/features.md" },
+    { "Secrets and Tokens" = "reference/token-permissions.md" },
+    { "Manual Repo Settings" = "reference/manual-repo-settings.md" },
+    { "Azure DevOps Limitations" = "reference/azure-devops.md" }
+  ] }
 {%- else %}
-  { "Getting Started" = "index.md" },
-  { "Prerequisites" = "prerequisites.md" },
-  { "Updating from the Template" = "updating-from-template.md" },
-  { "Releasing" = "releasing.md" },
-  { "Token Permissions" = "token-permissions.md" },
-  { "Manual Repo Settings" = "manual-repo-settings.md" }
+  { "Getting Started" = [
+    { "Prerequisites" = "getting-started/prerequisites.md" }
+  ] },
+  { "Maintaining This Project" = [
+    { "Updating from the Parent Template" = "maintaining/updating-from-template.md" },
+    { "Releasing" = "maintaining/releasing.md" }
+  ] },
+  { "Reference" = [
+    { "Secrets and Tokens" = "reference/token-permissions.md" },
+    { "Manual Repo Settings" = "reference/manual-repo-settings.md" }
+  ] }
 {%- endif %}
 ]
 {%- if zensical_ghpages %}

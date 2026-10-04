@@ -1,6 +1,6 @@
-# Token Permissions
+# Secrets and Tokens
 
-This doc details the credentials needed to use this template, along with reasons why. No
+This doc details the credentials this project needs, along with reasons why. No
 workflow or pipeline needs a Personal Access Token: CI runs under each platform's own built-in
 identity (`GITHUB_TOKEN` / `$(System.AccessToken)`), and repo setup uses your own CLI session.
 
@@ -8,15 +8,15 @@ identity (`GITHUB_TOKEN` / `$(System.AccessToken)`), and repo setup uses your ow
 
 === "GitHub"
 
-    Repo setup and the integration test scripts run as whoever is logged in via `gh auth login`.
-    That session needs the `repo` and `workflow` scopes, which `gh auth login` grants by default.
-    Check with `gh auth status`.
+    Repo setup (and, in Template projects, the integration test scripts) runs as whoever is
+    logged in via `gh auth login`. That session needs the `repo` and `workflow` scopes, which
+    `gh auth login` grants by default. Check with `gh auth status`.
 
 === "Azure DevOps"
 
-    Repo setup and the integration test scripts run as whoever is logged in via `az login`. That
-    account needs access to the target Azure DevOps project, plus permission to create repos,
-    pipelines, and branch policies in it.
+    Repo setup (and, in Template projects, the integration test scripts) runs as whoever is
+    logged in via `az login`. That account needs access to the target Azure DevOps project, plus
+    permission to create repos, pipelines, and branch policies in it.
 
 ## Secrets
 
@@ -38,4 +38,4 @@ and 80+ others; see Apprise's own docs for the URL format for your service of ch
 
 (GitHub with `code_coverage` only.) The PR validation workflow uploads `coverage.xml` to
 [Codecov](https://codecov.io/) with this token. Copy it from the repo's settings page on
-codecov.io after installing the Codecov GitHub App (see [Prerequisites](prerequisites.md)).
+codecov.io after installing the Codecov GitHub App (see [Prerequisites](../getting-started/prerequisites.md)).

@@ -5,6 +5,9 @@ exclude = [
 {%- if is_template %}
   'https://dev\.azure\.com', # This errors frequently, easier to just ignore
   'https://img\.shields\.io/github/all-contributors/', # Part of template code
+  # Relative links between template/docs/ sources can't resolve before rendering (targets
+  # carry Jinja-conditional or .jinja names); test_render.py link-checks every rendered combo
+  "^file://.*/template/docs/",
 {%- endif %}
 ]
 exclude_path = [

@@ -31,7 +31,7 @@ Support for Azure DevOps is provided on a best-effort basis and has some limitat
       repeat per repo.
 - `Release (Auto) - Prepare & Publish Release` pipeline detects PR merges via the API, not a native trigger
     - The release flow matches GitHub's: every push to `main` opens or updates a preview PR
-      (`knope/release`), and merging it publishes the release; see [Releasing](releasing.md).
+      (`knope/release`), and merging it publishes the release; see [Releasing](../maintaining/releasing.md).
       Azure Pipelines has no "PR completed" trigger, only branch-push triggers, so the pipeline
       tells "a normal push" apart from "this push is that PR's own merge" by asking the API
       whether the most recently completed PR from `knope/release` into `main` matches the commit

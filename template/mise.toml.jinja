@@ -30,7 +30,7 @@ run = "copier update --answers-file .config/copier-answers.yml --skip-answered -
 run = "zensical serve"
 
 [tasks.provision-secrets]
-# Opt-in and separate from _tasks on purpose; see docs/token-permissions.md. `raw`
+# Opt-in and separate from _tasks on purpose; see docs/reference/token-permissions.md. `raw`
 # gives gh/az direct terminal control so each CLI's own masked prompt (gh's
 # Prompter.Password, az's knack.prompting.prompt_pass) reads the value straight from
 # the terminal; it never touches a command-line argument, mise's own logging, or a
@@ -75,15 +75,15 @@ run = "uv run scripts/template_docs_server.py"
 # Creates two real throwaway repos from this template and runs every automated check
 # it can against Repo A, always at HEAD; this exists to verify a release candidate
 # on main is good before cutting a release, not to smoke-test an arbitrary branch. See
-# docs/integration-testing.md for what this does and doesn't check, and
-# docs/manual-verification-github.md for what still needs a human. Repo B is copied at
+# docs/maintaining/integration-testing/index.md for what this does and doesn't check, and
+# docs/maintaining/integration-testing/manual-verification-github.md for what still needs a human. Repo B is copied at
 # the last stable tag and left there; run `mise run copier-update` against it
 # yourself, then `mise run integration-test-verify-update-gh` to verify it. Both repos
 # are left in place afterward for inspection; delete them yourself when you're done.
 run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}"
 
 [tasks.integration-test-verify-update-gh]
-# Run after manually updating Repo B (see docs/manual-verification-github.md's "Repo
+# Run after manually updating Repo B (see docs/maintaining/integration-testing/manual-verification-github.md's "Repo
 # B" section); verifies the update applied cleanly (no conflict markers, current
 # content) and that PR Validation still works, the same way integration-test-gh
 # already verifies Repo A.
@@ -99,8 +99,8 @@ run = "python scripts/integration_test_github.py"
 # Creates two real throwaway repos from this template and runs every automated check
 # it can against Repo A, always at HEAD; this exists to verify a release candidate
 # on main is good before cutting a release, not to smoke-test an arbitrary branch. See
-# docs/integration-testing.md for what this does and doesn't check, and
-# docs/manual-verification-azdo.md for what still needs a human. Repo B is copied at
+# docs/maintaining/integration-testing/index.md for what this does and doesn't check, and
+# docs/maintaining/integration-testing/manual-verification-azdo.md for what still needs a human. Repo B is copied at
 # the last stable tag and left there; run `mise run copier-update` (then `mise run
 # migrate-azdo-pipeline-names`) against it yourself, then `mise run
 # integration-test-verify-update-azdo` to verify it. Both repos are left in place
@@ -120,7 +120,7 @@ flag "--project <project>" help="Azure DevOps project"{% if project_default %} d
 run = "python scripts/integration_test_azdo.py --source {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} --repo-prefix {{ repo_name }}"
 
 [tasks.integration-test-verify-update-azdo]
-# Run after manually updating Repo B (see docs/manual-verification-azdo.md's "Repo B"
+# Run after manually updating Repo B (see docs/maintaining/integration-testing/manual-verification-azdo.md's "Repo B"
 # section); verifies the update applied cleanly (no conflict markers, current
 # content, pipelines renamed in place) and that PR Validation still works, the same
 # way integration-test-azdo already verifies Repo A.

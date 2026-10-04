@@ -115,7 +115,7 @@ _migrations:
 
   # region Reminder to Remove REPO_MAINTENANCE_PAT (0.8.2)
   # v0.8.2 dropped REPO_MAINTENANCE_PAT: every GitHub workflow that used it now runs
-  # under the default GITHUB_TOKEN instead (see docs/releasing.md for the tradeoff --
+  # under the default GITHUB_TOKEN instead (see docs/maintaining/releasing.md for the tradeoff --
   # a one-time manual approval per bot-authored push). A project updating past this
   # point may still have the secret set from before; checks via `gh secret list`
   # rather than printing unconditionally, since a project that never set it (or
@@ -136,7 +136,7 @@ _migrations:
                 "workflows. Delete it from Settings > Secrets and variables > "
                 "Actions, and revoke the token itself at "
                 "https://github.com/settings/tokens if you're not using it "
-                "elsewhere. See docs/releasing.md for what changed."
+                "elsewhere. See docs/maintaining/releasing.md for what changed."
             )
     version: v0.8.2
     when: "{{ _stage == 'after' and using_github }}"
@@ -712,7 +712,7 @@ setup_checklist:
     - [ ] Add/remove badges to the top of README.md.
     - [ ] Replace docs/images/readme-logo.png with your own logo, or remove that section from README.md.
     - [ ] Replace docs/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
-    - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see docs/token-permissions.md.
+    - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see docs/reference/token-permissions.md.
   when: false
 # endregion Post-Question Computed Values
 
@@ -1092,11 +1092,11 @@ _message_after_copy: |-
   {%- if code_coverage %}
     - CODECOV_TOKEN
   {%- endif %}
-  Run `mise run provision-secrets`, or see docs/token-permissions.md for manual provisioning details.
+  Run `mise run provision-secrets`, or see docs/reference/token-permissions.md for manual provisioning details.
   {%- elif using_azdo -%}
   Before CI works, add these as secret Azure DevOps pipeline variables (Pipelines > Library):
     - APPRISE_URL
-  Run `mise run provision-secrets`, or see docs/token-permissions.md for manual provisioning details.
+  Run `mise run provision-secrets`, or see docs/reference/token-permissions.md for manual provisioning details.
   {%- endif %}
 
 _message_after_update: |-

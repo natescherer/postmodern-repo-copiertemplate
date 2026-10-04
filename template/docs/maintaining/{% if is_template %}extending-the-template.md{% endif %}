@@ -43,7 +43,7 @@ Once you know which fork you're on, everything else is the same kind of work rep
 
 ### Adding a new versioned dependency or tool
 
-This is the exercise that prompted this page; see [Token Permissions](token-permissions.md) and this template's own `renovate.json` for the concrete patterns referenced below.
+This is the exercise that prompted this page; see [Secrets and Tokens](../reference/token-permissions.md) and this template's own `renovate.json` for the concrete patterns referenced below.
 
 1. **Pin it.** A floating tag, `latest`, or an unversioned install script is a reproducibility gap. If you genuinely can't find a trackable version source for something (rare, but it happens), document *why* in a comment next to the install step rather than leaving a silent gap.
 2. **Wire it into `mise.toml`/`mise.ci.toml`** (or your own analog) with an exact version, not a range.
@@ -65,13 +65,13 @@ This is the exercise that prompted this page; see [Token Permissions](token-perm
 1. Build **both** platform variants together, not one now and the other "later": a platform gap tends to stay a gap. Match the established naming convention (`Category (Auto/Manual): Name` on GitHub, `Category (Auto/Manual) - Name` on Azure DevOps).
 2. On Azure DevOps, pipelines are live registered objects, not just files; wire the new one into the `_tasks` `az pipelines create` bootstrap so a fresh `copier copy` registers it.
 3. Add a check for it to the integration test scripts (a `check_X()` function, plus the pipeline's display name in whatever coverage list `integration_test_azdo.py` maintains) so a real run actually exercises it, not just a local render.
-4. Add whatever can't be automated to the manual verification checklists (`docs/manual-verification-github.md` / `-azdo.md`): anything that depends on an external system's own behavior (a real notification landing, a third-party bot responding) belongs there, not in the automated scripts.
+4. Add whatever can't be automated to the manual verification checklists (`docs/maintaining/integration-testing/manual-verification-github.md` / `-azdo.md`): anything that depends on an external system's own behavior (a real notification landing, a third-party bot responding) belongs there, not in the automated scripts.
 5. If it needs a secret, work through the next checklist too.
 6. Any new SHA-pinned action, `az pipelines create`d task version, or embedded tool version this workflow introduces goes through the dependency checklist above too.
 
 ### Adding a new secret or credential
 
-1. Document what it's for and what scope/permissions it needs in `docs/token-permissions.md`.
+1. Document what it's for and what scope/permissions it needs in `docs/reference/token-permissions.md`.
 2. Add it to the `provision-secrets` task (masked-prompt entry via `gh secret set` / `az pipelines variable create`) so setup stays a single guided step.
 3. Validate its presence in every consuming workflow/pipeline (the `require-secrets`-composite-action pattern on GitHub; an equivalent guard step on Azure DevOps) so a missing secret fails with a clear message instead of a confusing downstream error.
 4. Add it to `_message_after_copy`'s setup checklist.

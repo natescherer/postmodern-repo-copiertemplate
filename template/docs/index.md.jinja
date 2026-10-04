@@ -1,4 +1,4 @@
-# Getting Started
+# {{ project_name }}
 {% if is_template %}
 {{ project_name }} is a [Copier](https://copier.readthedocs.io/) template: running it against a
 destination path generates a ready-to-use repository with the "hard/boring stuff" (CI/CD,
@@ -12,11 +12,11 @@ locked in from then on:
 
 - **`developer_platform`** (GitHub or Azure DevOps): which CI/CD system, secrets store, and repo
   host the generated project targets. Most features exist in parallel on both; see [Azure
-  DevOps Limitations](azure-devops.md) for where they don't.
+  DevOps Limitations](reference/azure-devops.md) for where they don't.
 - **`project_type`** (Standard or Template): whether the generated project is a finished,
   ready-to-code-in repo (**Standard**), or is itself another Copier template that others can copy
   from in turn (**Template**, which is what produced the very docs you're reading right now). See
-  [Extending This Template](extending-the-template.md) if you're building a Template-type project
+  [Extending This Template](maintaining/extending-the-template.md) if you're building a Template-type project
   of your own; that page's "leaf vs. extensible" framing is the natural next decision after this
   one.
 
@@ -25,19 +25,19 @@ This project inherited its own base layer of automation the same way, from
 top of it, that child inherits from *you* next, the same relationship one level down. `copier
 update` is what keeps that inheritance flowing: run periodically against a generated project, it
 pulls in whatever changed upstream (new features, fixes, security patches) without discarding
-what's been customized locally. See [Updating from the Template](updating-from-template.md) for
+what's been customized locally. See [Updating from the Parent Template](maintaining/updating-from-template.md) for
 how to run it and what shows up in a project's own changelog when it does.
 
 ## What To Read Next
 
-- **Setting this up for the first time?** Check the [Prerequisites](prerequisites.md), then
-  follow [Creating a New Project](new-project.md). [Template Questions](template-questions.md)
+- **Setting this up for the first time?** Check the [Prerequisites](getting-started/prerequisites.md), then
+  follow [Creating a New Project](getting-started/new-project.md). [Template Questions](reference/template-questions.md)
   explains what each prompt controls.
 - **Adding this to a codebase that already exists?** See [Applying to Existing
-  Projects](applying-to-existing-projects.md) instead.
-- **Wondering what you actually get?** See [Features](features.md).
+  Projects](getting-started/existing-project.md) instead.
+- **Wondering what you actually get?** See [Features](reference/features.md).
 - **Extending this template into one of your own?** See [Extending This
-  Template](extending-the-template.md) once you've got it copied and running.
+  Template](maintaining/extending-the-template.md) once you've got it copied and running.
 {%- else %}
 Add your documentation here.
 {%- endif %}

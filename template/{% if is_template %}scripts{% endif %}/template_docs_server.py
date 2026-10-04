@@ -10,7 +10,7 @@
 """Preview template/'s docs through a real zensical render.
 
 A template project's docs can be gated by `{% if %}` conditionals both in their
-path (e.g. `template/docs/{% if is_template %}extending-the-template.md{% endif %}`)
+path (e.g. `template/docs/reference/{% if is_template %}features.md{% endif %}`)
 and in their content (a `.md.jinja` file with an `{% if is_public %}...{% endif %}`
 paragraph). Thus, there's no single "correct" answer set to render the whole
 docs/ tree with.
@@ -136,13 +136,12 @@ def load_answer_matrix() -> list[dict]:
 def find_docs_source_dirs() -> list[Path]:
     """Locate every docs source directory directly under template/.
 
-    There can be more than one: this project's own template/ has a directory
-    gated on is_template and a separate, much smaller one gated on is_standard for
-    the other project_type. Matched purely by each directory's own name stripping
-    down to "docs" once its Jinja conditional is removed (doesn't need to know
-    what condition or axis is actually gating it, or what values it takes), so
-    this generalizes to whatever a downstream template ends up using for the same
-    purpose, not just this project's own project_type/is_template/is_standard.
+    This project's own template/ has one plain docs/ (per-page conditionals
+    inside it), but a downstream template may instead split docs into several
+    directories, each gated on its own condition. Matched purely by each
+    directory's own name stripping down to "docs" once any Jinja conditional is
+    removed (doesn't need to know what condition or axis is gating it, or what
+    values it takes), so either layout works.
 
     Returns:
         Every "docs"-shaped directory found.
