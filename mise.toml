@@ -123,7 +123,7 @@ actionlint = "1.7.12"
 "aqua:tombi-toml/tombi" = "1.2.6"
 committed = "1.1.11"
 lychee = "0.15.1"
-ruff = "0.16.1"
+ruff = "0.16.10"
 rumdl = "0.2.52"
 shellcheck = "0.11.0"
 
