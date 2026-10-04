@@ -34,7 +34,9 @@ import tempfile
 import time
 from pathlib import Path
 
-# Default `gh auth login` scopes cover both; see docs/reference/token-permissions.md.
+from docs_links import docs_page_url
+
+# Default `gh auth login` scopes cover both; see the Secrets and Tokens docs page.
 REQUIRED_SCOPES = ("repo", "workflow")
 
 # Must match _tasks' project_description -d flag in create() below.
@@ -118,7 +120,8 @@ def check_scopes() -> None:
     if missing:
         raise SystemExit(
             f"Token is missing required scope(s): {', '.join(missing)}. See "
-            "docs/reference/token-permissions.md for what this token needs."
+            f"{docs_page_url('reference/token-permissions.md')} for what this token "
+            "needs."
         )
 
 
@@ -639,7 +642,7 @@ def verify(
     # polls rather than checking once. Requires that app be installed on the
     # authenticated account with access to all repositories (a new repo isn't
     # automatically visible to an app installed on "only select repositories"); see
-    # docs/getting-started/prerequisites.md.
+    # the Prerequisites docs page.
     for attempt in range(12):
         if settings_synced(repo, homepage, zensical_ghpages=zensical_ghpages):
             print(f"Settings App sync: OK (after {attempt * 10}s)")
@@ -1283,7 +1286,7 @@ def main() -> None:
     Once you've updated Repo B by hand, re-run this script with `--verify-update
     <repo> --local-path <path>` (also available as `mise run
     integration-test-verify-update-gh`) to check it applied cleanly; see the "Repo B"
-    section of docs/maintaining/integration-testing/manual-verification-github.md.
+    section of the GitHub manual verification checklist docs page.
 
     Raises:
         SystemExit: if required arguments are missing, or if any automated check
@@ -1390,7 +1393,7 @@ def main() -> None:
         "then `mise run integration-test-verify-update-gh -- --repo "
         f"{repo_b} --local-path {dest_b}` to verify it applied cleanly "
         '(see "Repo B" in '
-        "docs/maintaining/integration-testing/manual-verification-github.md)."
+        f"{docs_page_url('maintaining/integration-testing/manual-verification-github.md')})."
     )
 
     if failures_a or failures_b:

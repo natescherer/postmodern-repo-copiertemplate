@@ -42,6 +42,8 @@ import tempfile
 import time
 from pathlib import Path
 
+from docs_links import docs_page_url
+
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
 # Must match template/{% if is_template %}copier.yml{% endif %}.jinja's hardcoded
@@ -159,8 +161,8 @@ def check_access(org_url: str, project: str) -> None:
     if result.returncode != 0:
         raise SystemExit(
             f"Can't see project {project!r} at {org_url} with the current az "
-            "session. See docs/reference/token-permissions.md for what this token "
-            "needs."
+            f"session. See {docs_page_url('reference/token-permissions.md')} for what "
+            "this token needs."
         )
 
 
@@ -1437,8 +1439,8 @@ def main() -> None:
 
     Once you've updated Repo B by hand, re-run this script with `--verify-update
     <repo> --local-path <path>` (also available as `mise run
-    integration-test-verify-update-azdo`) to check it applied cleanly; see
-    docs/maintaining/integration-testing/manual-verification-azdo.md's "Repo B" section.
+    integration-test-verify-update-azdo`) to check it applied cleanly; see the "Repo B"
+    section of the Azure DevOps manual verification checklist docs page.
 
     Raises:
         SystemExit: if `az` or its azure-devops extension aren't installed, if
@@ -1569,7 +1571,7 @@ def main() -> None:
         "yourself to test the update path, then `mise run "
         f"integration-test-verify-update-azdo -- --repo {repo_b_name} --local-path "
         f'{dest_b}` to verify it applied cleanly (see "Repo B" in '
-        "docs/maintaining/integration-testing/manual-verification-azdo.md)."
+        f"{docs_page_url('maintaining/integration-testing/manual-verification-azdo.md')})."
     )
 
     if failures_a or failures_b:
