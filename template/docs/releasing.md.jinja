@@ -15,6 +15,14 @@ Changesets from [template updates](updating-from-template.md) are folded in too.
 If a push has nothing release-worthy in it (e.g. a `docs:`- or `chore:`-only commit),
 the {{ 'workflow' if using_github else 'pipeline' }} run shows a failed step but stays green overall; that's expected, not a
 bug, and no PR is opened or updated.
+{%- if using_github %}
+
+Each push to `main` also pushes a new commit to the release PR, authored as
+`github-actions[bot]`. GitHub requires a human to click "Approve and run workflow" in
+the Actions tab before that PR's required check can run on each of those pushes; branch
+protection won't let the PR merge until it does. This is deliberate: it avoids needing a
+repo-wide Personal Access Token, which commonly isn't usable in an enterprise context.
+{%- endif %}
 
 ## Prereleases
 
@@ -29,7 +37,12 @@ allowed, even without one.
 ## Graduating to 1.0.0
 
 While your project's lifecycle is Pre-Alpha, Alpha, or Beta, normal commits only ever
-bump the minor/patch version; Knope won't cross the `1.0.0` line on its own. Once
+bump the minor/patch version; Knope won't cross the `1.0.0` line on its own.
+{%- if is_template %} See
+[Lifecycle Management](lifecycle-management.md) for how to trigger that release when
+you're ready.
+{%- else %} Once
 you're ready, run `mise run set-lifecycle` and choose `Stable`; you'll get a message
 with a ready-to-run command that opens a pull request proposing the `1.0.0` release.
 Merging that PR publishes it.
+{%- endif %}

@@ -10,9 +10,10 @@
 """Preview template/'s docs through a real zensical render.
 
 A template project's docs can be gated by `{% if %}` conditionals both in their
-path (e.g. `template/{% if is_template %}docs{% endif %}/`) and in their content
-(a `.md.jinja` file with an `{% if is_public %}...{% endif %}` paragraph). Thus,
-there's no single "correct" answer set to render the whole docs/ tree with.
+path (e.g. `template/docs/{% if is_template %}extending-the-template.md{% endif %}`)
+and in their content (a `.md.jinja` file with an `{% if is_public %}...{% endif %}`
+paragraph). Thus, there's no single "correct" answer set to render the whole
+docs/ tree with.
 
 So instead of picking one answer set, this renders the whole tree once per entry
 in tests/answer_matrix.py's ANSWER_MATRIX (the same curated, valid combinations

@@ -1,5 +1,5 @@
 # Getting Started
-
+{% if is_template %}
 {{ project_name }} is a [Copier](https://copier.readthedocs.io/) template: running it against a
 destination path generates a ready-to-use repository with the "hard/boring stuff" (CI/CD,
 linting, releasing, documentation, repo settings) already wired up, so whoever uses it can get
@@ -133,3 +133,6 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 ### Editor Configuration
 
 Optimal settings and plugin recommendations are included for [Visual Studio Code](http://code.visualstudio.com/).
+{%- else %}
+Add your documentation here.
+{%- endif %}
