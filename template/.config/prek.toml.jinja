@@ -17,9 +17,7 @@ language = "system"
 entry = "mise x -- actionlint"
 types = ["yaml"]
 {%- if is_template %}
-# Also matches template/.../workflows/; a Template-type project embeds a full,
-# unrendered copy of template/ (via copy-template-files) for its own children to use,
-# regardless of *this* project's own developer_platform.
+# Also matches template/.../workflows/ to cover workflows inside the template
 files = "(^\\.github/workflows/|^template/.*workflows/)"
 {%- else %}
 files = "^\\.github/workflows/"
@@ -48,8 +46,7 @@ description = "Checks files for broken links"
 language = "system"
 entry = "mise x -- lychee --no-progress -c .config/lychee.toml --cache"
 types = ["text"]
-# renovate.json embeds a regex with a backslash-escaped domain (github, dot-escaped,
-# dot-com) whose backslash truncates lychee's URL extraction to a bogus bare domain.
+# renovate.json embeds a regex with a backslash-escaped domain that lychee chokes on
 exclude = "renovate\\.json"
 require_serial = true
 {%- if is_template %}
@@ -142,10 +139,6 @@ id = "fix-byte-order-marker"
 
 [[repos.hooks]]
 id = "mixed-line-ending"
-# Replaces a repo-wide `* text eol=lf` .gitattributes rule, which can corrupt binary
-# files (e.g. images) that Git's own text-detection heuristic misclassifies; this
-# hook's `types: [text]` filter (from pre-commit-hooks' own default) uses the more
-# reliable `identify` library instead, and never touches a file it can't confirm is text.
 args = ["--fix=lf"]
 
 [[repos.hooks]]
