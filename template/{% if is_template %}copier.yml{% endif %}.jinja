@@ -6,6 +6,21 @@
     {{- value -}}
   {%- endif -%}
 {%- endmacro -%}
+{#- This project's own docs pages live at docs_base() + page path + docs_suffix(). Points
+    at the repo's rendered Markdown when there's no hosted site, since a committed
+    docs-site/ isn't browsable from the repo host. -#}
+{%- macro docs_base() -%}
+  {%- if zensical_ghpages -%}
+    https://{{ github_repo_owner }}.github.io/{{ repo_name }}/latest/
+  {%- elif using_github -%}
+    https://github.com/{{ github_repo_owner }}/{{ repo_name }}/blob/main/docs/
+  {%- elif using_azdo -%}
+    https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}?path=/docs/
+  {%- endif -%}
+{%- endmacro -%}
+{%- macro docs_suffix() -%}
+  {{- '/' if zensical_ghpages else '.md' -}}
+{%- endmacro -%}
 # region Copier Settings
 _answers_file: .config/copier-answers.yml
 
@@ -15,7 +30,7 @@ _jinja_extensions:
 # renovate: datasource=pypi depName=copier
 _min_copier_version: "9.17.2"
 
-_message_before_copy: Thanks for using this template! Please consult the 'Template Questions' page in documentation for deeper explanation of each question.
+_message_before_copy: Thanks for using this template! See {{ docs_base() }}reference/template-questions{{ docs_suffix() }} for a deeper explanation of each question.
 
 _subdirectory: template
 # endregion Copier Settings
@@ -34,6 +49,19 @@ parent_template_url:
     {%- elif using_azdo -%}
       https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}
     {%- endif %}
+  when: false
+
+# Where this template's own docs pages live, as parent_template_docs_url + page path
+# (e.g. reference/token-permissions) + parent_template_docs_suffix. Used in copy/update
+# messages, which print before a new project's own docs are published.
+parent_template_docs_url:
+  type: str
+  default: "{{ docs_base() }}"
+  when: false
+
+parent_template_docs_suffix:
+  type: str
+  default: "{{ docs_suffix() }}"
   when: false
 # endregion Parent Template Values - DO NOT EDIT
 {%- raw %}
@@ -128,8 +156,8 @@ _migrations:
 
   # region Reminder to Remove REPO_MAINTENANCE_PAT (0.8.2)
   # v0.8.2 dropped REPO_MAINTENANCE_PAT: every GitHub workflow that used it now runs
-  # under the default GITHUB_TOKEN instead (see docs/maintaining/releasing.md for the tradeoff --
-  # a one-time manual approval per bot-authored push). A project updating past this
+  # under the default GITHUB_TOKEN instead, at the cost of a one-time manual approval
+  # per bot-authored push. A project updating past this
   # point may still have the secret set from before; checks via `gh secret list`
   # rather than printing unconditionally, since a project that never set it (or
   # already removed it) shouldn't be nagged.
@@ -149,7 +177,8 @@ _migrations:
                 "workflows. Delete it from Settings > Secrets and variables > "
                 "Actions, and revoke the token itself at "
                 "https://github.com/settings/tokens if you're not using it "
-                "elsewhere. See docs/maintaining/releasing.md for what changed."
+                "elsewhere. See {{ parent_template_docs_url }}maintaining/releasing{{ parent_template_docs_suffix }} "
+                "for what changed."
             )
     version: v0.8.2
     when: "{{ _stage == 'after' and using_github }}"
@@ -702,6 +731,23 @@ zensical_repo:
     {%- endif %}
   when: false
 
+# Where this project's own docs pages are published: `<url><page><suffix>`. A
+# section index page is `<url><section>/index.html` under either target.
+docs_url:
+  type: str
+  default: |-
+    {%- if zensical_ghpages -%}
+      https://{{ github_repo_owner }}.github.io/{{ repo_name }}/latest/
+    {%- else -%}
+      docs-site/
+    {%- endif %}
+  when: false
+
+docs_page_suffix:
+  type: str
+  default: "{{ '/' if zensical_ghpages else '.html' }}"
+  when: false
+
 current_knope_version:
   type: str
   default: |-
@@ -725,7 +771,7 @@ setup_checklist:
     - [ ] Add/remove badges to the top of README.md.
     - [ ] Replace docs/assets/images/readme-logo.png with your own logo, or remove that section from README.md.
     - [ ] Replace docs/assets/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
-    - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see docs/reference/token-permissions.md.
+    - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }}.
   when: false
 # endregion Post-Question Computed Values
 
@@ -1092,11 +1138,11 @@ _message_after_copy: |-
   {{ setup_checklist }}
   {% endif -%}
   {%- if using_github -%}
-    Repo settings (labels, merge options, branch protection) are not being applied automatically. See the 'Manual Repo Settings' page in documentation for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.
+    Repo settings (labels, merge options, branch protection) are not being applied automatically. See {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }} for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.
 
   {% endif -%}
   {%- if using_azdo and not should_set_repo_settings -%}
-    Azure Pipelines and the PR-validation build policy were not created automatically since repo setup was skipped. See the 'Manual Repo Settings' page in documentation for how to set these up by hand.
+    Azure Pipelines and the PR-validation build policy were not created automatically since repo setup was skipped. See {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }} for how to set these up by hand.
 
   {% endif -%}
   {%- if using_github -%}
@@ -1105,11 +1151,11 @@ _message_after_copy: |-
   {%- if code_coverage %}
     - CODECOV_TOKEN
   {%- endif %}
-  Run `mise run provision-secrets`, or see docs/reference/token-permissions.md for manual provisioning details.
+  Run `mise run provision-secrets`, or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }} for manual provisioning details.
   {%- elif using_azdo -%}
   Before CI works, add these as secret Azure DevOps pipeline variables (Pipelines > Library):
     - APPRISE_URL
-  Run `mise run provision-secrets`, or see docs/reference/token-permissions.md for manual provisioning details.
+  Run `mise run provision-secrets`, or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }} for manual provisioning details.
   {%- endif %}
 
 _message_after_update: |-
