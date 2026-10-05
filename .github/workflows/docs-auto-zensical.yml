@@ -35,7 +35,7 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5
         with:
           # mike is a git dependency, so uv builds it from source using a python
           # interpreter under the runner's ephemeral _temp dir -- a path that's never
