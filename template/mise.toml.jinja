@@ -144,7 +144,7 @@ run = "python scripts/integration_test_azdo.py"
 {#- renovate: datasource=python-version depName=python versioning=python #}
 python = "3.14.8" # Used by copier
 {#- renovate: datasource=github-releases depName=astral-sh/uv #}
-uv = "0.12.2" # Used by pipx tools
+uv = "0.12.23" # Used by pipx tools
 # Tools
 {%- if is_template or using_github %}
 {#- is_template needs this even on Azure DevOps: copy-template-files embeds a full,

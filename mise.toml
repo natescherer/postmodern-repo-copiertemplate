@@ -112,7 +112,7 @@ run = "python scripts/integration_test_azdo.py"
 [tools]
 # Backends
 python = "3.14.8" # Used by copier
-uv = "0.12.2" # Used by pipx tools
+uv = "0.12.23" # Used by pipx tools
 # Tools
 actionlint = "1.7.12"
 "aqua:cli/cli" = "2.97.0"
