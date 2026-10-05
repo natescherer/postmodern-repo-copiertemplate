@@ -44,6 +44,8 @@ This is the root template for a whole family of templates that do more specific 
 - License and Policies
 - Contribution Guide and Automatic Contributor Crediting
 
+See documentation below for more details on each item.
+
 ## Documentation
 
 For detailed documentation, see [https://natescherer.github.io/postmodern-repo-copiertemplate](https://natescherer.github.io/postmodern-repo-copiertemplate).
