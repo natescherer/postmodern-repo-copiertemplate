@@ -1,0 +1,56 @@
+# Development
+
+## Setup
+
+1. Complete the [workstation prerequisites](../getting-started/prerequisites.md#workstation-prerequisites).
+1. Clone the repo and, from its root, run:
+
+    ```bash
+    mise trust
+    mise install
+    ```
+
+`mise install` installs every tool this project uses at its pinned version, then installs
+[prek](https://prek.j178.dev/)'s Git hooks: linters and formatters run on each commit, and
+[committed](https://github.com/crate-ci/committed) checks each commit message. To run every
+hook against the whole repo:
+
+```bash
+mise x -- prek run -c .config/prek.toml --all-files
+```
+
+## Commits and Pull Requests
+
+Commit messages and PR titles follow [Conventional Commits](https://www.conventionalcommits.org/)
+(`type: summary`). The type decides the next version bump; see [Releasing](releasing.md).
+
+PR Validation checks that the PR title is a Conventional Commit and runs the prek hooks against
+every file the PR changes.
+{%- if is_template or using_github %} {% if is_template %}On GitHub, PRs{% else %}PRs{% endif %} are squash-merged, so the PR title becomes the
+commit message on `main`.
+{%- endif %}
+
+## Tasks
+
+Run any of these with `mise run <task>`.
+
+| Task | What it does |
+| ---- | ------------ |
+| `copier-update` | Pulls in the latest parent template changes; see [Updating from the Parent Template](updating-from-template.md) |
+| `set-lifecycle` | Changes only the `lifecycle` answer, without pulling in a template update |
+| `docs-server` | Serves these docs locally with live reload |
+| `provision-secrets` | Sets the secrets CI needs, via masked prompts; see [Secrets and Tokens](../reference/token-permissions.md) |
+{%- if is_template or using_azdo %}
+| `migrate-azdo-pipeline-names` | {% if is_template %}(Azure DevOps only) {% endif %}Renames existing pipeline registrations after a template update renames their files |
+{%- endif %}
+{%- if is_template %}
+| `test` | Runs the render-validation test suite |
+| `template-docs-server` | Previews the template's docs rendered under every answer combination |
+| `integration-test-gh` / `integration-test-azdo` | Creates real throwaway repos from this template and checks them; see [Integration Testing](integration-testing/index.md) |
+| `integration-test-verify-update-gh` / `integration-test-verify-update-azdo` | Verifies a manually updated integration-test repo |
+{%- endif %}
+
+## Documentation
+
+Docs live in `docs/` and are built with [Zensical](https://zensical.org/). Add every new page to
+`nav` in `zensical.toml`{% if is_template %}; the render-validation tests fail on a page missing from it{% endif %}.

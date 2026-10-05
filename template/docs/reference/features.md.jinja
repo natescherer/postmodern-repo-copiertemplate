@@ -97,7 +97,7 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 
 ## Code Management and Formatting
 
-- Automatic, repository-local dev tool installation via [mise](https://github.com/jdx/mise), with tool caches kept under `.cache/`
+- Automatic, repository-local dev tool installation via [mise](https://github.com/jdx/mise), with tool caches kept under `.cache/`; see [Development](../maintaining/development.md)
 - Automatic code linting and formatting via [prek](https://prek.j178.dev/):
     - Commit message linting via [committed](https://github.com/crate-ci/committed)
 {%- if is_template or using_github %}
@@ -147,7 +147,7 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 
 ## Template Projects
 
-Choosing `project_type: Template` adds tooling for building and maintaining a template of your own:
+Choosing `project_type: Template` adds tooling for building and maintaining a template of your own (see [Development](../maintaining/development.md#tasks) for the full task list):
 
 - An unrendered copy of the parent template's `template/` directory, so your template starts from (and can keep receiving) everything above
 - A pytest render-validation suite that renders every answer combination in an answer matrix and checks the output (`mise run test`)
