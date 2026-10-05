@@ -40,7 +40,7 @@ It is highly encouraged for you to take this template and make your own child te
 
 ### AI Agent Instructions
 
-{% if is_template %}Optionally (via [`agent_instructions`](template-questions.md#agent_instructions-yes-no)), an{% else %}An{% endif %} `AGENTS.md` describes the project's conventions for AI coding agents, with a `CLAUDE.md` that imports it.
+{% if is_template %}Optionally (via [`agent_instructions`](template-questions.md#agent_instructions-yes-no)), an{% else %}An{% endif %} `AGENTS.md` describes the project's conventions for AI coding agents.
 {%- endif %}
 {%- if is_template or code_coverage %}
 
@@ -129,7 +129,7 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 - `.gitignore`, set to ignore macOS `.DS_Store` files, Windows `Thumbs.db` files, Python virtual environments, and tool caches
 - `CHANGELOG.md`, maintained by Knope
 {%- if is_template or agent_instructions %}
-- `AGENTS.md`/`CLAUDE.md`, instructions for AI coding agents
+- `AGENTS.md`, instructions for AI coding agents
 {%- endif %}
 {%- if is_template or is_public %}
 - `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant](https://www.contributor-covenant.org/){% if is_template %} (public projects only){% endif %}
