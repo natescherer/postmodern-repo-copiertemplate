@@ -10,7 +10,7 @@
 """Preview template/'s docs through a real zensical render.
 
 A template project's docs can be gated by `{% if %}` conditionals both in their
-path (e.g. `template/docs/reference/{% if is_template %}features.md{% endif %}`)
+path (e.g. `template/docs/reference/{% if is_template %}azure-devops.md{% endif %}`)
 and in their content (a `.md.jinja` file with an `{% if is_public %}...{% endif %}`
 paragraph). Thus, there's no single "correct" answer set to render the whole
 docs/ tree with.

@@ -1,0 +1,162 @@
+# Features
+{%- if not is_template %}
+
+What this project gets from its parent template, [{{ parent_template_name }}]({{ parent_template_url }}).
+{%- endif %}
+
+## Core
+{%- if is_template %}
+
+### Support for Multiple CI/CD Platforms
+
+- GitHub **Recommended**
+    - Creating repos under both users and orgs is supported
+- Azure DevOps **Deprecated**
+    - See [Azure DevOps Limitations](azure-devops.md) for details about features missing for AzDO, and why this platform is being phased out
+
+### Support for Public (Open-Source) and Private (Closed-Source) Repositories
+
+This template fully supports both public/open-source and private/closed-source repositories. See [`project_visibility`](template-questions.md#project_visibility-public-private) for what differs.
+
+### Support for Existing Projects
+
+Postmodern templates are designed to allow either the creation of new templates from scratch or adoption for existing projects with existing code repos. See [Applying to an Existing Project](../getting-started/existing-project.md).
+{%- endif %}
+
+### Support for Template Updates
+
+Keeping projects in sync with their parent template is a core feature of [Copier](https://github.com/copier-org/copier). A scheduled {% if is_template %}GitHub Actions workflow/Azure DevOps pipeline{% elif using_github %}GitHub Actions workflow{% else %}Azure DevOps pipeline{% endif %} checks for new template releases, and `mise run copier-update` applies them. See [Updating from the Parent Template](../maintaining/updating-from-template.md).
+{%- if is_template %}
+
+### Support for Child/Recursive Templates
+
+It is highly encouraged for you to take this template and make your own child template that meets your needs. Your child template can (optionally) receive updates from this template. See [Template Projects](#template-projects) and [Extending This Template](../maintaining/extending-the-template.md).
+{%- endif %}
+
+### Project Lifecycle
+
+{% if is_template %}A project's [`lifecycle`](template-questions.md#lifecycle-pre-alpha-alpha-beta-stable-inactive) (Pre-Alpha, Alpha, Beta, Stable, or Inactive){% else %}This project's lifecycle state (currently {{ lifecycle }}){% endif %} drives a managed notice at the top of the README. Lifecycle only moves forward (Pre-Alpha to Alpha to Beta to Stable); Inactive is reachable from any state. Change it with `mise run set-lifecycle`.
+{%- if is_template or agent_instructions %}
+
+### AI Agent Instructions
+
+{% if is_template %}Optionally (via [`agent_instructions`](template-questions.md#agent_instructions-yes-no)), an{% else %}An{% endif %} `AGENTS.md` describes the project's conventions for AI coding agents, with a `CLAUDE.md` that imports it.
+{%- endif %}
+{%- if is_template or code_coverage %}
+
+### Code Coverage Reporting
+
+{% if is_template %}Optionally (via [`code_coverage`](template-questions.md#code_coverage-yes-no)), PR{% else %}PR{% endif %} validation publishes a Cobertura `coverage.xml` from the repo root{% if is_template %} to [Codecov](https://about.codecov.io/) on GitHub, or to Azure Pipelines' built-in coverage reporting on Azure DevOps{% elif using_github %} to [Codecov](https://about.codecov.io/){% else %} to Azure Pipelines' built-in coverage reporting{% endif %}. Your own test command produces the file.
+{%- endif %}
+
+## Repository Management
+
+{% if is_template -%}
+- Creation of new repos and branches
+{% endif -%}
+- Repo settings and branch protection{% if is_template or using_github %} (on GitHub, kept in sync from `.github/settings.yml` by the [Settings GitHub App](https://github.com/apps/settings)){% endif %}; see [Manual Repo Settings](manual-repo-settings.md)
+{%- if is_template or using_azdo %}
+- {% if is_template %}On Azure DevOps, a{% else %}A{% endif %} build validation policy requiring PR Validation to pass before a PR completes, with a Project Administrator override
+{%- endif %}
+{%- if is_template or using_github %}
+- Creation of useful non-default issue labels: `awaiting pr` and `blocked`
+{%- endif %}
+{%- if is_template or (using_github and is_public) %}
+- {% if is_template %}On public GitHub repos, [CodeQL](https://codeql.github.com/){% else %}[CodeQL](https://codeql.github.com/){% endif %} code scanning and private vulnerability reporting are enabled
+{%- endif %}
+{%- if is_template or is_public %}
+- Contributor management and crediting via [All Contributors](https://allcontributors.org/)
+{%- endif %}
+{%- if is_template %}
+- Dependency updates via [Renovate](https://www.mend.io/renovate/); the [GitHub Marketplace
+  App](https://github.com/marketplace/renovate/) on GitHub, a self-hosted scheduled pipeline on
+  Azure DevOps
+{%- elif using_github %}
+- Dependency updates via the [Renovate](https://www.mend.io/renovate/) [GitHub Marketplace App](https://github.com/marketplace/renovate/)
+{%- else %}
+- Dependency updates via [Renovate](https://www.mend.io/renovate/), run by a self-hosted scheduled pipeline
+{%- endif %}
+- A scheduled repo health check that link-checks the whole repo{% if is_template or using_github %}{% if is_template %} (on GitHub, it{% else %} (it{% endif %} also keeps GitHub from disabling scheduled workflows on an inactive repo){% endif %}
+- Notifications via [Apprise](https://github.com/caronc/apprise) (Slack, Teams, email, and many more) when a template update is available{% if is_template or using_azdo %}{% if is_template %}, plus on Azure DevOps{% else %}, plus{% endif %} when Renovate opens PRs and when a docs PR merges or needs attention{% endif %}; `mise run provision-secrets` sets the secrets these need (see [Secrets and Tokens](token-permissions.md))
+
+## Documentation
+
+Rich Markdown documentation is pre-configured using [Zensical](https://zensical.org/), the successor to the extremely popular (but end of life) [mkdocs-material](https://squidfunk.github.io/mkdocs-material/).
+
+{% if is_template -%}
+- Multiple choices of documentation target:
+    - GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
+    - A `docs-site` folder in your repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
+{%- elif zensical_ghpages -%}
+- Published to GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
+{%- else -%}
+- Built into a `docs-site` folder in this repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
+{%- endif %}
+- Local preview via `mise run docs-server`
+- Starter pages for prerequisites, releasing, updating from the parent template, secrets, and manual repo settings
+
+## Code Management and Formatting
+
+- Automatic, repository-local dev tool installation via [mise](https://github.com/jdx/mise), with tool caches kept under `.cache/`
+- Automatic code linting and formatting via [prek](https://prek.j178.dev/):
+    - Commit message linting via [committed](https://github.com/crate-ci/committed)
+{%- if is_template or using_github %}
+    - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
+{%- endif %}
+    - Link checking via [lychee](https://github.com/lycheeverse/lychee)
+    - Markdown linting via [rumdl](https://github.com/rvben/rumdl)
+{%- if is_template %}
+    - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff) (Template projects only)
+{%- endif %}
+    - Shell script linting via [ShellCheck](https://github.com/koalaman/shellcheck)
+    - Spell checking via [typos](https://github.com/crate-ci/typos)
+    - TOML linting and formatting via [Tombi](https://github.com/tombi-toml/tombi)
+    - YAML linting via [ryl](https://github.com/owenlamont/ryl)
+    - General hygiene: merge conflict markers, trailing whitespace, final newlines, byte order marks, LF line endings, and filename case conflicts
+
+## CI/CD
+
+- PR validation: the PR title must be a [Conventional Commit](https://www.conventionalcommits.org/), and prek runs against every file the PR changes
+- Version number calculation, changelog updating, releasing, and tagging via
+  [Knope](https://knope.tech/): each push to `main` updates a release PR, and merging it publishes the release; see [Releasing](../maintaining/releasing.md)
+- A manually triggered prerelease (alpha, beta, or rc) {% if is_template %}workflow/pipeline{% elif using_github %}workflow{% else %}pipeline{% endif %}
+{%- if is_template or using_github %}
+- {% if is_template %}On GitHub, third-party{% else %}Third-party{% endif %} actions are pinned to commit SHAs, and Renovate keeps those pins current
+{%- endif %}
+
+## Support Files
+
+- `.gitignore`, set to ignore macOS `.DS_Store` files, Windows `Thumbs.db` files, Python virtual environments, and tool caches
+- `CHANGELOG.md`, maintained by Knope
+{%- if is_template or agent_instructions %}
+- `AGENTS.md`/`CLAUDE.md`, instructions for AI coding agents
+{%- endif %}
+{%- if is_template or is_public %}
+- `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant](https://www.contributor-covenant.org/){% if is_template %} (public projects only){% endif %}
+- `CONTRIBUTING.md`, designed to help novices make their first contribution{% if is_template %} (public projects only){% endif %}
+{%- endif %}
+{%- if is_template or using_mit %}
+- `LICENSE`, a copy of the [MIT License](https://choosealicense.com/licenses/mit/){% if is_template %} (public projects only){% endif %}
+{%- endif %}
+{%- if is_template %}
+- `README.md`, designed for general products (Standard projects) or for describing a template (Template projects)
+{%- else %}
+- `README.md`, designed for general products
+{%- endif %}
+{%- if is_template %}
+
+## Template Projects
+
+Choosing `project_type: Template` adds tooling for building and maintaining a template of your own:
+
+- An unrendered copy of the parent template's `template/` directory, so your template starts from (and can keep receiving) everything above
+- A pytest render-validation suite that renders every answer combination in an answer matrix and checks the output (`mise run test`)
+- [Integration tests](../maintaining/integration-testing/index.md) that create real throwaway repos on GitHub or Azure DevOps (`mise run integration-test-gh` / `mise run integration-test-azdo`)
+- `mise run template-docs-server`, a live preview of your template's docs rendered under every answer combination
+- Python linting and formatting via Ruff for the template's own scripts and tests
+- On every `copier update`, any parent template change worth releasing is turned into a Knope changeset, so it reaches your own changelog and version bump instead of disappearing into a single update commit
+{%- endif %}
+
+## Editor Configuration
+
+Optimal settings and plugin recommendations are included for [Visual Studio Code](http://code.visualstudio.com/).
