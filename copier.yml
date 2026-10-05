@@ -5,7 +5,7 @@ _jinja_extensions:
   - jinja2_shell_extension.ShellExtension
 
 # renovate: datasource=pypi depName=copier
-_min_copier_version: "9.17.2"
+_min_copier_version: "9.18.2"
 
 _message_before_copy: Thanks for using this template! See https://natescherer.github.io/postmodern-repo-copiertemplate/latest/reference/template-questions/ for a deeper explanation of each question.
 
