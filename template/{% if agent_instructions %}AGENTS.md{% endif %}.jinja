@@ -93,3 +93,33 @@ standard-cron-style fix): that's invalid for Renovate specifically, since it
 constrains the minutes field.
 
 Reference: <https://docs.renovatebot.com/key-concepts/scheduling/>
+
+## Tooling
+
+Every dev tool is pinned in `mise.toml`; run them as `mise x -- <tool>` rather than
+relying on whatever is on `PATH`. prek's Git hooks (`.config/prek.toml`) run the
+linters and formatters on every commit and check the commit message; fix what they
+report rather than bypassing them with `--no-verify`.
+
+## Managed files
+
+These are written by tooling; don't hand-edit them:
+
+- `.config/copier-answers.yml`: Copier's record of this project's answers.
+- `CHANGELOG.md` and `.config/knope-current-version.json`: Knope updates both when
+  it prepares a release.
+- The README's lifecycle notice: driven by the `lifecycle` answer; change it with
+  `mise run set-lifecycle`.
+{%- if is_template or zensical_repo %}
+- `docs-site/`{% if is_template %} (when docs are built into the repo){% endif %}: CI rebuilds
+  it from `docs/` whenever docs change on `main`.
+{%- endif %}
+
+Files that came from the parent template change through `mise run copier-update`,
+not by hand; a local edit to one is kept, but every later update has to merge
+around it.
+
+## Documentation
+
+Docs live in `docs/` and are built with Zensical. Add every new page to `nav` in
+`zensical.toml`.
