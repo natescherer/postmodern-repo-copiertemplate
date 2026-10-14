@@ -33,7 +33,7 @@ A Copier template to create a repo with the Hard/Boring stuff automated, so you 
 
 A basic one, by intention.
 
-This is the root template for a whole family of templates that do more specific tasks. If you want a simple repository that releases static files at a point-in-time, you're in the right place. Otherwise, you might want to look at the Other Postmodern Templates.
+This is the root template for a whole family of templates that do more specific tasks. If you want a simple repository that releases static files at a point-in-time, you're in the right place. Otherwise, you might want to look at the [other Postmodern templates](https://postmodern-templates.github.io/ecosystem).
 
 ## What sorts of Hard/Boring stuff does it automate?
 
