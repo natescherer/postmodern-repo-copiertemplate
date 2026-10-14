@@ -27,3 +27,26 @@ jobs:
         uses: JoshuaKGoldberg/all-contributors-auto-action@c578423db9b2c14d3cee9c72f6c2aed31c128030 # v0.7.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  workflow-keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+    steps:
+      # Re-enables this workflow if GitHub disabled it for inactivity. Inlined from
+      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh`,
+      # unsupported on Windows runners, unlike bash, which is available there via Git
+      # for Windows.
+      - name: Re-enable Workflow
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          case "${GITHUB_WORKFLOW_REF:?}" in
+            "${GITHUB_REPOSITORY:?}"/.github/workflows/*.y*ml@*) ;;
+            *) false ;;
+          esac
+          workflow="${GITHUB_WORKFLOW_REF%%@*}"
+          workflow="${workflow#"$GITHUB_REPOSITORY"/.github/workflows/}"
+          gh api -X PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/enable"

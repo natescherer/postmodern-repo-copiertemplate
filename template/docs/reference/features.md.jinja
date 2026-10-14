@@ -76,7 +76,10 @@ It is highly encouraged for you to take this template and make your own child te
 {%- else %}
 - Dependency updates via [Renovate](https://www.mend.io/renovate/), run by a self-hosted scheduled pipeline
 {%- endif %}
-- A monthly repo health check that link-checks the whole repo{% if is_template or using_github %}{% if is_template %} (on GitHub, it{% else %} (it{% endif %} also keeps GitHub from disabling it on an inactive repo){% endif %}
+- A monthly repo health check that link-checks the whole repo
+{%- if is_template or using_github %}
+- {% if is_template %}On GitHub, each{% else %}Each{% endif %} scheduled workflow re-enables itself on each scheduled run, so GitHub doesn't disable it after 60 days without repo activity
+{%- endif %}
 - Notifications via [Apprise](https://github.com/caronc/apprise) (Slack, Teams, email, and many more) when a template update is available{% if is_template or using_azdo %}{% if is_template %}, plus on Azure DevOps{% else %}, plus{% endif %} when Renovate opens PRs and when a docs PR merges or needs attention{% endif %}; `mise run provision-secrets` sets the secrets these need (see [Secrets and Tokens](token-permissions.md))
 
 ## Documentation
