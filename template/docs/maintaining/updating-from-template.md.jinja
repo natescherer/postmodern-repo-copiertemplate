@@ -1,16 +1,43 @@
 # Updating from the Parent Template
 
 This project was generated from the [{{ parent_template_name }}]({{ parent_template_url }})
-[Copier](https://copier.readthedocs.io/) template. To pull in its latest changes:
+[Copier](https://copier.readthedocs.io/) template. Every Monday, the Copier Update Check
+{% if is_template %}workflow/pipeline{% elif using_github %}workflow{% else %}pipeline{% endif %} checks for a new template release and sends a notification to
+`APPRISE_URL` when one is available; see [Secrets and Tokens](../reference/token-permissions.md#apprise_url).
+
+To pull in its latest changes:
 
 1. Start from a clean working tree on a new branch; Copier refuses to update with
    uncommitted changes.
-2. Run `mise run copier-update`. Your recorded answers are reused, so you're only
+1. Run `mise run copier-update`. Your recorded answers are reused, so you're only
    asked about questions added since your last update.
-3. Resolve any conflicts where your own edits overlap a template change; Copier marks
+1. Resolve any conflicts where your own edits overlap a template change; Copier marks
    them inline.
-4. Review any new files in `.changeset/` (one per relevant upstream change) and delete
+{%- if is_template or using_azdo %}
+1. {% if is_template %}On Azure DevOps, run{% else %}Run{% endif %} `mise run migrate-azdo-pipeline-names` if the update renamed any files under
+   `.azurepipelines/`. It repoints the existing pipeline registrations at the new names,
+   keeping their run history and variables. It's safe to run when nothing needs migrating.
+{%- endif %}
+1. Review any new files in `.changeset/` (one per relevant upstream change) and delete
    the ones that don't apply to your project. Each entry links back to the upstream {{ 'PR' if using_github else 'repo' }} it came
    from, so you can check the source before deciding.
-5. Commit and open a pull request as usual. The remaining changes described by files in `.changeset/` are folded into
+1. Commit and open a pull request as usual. The remaining changes described by files in `.changeset/` are folded into
    your [next release](releasing.md) alongside your own commits.
+
+## Troubleshooting
+
+If `copier update` fails while rendering your project's *old* template version (for example,
+because that version depends on something that no longer exists), re-apply the current template
+over your project instead:
+
+1. Copy `.config/copier-answers.yml` to a temporary file outside the repo and delete every key
+   that starts with `_` from the copy.
+1. Run:
+
+    ```bash
+    mise x -- copier copy --trust --overwrite --data-file <temporary-answers-file> {{ parent_template_url }} .
+    ```
+
+1. This doesn't preserve your own edits the way `copier update` does. Review every changed file
+   against your last commit with `git diff`, and restore anything you had customized before
+   committing.
