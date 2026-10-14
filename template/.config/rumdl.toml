@@ -10,3 +10,6 @@ indent = 4 # Set list indentation to 4 spaces
 
 [MD077]
 indent = 4 # Set the indent for unordered list items to 4 spaces
+
+[per-file-ignores]
+".github/pull_request_template.md" = ["MD041"] # PR bodies sit under the PR title, not an H1
