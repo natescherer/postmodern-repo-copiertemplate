@@ -8,6 +8,9 @@ disable = [
 [MD007]
 indent = 4 # Set list indentation to 4 spaces
 
+[MD051]
+anchor-style = "python-markdown" # Match Zensical's heading anchors
+
 [MD077]
 indent = 4 # Set the indent for unordered list items to 4 spaces
 
