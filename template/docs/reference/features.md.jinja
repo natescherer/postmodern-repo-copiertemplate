@@ -148,6 +148,9 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 {%- else %}
 - `README.md`, designed for general products
 {%- endif %}
+{%- if is_template or is_public %}
+- `SECURITY.md`, pointing vulnerability reports to GitHub's private reporting{% if is_template %} (public projects only){% endif %}
+{%- endif %}
 {%- if is_template %}
 
 ## Template Projects
