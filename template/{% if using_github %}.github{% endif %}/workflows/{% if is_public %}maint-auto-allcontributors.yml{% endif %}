@@ -33,20 +33,11 @@ jobs:
     timeout-minutes: 15
     permissions:
       actions: write
+      contents: read
     steps:
-      # Re-enables this workflow if GitHub disabled it for inactivity. Inlined from
-      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh`,
-      # unsupported on Windows runners, unlike bash, which is available there via Git
-      # for Windows.
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: .github/actions
       - name: Re-enable Workflow
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          case "${GITHUB_WORKFLOW_REF:?}" in
-            "${GITHUB_REPOSITORY:?}"/.github/workflows/*.y*ml@*) ;;
-            *) false ;;
-          esac
-          workflow="${GITHUB_WORKFLOW_REF%%@*}"
-          workflow="${workflow#"$GITHUB_REPOSITORY"/.github/workflows/}"
-          gh api -X PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/enable"
+        uses: ./.github/actions/reenable-workflow
