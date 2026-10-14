@@ -115,7 +115,7 @@ python = "3.14.8" # Used by copier
 uv = "0.12.23" # Used by pipx tools
 # Tools
 actionlint = "1.7.12"
-"aqua:cli/cli" = "2.97.0"
+"aqua:cli/cli" = "2.102.0"
 "github:knope-dev/knope" = "knope/v0.23.0"
 "aqua:crate-ci/typos" = "1.50.3"
 "aqua:j178/prek" = "0.4.12"
