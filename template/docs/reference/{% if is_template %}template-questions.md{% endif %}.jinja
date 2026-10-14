@@ -37,6 +37,19 @@ automatically if you've installed the [Settings GitHub App](https://github.com/a
 [Prerequisites](../getting-started/prerequisites.md)) or by hand per [Manual Repo Settings](manual-repo-settings.md)
 if you haven't. Choosing `None` prints a reminder about this at the end of the run.
 
+## Repo location: `github_username` / `github_org` / `azdo_org` / `azdo_project`
+
+Where the repo lives. Only the pair for your `developer_platform` is asked, and like the
+platform itself, these are locked after the first copy.
+
+- **`github_username`**: your GitHub username. It defaults to the username in a GitHub
+  noreply `user.email` (`12345+username@users.noreply.github.com`); with any other email,
+  check the default before accepting it.
+- **`github_org`**: the organization that owns the repo. Leave it as `None` to create the repo
+  under `github_username` instead.
+- **`azdo_org`** / **`azdo_project`**: the Azure DevOps organization and project the repo is
+  created in. The project name may contain spaces.
+
 ## `project_type`: Standard / Template
 
 The other foundational decision, alongside `developer_platform`; see [the home
