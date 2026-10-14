@@ -20,20 +20,15 @@ If your contribution is accepted, you will be added to the Authors section in th
 
 ### Vulnerabilities
 
-If you find a security vulnerability, please do NOT open an Issue. Instead, use the vulnerability reporting feature on the Security tab.
+If you find a security vulnerability, please do NOT open an Issue. Instead, choose **Security Vulnerability** when opening a new issue (or use the vulnerability reporting feature on the Security tab) to report it privately.
 
 ### Non-Security Bugs
 
-For non-security bugs, please open a GitHub issue with the "bug" label containing the following information:
-
-> 1. What platform are you running on (and what are relevant tool versions, if applicable)?
-> 1. What did you do?
-> 1. What did you expect to see?
-> 1. What did you see instead?
+For non-security bugs, please open a new issue and choose the **Bug Report** template.
 
 ## How to suggest a feature or enhancement
 
-If you wish to suggest a feature or enhancement, please enter a GitHub issue with the "enhancement" label detailing the suggestion.
+If you wish to suggest a feature or enhancement, please open a new issue and choose the **Feature Request** template.
 
 ## Code review process
 
@@ -41,4 +36,4 @@ The owners of this project will conduct code reviews on a best-effort basis.
 
 ## Questions
 
-If you have additional questions about contributing, please open a GitHub issue with the "question" tag.
+If you have additional questions about contributing, please open a new issue and choose the **Question** template.
