@@ -2,7 +2,7 @@ name: "Maint (Auto): Repo Health Check"
 
 on:
   schedule:
-    - cron: 0 18 * * 1 # Every Monday at 6pm UTC (offset from the other Monday jobs)
+    - cron: 0 18 1 * * # 1st of each month at 6pm UTC
   workflow_dispatch:
 
 env:
