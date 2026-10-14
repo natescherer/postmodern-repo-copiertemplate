@@ -4,37 +4,28 @@
         <loc>https://natescherer.github.io/latest/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/prerequisites/</loc>
-      </url>
-      <url>
         <loc>https://natescherer.github.io/latest/applying-to-existing-projects/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/template-questions/</loc>
+        <loc>https://natescherer.github.io/latest/components/template-engine/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/lifecycle-management/</loc>
-      </url>
-      <url>
-        <loc>https://natescherer.github.io/latest/releasing/</loc>
+        <loc>https://natescherer.github.io/latest/extending-the-template/</loc>
       </url>
       <url>
         <loc>https://natescherer.github.io/latest/integration-testing/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/manual-verification-github/</loc>
-      </url>
-      <url>
-        <loc>https://natescherer.github.io/latest/manual-verification-azdo/</loc>
-      </url>
-      <url>
-        <loc>https://natescherer.github.io/latest/token-permissions/</loc>
+        <loc>https://natescherer.github.io/latest/lifecycle-management/</loc>
       </url>
       <url>
         <loc>https://natescherer.github.io/latest/manual-repo-settings/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/public-vs-private-repos/</loc>
+        <loc>https://natescherer.github.io/latest/manual-verification-azdo/</loc>
+      </url>
+      <url>
+        <loc>https://natescherer.github.io/latest/manual-verification-github/</loc>
       </url>
       <url>
         <loc>https://natescherer.github.io/latest/platform-notes/</loc>
@@ -43,9 +34,18 @@
         <loc>https://natescherer.github.io/latest/platform-notes/azure-devops/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/extending-the-template/</loc>
+        <loc>https://natescherer.github.io/latest/prerequisites/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/components/template-engine/</loc>
+        <loc>https://natescherer.github.io/latest/public-vs-private-repos/</loc>
+      </url>
+      <url>
+        <loc>https://natescherer.github.io/latest/releasing/</loc>
+      </url>
+      <url>
+        <loc>https://natescherer.github.io/latest/template-questions/</loc>
+      </url>
+      <url>
+        <loc>https://natescherer.github.io/latest/token-permissions/</loc>
       </url>
 </urlset>
