@@ -76,16 +76,28 @@ stages:
           - bash: |
               zensical build
               git add --all
+              # Nothing to publish when the rebuilt site matches what's committed; the
+              # remaining steps are skipped instead of failing on an empty commit.
+              if git diff --cached --quiet; then
+                echo "Built docs are unchanged; nothing to publish."
+                echo "##vso[task.setvariable variable=DOCS_CHANGED]false"
+                exit 0
+              fi
               git commit -m "docs: build zensical"
+              echo "##vso[task.setvariable variable=DOCS_CHANGED]true"
             displayName: Run 'zensical build'
           - pwsh: |
               $BranchName = "zensical-build"
               Write-Host "##vso[task.setvariable variable=BRANCH_NAME;]$BranchName"
 
-              git checkout -b $BranchName
-              git push --set-upstream origin $BranchName
-              git push origin --tags
-            displayName: Push New Branch
+              # Forced, since a run whose PR was left open for review leaves this branch
+              # behind; that PR is reused below.
+              git checkout -B $BranchName
+              git push --force --set-upstream origin $BranchName
+              $SourceCommitID = git rev-parse HEAD
+              Write-Host "##vso[task.setvariable variable=LAST_MERGE_SOURCE_COMMIT_ID;]$SourceCommitID"
+            displayName: Push Build Branch
+            condition: and(succeeded(), eq(variables['DOCS_CHANGED'], 'true'))
           - pwsh: |
               $PRTitle = "docs: build zensical"
               Write-Host "##vso[task.setvariable variable=PR_TITLE;]$PRTitle"
@@ -98,27 +110,33 @@ stages:
                 }
               }
 
-              $CreateSplat = $BaseSplat + @{
-                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=7.0"
-                Method = "POST"
-                Body = ConvertTo-Json @{
-                  sourceRefName = "refs/heads/$(BRANCH_NAME)"
-                  targetRefName = "$(Build.SourceBranch)"
-                  title = $PRTitle
-                  description = $PRTitle
-                }
+              $ListSplat = $BaseSplat + @{
+                Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests?searchCriteria.sourceRefName=$([Uri]::EscapeDataString("refs/heads/$(BRANCH_NAME)"))&searchCriteria.status=active&api-version=7.0"
+                Method = "GET"
               }
-              Write-Host "Creating Pull Request..."
-              $CreateResponse = Invoke-RestMethod @CreateSplat
+              $ExistingPR = (Invoke-RestMethod @ListSplat).value | Select-Object -First 1
 
-              $PullRequestID = $CreateResponse.pullRequestId
+              if ($ExistingPR) {
+                $PullRequestID = $ExistingPR.pullRequestId
+                Write-Host "Reusing open Pull Request '$PullRequestID'"
+              } else {
+                $CreateSplat = $BaseSplat + @{
+                  Uri = "$ProjectBaseUri/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=7.0"
+                  Method = "POST"
+                  Body = ConvertTo-Json @{
+                    sourceRefName = "refs/heads/$(BRANCH_NAME)"
+                    targetRefName = "$(Build.SourceBranch)"
+                    title = $PRTitle
+                    description = $PRTitle
+                  }
+                }
+                Write-Host "Creating Pull Request..."
+                $PullRequestID = (Invoke-RestMethod @CreateSplat).pullRequestId
+              }
               Write-Host "Pull Request ID is '$PullRequestID'"
               Write-Host "##vso[task.setvariable variable=PULL_REQUEST_ID;]$PullRequestID"
-
-              $LastMergeSourceCommitID = $CreateResponse.lastMergeSourceCommit.commitId
-              Write-Host "Last Merge Source Commit ID is '$LastMergeSourceCommitID'"
-              Write-Host "##vso[task.setvariable variable=LAST_MERGE_SOURCE_COMMIT_ID;]$LastMergeSourceCommitID"
-            displayName: Create Pull Request
+            displayName: Create or Reuse Pull Request
+            condition: and(succeeded(), eq(variables['DOCS_CHANGED'], 'true'))
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - pwsh: |
@@ -153,6 +171,7 @@ stages:
               Write-Host "Approving Pull Request..."
               Invoke-RestMethod @ApproveSplat | Out-Null
             displayName: Approve Pull Request
+            condition: and(succeeded(), eq(variables['DOCS_CHANGED'], 'true'))
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - pwsh: |
@@ -200,6 +219,7 @@ stages:
 
               Write-Host "##vso[task.setvariable variable=PR_VALIDATION_STATUS;]$Status"
             displayName: Wait for PR Validation Policy
+            condition: and(succeeded(), eq(variables['DOCS_CHANGED'], 'true'))
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - pwsh: |
@@ -238,6 +258,7 @@ stages:
 
               apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Docs PR Merged" -b "PR #$(PULL_REQUEST_ID) ($(PR_TITLE)) passed PR validation and was merged automatically." $env:APPRISE_URL
             displayName: Merge Pull Request
+            condition: and(succeeded(), eq(variables['DOCS_CHANGED'], 'true'))
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
               APPRISE_URL: $(APPRISE_URL)
