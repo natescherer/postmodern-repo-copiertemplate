@@ -508,11 +508,19 @@ project_type:
 
 project_name:
   type: str
-  help: The friendly name of this project, which can include captitals, spaces, etc.
+  help: The friendly name of this project, which can include capitals, spaces, etc.
+  validator: |-
+    {%- if '"' in project_name or '\\' in project_name -%}
+      The project name can't contain '"' or '\', since it's written into quoted TOML/YAML strings.
+    {%- endif -%}
 
 project_description:
   type: str
   help: A short (two-ish sentence) description for this project, to be used in documentation and packaging.
+  validator: |-
+    {%- if '"' in project_description or '\\' in project_description -%}
+      The project description can't contain '"' or '\', since it's written into quoted TOML/YAML strings.
+    {%- endif -%}
 
 project_visibility:
   type: str
