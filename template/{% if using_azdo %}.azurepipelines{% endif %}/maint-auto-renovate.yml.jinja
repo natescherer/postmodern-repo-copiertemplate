@@ -15,6 +15,9 @@ schedules:
     branches:
       include:
         - main
+    # Azure Pipelines skips a scheduled run when main hasn't changed since the last
+    # one by default; these checks matter most in a quiet repo.
+    always: true
 
 variables:
   CI: true
