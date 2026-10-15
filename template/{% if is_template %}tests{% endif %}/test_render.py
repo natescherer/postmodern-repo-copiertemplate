@@ -7,10 +7,10 @@ which a child template should edit alongside its own copier.yml changes.
 """
 
 import json
+import tomllib
 from pathlib import Path
 
 import pytest
-import tomllib
 import yaml
 from answer_matrix import ANSWER_MATRIX
 from conftest import _git_commit_all, _git_init_repo, _render, _run
