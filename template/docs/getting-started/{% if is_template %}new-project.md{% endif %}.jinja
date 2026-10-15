@@ -6,15 +6,128 @@ Before starting, make sure the [Prerequisites](prerequisites.md) are in place.
 1. Clone this repository and open it in your terminal
 1. Run the following to install needed dependencies to use the template:
 
-   ```bash
-   mise trust
-   mise install
-   ```
+    ```bash
+    mise trust
+    mise install
+    ```
 
 1. Run the following to create the template, making sure to set the path at the end as appropriate
 
-   ```bash
-   mise x "--" copier copy --trust {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} ~/local-repo-path-here
-   ```
+    ```bash
+    mise x "--" copier copy --trust {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} ~/local-repo-path-here
+    ```
 
 See [Template Questions](../reference/template-questions.md) for what each prompt during that step controls.
+
+## After Creation
+
+What's left to do depends on your `repo_setup_actions` answer and your platform.
+
+=== "Create Repo"
+
+    === "GitHub"
+
+        The copy step has already:
+
+        - Created the remote repo, pushed an initial commit to `main`, and opened the first
+          release PR (proposing `0.1.0`, or `1.0.0` if `lifecycle` is `Stable`)
+        - Allowed workflows to open pull requests
+        - Set up GitHub Pages, if `zensical_target` is `GitHub Pages`
+        - Enabled CodeQL code scanning and private vulnerability reporting, if the repo is public
+        - Opened a **Template Setup Checklist** issue
+
+        Then finish setup:
+
+        1. Run `mise run provision-secrets` to set the secrets CI needs; see [Secrets and
+           Tokens](../reference/token-permissions.md).
+        1. Work through the setup checklist issue.
+        1. If you haven't installed the [Settings GitHub App](https://github.com/apps/settings),
+           apply the settings in [Manual Repo Settings](../reference/manual-repo-settings.md).
+        1. Merge the first release PR once PR Validation passes; see [Releasing](../maintaining/releasing.md).
+
+    === "Azure DevOps"
+
+        The copy step has already:
+
+        - Created the remote repo, pushed an initial commit to `main`, and opened the first
+          release PR (proposing `0.1.0`, or `1.0.0` if `lifecycle` is `Stable`)
+        - Registered a pipeline for each file under `.azurepipelines/`
+        - Required the PR Validation pipeline to pass before a PR to `main` can complete
+        - Printed the setup checklist at the end of the run
+
+        Then finish setup:
+
+        1. Run `mise run provision-secrets` to set the pipeline variables CI needs; see
+           [Secrets and Tokens](../reference/token-permissions.md).
+        1. Work through the printed setup checklist.
+        1. Merge the first release PR once PR Validation passes; see [Releasing](../maintaining/releasing.md).
+
+=== "Set Repo Rules"
+
+    === "GitHub"
+
+        The copy step left repo creation and Git to you, but has already:
+
+        - Allowed workflows to open pull requests
+        - Set up GitHub Pages, if `zensical_target` is `GitHub Pages`
+        - Enabled CodeQL code scanning and private vulnerability reporting, if the repo is public
+        - Opened a **Template Setup Checklist** issue
+
+        Then finish setup:
+
+        1. Commit the generated files and merge them to `main`; the first push to `main` opens
+           the first release PR.
+        1. Run `mise run provision-secrets` to set the secrets CI needs; see [Secrets and
+           Tokens](../reference/token-permissions.md).
+        1. Work through the setup checklist issue.
+        1. If you haven't installed the [Settings GitHub App](https://github.com/apps/settings),
+           apply the settings in [Manual Repo Settings](../reference/manual-repo-settings.md).
+
+    === "Azure DevOps"
+
+        The copy step left repo creation and Git to you, but has already:
+
+        - Registered a pipeline for each file under `.azurepipelines/`
+        - Required the PR Validation pipeline to pass before a PR to `main` can complete
+        - Printed the setup checklist at the end of the run
+
+        Then finish setup:
+
+        1. Commit the generated files and merge them to `main`; the first push to `main` opens
+           the first release PR.
+        1. Run `mise run provision-secrets` to set the pipeline variables CI needs; see
+           [Secrets and Tokens](../reference/token-permissions.md).
+        1. Work through the printed setup checklist.
+
+=== "None"
+
+    === "GitHub"
+
+        The copy step only generated files and printed the setup checklist. Then finish setup:
+
+        1. Create the remote repo, then commit and push the generated files to `main`; that
+           first push opens the first release PR.
+        1. Apply the settings in [Manual Repo Settings](../reference/manual-repo-settings.md), or
+           install the [Settings GitHub App](https://github.com/apps/settings) to sync them from
+           `.github/settings.yml`.
+        1. Under **Settings > Actions > General**, enable **Allow GitHub Actions to create and
+           approve pull requests**.
+        1. If `zensical_target` is `GitHub Pages`, set **Settings > Pages > Source** to
+           **GitHub Actions**.
+        1. If the repo is public, enable CodeQL's default setup and private vulnerability
+           reporting under **Settings > Advanced Security**.
+        1. Run `mise run provision-secrets` to set the secrets CI needs; see [Secrets and
+           Tokens](../reference/token-permissions.md).
+        1. Work through the printed setup checklist.
+
+    === "Azure DevOps"
+
+        The copy step only generated files and printed the setup checklist. Then finish setup:
+
+        1. Create the remote repo, then commit and push the generated files to `main`.
+        1. Register the pipelines and the PR Validation branch policy as described in [Manual
+           Repo Settings](../reference/manual-repo-settings.md); the first release PR opens once
+           the release pipeline exists and runs on `main`.
+        1. Run `mise run provision-secrets` to set the pipeline variables CI needs; see
+           [Secrets and Tokens](../reference/token-permissions.md).
+        1. Work through the printed setup checklist.

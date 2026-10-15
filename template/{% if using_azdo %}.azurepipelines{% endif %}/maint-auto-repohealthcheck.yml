@@ -6,10 +6,9 @@ trigger:
       - "*"
 
 schedules:
-  # Offset from the other Monday jobs (copier-update-check, renovate) to avoid runner
-  # contention.
-  - cron: 0 18 * * 1
-    displayName: Check for Broken Links Every Monday at 6pm UTC
+  # Offset from Renovate (00:00 on the 1st) to avoid runner contention.
+  - cron: 0 18 1 * *
+    displayName: Check for Broken Links on the 1st of Each Month at 6pm UTC
     branches:
       include:
         - main
@@ -32,7 +31,7 @@ stages:
           - checkout: self
           - bash: |
               # renovate: datasource=github-releases depName=jdx/mise
-              curl https://mise.run | MISE_VERSION=v2026.8.14 MISE_INSTALL_SKIP_IF_EXISTS=1 sh
+              curl https://mise.run | MISE_VERSION=v2026.10.10 MISE_INSTALL_SKIP_IF_EXISTS=1 sh
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
             displayName: Install Mise

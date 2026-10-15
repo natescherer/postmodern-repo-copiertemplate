@@ -21,6 +21,12 @@
     1. **[Skip for Private Repos]** [AllContributors GitHub App](https://github.com/apps/allcontributors/installations/new)
         - This app provides automatic README crediting when other people contribute to your project
 
+    #### Failed Workflow Alerts
+
+    To be alerted when a workflow run fails, open [Notification settings](https://github.com/settings/notifications), and under **Actions**, choose how you want to be notified and enable **Only notify for failed workflows**.
+
+    Notifications for scheduled workflows go to the user who created the workflow, or to whoever last changed its cron schedule, not to everyone with access to the repo.
+
 === "Azure DevOps"
 
     ### One-Time Actions per Azure DevOps Project

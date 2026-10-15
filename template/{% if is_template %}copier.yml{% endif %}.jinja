@@ -28,7 +28,7 @@ _jinja_extensions:
   - jinja2_shell_extension.ShellExtension
 
 # renovate: datasource=pypi depName=copier
-_min_copier_version: "9.17.2"
+_min_copier_version: "9.19.1"
 
 _message_before_copy: Thanks for using this template! See {{ docs_base() }}reference/template-questions{{ docs_suffix() }} for a deeper explanation of each question.
 
@@ -772,6 +772,12 @@ setup_checklist:
     - [ ] Replace docs/assets/images/readme-logo.png with your own logo, or remove that section from README.md.
     - [ ] Replace docs/assets/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
     - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }}.
+    {%- if using_github %}
+    - [ ] Once Renovate opens its **Dependency Dashboard** issue, pin it (**Pin issue** in the issue sidebar) so it stays at the top of the Issues tab.
+    {%- endif %}
+    {%- if is_public and license == 'None' %}
+    - [ ] Add a license. Until one is added, no one may legally use, copy, modify, or distribute this code without your explicit permission.
+    {%- endif %}
   when: false
 # endregion Post-Question Computed Values
 

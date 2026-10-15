@@ -2,7 +2,7 @@ name: "Maint (Auto): Repo Health Check"
 
 on:
   schedule:
-    - cron: 0 18 * * 1 # Every Monday at 6pm UTC (offset from the other Monday jobs)
+    - cron: 0 18 1 * * # 1st of each month at 6pm UTC
   workflow_dispatch:
 
 env:
@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5
       - name: Check for Broken Links
         shell: bash
         env:
@@ -29,20 +29,11 @@ jobs:
     timeout-minutes: 15
     permissions:
       actions: write
+      contents: read
     steps:
-      # Re-enables this workflow if GitHub disabled it for inactivity. Inlined from
-      # liskin/gh-workflow-keepalive, whose one step is pinned to `shell: sh`,
-      # unsupported on Windows runners, unlike bash, which is available there via Git
-      # for Windows.
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: .github/actions
       - name: Re-enable Workflow
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          case "${GITHUB_WORKFLOW_REF:?}" in
-            "${GITHUB_REPOSITORY:?}"/.github/workflows/*.y*ml@*) ;;
-            *) false ;;
-          esac
-          workflow="${GITHUB_WORKFLOW_REF%%@*}"
-          workflow="${workflow#"$GITHUB_REPOSITORY"/.github/workflows/}"
-          gh api -X PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/enable"
+        uses: ./.github/actions/reenable-workflow

@@ -33,18 +33,13 @@
 | :zap: Notice: This project is no longer under active development. |
 | ----------------------------------------------------------------- |
 {%- endif %}
-{%- if is_public and license == 'None' %}
-
-| :warning: Notice: This project does not currently have a license set. Until a license is added, no one may legally use, copy, modify, or distribute this code without your explicit permission. |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-{%- endif %}
 
 Describe your template here.
 
 ## Documentation
 {%- if zensical_ghpages %}
 
-For detailed documentation, see [https://{{github_repo_owner}}.github.io/{{repo_name}}](https://{{github_repo_owner}}.github.io/{{repo_name}}).
+For detailed documentation, see [{{ docs_url }}]({{ docs_url }}).
 {%- endif %}
 {%- if zensical_repo %}
 

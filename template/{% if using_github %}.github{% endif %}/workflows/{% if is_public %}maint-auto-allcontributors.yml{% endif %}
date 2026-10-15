@@ -24,6 +24,20 @@ jobs:
         with:
           fetch-depth: 0
       - name: Run All Contributors Auto Action
-        uses: JoshuaKGoldberg/all-contributors-auto-action@c7fc6295746c5946841efee0aaf37796a60bef71 # v0.6.1
+        uses: JoshuaKGoldberg/all-contributors-auto-action@c578423db9b2c14d3cee9c72f6c2aed31c128030 # v0.7.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  workflow-keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: .github/actions
+      - name: Re-enable Workflow
+        uses: ./.github/actions/reenable-workflow

@@ -142,9 +142,9 @@ run = "python scripts/integration_test_azdo.py"
 [tools]
 # Backends
 {#- renovate: datasource=python-version depName=python versioning=python #}
-python = "3.14.8" # Used by copier
+python = "3.15.0" # Used by copier
 {#- renovate: datasource=github-releases depName=astral-sh/uv #}
-uv = "0.12.23" # Used by pipx tools
+uv = "0.13.1" # Used by pipx tools
 # Tools
 {%- if is_template or using_github %}
 {#- is_template needs this even on Azure DevOps: copy-template-files embeds a full,
@@ -158,7 +158,7 @@ actionlint = "1.7.12"
    the questionnaire itself (this file doesn't exist yet at that point); the
    developer_platform question's validator checks whatever gh is already on PATH. #}
 {#- renovate: datasource=github-releases depName=cli/cli #}
-"aqua:cli/cli" = "2.97.0"
+"aqua:cli/cli" = "2.102.0"
 {%- endif %}
 {#- Used by _tasks in copier.yml (repo bootstrap) and the release-flow pipelines/
    workflows on both platforms. ubi is deprecated in mise and knope isn't in the aqua
@@ -170,28 +170,28 @@ actionlint = "1.7.12"
    `renovate:` comment marker here, since that generic manager would also match it. #}
 "github:knope-dev/knope" = "knope/v0.23.0"
 {#- renovate: datasource=github-releases depName=crate-ci/typos #}
-"aqua:crate-ci/typos" = "1.49.0"
+"aqua:crate-ci/typos" = "1.51.1"
 {#- renovate: datasource=github-releases depName=j178/prek #}
-"aqua:j178/prek" = "0.4.12"
+"aqua:j178/prek" = "0.5.5"
 {#- renovate: datasource=github-releases depName=owenlamont/ryl #}
-"aqua:owenlamont/ryl" = "0.21.0"
+"aqua:owenlamont/ryl" = "0.24.0"
 {#- renovate: datasource=github-releases depName=tombi-toml/tombi #}
-"aqua:tombi-toml/tombi" = "1.2.6"
+"aqua:tombi-toml/tombi" = "1.8.4"
 {#- renovate: datasource=github-releases depName=crate-ci/committed #}
 committed = "1.1.11"
 {#- renovate: datasource=github-releases depName=lycheeverse/lychee #}
 lychee = "0.15.1"
 {%- if is_template %}
 {#- renovate: datasource=github-releases depName=astral-sh/ruff #}
-ruff = "0.16.10"
+ruff = "0.17.0"
 {%- endif %}
 {#- renovate: datasource=github-releases depName=rvben/rumdl #}
-rumdl = "0.2.78"
+rumdl = "0.2.79"
 {#- renovate: datasource=github-releases depName=koalaman/shellcheck #}
 shellcheck = "0.11.0"
 
 [tools."pipx:copier"]
-version = "9.17.2"
+version = "9.19.1"
 uvx_args = "--with jinja2-shell-extension==2.1.1"
 {%- if is_template %}
 
@@ -205,5 +205,5 @@ uvx_args = "--with pyyaml==6.0.3 --with jinja2==3.1.6 --with jinja2-ansible-filt
 {%- endif %}
 
 [tools."pipx:zensical"]
-version = "0.0.67"
+version = "0.0.70"
 uvx_args = "--with git+https://github.com/squidfunk/mike.git@2.2.0+zensical-0.1.0"

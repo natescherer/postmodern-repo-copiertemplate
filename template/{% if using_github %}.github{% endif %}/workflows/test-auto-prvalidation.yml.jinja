@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5
       - name: Check PR Title is a Conventional Commit
         shell: bash
         env:
@@ -50,7 +50,7 @@ jobs:
 {%- if code_coverage %}
       - name: Upload Coverage to Codecov
         if: {% raw %}${{ hashFiles('coverage.xml') != '' }}{% endraw %}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           token: {% raw %}${{ secrets.CODECOV_TOKEN }}{% endraw %}
           files: coverage.xml
