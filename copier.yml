@@ -1095,8 +1095,11 @@ _tasks:
         true
       {%- endif %}
 
-  # Sets up GitHub Pages
-  - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
+  # Sets up GitHub Pages; an existing repo (Set Repo Rules) may already have a site,
+  # which POST rejects with 409, so that case switches its build type instead.
+  - command: >-
+      gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
+      || gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X PUT -f build_type=workflow
     when: |-
       {%- if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' -%}
         true
