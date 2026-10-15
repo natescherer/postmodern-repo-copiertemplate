@@ -243,16 +243,18 @@
       "versioningTemplate": "semver"
     },
     {
-      "description": "Manager for the mise install version pin in Azure Pipelines",
+      "description": "Manager for the mise version pin in Azure Pipelines' install step and GitHub workflows' mise-action",
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "jdx/mise",
       "extractVersionTemplate": "^v(?<version>.*)$",
       "managerFilePatterns": [
-        "/(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"
+        "/(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/",
+        "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"
       ],
       "matchStrings": [
-        "MISE_VERSION=v(?<currentValue>[^\\s]+)"
+        "MISE_VERSION=v(?<currentValue>[^\\s]+)",
+        "version: (?<currentValue>\\d+\\.\\d+\\.\\d+) # jdx/mise"
       ],
       "versioningTemplate": "semver"
     },

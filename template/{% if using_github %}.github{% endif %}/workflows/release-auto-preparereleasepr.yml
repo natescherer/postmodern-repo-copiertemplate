@@ -40,6 +40,8 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email github-actions@github.com
       - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5
+        with:
+          version: 2026.10.10 # jdx/mise
       - name: Prepare Release PR
         shell: bash
         # .config/knope-release-override.json can pin the next release's version (e.g. a
