@@ -126,23 +126,29 @@ _migrations:
     when: "{{ _stage == 'after' }}"
   # endregion Knope Changelog Reformatter (0.8.1)
 
-  # region Reminder to Remove REPO_MAINTENANCE_PAT (0.8.2)
-  # v0.8.2 dropped REPO_MAINTENANCE_PAT: every GitHub workflow that used it now runs
+  # region Reminder to Remove REPO_MAINTENANCE_PAT (1.0.0)
+  # v1.0.0 dropped REPO_MAINTENANCE_PAT: every GitHub workflow that used it now runs
   # under the default GITHUB_TOKEN instead, at the cost of a one-time manual approval
   # per bot-authored push. A project updating past this
   # point may still have the secret set from before; checks via `gh secret list`
   # rather than printing unconditionally, since a project that never set it (or
-  # already removed it) shouldn't be nagged.
+  # already removed it) shouldn't be nagged; skipped quietly when `gh` isn't installed,
+  # so the update itself (and the changeset generator after it) still runs.
   - command:
       - "{{ _copier_python }}"
       - -c
       - |
-        import subprocess
+        import shutil, subprocess, sys
 
-        result = subprocess.run(
-            ["gh", "secret", "list", "--json", "name"],
-            capture_output=True, text=True, check=False,
-        )
+        if not shutil.which("gh"):
+            sys.exit(0)
+        try:
+            result = subprocess.run(
+                ["gh", "secret", "list", "--json", "name"],
+                capture_output=True, text=True, check=False,
+            )
+        except OSError:
+            sys.exit(0)
         if result.returncode == 0 and '"REPO_MAINTENANCE_PAT"' in result.stdout:
             print(
                 "REPO_MAINTENANCE_PAT is no longer used by this template's GitHub "
@@ -152,9 +158,9 @@ _migrations:
                 "elsewhere. See {{ parent_template_docs_url }}maintaining/releasing{{ parent_template_docs_suffix }} "
                 "for what changed."
             )
-    version: v0.8.2
+    version: v1.0.0
     when: "{{ _stage == 'after' and using_github }}"
-  # endregion Reminder to Remove REPO_MAINTENANCE_PAT (0.8.2)
+  # endregion Reminder to Remove REPO_MAINTENANCE_PAT (1.0.0)
 
   # region Upstream Change to Changeset Generator (all versions)
   # This runs on every update, so upstream changes can be easily added to this
