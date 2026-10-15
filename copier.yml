@@ -860,31 +860,6 @@ _tasks:
   - command: git push -u origin --all
     when: *when_copy_create_repo
 
-  # Stages First Release PR
-  - command:
-      - "{{ _copier_python }}"
-      - -c
-      - |
-        import os, subprocess
-        version = "{{ '0.1.0' if lifecycle_is_pre_stable else '1.0.0' }}"
-        try:
-            {%- if using_github %}
-            token = subprocess.run(["gh", "auth", "token"], capture_output=True, text=True, check=True).stdout.strip()
-            env = {**os.environ, "GITHUB_TOKEN": token}
-            subprocess.run(["knope", "autoupdate-knope-pr", "--override-version", version], env=env, check=True)
-            {%- elif using_azdo %}
-            subprocess.run(["knope", "autoupdate-knope-pr", "--override-version", version], check=True)
-            {%- endif %}
-        except subprocess.CalledProcessError:
-            print(
-                "Warning: could not automatically open the first release PR "
-                "(a common cause is a shell-quoting quirk in the PR-creation step "
-                "on some platforms/shells). Once you've confirmed your CLI auth is "
-                "working, run this manually to open it yourself:\n"
-                f"  knope autoupdate-knope-pr --override-version {version}"
-            )
-    when: *when_copy_create_repo
-
   # Creates Azure Pipeline for maint-auto-copierupdatecheck
   - command: >-
       az pipelines create
@@ -1163,18 +1138,9 @@ _message_after_copy: |-
 
 _message_after_update: |-
   {%- if lifecycle == 'Stable' and current_knope_version_is_pre_1 -%}
-  This project's lifecycle is 'Stable' but the version hasn't been bumped to 1.0.0 yet. Run
-  {%- if using_github %} one of the following (whichever matches your shell) to open a PR proposing that release:
-
-  # bash/zsh/Git Bash
-  GITHUB_TOKEN=$(gh auth token) knope autoupdate-knope-pr --override-version 1.0.0
-
-  # PowerShell
-  $env:GITHUB_TOKEN = (gh auth token); knope autoupdate-knope-pr --override-version 1.0.0
-  {%- elif using_azdo %} the following to open a PR proposing that release:
-
-  knope autoupdate-knope-pr --override-version 1.0.0
-  {%- endif %}
+  This project's lifecycle is 'Stable' but it hasn't released 1.0.0 yet. This update pins
+  the next release to 1.0.0 in .config/knope-release-override.json; once it's merged to main,
+  the release PR proposes 1.0.0.
   {%- endif %}
   {%- set changesets = ('python -c "import glob; print(chr(10).join(glob.glob(\'.changeset/*.md\')))"' | shell()) -%}
   {%- if changesets.strip() %}

@@ -1,6 +1,9 @@
 name: $(BuildId)
 
 trigger:
+  # Each run force-pushes knope/release, so pushes that land mid-run are folded into
+  # one follow-up run instead of racing it.
+  batch: true
   branches:
     include:
       - main
@@ -76,9 +79,35 @@ stages:
             condition: eq(variables['IS_RELEASE_MERGE'], 'true')
             env:
               AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-          - bash: mise x -- knope autoupdate-knope-pr --verbose
+          - bash: |
+              # .config/knope-release-override.json can pin the next release's version (e.g. a
+              # project's first release, or 1.0.0); it's ignored once the released version
+              # reaches it. "Nothing release-worthy since the last release" is a normal outcome,
+              # not a failure, so only that specific knope error is tolerated.
+              args=()
+              override=$(mise x -- jq -r '.version // empty' .config/knope-release-override.json 2>/dev/null || true)
+              if [ -n "$override" ]; then
+                if ! printf '%s' "$override" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+                  echo "##vso[task.logissue type=error].config/knope-release-override.json has version '$override', which isn't X.Y.Z."
+                  exit 1
+                fi
+                current=$(mise x -- jq -r .version .config/knope-current-version.json)
+                if [ "$override" != "$current" ] && [ "$(printf '%s\n%s\n' "$current" "$override" | sort -V | tail -n 1)" = "$override" ]; then
+                  echo "Pinning this release to $override (from .config/knope-release-override.json)."
+                  args=(--override-version "$override")
+                fi
+              fi
+              log=$(mktemp)
+              set +e
+              mise x -- knope autoupdate-knope-pr "${args[@]}" --verbose 2>&1 | tee "$log"
+              status=${PIPESTATUS[0]}
+              set -e
+              if [ "$status" -ne 0 ] && grep -q 'releases::no_release' "$log"; then
+                echo "Nothing to release yet."
+                exit 0
+              fi
+              exit "$status"
             displayName: Prepare Release PR
             condition: eq(variables['IS_RELEASE_MERGE'], 'false')
-            continueOnError: true
             env:
               AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)

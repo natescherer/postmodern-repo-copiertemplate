@@ -1,0 +1,4 @@
+{
+  "_comment": "Pins the version of the next release, e.g. a project's first release or 1.0.0. The release automation passes this version to Knope only while it's higher than the released version in .config/knope-current-version.json; once that version (or a higher one) is released, this file is ignored, so it never needs removing. To pin a different version, change it here (X.Y.Z) and merge that change to main. While a pinned version is unreleased, prereleases count up toward it (e.g. 1.0.0-rc.0).",
+  "version": "{{ '0.1.0' if lifecycle_is_pre_stable else '1.0.0' }}"
+}

@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
 
+# Each run force-pushes knope/release, so only the newest one should finish.
+concurrency:
+  group: knope-release-pr
+  cancel-in-progress: true
+
 jobs:
   autoupdate-knope-pr:
     if: "!contains(github.event.head_commit.message, 'chore: prepare release')"
@@ -37,7 +42,33 @@ jobs:
       - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5
       - name: Prepare Release PR
         shell: bash
-        run: mise x -- knope autoupdate-knope-pr --verbose
+        # .config/knope-release-override.json can pin the next release's version (e.g. a
+        # project's first release, or 1.0.0); it's ignored once the released version
+        # reaches it. "Nothing release-worthy since the last release" is a normal outcome,
+        # not a failure, so only that specific knope error is tolerated.
+        run: |
+          args=()
+          override=$(jq -r '.version // empty' .config/knope-release-override.json 2>/dev/null || true)
+          if [ -n "$override" ]; then
+            if ! printf '%s' "$override" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "::error::.config/knope-release-override.json has version '$override', which isn't X.Y.Z."
+              exit 1
+            fi
+            current=$(jq -r .version .config/knope-current-version.json)
+            if [ "$override" != "$current" ] && [ "$(printf '%s\n%s\n' "$current" "$override" | sort -V | tail -n 1)" = "$override" ]; then
+              echo "Pinning this release to $override (from .config/knope-release-override.json)."
+              args=(--override-version "$override")
+            fi
+          fi
+          log=$(mktemp)
+          set +e
+          mise x -- knope autoupdate-knope-pr "${args[@]}" --verbose 2>&1 | tee "$log"
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ] && grep -q 'releases::no_release' "$log"; then
+            echo "Nothing to release yet."
+            exit 0
+          fi
+          exit "$status"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true

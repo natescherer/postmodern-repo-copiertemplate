@@ -61,8 +61,23 @@ stages:
                 throw "Duplicate prerelease"
               }
             displayName: Block Duplicate Prerelease
-          - bash: mise x -- knope create-prerelease-via-knope --prerelease-label ${{ parameters.label }} --verbose
+          - bash: |
+              # A version pinned in .config/knope-release-override.json (and not yet released) makes
+              # prereleases count up toward it (e.g. 1.0.0-rc.0, 1.0.0-rc.1) instead of the
+              # version knope would compute.
+              override=$(mise x -- jq -r '.version // empty' .config/knope-release-override.json 2>/dev/null || true)
+              current=$(mise x -- jq -r .version .config/knope-current-version.json)
+              if printf '%s' "$override" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
+                && [ "$override" != "$current" ] \
+                && [ "$(printf '%s\n%s\n' "$current" "$override" | sort -V | tail -n 1)" = "$override" ]; then
+                n=$(git tag -l "v$override-$LABEL.*" | wc -l)
+                mise x -- knope create-prerelease-via-knope --override-version "$override-$LABEL.$n" --verbose
+              else
+                mise x -- knope create-prerelease-via-knope --prerelease-label "$LABEL" --verbose
+              fi
             displayName: Create Prerelease
+            env:
+              LABEL: ${{ parameters.label }}
           - pwsh: |
               $Content = Get-Content .config/knope-current-version.json -Raw | ConvertFrom-Json
               Write-Host "##vso[task.setvariable variable=VERSION]$($Content.version)"
