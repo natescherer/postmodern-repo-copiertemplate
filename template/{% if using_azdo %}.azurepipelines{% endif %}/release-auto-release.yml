@@ -102,11 +102,28 @@ stages:
               mise x -- knope autoupdate-knope-pr "${args[@]}" --verbose 2>&1 | tee "$log"
               status=${PIPESTATUS[0]}
               set -e
-              if [ "$status" -ne 0 ] && grep -q 'releases::no_release' "$log"; then
-                echo "Nothing to release yet."
-                exit 0
+              if [ "$status" -ne 0 ]; then
+                if grep -q 'releases::no_release' "$log"; then
+                  echo "Nothing to release yet."
+                  exit 0
+                fi
+                exit "$status"
               fi
-              exit "$status"
+              # Knope only pushes knope/release here; the PR is opened (or, once it
+              # exists, updated) below instead of by a knope Command step, so the
+              # changelog is passed as one argument and never parsed by a shell. Azure
+              # DevOps caps PR descriptions at 4000 characters.
+              version=$(mise x -- jq -r .version .config/knope-current-version.json)
+              notes=$(awk '/^## /{n++; next} n==1' CHANGELOG.md | sed '/./,$!d')
+              title="chore: prepare release $version"
+              description=$(printf 'This PR was created by Knope. Merging it will create a new release (v%s).\n\n%s\n\n- [ ] Integration tests have been run and passed (or N/A)' "$version" "$notes")
+              description=${description:0:4000}
+              pr_id=$(az repos pr list --source-branch knope/release --target-branch main --status active --query "[0].pullRequestId" -o tsv)
+              if [ -n "$pr_id" ]; then
+                az repos pr update --id "$pr_id" --title "$title" --description "$description" --output none
+              else
+                az repos pr create --source-branch knope/release --target-branch main --title "$title" --description "$description" --squash true --auto-complete false --output none
+              fi
             displayName: Prepare Release PR
             condition: eq(variables['IS_RELEASE_MERGE'], 'false')
             env:
