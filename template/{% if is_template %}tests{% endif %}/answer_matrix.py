@@ -158,6 +158,19 @@ INVALID_ANSWER_MATRIX = [
         "lifecycle": "Pre-Alpha",
         "expected_error": "The project description can't contain",
     },
+    {
+        "id": "azdo-set-repo-rules-rejected",
+        **COMMON,
+        "repo_setup_actions": "Set Repo Rules",
+        "developer_platform": "Azure DevOps",
+        "azdo_org": "test-org",
+        "azdo_project": "Test Project",
+        "project_visibility": "Private",
+        "license": "None",
+        "zensical_target": "docs-site Directory in Repo",
+        "lifecycle": "Pre-Alpha",
+        "expected_error": "Not Supported on Azure DevOps: choose None",
+    },
 ]
 
 # Questions test_answer_matrix_coverage.py's choices-completeness check should skip,
