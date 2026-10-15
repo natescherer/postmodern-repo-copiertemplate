@@ -5,9 +5,8 @@ copied verbatim (not rendered) into every Template-type project, each with its o
 docs location.
 """
 
-from pathlib import Path
-
 import tomllib
+from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
