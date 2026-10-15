@@ -77,8 +77,11 @@ jobs:
         run: mike deploy --push --update-aliases dev
         if: ${{ github.event_name == 'push' }}
       - shell: bash
+        # Through env rather than ${{ }} in the script, since inputs.tag is free text.
+        env:
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
         run: |
-          mike deploy --push --update-aliases ${{ github.event.release.tag_name || inputs.tag }} latest
+          mike deploy --push --update-aliases "$TAG" latest
           mike set-default --push latest
         if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.tag != '') }}
   deploy-zensical:
