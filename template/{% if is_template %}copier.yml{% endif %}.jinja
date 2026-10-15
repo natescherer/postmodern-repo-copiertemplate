@@ -160,17 +160,23 @@ _migrations:
   # per bot-authored push. A project updating past this
   # point may still have the secret set from before; checks via `gh secret list`
   # rather than printing unconditionally, since a project that never set it (or
-  # already removed it) shouldn't be nagged.
+  # already removed it) shouldn't be nagged; skipped quietly when `gh` isn't installed,
+  # so the update itself (and the changeset generator after it) still runs.
   - command:
       - "{{ _copier_python }}"
       - -c
       - |
-        import subprocess
+        import shutil, subprocess, sys
 
-        result = subprocess.run(
-            ["gh", "secret", "list", "--json", "name"],
-            capture_output=True, text=True, check=False,
-        )
+        if not shutil.which("gh"):
+            sys.exit(0)
+        try:
+            result = subprocess.run(
+                ["gh", "secret", "list", "--json", "name"],
+                capture_output=True, text=True, check=False,
+            )
+        except OSError:
+            sys.exit(0)
         if result.returncode == 0 and '"REPO_MAINTENANCE_PAT"' in result.stdout:
             print(
                 "REPO_MAINTENANCE_PAT is no longer used by this template's GitHub "
