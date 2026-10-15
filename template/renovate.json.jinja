@@ -255,8 +255,9 @@
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver"
     },
+    {%- if is_template or using_azdo %}
     {
-      "description": "Manager for the mise version pin in Azure Pipelines' install step and GitHub workflows' mise-action",
+      "description": "Manager for the mise version pin in Azure Pipelines' install step, plus mise-action's in .jinja workflows (which the github-actions manager can't parse as YAML)",
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "jdx/mise",
@@ -264,19 +265,18 @@
       "managerFilePatterns": [
         {%- if is_template %}
         {% raw %}"/(^|/)(?:{%.*%})?\\.azurepipelines(?:{%.*%})?/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/",
-        "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"{% endraw %}
-        {%- elif using_azdo %}
-        "/(^|/)\\.azurepipelines/.+\\.ya?ml$/"
+        "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/.+\\.ya?ml(?:{%.*%})?\\.jinja$/"{% endraw %}
         {%- else %}
-        "/(^|/)\\.github/workflows/.+\\.ya?ml$/"
+        "/(^|/)\\.azurepipelines/.+\\.ya?ml$/"
         {%- endif %}
       ],
       "matchStrings": [
-        "MISE_VERSION=v(?<currentValue>[^\\s]+)",
-        "version: (?<currentValue>\\d+\\.\\d+\\.\\d+) # jdx/mise"
+        "MISE_VERSION=v(?<currentValue>[^\\s]+)"{% if is_template %},
+        "version: (?<currentValue>\\d+\\.\\d+\\.\\d+) # jdx/mise"{% endif %}
       ],
       "versioningTemplate": "semver"
     },
+    {%- endif %}
     {
       "description": "Manager for pipx tool dependencies",
       "customType": "regex",
