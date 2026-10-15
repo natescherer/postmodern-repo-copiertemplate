@@ -66,4 +66,6 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Emit Release Notice
         shell: bash
-        run: echo "::notice title=Prerelease Published::https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }}"
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: echo "::notice title=Prerelease Published::https://github.com/$GITHUB_REPOSITORY/releases/tag/v$VERSION"

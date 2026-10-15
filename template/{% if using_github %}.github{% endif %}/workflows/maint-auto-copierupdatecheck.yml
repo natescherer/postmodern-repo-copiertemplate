@@ -38,10 +38,12 @@ jobs:
         shell: bash
         env:
           APPRISE_URL: ${{ secrets.APPRISE_URL }}
+          CURRENT_VERSION: ${{ steps.copier.outputs.check-update_current_version }}
+          LATEST_VERSION: ${{ steps.copier.outputs.check-update_latest_version }}
         run: |
           mise x -- apprise -i html \
-            -t "${{ github.repository }} Template Update Available" \
-            -b "Repository ${{ github.repository }} has a new template update available.<br><br>Current version is ${{ steps.copier.outputs.check-update_current_version }}, latest version is ${{ steps.copier.outputs.check-update_latest_version }}." \
+            -t "$GITHUB_REPOSITORY Template Update Available" \
+            -b "Repository $GITHUB_REPOSITORY has a new template update available.<br><br>Current version is $CURRENT_VERSION, latest version is $LATEST_VERSION." \
             "$APPRISE_URL"
   workflow-keepalive:
     if: github.event_name == 'schedule'
