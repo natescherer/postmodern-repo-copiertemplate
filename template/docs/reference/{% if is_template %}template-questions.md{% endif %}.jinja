@@ -26,10 +26,12 @@ installed and authenticated *before* letting you proceed; see [Prerequisites](..
 
 - **Create Repo**: creates the remote repo; on GitHub also sets Actions workflow permissions,
   sets up GitHub Pages if applicable, and (for public repos) enables CodeQL code scanning's
-  default setup and private vulnerability reporting; on Azure DevOps also registers pipelines for
-  each file under `.azurepipelines/`.
-- **Set Repo Rules**: skips repo creation (for an existing repo) but still applies the other
-  automation above.
+  default setup and private vulnerability reporting; on Azure DevOps also registers a pipeline for
+  each `.yml` file under `.azurepipelines/`.
+- **Set Repo Rules** (GitHub only): skips repo creation (for an existing repo) but still applies the
+  other automation above. Azure DevOps registers pipelines from YAML on the remote repo, which an
+  existing project hasn't pushed at copy time, so choose `None` there and follow
+  [Manual Repo Settings](manual-repo-settings.md).
 - **None**: skips all of it; you're on your own for repo creation and settings.
 
 Whichever you choose, GitHub projects still get a generated `.github/settings.yml`, applied

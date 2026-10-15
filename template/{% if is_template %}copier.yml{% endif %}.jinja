@@ -408,14 +408,23 @@ repo_setup_actions:
   type: str
   help: |
     {%- if not project_initialized -%}
-      New project? 'Create Repo'. Existing project? 'Set Repo Rules'. Don't want to do anything? 'None'.
+      New project? 'Create Repo'. Existing project? 'Set Repo Rules' on GitHub, 'None' on Azure DevOps. Don't want to do anything? 'None'.
     {%- else -%}
       Locked value on update, press Enter.
     {%- endif %}
   choices:
-    - Create Repo
-    - Set Repo Rules
-    - None
+    Create Repo:
+      value: Create Repo
+    Set Repo Rules:
+      value: Set Repo Rules
+      # Azure DevOps registers pipelines from YAML on the remote main, which an existing
+      # project hasn't pushed yet at copy time.
+      validator: |-
+        {%- if developer_platform == 'Azure DevOps' -%}
+          Not Supported on Azure DevOps: choose None, push the generated files, then follow {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }}
+        {%- endif %}
+    None:
+      value: None
   default: Create Repo
   # This validator makes sure you have the proper CLI for your platform both installed and logged in
   validator: |-
