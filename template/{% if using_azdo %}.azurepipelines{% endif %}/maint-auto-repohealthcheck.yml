@@ -38,7 +38,21 @@ stages:
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
               echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
             displayName: Install Mise
+          - task: Cache@2
+            inputs:
+              key: 'mise | "$(Agent.OS)" | mise.toml | mise.ci.toml'
+              restoreKeys: |
+                mise | "$(Agent.OS)"
+              path: $(HOME)/.local/share/mise
+            displayName: Cache Mise Tools
           - bash: mise install
             displayName: Run 'mise install'
-          - bash: mise x -- lychee --no-progress -c .config/lychee.toml .
+          - bash: |
+              # The optional GITHUB_COM_TOKEN pipeline variable keeps github.com links
+              # from hitting its unauthenticated rate limit; when it isn't defined, Azure
+              # Pipelines passes the literal macro text, so that's treated as unset.
+              case "$GITHUB_TOKEN" in ''|'$('*) unset GITHUB_TOKEN ;; esac
+              mise x -- lychee --no-progress -c .config/lychee.toml .
             displayName: Check for Broken Links
+            env:
+              GITHUB_TOKEN: $(GITHUB_COM_TOKEN)

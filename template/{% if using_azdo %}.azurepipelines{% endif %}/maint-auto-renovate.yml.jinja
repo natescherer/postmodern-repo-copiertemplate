@@ -31,7 +31,8 @@ stages:
     displayName: Renovate
     jobs:
       - job: renovate
-        timeoutInMinutes: 15
+        # A cold npm:renovate install plus a full run can exceed the usual 15 minutes.
+        timeoutInMinutes: 30
         displayName: Renovate
         steps:
           - pwsh: |
@@ -66,8 +67,14 @@ stages:
             displayName: Cache Mise Tools
           - bash: mise install
             displayName: Run 'mise install'
-          - bash: mise x -- renovate "{{ azdo_project }}/{{ repo_name }}"
+          - bash: |
+              # The optional GITHUB_COM_TOKEN pipeline variable lifts github.com's
+              # unauthenticated rate limit for release lookups; when it isn't defined,
+              # Azure Pipelines passes the literal macro text, so that's treated as unset.
+              case "$GITHUB_COM_TOKEN" in ''|'$('*) unset GITHUB_COM_TOKEN ;; esac
+              mise x -- renovate "{{ azdo_project }}/{{ repo_name }}"
             env:
+              GITHUB_COM_TOKEN: $(GITHUB_COM_TOKEN)
               RENOVATE_PLATFORM: azure
               RENOVATE_ENDPOINT: $(System.CollectionUri)
               RENOVATE_TOKEN: $(System.AccessToken)
