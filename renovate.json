@@ -217,20 +217,6 @@
       "versioningTemplate": "pep440"
     },
     {
-      "description": "Manager for the knope version pin in the Knope-based release workflows",
-      "customType": "regex",
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "knope-dev/knope",
-      "extractVersionTemplate": "^knope/v(?<version>.*)$",
-      "managerFilePatterns": [
-        "/(^|/)(?:{%.*%})?\\.github(?:{%.*%})?/workflows/(?:{%.*%})?release-.*\\.ya?ml(?:{%.*%})?(?:\\.jinja)?$/"
-      ],
-      "matchStrings": [
-        "version:\\s*(?<currentValue>[\\d.]+)"
-      ],
-      "versioningTemplate": "semver"
-    },
-    {
       "description": "Manager for pipx git-sourced tools",
       "customType": "regex",
       "managerFilePatterns": [
