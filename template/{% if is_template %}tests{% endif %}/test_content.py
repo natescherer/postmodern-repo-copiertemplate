@@ -7,10 +7,10 @@ changes.
 """
 
 import re
+import tomllib
 from pathlib import Path
 
 import pytest
-import tomllib
 import yaml
 from answer_matrix import ANSWER_MATRIX
 from conftest import _render
@@ -117,7 +117,7 @@ def _entry_tool(entry: str) -> str | None:
         that isn't backed by a mise-managed CLI at all).
 
     """
-    prefix = "mise x; "
+    prefix = "mise x -- "
     if not entry.startswith(prefix):
         return None
     return entry[len(prefix) :].split()[0]
@@ -149,16 +149,24 @@ def _check_hook_tools_available(prek_toml: Path, mise_toml: Path) -> list[str]:
     }
 
     errors = []
+    checked = 0
     for repo in prek_config.get("repos", []):
         if repo.get("repo") != "local":
             continue
         for hook in repo.get("hooks", []):
             tool = _entry_tool(hook.get("entry", ""))
-            if tool is not None and tool not in installed_tools:
+            if tool is None:
+                continue
+            checked += 1
+            if tool not in installed_tools:
                 errors.append(
                     f"hook {hook['id']!r} needs {tool!r}, which isn't in "
                     "mise.toml's [tools]"
                 )
+    # A render with no matching entries means _entry_tool's pattern drifted from the
+    # hook entry format, which would otherwise make this check silently pass.
+    if not checked:
+        errors.append("no local prek hook entry matched the `mise x -- <tool>` pattern")
     return errors
 
 
