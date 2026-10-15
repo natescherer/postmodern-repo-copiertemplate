@@ -34,6 +34,18 @@ validation failing to pass. It's an [Apprise](https://github.com/caronc/apprise)
 pointing at wherever you want these notifications sent (email, Slack, Discord, ntfy, Pushover,
 and 80+ others; see Apprise's own docs for the URL format for your service of choice).
 
+### GITHUB_COM_TOKEN
+
+(Azure DevOps only, optional.) Renovate looks up most dependency versions on github.com, and the
+Repo Health Check pipeline checks github.com links; both hit github.com's unauthenticated rate
+limit without a token. Create a [personal access token](https://github.com/settings/tokens) on any
+GitHub account with **no scopes**, then add it to both pipelines:
+
+```bash
+az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name "[<repo>] Maint (Auto) - Renovate" --secret true
+az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name "[<repo>] Maint (Auto) - Repo Health Check" --secret true
+```
+
 ### CODECOV_TOKEN
 
 (GitHub with `code_coverage` only.) The PR validation workflow uploads `coverage.xml` to
