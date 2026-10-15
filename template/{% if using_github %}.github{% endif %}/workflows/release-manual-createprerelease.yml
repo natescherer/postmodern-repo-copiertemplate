@@ -37,6 +37,8 @@ jobs:
             exit 1
           fi
       - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5
+        with:
+          version: 2026.10.10 # jdx/mise
       - name: Create Prerelease
         shell: bash
         # A version pinned in .config/knope-release-override.json (and not yet released) makes
