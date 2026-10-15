@@ -33,13 +33,9 @@ template = "chore: prepare release $version"
 
 [workflows.steps.body]
 template = "This PR was created by Knope. Merging it will create a new release (v$version).\n\n$changelog\n\n- [ ] Integration tests have been run and passed (or N/A)"
-{%- elif using_azdo %}
-
-[[workflows.steps]]
-type = "Command"
-command = "az repos pr create --source-branch knope/release --target-branch main --title \"chore: prepare release $version\" --description \"This PR was created by Knope. Merging it will create a new release (v$version).\n\n$changelog\n\n- [ ] Integration tests have been run and passed (or N/A)\" --squash true --auto-complete false"
-shell = true
 {%- endif %}
+{#- On Azure DevOps, release-auto-release.yml opens or updates the PR itself, since a
+    shell = true Command step would interpolate the changelog into a shell string. #}
 
 [[workflows]]
 name = "release-on-knope-pr-merge"
