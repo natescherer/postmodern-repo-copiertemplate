@@ -769,13 +769,21 @@ copyright_year:
 # region Tasks
 _tasks:
   # This is the secret sauce that makes nested templates work. Every template gets
-  # a copy of the parent template's 'template' directory added back unrendered
+  # a copy of the parent template's 'template' directory added back unrendered. On
+  # update, files the parent deleted (or renamed) since the previous version are
+  # removed too, since copytree only adds and overwrites; the previous version comes
+  # from the answers file still committed at HEAD.
   - command:
       - "{{ _copier_python }}"
       - -c
       - |
-        import os, shutil, subprocess, sys, tempfile, time
-        src, ref = sys.argv[1], sys.argv[2]
+        import os, re, shutil, subprocess, sys, tempfile, time
+        src, ref, answers_file = sys.argv[1], sys.argv[2], sys.argv[3]
+        old = subprocess.run(
+            ["git", "show", "HEAD:" + answers_file.replace("\\", "/")],
+            capture_output=True, text=True,
+        )
+        old_ref = re.search(r"(?m)^_commit:\s*(\S+)", old.stdout) if old.returncode == 0 else None
         with tempfile.TemporaryDirectory() as d:
             args = ["git", "-c", "advice.detachedHead=false", "clone", "--quiet"]
             if ref and ref != "HEAD":
@@ -783,9 +791,26 @@ _tasks:
                 args += ["--branch", ref]
             args += [src, d]
             subprocess.run(args, check=True)
+            if old_ref:
+                diff = subprocess.run(
+                    ["git", "-C", d, "diff", "--name-only", "--no-renames",
+                     "--diff-filter=D", "-z", old_ref.group(1), "HEAD", "--", "template"],
+                    capture_output=True, text=True,
+                )
+                if diff.returncode != 0:
+                    print("Warning: couldn't diff the parent template from " + old_ref.group(1)
+                          + "; files it deleted since then won't be removed from template/.")
+                for path in filter(None, diff.stdout.split("\0")):
+                    if os.path.isfile(path):
+                        os.remove(path)
+                        parent = os.path.dirname(path)
+                        while parent != "template" and os.path.isdir(parent) and not os.listdir(parent):
+                            os.rmdir(parent)
+                            parent = os.path.dirname(parent)
             shutil.copytree(os.path.join(d, "template"), "template", dirs_exist_ok=True)
       - "{{ _copier_conf.src_path }}"
       - "{{ _copier_conf.vcs_ref if _copier_conf.vcs_ref else '' }}"
+      - "{{ _copier_conf.answers_file }}"
     when: |-
       {%- if is_template -%}
         true
