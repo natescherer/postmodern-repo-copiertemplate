@@ -36,6 +36,11 @@
   },
   {%- endif %}
   "packageRules": [
+    {#- These groups pair a tool's pin in template/ (found by the custom managers
+        below) with its pin in the project's own rendered files (found by Renovate's
+        built-in managers), so both update together; a non-template project has just
+        one of each. #}
+    {%- if is_template %}
     {
       "description": "Group actionlint",
       "matchPackageNames": [
@@ -173,6 +178,10 @@
       ],
       "groupName": "uv"
     },
+    {%- endif %}
+    {#- zensical is pinned twice in any GitHub Pages project: as a mise tool and in
+        mise.ci.toml's uvx_args. #}
+    {%- if is_template or zensical_ghpages %}
     {
       "description": "Group zensical",
       "matchPackageNames": [
@@ -180,7 +189,9 @@
         "pipx:zensical"
       ],
       "groupName": "zensical"
-    }{% if is_template or (is_standard and using_azdo) %},
+    }{% if is_template %},{% endif %}
+    {%- endif %}
+    {%- if is_template or using_azdo %}
     {
       "description": "Use standard major version numbers for Azure Pipelines",
       "matchDatasources": ["azure-pipelines-tasks"],
