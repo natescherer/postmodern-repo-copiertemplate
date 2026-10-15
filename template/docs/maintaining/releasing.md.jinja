@@ -38,6 +38,10 @@ allowed, even without one.
 
 While your project's lifecycle is Pre-Alpha, Alpha, or Beta, normal commits only ever
 bump the minor/patch version; Knope won't cross the `1.0.0` line on its own. Once
-you're ready, run `mise run set-lifecycle` and choose `Stable`; you'll get a message
-with a ready-to-run command that opens a pull request proposing the `1.0.0` release.
-Merging that PR publishes it, and the message stops appearing.
+you're ready, run `mise run set-lifecycle` and choose `Stable`. That updates
+`.config/knope-release-override.json` to `1.0.0`; once the change is merged to `main`, the
+release PR proposes `1.0.0`, and prereleases count up toward it (`1.0.0-rc.0`,
+`1.0.0-rc.1`). Merging the release PR publishes it.
+
+The same file pins any other version: replace the version in it and merge that change.
+It's ignored once the released version reaches it, so it never needs removing.

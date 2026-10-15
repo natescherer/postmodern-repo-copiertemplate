@@ -1076,12 +1076,9 @@ def check_release_flow(
         org_url, project, f"[{repo_name}] Release (Auto) - Prepare & Publish Release"
     )
 
-    # The bootstrap-time PR is prepared with an explicit --override-version; the
-    # *first* automated run after that always recomputes the version from knope's own
-    # default rules, changing the PR's content regardless of what triggered that run.
-    # Absorb that one-time transition with a throwaway merge before testing that a
-    # docs-only merge is a true no-op; otherwise the correction gets misattributed
-    # to whichever commit happens to trigger the first automated run.
+    # Absorb any copy-time churn on the release PR (the first runs after copy may each
+    # touch it) with a throwaway merge before testing that a docs-only merge is a true
+    # no-op; otherwise that churn gets misattributed to the commit under test.
     prepare_before = latest_pipeline_run_id(org_url, project, pid)
     open_pr_wait_and_merge(
         org_url,
