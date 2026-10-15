@@ -890,7 +890,7 @@ _tasks:
       {% if using_github -%}
         https://github.com/{{ github_repo_owner }}/{{ repo_name }}.git
       {%- elif using_azdo -%}
-        https://{{ azdo_org }}@dev.azure.com/{{ azdo_org }}/{{ azdo_project }}/_git/{{ repo_name }}
+        https://{{ azdo_org }}@dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}
       {%- endif %}
     when: *when_copy_create_repo
 
