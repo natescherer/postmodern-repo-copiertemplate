@@ -4,7 +4,7 @@
 {%- if using_github %}
 {#- Used by release-manual-createprerelease.yml's Capture Version step. GitHub-hosted
    runners ship jq by default, but self-hosted ones aren't guaranteed to. #}
-{#- renovate: datasource=github-releases depName=jqlang/jq #}
+{#- renovate: datasource=github-releases depName=jqlang/jq extractVersion=^jq-(?<version>\d+\.\d+\.\d+)$ #}
 jq = "1.8.2"
 {%- endif %}
 {%- if using_azdo %}

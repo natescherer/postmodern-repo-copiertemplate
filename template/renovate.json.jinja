@@ -208,7 +208,7 @@
         {% raw %}"/mise\\..*toml(?:{%.*%})?\\.jinja/"{% endraw %}
       ],
       "matchStrings": [
-        {% raw %}"{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*#}\\s+[A-Za-z0-9_\\-\"':/]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"{% endraw %}
+        {% raw %}"{#[-]? renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s*-?#}\\s+[A-Za-z0-9_\\-\"':/]+\\s?=\\s?[\"'](?<currentValue>[^\"']*)[\"'].*"{% endraw %}
       ],
       "versioningTemplate": {% raw %}"{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"{% endraw %}
     },
