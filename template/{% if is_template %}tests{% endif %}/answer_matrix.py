@@ -120,6 +120,20 @@ INVALID_ANSWER_MATRIX = [
         "lifecycle": "Pre-Alpha",
         "expected_error": "Not Supported on Azure DevOps",
     },
+    {
+        # repo_name lands unquoted in shell-string tasks (gh repo create, git remote
+        # add, az pipelines create), so anything outside this set would break them.
+        "id": "repo-name-with-space-rejected",
+        **COMMON,
+        "repo_name": "render test",
+        "developer_platform": "GitHub",
+        "github_username": "octocat",
+        "project_visibility": "Public",
+        "license": "MIT",
+        "zensical_target": "GitHub Pages",
+        "lifecycle": "Pre-Alpha",
+        "expected_error": "Repo names may only contain letters, digits",
+    },
 ]
 
 # Questions test_answer_matrix_coverage.py's choices-completeness check should skip,

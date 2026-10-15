@@ -482,7 +482,11 @@ repo_name:
     {%- else -%}
       Locked value on update, press Enter.
     {%- endif %}
-  default: "{{ _copier_conf.dst_path | basename }}"
+  default: "{{ _copier_conf.dst_path | realpath | basename }}"
+  validator: |-
+    {%- if not (repo_name | regex_search('^[A-Za-z0-9._-]+$')) -%}
+      Repo names may only contain letters, digits, '.', '_', and '-'.
+    {%- endif -%}
 
 author_name:
   type: str
