@@ -1194,7 +1194,7 @@ _message_after_update: |-
   the next release to 1.0.0 in .config/knope-release-override.json; once it's merged to main,
   the release PR proposes 1.0.0.
   {%- endif %}
-  {%- set changesets = ('python -c "import glob; print(chr(10).join(glob.glob(\'.changeset/*.md\')))"' | shell()) -%}
+  {%- set changesets = (('"' ~ _copier_python ~ '" -c "import glob, os, sys; print(chr(10).join(glob.glob(os.path.join(sys.argv[1], \'.changeset\', \'template-update-*.md\'))))" "' ~ _copier_conf.dst_path ~ '"') | shell()) -%}
   {%- if changesets.strip() %}
 
   This project has pending changesets describing upstream template updates in the '.changeset' folder.
