@@ -67,7 +67,9 @@ What's left to do depends on your `repo_setup_actions` answer and your platform.
     (GitHub only; on Azure DevOps, choose `None` and follow
     [Manual Repo Settings](../reference/manual-repo-settings.md) once the generated files are pushed.)
 
-    The copy step left repo creation and Git to you, but has already:
+    Create the GitHub repo (empty is fine) before copying: the copy step configures it through
+    GitHub's API, so it fails if the repo doesn't exist yet. It leaves committing and pushing to you,
+    but has already:
 
     - Allowed workflows to open pull requests
     - Set up GitHub Pages, if `zensical_target` is `GitHub Pages`
