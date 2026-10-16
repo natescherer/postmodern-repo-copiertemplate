@@ -44,17 +44,19 @@ _migrations:
   # v0.8.0 is what replaced release-please (GitHub) and commitizen (Azure
   # DevOps) with Knope, introducing knope-current-version.json. A project
   # updating past that point tracked its version via one of those two tools
-  # or their own predecessor commit-and-tag-version instead -- but all
-  # three tag releases as `vX.Y.Z` the same way Knope does, so the latest
-  # git tag is the real version regardless of which one was in use; no
-  # need to detect which. The file is seeded with a "0.0.0" placeholder the
-  # moment a project first receives it, same as any other new template
-  # file, so this only overwrites that placeholder, never a real version.
-  - command:
+  # or their own predecessor commit-and-tag-version instead; all three tag
+  # releases as `vX.Y.Z` the same way Knope does, so the latest such tag is
+  # the real version regardless of which one was in use. The file is seeded
+  # with a "0.0.0" placeholder the moment a project first receives it, so
+  # this only overwrites that placeholder, never a real version. The same
+  # command runs as a copy task (see _tasks), for an existing project that
+  # applies the template with its release tags already in place.
+  - command: &seed_version_from_tag
       - "{{ _copier_python }}"
       - -c
       - |
         import json
+        import re
         import subprocess
         import sys
         from pathlib import Path
@@ -71,12 +73,13 @@ _migrations:
                 sys.exit(0)
 
         result = subprocess.run(
-            ["git", "describe", "--tags", "--abbrev=0"],
+            ["git", "describe", "--tags", "--abbrev=0", "--match", "v[0-9]*"],
             capture_output=True, text=True, check=False,
         )
-        if result.returncode != 0:
+        tag = result.stdout.strip()
+        if result.returncode != 0 or not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
             sys.exit(0)
-        version = result.stdout.strip().lstrip("v")
+        version = tag[1:]
 
         version_file.parent.mkdir(exist_ok=True)
         version_file.write_text(
@@ -90,7 +93,7 @@ _migrations:
             + "\n",
             encoding="utf-8",
         )
-        print(f"Backfilled legacy version {version!r} into knope-current-version.json.")
+        print(f"Seeded knope-current-version.json with {version!r} from the latest release tag.")
     version: v0.8.0
     when: "{{ _stage == 'after' }}"
   # endregion Backfill Legacy Version Into knope-current-version.json (0.8.0)
@@ -814,6 +817,12 @@ copyright_year:
 
 # region Tasks
 _tasks:
+  # Applying the template to an existing project: seeds knope-current-version.json
+  # from its latest vX.Y.Z tag (see the 0.8.0 migration that shares this command),
+  # so the first release continues from there instead of from 0.0.0.
+  - command: *seed_version_from_tag
+    when: "{{ _copier_operation == 'copy' }}"
+
   # This is the secret sauce that makes nested templates work. Every template gets
   # a copy of the parent template's 'template' directory added back unrendered. On
   # update, files the parent deleted (or renamed) since the previous version are
