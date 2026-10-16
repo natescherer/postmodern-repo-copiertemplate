@@ -397,7 +397,7 @@ developer_platform:
       support is deprecated and will eventually be removed; prefer GitHub unless you
       specifically need Azure DevOps.
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   choices:
     - GitHub
@@ -410,7 +410,7 @@ repo_setup_actions:
     {%- if not project_initialized -%}
       New project? 'Create Repo'. Existing project? 'Set Repo Rules' on GitHub, 'None' on Azure DevOps. Don't want to do anything? 'None'.
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   choices:
     Create Repo:
@@ -473,7 +473,7 @@ github_username:
     {%- if not project_initialized -%}
       Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   # Assumes GitHub's noreply-email pattern (12345+username@users.noreply.github.com); for any
   # other "+"-tagged email (e.g. user+tag@gmail.com) this will incorrectly default to the tag.
@@ -486,7 +486,7 @@ github_org:
     {%- if not project_initialized -%}
       If this repo is part of a GitHub organization, supply its name here, otherwise leave the default value of 'None'.
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   default: None
   when: "{{ developer_platform == 'GitHub' }}"
@@ -497,7 +497,7 @@ azdo_org:
     {%- if not project_initialized -%}
       The Azure DevOps organization for this project.
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
@@ -507,7 +507,7 @@ azdo_project:
     {%- if not project_initialized -%}
       The Azure DevOps project for your repo.
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
@@ -517,7 +517,7 @@ repo_name:
     {%- if not project_initialized -%}
       The name of this project's Git repository. Defaults to the name of the destination folder.
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   default: "{{ _copier_conf.dst_path | realpath | basename }}"
   validator: |-
@@ -536,7 +536,7 @@ project_type:
     {%- if not project_initialized -%}
       If you are creating a basic repo, choose Standard. If you are creating a child template, choose Template.
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   choices:
     - Standard
@@ -565,7 +565,7 @@ project_visibility:
     {%- if not project_initialized -%}
       Choose if you want this project to be Public or Private.
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   choices:
     Public:
@@ -602,7 +602,7 @@ zensical_target:
     {%- if not project_initialized -%}
       Choose how you want to publish your documentation
     {%- else -%}
-      Locked value on update, press Enter.
+      Changing this after the first copy isn't supported; press Enter to keep it.
     {%- endif %}
   choices:
     GitHub Pages:
