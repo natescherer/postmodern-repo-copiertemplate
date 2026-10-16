@@ -803,7 +803,7 @@ docs_page_suffix:
 current_knope_version:
   type: str
   default: |-
-    {%- set _version_file_raw = ('git show HEAD:.config/knope-current-version.json 2>&1' | shell()) -%}
+    {%- set _version_file_raw = (('git -C "' ~ _copier_conf.dst_path ~ '" show HEAD:.config/knope-current-version.json 2>&1') | shell()) -%}
     {%- if '"version"' in _version_file_raw -%}
       {{- (_version_file_raw | from_json).version -}}
     {%- endif -%}
