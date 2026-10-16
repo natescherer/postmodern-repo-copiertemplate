@@ -74,7 +74,7 @@ This is the exercise that prompted this page; see [Secrets and Tokens](../refere
 1. Document what it's for and what scope/permissions it needs in `docs/reference/token-permissions.md`.
 2. Add it to the `provision-secrets` task (masked-prompt entry via `gh secret set` / `az pipelines variable create`) so setup stays a single guided step.
 3. Validate its presence in every consuming workflow/pipeline (the `require-secrets`-composite-action pattern on GitHub; an equivalent guard step on Azure DevOps) so a missing secret fails with a clear message instead of a confusing downstream error.
-4. Add it to `_message_after_copy`'s setup checklist.
+4. Add it to the "Before CI works" secrets list in `_message_after_copy`, for each platform that needs it.
 5. Consider whether it can expire, and if so, whether an expiration check belongs somewhere (e.g. the monthly repo health check): authenticate as the credential itself, read whatever the platform's API reports about its expiration, and notify ahead of time rather than letting it fail silently later.
 
 ### Renaming or removing something
