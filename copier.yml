@@ -567,6 +567,12 @@ license:
         {%- endif %}
     None:
       value: None
+  default: |-
+    {%- if project_visibility == 'Private' -%}
+      None
+    {%- else -%}
+      MIT
+    {%- endif %}
 
 zensical_target:
   type: str
