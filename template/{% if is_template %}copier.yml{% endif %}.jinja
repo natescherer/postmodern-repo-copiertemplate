@@ -822,8 +822,11 @@ setup_checklist:
     - [ ] Replace docs/assets/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
     - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }}.
     {%- if using_github %}
+    - [ ] If the Renovate GitHub App only has access to selected repositories, add this one.
     - [ ] Once Renovate opens its **Dependency Dashboard** issue, pin it (**Pin issue** in the issue sidebar) so it stays at the top of the Issues tab.
+    - [ ] On the first release PR, approve its PR Validation run (**Approve and run workflow**); GitHub holds runs on bot-opened PRs until a person approves them.
     {%- endif %}
+    - [ ] Merge the first release PR once PR Validation passes.
     {%- if is_public and license == 'None' %}
     - [ ] Add a license. Until one is added, no one may legally use, copy, modify, or distribute this code without your explicit permission.
     {%- endif %}
@@ -1194,6 +1197,7 @@ _message_after_copy: |-
 
   Setup checklist:
   {{ setup_checklist }}
+
   {% endif -%}
   {%- if using_github -%}
     Repo settings (labels, merge options, branch protection) are not being applied automatically. See {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }} for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.
