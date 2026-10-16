@@ -15,7 +15,7 @@ Fresh copy at `HEAD`, `zensical_target: GitHub Pages`, `code_coverage` on.
 
 *Branch protection actually blocking a bad PR is automated; see "a bad-title PR fails Test (Auto): PR Validation" and "branch protection blocks merging a PR with a bad PR title" in the script's own output.*
 
-- [ ] The setup checklist (a GitHub Issue titled "Post-Setup Checklist," opened automatically on first copy) exists and every item on it has been addressed.
+- [ ] The setup checklist (a GitHub Issue titled "Template Setup Checklist," opened automatically on first copy) exists and every item on it has been addressed.
 - [ ] Badges at the top of README.md render correctly (no broken image icons).
 - [ ] `docs/assets/images/readme-logo.png` and `docs/assets/images/readme-screenshot.png` display correctly in README.md, or that section has been removed if unused.
 - [ ] Required secrets/pipeline variables are provisioned (`mise run provision-secrets`, or see [Secrets and Tokens](../../reference/token-permissions.md)); confirmed by the pipelines below not failing with authentication errors.
