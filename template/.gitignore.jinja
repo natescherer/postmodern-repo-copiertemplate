@@ -1,0 +1,14 @@
+### OS Files ###
+.DS_Store
+Thumbs.db
+
+### Tool Caches ###
+.cache
+# lychee always writes its cache to the repo root; move it under .cache once a
+# release supports configuring that (lycheeverse/lychee#1700)
+.lycheecache
+{%- if is_template %}
+# Python run outside mise's environment (e.g. an IDE's test runner) writes its
+# bytecode cache next to tests/ and scripts/ instead of under .cache/pycache
+__pycache__
+{%- endif %}
