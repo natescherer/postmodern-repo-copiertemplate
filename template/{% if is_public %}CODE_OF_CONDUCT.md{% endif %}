@@ -60,9 +60,11 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement via the built-in
-GitHub vulnerability reporting on the Security tab. All complaints will be
-reviewed and investigated promptly and fairly.
+reported privately to the community leaders responsible for enforcement through
+GitHub's private vulnerability reporting (**Security > Report a vulnerability**).
+Despite its name, it's this project's private channel to the maintainers for any
+report, not just security issues. All complaints will be reviewed and
+investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the
 reporter of any incident.
