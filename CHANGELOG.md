@@ -1,5 +1,73 @@
 # Changelog
 
+## 0.8.2 (2026-10-17)
+
+### Features
+
+- vscode ux improvements (#1117)
+- add badges to READMEs (#1122)
+- remove ryl vscode config (#1136)
+- stop generating CLAUDE.md alongside AGENTS.md (#1169)
+- add issue forms and template chooser for public projects (#1189)
+- pin release versions with .config/knope-release-override.json (#1206)
+- accept an optional GITHUB_COM_TOKEN in AzDO Renovate and link checks (#1211)
+- add a renovate-lookup task to check managers before pushing (#1241)
+- release Renovate dependency bumps as patches (#1243)
+
+### Fixes
+
+- generate one attributed changeset per upstream changelog entry (#1110)
+- make changeset generation resilient to changelog edits and custom sections (#1118)
+- backfill legacy version numbers into knope-current-version.json (#1119)
+- apply linting corrections (closes #1092, #975) (#1120)
+- remove REPO_MAINTENANCE_PAT in favor of default GITHUB_TOKEN (#1126)
+- restrict actionlint to workflow files in non-template projects (#1133)
+- gate VS Code jinja settings and empty file associations (#1134)
+- remove Renovate PR rate limits (#1135)
+- keep primary variant unsuffixed in prefixed docs preview sections (#1140)
+- run the repo health check monthly instead of weekly (#1174)
+- keep All Contributors workflow from being disabled for inactivity (#1176)
+- make blocked label orange to distinguish it from bug (#1186)
+- exempt README inline HTML from rumdl in rendered projects (#1192)
+- point README docs links and repo homepage at docs_url (#1193)
+- match rumdl link-fragment checks to Zensical anchors (#1194)
+- repair list nesting on the existing-project docs page (#1195)
+- let Renovate track lychee's lychee-v-prefixed release tags (#1199)
+- make the hook-tool test actually check prek hook entries (#1202)
+- remove files the parent template deleted from a child's template/ (#1204)
+- skip the PAT reminder migration when gh isn't installed (#1205)
+- open the AzDO release PR without shell-interpolating the changelog (#1207)
+- pass secrets to require-secrets through env, not the script text (#1208)
+- run AzDO scheduled pipelines even when main hasn't changed (#1209)
+- make the AzDO docs pipeline tolerate no-op builds and reruns (#1210)
+- pin mise-action's mise version and keep it current with Renovate (#1212)
+- pass workflow expressions to run scripts through env (#1213)
+- drop the stale knope workflow Renovate manager (#1214)
+- stop the jdx/mise Renovate manager duplicating github-actions (#1215)
+- generate Renovate tool groups only where they pair two pins (#1216)
+- make Renovate track jq's jq- tags and the mise min_version pin (#1217)
+- track the mike fork pin with loose versioning in both places (#1219)
+- default repo_name from the resolved destination and validate it (#1220)
+- URL-encode the AzDO project name in the git remote URL (#1221)
+- reject quotes and backslashes in project name and description (#1222)
+- reject Set Repo Rules on Azure DevOps and document pipeline setup (#1223)
+- let the GitHub Pages setup task handle a repo that already has Pages (#1224)
+- default license to MIT for public repos and None for private (#1226)
+- say when the changeset migration can't generate changesets (#1227)
+- detect upstream changesets with Copier's Python, in the project (#1228)
+- complete the setup checklist and separate it in the copy message (#1229)
+- seed the knope version from release tags when applying to a repo (#1230)
+- read the current knope version from the project being updated (#1231)
+- link the README and repo homepage to the docs site root (#1236)
+- write one Renovate dependency footer per PR (#1245)
+- read changelogs in migrations without Python 3.13-only APIs (#1247)
+- run inherited migrations on every update instead of by version (#1249)
+
+### Dependencies
+
+- update zensical from 0.0.70 to 0.0.71
+- update ryl to v0.25.1
+
 ## 0.8.1 (2026-08-30)
 
 ### Features
