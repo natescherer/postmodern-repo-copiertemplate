@@ -39,12 +39,17 @@
                 - `All Repositories Settings` section
                     - Ensure `Include PR ID in the completion commit message title by default` is set to `Off`
 
-    In order to support Knope/Zensical workflows, the following permissions must be granted:
+    The release, docs, and Renovate pipelines push branches and open pull requests as the
+    pipeline's build service identity, which needs these permissions. Which identity that is
+    depends on **Project settings > Pipelines > Settings > Limit job authorization scope to current
+    project for non-release pipelines**: when it's on (the default for new projects), pipelines run
+    as `<Project> Build Service (<Org>)`; when it's off, as `Project Collection Build Service
+    (<Org>)`.
 
     - `Project settings`
         - `Repositories`
             - `Security` tab
-                - `PROJECTNAME Build Service (PROJECTNAME)`
+                - The build service identity above
                     - Set these to `Allow`:
                         - `Contribute`
                         - `Contribute to pull requests`
