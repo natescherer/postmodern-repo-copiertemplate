@@ -40,6 +40,7 @@ Run any of these with `mise run <task>`.
 | `set-lifecycle` | Changes only the `lifecycle` answer, without pulling in a template update |
 | `docs-server` | Serves these docs locally with live reload |
 | `provision-secrets` | Sets the secrets CI needs, via masked prompts; see [Secrets and Tokens](../reference/token-permissions.md) |
+| `renovate-lookup` | Runs Renovate locally in dry-run mode to show what it detects, without pushing anything; see [Adding a Dependency or Tool](#adding-a-dependency-or-tool) |
 {%- if is_template or using_azdo %}
 | `migrate-azdo-pipeline-names` | {% if is_template %}(Azure DevOps only) {% endif %}Renames existing pipeline registrations after a template update renames their files |
 {%- endif %}
@@ -49,6 +50,34 @@ Run any of these with `mise run <task>`.
 | `integration-test-gh` / `integration-test-azdo` | Creates real throwaway repos from this template and checks them; see [Integration Testing](integration-testing/index.md) |
 | `integration-test-verify-update-gh` / `integration-test-verify-update-azdo` | Verifies a manually updated integration-test repo |
 {%- endif %}
+
+## Adding a Dependency or Tool
+
+Pin every dependency to an exact version, never a range, `latest`, or an unversioned install
+script, so every contributor and CI run gets the same one and Renovate can propose each bump.
+Where it goes depends on what it is:
+
+- **Command-line tools** (linters, formatters, build and release tools): add them to `mise.toml`,
+  or `mise.ci.toml` if only CI needs them.{% if is_template %} A pin in a `.jinja` file under
+  `template/` also needs a `{% raw %}{#- renovate: datasource=... depName=... #}{% endraw %}` comment above it, which
+  this repo's custom managers match.{% endif %}
+- **Libraries and packages**: declare them in the language's own manifest or lockfile. Renovate
+  detects [many of these](https://docs.renovatebot.com/modules/manager/) natively, but not every
+  ecosystem or file format.
+
+Then:
+
+1. **Confirm Renovate detects it.** Run `mise run renovate-lookup` and check that the dependency
+   appears, with the right version, in the `packageFiles with updates` log entry. A missing or
+   garbled entry fails silently otherwise, both for a manifest Renovate doesn't support and for a
+   custom manager whose regex captures too much.
+1. **Add a custom manager if it doesn't.** A regex entry under `customManagers` in
+   `renovate.json` can track a version Renovate can't find on its own, such as one inside a
+   script.
+1. **Group duplicates.** If one dependency is pinned under two names (for example, as a mise tool
+   and as a CI step), a `packageRules` entry with a shared `groupName` bumps both in one PR.
+1. **Explain any gap.** If a dependency has no trackable version source at all, say why in a
+   comment next to where it's installed.
 
 ## Documentation
 

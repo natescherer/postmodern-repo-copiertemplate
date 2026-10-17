@@ -50,6 +50,24 @@ run = [
   "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Maint (Auto) - Renovate\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
 {%- endif %}
 ]
+
+[tasks.renovate-lookup]
+# Runs every Renovate manager over the working tree without pushing or opening
+# anything; the debug log's "packageFiles with updates" entry lists what each one
+# detected. Its tools are task-scoped, so they only install when this task runs.
+env = { LOG_LEVEL = "debug", RENOVATE_PLATFORM = "local", RENOVATE_DRY_RUN = "lookup" }
+run = "renovate"
+
+[tasks.renovate-lookup.tools]
+{#- renovate: datasource=node-version depName=node versioning=node #}
+node = "24.22.0"
+
+[tasks.renovate-lookup.tools."npm:renovate"]
+{#- renovate: datasource=npm depName=renovate #}
+version = "44.158.1"
+# @yarnpkg/libzip@3.2.2 (a renovate transitive dependency) lost the provenance
+# attestation 3.2.0 had, so mise's trust policy refuses it; remove once resolved.
+trust_policy_excludes = ["@yarnpkg/libzip@3.2.2"]
 {%- if using_azdo %}
 
 [tasks.migrate-azdo-pipeline-names]
