@@ -143,7 +143,8 @@ _migrations:
 
         path = Path("CHANGELOG.md")
         if path.is_file():
-            content = path.read_text(encoding="utf-8", newline="")
+            with path.open(encoding="utf-8", newline="") as f:
+                content = f.read()
             new_content, count = re.subn(
                 r"^## \[(\d+\.\d+\.\d+)\]\([^)]+\) (\(\d{4}-\d{2}-\d{2}\))$",
                 r"## \1 \2",
@@ -269,9 +270,8 @@ _migrations:
                     print(f"Warning: couldn't generate changesets for this update ({reason}).")
                 sys.exit(0)
 
-            entry = (scratch / "CHANGELOG.md").read_text(
-                encoding="utf-8", newline=""
-            ).strip()
+            with (scratch / "CHANGELOG.md").open(encoding="utf-8", newline="") as f:
+                entry = f.read().strip()
             body = entry.split("\n", 1)[1].strip() if "\n" in entry else ""
 
             # Knope's default changelog section names (Breaking Changes/Features/
