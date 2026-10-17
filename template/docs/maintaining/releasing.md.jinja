@@ -9,7 +9,9 @@ Commits](https://www.conventionalcommits.org/).
 Every push to `main` opens or updates a pull request (branch `knope/release`)
 proposing the next release, computed from commit messages since the last release:
 `fix:` bumps the patch version, `feat:` bumps minor, and a `!`/`BREAKING CHANGE:`
-commit bumps major. Merging that PR tags and publishes the release automatically.
+commit bumps major. Renovate's `chore(deps):` PRs add a `Dependency-Update:` footer for each
+bump, so they bump patch too, under a **Dependencies** heading. Merging that PR tags and
+publishes the release automatically.
 Changesets from [template updates](updating-from-template.md) are folded in too.
 
 If a push has nothing release-worthy in it (e.g. a `docs:`- or `chore:`-only commit),
