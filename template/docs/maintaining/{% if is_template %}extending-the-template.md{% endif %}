@@ -43,15 +43,7 @@ Once you know which fork you're on, everything else is the same kind of work rep
 
 ### Adding a new versioned dependency or tool
 
-This is the exercise that prompted this page; see [Secrets and Tokens](../reference/token-permissions.md) and this template's own `renovate.json` for the concrete patterns referenced below.
-
-1. **Pin it.** A floating tag, `latest`, or an unversioned install script is a reproducibility gap. If you genuinely can't find a trackable version source for something (rare, but it happens), document *why* in a comment next to the install step rather than leaving a silent gap.
-2. **Wire it into `mise.toml`/`mise.ci.toml`** (or your own analog) with an exact version, not a range.
-3. **Make sure Renovate can actually see it.** Check `renovate.json`'s existing `customManagers` for a manager that already covers the shape of what you're adding (a `# renovate: datasource=... depName=...` comment above an inline `key = "value"` pin covers most simple cases). If nothing fits, you'll likely need a new custom regex manager.
-4. **Group related packages** if the same underlying dependency shows up under more than one name across ecosystems (e.g. a tool that's both a mise tool `depName` and a GitHub Action `depName`): a `packageRules` entry with a shared `groupName` keeps Renovate from opening two PRs for the same bump.
-
-!!! warning "Verify it, don't assume it"
-    A regex manager that looks right can still fail silently: a captured version string that includes trailing garbage (a Jinja tag with no space before it, a stray quote) won't error, it'll just get quietly dropped by Renovate during its own parsing. The reliable way to check: after `git push`, open the repo's **Dependency Dashboard** issue (Renovate creates one automatically) and confirm your dependency actually appears under **Detected Dependencies**, with the version you expect, not garbled, not missing. If you want to check a specific regex's matching behavior before pushing at all, test it directly against the real file content with a same-language regex engine (Renovate itself uses JS `RegExp` semantics) rather than reasoning about it by eye.
+Follow [Adding a Dependency or Tool](development.md#adding-a-dependency-or-tool); it covers the `renovate:` comments that pins under `template/` need, and how to check Renovate detects them.
 
 ### Adding a new Copier question
 
