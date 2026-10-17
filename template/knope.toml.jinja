@@ -1,8 +1,9 @@
 [package]
-versioned_files = [
-    { path = ".config/knope-current-version.json", regex = "\"version\": \"(?<version>[^\"]+)\"" }
-]
+versioned_files = [{ path = ".config/knope-current-version.json", regex = "\"version\": \"(?<version>[^\"]+)\"" }]
 changelog = "CHANGELOG.md"
+# Renovate writes a Dependency-Update footer for each bump (see renovate.json), so
+# chore(deps) commits, which Knope otherwise ignores, release as patches.
+extra_changelog_sections = [{ name = "Dependencies", footers = ["Dependency-Update"] }]
 
 [[workflows]]
 name = "autoupdate-knope-pr"
