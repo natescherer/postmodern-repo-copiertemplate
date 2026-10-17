@@ -28,8 +28,9 @@ questions have since been renamed, so update once with a command that supplies b
    `.config/copier-answers.yml` and commit that on its own.
 
 1. Template projects only: Copier doesn't manage `template/`, so remove the files the parent
-   deleted from it since your version yourself. From your project's root, with your answers
-   file's `_commit` as `<old-version>` and the release you're updating to as `<new-version>`:
+   deleted from it since your version yourself. From your project's root (in Git Bash on
+   Windows), with your answers file's `_commit` as `<old-version>` and the release you're
+   updating to as `<new-version>`:
 
     ```bash
     git clone --branch <new-version> {{ clone_url }} ~/template-clone
@@ -49,8 +50,8 @@ questions have since been renamed, so update once with a command that supplies b
     the repo again from your recorded answers. Copier's migrations still run, so the version
     file and changelog headings are handled the same way as on the other path.
 
-1. Template projects only: copy the parent's current `template/` into yours, which the skipped
-   tasks would otherwise have done:
+1. Template projects only: copy the parent's current `template/` into yours (in Git Bash on
+   Windows), which the skipped tasks would otherwise have done:
 
     ```bash
     cp -r ~/template-clone/template/. template/
