@@ -772,6 +772,14 @@ docs_page_suffix:
   default: "{{ '/' if zensical_ghpages else '.html' }}"
   when: false
 
+# The GitHub Pages site root, for links to the docs as a whole (README, repo
+# homepage). It redirects to the current version, so unlike docs_url it doesn't
+# depend on the versioning scheme's path layout.
+docs_root:
+  type: str
+  default: "{{ 'https://' ~ github_repo_owner ~ '.github.io/' ~ repo_name ~ '/' if zensical_ghpages else '' }}"
+  when: false
+
 current_knope_version:
   type: str
   default: |-

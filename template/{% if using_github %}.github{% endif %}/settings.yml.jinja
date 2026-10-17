@@ -5,7 +5,7 @@
 
 repository:
   description: "{{ project_description }}"
-  homepage: "{% if is_public and zensical_ghpages %}{{ docs_url }}{% endif %}"
+  homepage: "{% if is_public and zensical_ghpages %}{{ docs_root }}{% endif %}"
   private: {% if is_public %}false{% else %}true{% endif %}
 
   # Deliberate overrides of GitHub's defaults
