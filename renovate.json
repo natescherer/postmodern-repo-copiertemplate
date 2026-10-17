@@ -10,8 +10,8 @@
   ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
-  "commitBody": "{{#each upgrades}}Dependency-Update: update {{{depName}}} from {{{displayFrom}}} to {{{displayTo}}}\n{{/each}}",
-  "prFooter": "{{#each upgrades}}Dependency-Update: update {{{depName}}} from {{{displayFrom}}} to {{{displayTo}}}\n{{/each}}",
+  "commitBody": "Dependency-Update: {{{replace '^[^:]*: ' '' commitMessage}}}",
+  "prFooter": "Dependency-Update: {{{replace '^[^:]*: ' '' prTitle}}}",
   "azure-pipelines": {
     "enabled": true,
     "managerFilePatterns": [

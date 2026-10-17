@@ -12,8 +12,8 @@
   ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
-  "commitBody": {% raw %}"{{#each upgrades}}Dependency-Update: update {{{depName}}} from {{{displayFrom}}} to {{{displayTo}}}\n{{/each}}"{% endraw %},
-  "prFooter": {% raw %}"{{#each upgrades}}Dependency-Update: update {{{depName}}} from {{{displayFrom}}} to {{{displayTo}}}\n{{/each}}"{% endraw %},
+  "commitBody": {% raw %}"Dependency-Update: {{{replace '^[^:]*: ' '' commitMessage}}}"{% endraw %},
+  "prFooter": {% raw %}"Dependency-Update: {{{replace '^[^:]*: ' '' prTitle}}}"{% endraw %},
   {%- if is_template or (is_standard and using_azdo) %}
   "azure-pipelines": {
     "enabled": true,
