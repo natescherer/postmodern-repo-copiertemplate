@@ -9,6 +9,8 @@ To pull in its latest changes:
 
 1. Start from a clean working tree on a new branch; Copier refuses to update with
    uncommitted changes.
+1. If the update crosses a major version, read that release's **Breaking Changes** in the
+   template's changelog first; see its [Stability Policy]({{ parent_template_docs_url }}reference/stability-policy{{ parent_template_docs_suffix }}).
 1. Run `mise run copier-update`. Your recorded answers are reused, so you're only
    asked about questions added since your last update.
 1. Resolve any conflicts where your own edits overlap a template change; Copier marks
