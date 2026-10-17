@@ -39,8 +39,12 @@ parent_template_docs_suffix:
 # endregion Parent Template Values - DO NOT EDIT
 
 # region Migrations
+# None of these has a `version:` gate. Copier checks a gate against the version of
+# the template a project updates from, and a child template inheriting these has its
+# own version numbers, so a gate set for this template's releases would misfire for
+# its descendants. Each one runs on every update instead, so it must be safe to rerun.
 _migrations:
-  # region Backfill Legacy Version Into knope-current-version.json (0.8.0)
+  # region Backfill Legacy Version Into knope-current-version.json (all versions)
   # v0.8.0 is what replaced release-please (GitHub) and commitizen (Azure
   # DevOps) with Knope, introducing knope-current-version.json. A project
   # updating past that point tracked its version via one of those two tools
@@ -94,11 +98,10 @@ _migrations:
             encoding="utf-8",
         )
         print(f"Seeded knope-current-version.json with {version!r} from the latest release tag.")
-    version: v0.8.0
     when: "{{ _stage == 'after' }}"
-  # endregion Backfill Legacy Version Into knope-current-version.json (0.8.0)
+  # endregion Backfill Legacy Version Into knope-current-version.json (all versions)
 
-  # region Knope Changelog Reformatter (0.8.1)
+  # region Knope Changelog Reformatter (all versions)
   # release-please wrote CHANGELOG.md headings as `## [X.Y.Z](url) (date)`, which
   # Knope's changelog writer can't parse; it silently appends new releases at the
   # end of the file instead of the top once it can't find a heading it recognizes. A
@@ -126,11 +129,10 @@ _migrations:
             if count:
                 path.write_text(new_content, encoding="utf-8", newline="")
                 print(f"Reformatted {count} changelog heading(s) for Knope.")
-    version: v0.8.1
     when: "{{ _stage == 'after' }}"
-  # endregion Knope Changelog Reformatter (0.8.1)
+  # endregion Knope Changelog Reformatter (all versions)
 
-  # region Reminder to Remove REPO_MAINTENANCE_PAT (0.8.2)
+  # region Reminder to Remove REPO_MAINTENANCE_PAT (all versions)
   # v0.8.2 dropped REPO_MAINTENANCE_PAT: every GitHub workflow that used it now runs
   # under the default GITHUB_TOKEN instead, at the cost of a one-time manual approval
   # per bot-authored push. A project updating past this
@@ -162,9 +164,8 @@ _migrations:
                 "elsewhere. See {{ parent_template_docs_url }}maintaining/upgrading-from-0x{{ parent_template_docs_suffix }} "
                 "for what changed."
             )
-    version: v0.8.2
     when: "{{ _stage == 'after' and using_github }}"
-  # endregion Reminder to Remove REPO_MAINTENANCE_PAT (0.8.2)
+  # endregion Reminder to Remove REPO_MAINTENANCE_PAT (all versions)
 
   # region Upstream Change to Changeset Generator (all versions)
   # This runs on every update, so upstream changes can be easily added to this
