@@ -9,6 +9,12 @@
     through the GitHub UI. `.github/settings.yml` is the source of truth for the exact values below;
     if the two ever disagree, trust the file.
 
+    ### Description and Homepage
+
+    On the repo's main page, edit **About** (the gear icon) and set the description to your
+    `project_description` answer. For a public repo publishing docs to GitHub Pages, also set the
+    website to the docs site (`https://<owner>.github.io/<repo>/`).
+
     ### Labels
 
     Under the repo's **Issues** tab, open **Labels**, and create:
@@ -20,10 +26,13 @@
 
     ### Merge Options
 
-    Under **Settings > General > Pull Requests**, enable:
+    Under **Settings > General > Pull Requests**:
 
-    - **Allow auto-merge**
-    - **Automatically delete head branches**
+    - Disable **Allow merge commits** and **Allow rebase merging**, leaving **Allow squash merging**
+      as the only option: a squashed PR's title becomes its commit on `main`, which is what the
+      Conventional Commits checks and release automation read
+    - Enable **Allow auto-merge**
+    - Enable **Automatically delete head branches**
 
     ### Branch Protection
 
@@ -62,6 +71,17 @@
 
     Under **Settings > Code security**, enable **Secret scanning** and **Push protection**.
 
+    ### Settings Repo Setup Applies
+
+    With `repo_setup_actions: None`, these aren't covered by `.github/settings.yml` or applied
+    during the copy, so set them by hand:
+
+    - Under **Settings > Actions > General**, enable **Allow GitHub Actions to create and approve
+      pull requests**
+    - If `zensical_target` is `GitHub Pages`, set **Settings > Pages > Source** to **GitHub Actions**
+    - If the repo is public, enable CodeQL's default setup and private vulnerability reporting under
+      **Settings > Advanced Security**
+
 === "Azure DevOps"
 
     If you chose `repo_setup_actions: None` (or need to reapply this after the fact), here's how to
@@ -72,24 +92,26 @@
 
     Push the generated files to `main` first: Azure DevOps reads each pipeline's YAML from the
     repo. Then, under **Pipelines > New pipeline** (**Azure Repos Git**, this repo, **Existing Azure
-    Pipelines YAML file**), create these, using exactly these names; other automation (e.g.
-    `mise run provision-secrets`) finds pipelines by name:
+    Pipelines YAML file**), create these, using exactly these names with `<repo>` replaced by your
+    repo's name; other automation (e.g. `mise run provision-secrets`) finds pipelines by name:
 
     | Name | YAML file |
     | --- | --- |
-    | `[{{ repo_name }}] Maint (Auto) - Copier Update Check` | `.azurepipelines/maint-auto-copierupdatecheck.yml` |
-    | `[{{ repo_name }}] Maint (Auto) - Repo Health Check` | `.azurepipelines/maint-auto-repohealthcheck.yml` |
-    | `[{{ repo_name }}] Maint (Auto) - Renovate` | `.azurepipelines/maint-auto-renovate.yml` |
-    | `[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish` | `.azurepipelines/docs-auto-zensical.yml` |
-    | `[{{ repo_name }}] Test (Auto) - PR Validation` | `.azurepipelines/test-auto-prvalidation.yml` |
-    | `[{{ repo_name }}] Release (Auto) - Prepare & Publish Release` | `.azurepipelines/release-auto-release.yml` |
-    | `[{{ repo_name }}] Release (Manual) - Create Prerelease` | `.azurepipelines/release-manual-createprerelease.yml` |
+    | `[<repo>] Maint (Auto) - Copier Update Check` | `.azurepipelines/maint-auto-copierupdatecheck.yml` |
+    | `[<repo>] Maint (Auto) - Repo Health Check` | `.azurepipelines/maint-auto-repohealthcheck.yml` |
+    | `[<repo>] Maint (Auto) - Renovate` | `.azurepipelines/maint-auto-renovate.yml` |
+    | `[<repo>] Docs (Auto) - Zensical Build & Publish` | `.azurepipelines/docs-auto-zensical.yml` |
+    | `[<repo>] Test (Auto) - PR Validation` | `.azurepipelines/test-auto-prvalidation.yml` |
+    | `[<repo>] Release (Auto) - Prepare & Publish Release` | `.azurepipelines/release-auto-release.yml` |
+    | `[<repo>] Release (Manual) - Create Prerelease` | `.azurepipelines/release-manual-createprerelease.yml` |
 
-    Or, from the repo with `az devops` defaults configured, run this once per row:
+    Or, with the Azure CLI and its `azure-devops` extension installed and `az login` done, run this
+    once per row:
 
     ```bash
-    az pipelines create --name "<name>" --repository {{ repo_name }} --repository-type tfsgit \
-      --branch main --yml-path <yaml file> --skip-first-run true
+    az pipelines create --name "<name>" --repository <repo> --repository-type tfsgit \
+      --branch main --yml-path <yaml file> --skip-first-run true \
+      --org https://dev.azure.com/<org>/ --project "<project>"
     ```
 
     Then run **Docs (Auto) - Zensical Build & Publish** and **Release (Auto) - Prepare & Publish

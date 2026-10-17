@@ -97,12 +97,8 @@ What's left to do depends on your `repo_setup_actions` answer and your platform.
         1. Apply the settings in [Manual Repo Settings](../reference/manual-repo-settings.md), or
            install the [Settings GitHub App](https://github.com/apps/settings) to sync them from
            `.github/settings.yml`.
-        1. Under **Settings > Actions > General**, enable **Allow GitHub Actions to create and
-           approve pull requests**.
-        1. If `zensical_target` is `GitHub Pages`, set **Settings > Pages > Source** to
-           **GitHub Actions**.
-        1. If the repo is public, enable CodeQL's default setup and private vulnerability
-           reporting under **Settings > Advanced Security**.
+        1. Apply the settings repo setup would otherwise have applied; see [Settings Repo Setup
+           Applies](../reference/manual-repo-settings.md#settings-repo-setup-applies).
         1. Run `mise run provision-secrets` to set the secrets CI needs; see [Secrets and
            Tokens](../reference/token-permissions.md).
         1. Work through the printed setup checklist.
