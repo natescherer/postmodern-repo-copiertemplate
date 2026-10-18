@@ -90,7 +90,7 @@ run = "uv run scripts/template_docs_server.py"
 # this template and runs every automated check against Repo A, a copy at HEAD. Repo B
 # is a copy at the last stable tag: update it yourself with `mise run copier-update`,
 # then check it with `mise run integration-test-verify-update-gh`. Both repos stay
-# for inspection; delete them when you're done. See
+# for inspection; delete them with `mise run integration-test-cleanup-gh`. See
 # {{ docs_url }}maintaining/integration-testing/index.html and
 # {{ docs_url }}maintaining/integration-testing/manual-verification-github{{ docs_page_suffix }}.
 run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}{% if not is_extensible %} --leaf{% endif %}"
@@ -119,12 +119,12 @@ run = "python scripts/integration_test_github.py --cleanup --repo-prefix {{ repo
 # is a copy at the last stable tag: update it yourself with `mise run copier-update`
 # and `mise run migrate-azdo-pipeline-names`, then check it with
 # `mise run integration-test-verify-update-azdo`. Both repos stay for inspection;
-# delete them when you're done. See
+# delete them with `mise run integration-test-cleanup-azdo`. See
 # {{ docs_url }}maintaining/integration-testing/index.html and
 # {{ docs_url }}maintaining/integration-testing/manual-verification-azdo{{ docs_page_suffix }}.
 #
 # --org and --project default to this project's own org and project on Azure DevOps;
-# otherwise pass them, as in `mise run integration-test-azdo -- --org myorg --project
+# otherwise pass them, as in `mise run integration-test-azdo --org myorg --project
 # myproject`. The `usage` field, not the deprecated option() function, passes them to
 # the script as environment variables (usage_org, usage_project), which works the same
 # in any shell and fails clearly when a required value is missing.

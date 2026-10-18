@@ -29,10 +29,12 @@ import subprocess  # noqa: S404
 import sys
 import tempfile
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 from console import RepoResult, Step, check, heading, summary
 from docs_links import docs_page_url
+from repo_edits import let_renovate_bump_typos
 
 # Default `gh auth login` scopes cover both; see the Secrets and Tokens docs page.
 REQUIRED_SCOPES = ("repo", "workflow")
@@ -333,9 +335,17 @@ def dispatch_workflow(
 
 
 def open_pr_wait_and_merge(
-    repo: str, dest: str, branch: str, commit_message: str, filename: str
+    repo: str,
+    dest: str,
+    branch: str,
+    commit_message: str,
+    filename: str = "",
+    *,
+    edit: Callable[[Path], None] | None = None,
 ) -> None:
     """Open a passing PR and merge it, the only way commits reach main.
+
+    The PR adds a scratch file named `filename`, or makes `edit`'s changes instead.
 
     Branch protection requires every change to go through a PR, even from the repo
     owner, so a direct `git push` to main is rejected. Merging a PR also matches how
@@ -345,7 +355,10 @@ def open_pr_wait_and_merge(
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
     run("git", "switch", "-c", branch, cwd=dest)
-    Path(dest, filename).write_text(SCRATCH_FILE_CONTENT, newline="\n")
+    if edit is None:
+        Path(dest, filename).write_text(SCRATCH_FILE_CONTENT, newline="\n")
+    else:
+        edit(Path(dest))
     run("git", "add", "-A", cwd=dest)
     run("git", "commit", "-m", commit_message, cwd=dest)
     run("git", "push", "-u", "origin", branch, cwd=dest)
@@ -1411,6 +1424,14 @@ def main() -> None:
     # first Pages deployment propagates, which it has by this point.
     check_repo_health_check(repo_a, failures_a)
     check_prerelease_flow(repo_a, dest_a, failures_a)
+    # Gives the Renovate app something to bump; the manual checklist confirms its PR.
+    open_pr_wait_and_merge(
+        repo_a,
+        dest_a,
+        "integration-test/renovate-setup",
+        "chore: let Renovate bump an old typos",
+        edit=let_renovate_bump_typos,
+    )
 
     old_ref = latest_stable_tag(args.source)
     heading(
@@ -1446,17 +1467,16 @@ def main() -> None:
         ],
         [
             Step(
-                "Update Repo B the way a user would:",
-                [f'cd "{dest_b}"', "mise run copier-update"],
+                "Work through the manual checklist, which updates Repo B along the "
+                f"way: {checklist}"
             ),
             Step(
-                "Once the update merges, verify it:",
+                "Once Repo B's update merges, verify it:",
                 [
-                    "mise run integration-test-verify-update-gh -- "
+                    "mise run integration-test-verify-update-gh "
                     f'--repo {repo_b} --local-path "{dest_b}"',
                 ],
             ),
-            Step(f"Work through the manual checklist: {checklist}"),
             Step(
                 "When you're done, delete both repos:",
                 ["mise run integration-test-cleanup-gh"],

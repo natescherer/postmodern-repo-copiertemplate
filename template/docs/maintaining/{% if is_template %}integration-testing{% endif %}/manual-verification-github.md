@@ -5,26 +5,26 @@ Work through this whole list by hand as the last step before a release. It cover
 `[PASS]` or `[FAIL]` per check and a summary. See [Integration Testing](index.md) for what the
 run creates and why Repo B's update is manual.
 
+Run each command from the repo's local clone, at the path the run's summary prints for it.
+
 !!! bug "Checkbox state isn't saved"
     You can tick the boxes as you go, but reloading or leaving the page clears them. Finish the
     list in one sitting.
 
 ## Repo A
 
-A copy at `HEAD`, with `zensical_target: GitHub Pages` and `code_coverage` on.
+A copy at `HEAD`, with `zensical_target: GitHub Pages` and `code_coverage` on. Its docs site is
+its homepage, `https://<owner>.github.io/<repo>/`.
 
 ### After First Setup
 
 *Automated: a bad PR title fails PR Validation, and branch protection blocks merging it.*
 
-- [ ] The setup checklist (the "Template Setup Checklist" issue, opened on first copy) exists,
-  and every item on it is done.
+- [ ] Each item in the **Template Setup Checklist** issue applies to a GitHub project, and each
+  link in it opens.
 - [ ] The badges at the top of README.md render, with no broken images.
-- [ ] `docs/assets/images/readme-logo.png` and `docs/assets/images/readme-screenshot.png`
-  display in README.md, or that section is removed.
-- [ ] The required secrets are set (`mise run provision-secrets`, or see
-  [Secrets and Tokens](../../reference/token-permissions.md)): none of the workflows below fails
-  on authentication.
+- [ ] README.md shows `docs/assets/images/readme-logo.png` and
+  `docs/assets/images/readme-screenshot.png`.
 
 ### Maint (Auto): Copier Update Check
 
@@ -36,38 +36,63 @@ Nothing left to check for Repo A.
 
 *Automated: it runs and completes clean.*
 
-- [ ] Add a broken link (a mistyped URL in a doc), confirm the next run reports it, then
-  revert.
+- [ ] Run it on a branch with a broken link:
+
+    ```sh
+    git switch main
+    git pull
+    git switch -c integration-test/broken-link
+    echo "[Broken link](https://example.invalid/)" >> README.md
+    git commit -am "docs: add a broken link"
+    git push -u origin integration-test/broken-link
+    gh workflow run maint-auto-repohealthcheck.yml --ref integration-test/broken-link
+    ```
+
+    The run fails, and its **Check for Broken Links** step names `https://example.invalid/`.
 
 ### Maint (Auto): Renovate
 
 On GitHub, Renovate runs as the [Renovate GitHub App](https://github.com/apps/renovate), outside
 this repo's CI, so there's nothing to dispatch.
 
-- [ ] The app is installed with access to this repo (**Settings > Integrations**, or the
-  account's or org's installed apps).
-- [ ] On its next scheduled run (or a manual run from its dashboard), it authenticates.
-- [ ] With an outdated dependency present, it opens or updates a PR for the bump.
+- [ ] Repo A's **Settings > GitHub Apps** lists Renovate.
+- [ ] Renovate opens a **Dependency Dashboard** issue in Repo A.
+- [ ] Renovate opens a PR bumping typos. The run's last merge, `chore: let Renovate bump an old
+  typos`, lifted Repo A's Renovate schedule and pinned typos to an old release.
 
 ### Maint (Auto): All Contributors
 
-Public repos only. Both repos are public; use this one.
-
-- [ ] Comment `@all-contributors please add @<username> for <contribution>` on an issue or PR,
-  and confirm the bot opens a PR adding them to README.md's Contributors section.
+- [ ] Comment `@all-contributors please add @<your GitHub username> for doc` on the
+  **Template Setup Checklist** issue. The bot opens a PR adding you to README.md's
+  Contributors section.
 
 ### Docs (Auto): Zensical Publish to GitHub Pages
 
-- [ ] Push a docs change to `main`, and confirm the site's `dev` version updates at `.../dev/`.
-- [ ] Publish a release, and confirm a new version is published, `latest` points at it, and the
-  site root serves it.
+- [ ] Merge a docs change through a PR:
+
+    ```sh
+    git switch main
+    git pull
+    git switch -c integration-test/docs-change
+    echo "Integration test docs change." >> docs/index.md
+    git commit -am "docs: integration test docs change"
+    git push -u origin integration-test/docs-change
+    gh pr create --title "docs: integration test docs change" --body "Integration test."
+    gh pr merge --squash --auto --delete-branch
+    ```
+
+- [ ] Once that PR merges, the site's `dev` version (`.../dev/`) shows "Integration test docs
+  change." on its home page.
+- [ ] The site's version selector lists the release the run published, `latest` points at it,
+  and the site root serves it.
 
 ### Test (Auto): PR Validation
 
 *Automated: a bad PR title fails, and a failing test suite fails and blocks the merge.*
 
-- [ ] `coverage.xml` uploads to Codecov, and the report and badge reflect it (`code_coverage`
-  is on for this repo).
+- [ ] The PR Validation run for the docs-change PR uploads `coverage.xml` (its
+  **Upload Coverage to Codecov** step succeeds), and the coverage badge in README.md shows a
+  percentage (`code_coverage` is on for this repo).
 
 ### Release (Auto): Prepare/Publish Release
 
@@ -93,23 +118,30 @@ A copy at the last stable release tag, with `zensical_target: docs-site Director
 *Automated, before you update anything: Maint (Auto): Copier Update Check runs, completes, and
 detects the newer version.*
 
-- [ ] The Apprise notification arrives at the endpoint in `APPRISE_URL`.
+- [ ] Its run's **Notify if Update is Available** step succeeds.
 
 ### Running the Update
 
-- [ ] In the repo, run `mise run copier-update`. Answer any new question the way a real user
-  updating from the last release would.
-- [ ] Commit and push the result.
+- [ ] Update on a branch, pressing Enter at each prompt to accept the default:
+
+    ```sh
+    git switch -c integration-test/copier-update
+    mise run copier-update
+    git add -A
+    git commit -m "chore: copier update"
+    git push -u origin integration-test/copier-update
+    gh pr create --title "chore: copier update" --body "Integration test."
+    gh pr merge --squash --auto --delete-branch
+    ```
 
 ### After Updating
 
-Run `mise run integration-test-verify-update-gh -- --repo <repo> --local-path <path>`, with the
-repo and path printed at the end of the original `mise run integration-test-gh` run. It checks
+Once the update's PR merges, run the verify command in step 2 of the run's summary. It checks
 that the update brought in current content, left no conflict markers, and that
 `Test (Auto): PR Validation` triggers and passes on a new PR.
 
 ## Cleaning Up
 
-- [ ] Run `mise run integration-test-cleanup-gh`. It lists every integration-test repo under
-  your account, including any left by a run that stopped partway, and deletes them once you
-  confirm. It needs the `delete_repo` scope: `gh auth refresh -h github.com -s delete_repo`.
+- [ ] Run the cleanup command in the run's summary, and confirm. It deletes every
+  integration-test repo under your account, including any left by a run that stopped partway.
+  It needs the `delete_repo` scope: `gh auth refresh -h github.com -s delete_repo`.
