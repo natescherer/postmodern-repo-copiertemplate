@@ -251,7 +251,8 @@ def test_nested_template(update_source, tmp_path, extensible):
     The render tests skip tasks, so they never run `copy-template-files`, the task
     that gives a Template child its own copy of `template/`; without it, the child
     can't be copied from at all. This runs it (repo setup stays off, so nothing
-    touches a remote) and then renders a grandchild from the result. An extensible
+    touches a remote), checks that a no-op `copier update` of the child succeeds,
+    and then renders a grandchild from the result. An extensible
     template child gets the parent's whole `template/`. A leaf template child gets it
     without the paths gated on is_template or is_extensible and with the project-type
     gates folded out, its copier.yml has no project-type questions or
@@ -271,6 +272,27 @@ def test_nested_template(update_source, tmp_path, extensible):
     # S101: `assert` is the normal, expected way to fail a pytest test.
     assert result.returncode == 0, (  # noqa: S101
         f"copier copy failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+    )
+
+    # HEAD is past the last tag, so the child records a `git describe` _commit, and
+    # the update replays the task at that version first.
+    _git_init_repo(child)
+    _git_commit_all(child, "initial copy")
+    result = _run(
+        [
+            "copier",
+            "update",
+            "--trust",
+            "--defaults",
+            "--skip-answered",
+            "--vcs-ref=HEAD",
+            "-a",
+            ".config/copier-answers.yml",
+        ],
+        cwd=child,
+    )
+    assert result.returncode == 0, (  # noqa: S101
+        f"copier update failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
     )
 
     expected = source / "template"
