@@ -57,6 +57,14 @@ PIPELINE_DISPLAY_NAMES = (
 
 SCRATCH_FILE_CONTENT = "# Integration Test Scratch File\n\nSafe to ignore or delete.\n"
 
+# Must match the bypass grant in the Set Repo Rules task of
+# template/{% if is_template %}copier.yml{% endif %}.jinja.
+GIT_REPOSITORIES_NAMESPACE = "2e9eb7ed-3c0a-47d4-87c1-0ffdd275fd87"
+PULL_REQUEST_BYPASS_POLICY = 32768
+# refs/heads/main, UTF-16LE hex-encoded per character: Azure DevOps's Git ACL token
+# format for a branch.
+MAIN_BRANCH_ACL_PATH = "refs/heads/6d00610069006e00"
+
 
 def run(
     *args: str, check: bool = True, capture: bool = False, cwd: str | None = None
@@ -386,11 +394,8 @@ def report_pr_validation_policy(
 ) -> None:
     """Report whether the PR Validation build policy was applied.
 
-    Checks the policy's configuration only: that it exists, blocks, is enabled, and
-    targets the pr_validation pipeline. It doesn't check the Project Administrators
-    bypass permission beside it: Microsoft's docs give no example of `az devops security
-    permission`'s JSON output, so a check on it couldn't be trusted without a live org
-    to confirm against.
+    Checks the policy's configuration: that it exists, blocks, is enabled, and targets
+    the pr_validation pipeline. report_bypass_permission() checks the bypass beside it.
     """
     pr_validation_id = next(
         (
@@ -446,6 +451,90 @@ def report_pr_validation_policy(
         "the build-validation policy is blocking and enabled",
         bool(policy.get("isBlocking")) and bool(policy.get("isEnabled")),
         f"policy {policy.get('id')}",
+    )
+
+
+def report_bypass_permission(
+    repo_id: str, org_url: str, project: str, failures: list[str]
+) -> None:
+    """Report whether Project Administrators can bypass main's PR policies.
+
+    Repo setup grants it explicitly, matching GitHub's admin bypass: allow bit 32768
+    (PullRequestBypassPolicy) in the Git Repositories namespace, on main's ACL token,
+    for the project's Project Administrators group. This reads that same entry.
+    """
+    project_id = az_value(
+        "devops",
+        "project",
+        "show",
+        "--project",
+        project,
+        "--org",
+        org_url,
+        "--query",
+        "id",
+        "-o",
+        "tsv",
+    )
+    groups = json.loads(
+        az_value(
+            "devops",
+            "security",
+            "group",
+            "list",
+            "--org",
+            org_url,
+            "--project",
+            project,
+            "-o",
+            "json",
+        )
+        or "{}"
+    )
+    descriptor = next(
+        (
+            group["descriptor"]
+            for group in groups.get("graphGroups", [])
+            if group.get("displayName") == "Project Administrators"
+        ),
+        None,
+    )
+    if descriptor is None:
+        check(
+            failures,
+            "Project Administrators can bypass policies to complete PRs on 'main'",
+            False,
+            "Project Administrators group not found",
+        )
+        return
+    entries = json.loads(
+        az_value(
+            "devops",
+            "security",
+            "permission",
+            "show",
+            "--namespace-id",
+            GIT_REPOSITORIES_NAMESPACE,
+            "--subject",
+            descriptor,
+            "--token",
+            f"repoV2/{project_id}/{repo_id}/{MAIN_BRANCH_ACL_PATH}",
+            "--org",
+            org_url,
+            "-o",
+            "json",
+        )
+        or "[]"
+    )
+    aces = entries[0].get("acesDictionary", {}) if entries else {}
+    ace = next(iter(aces.values()), {})
+    allow, deny = ace.get("allow", 0), ace.get("deny", 0)
+    check(
+        failures,
+        "Project Administrators can bypass policies to complete PRs on 'main'",
+        bool(allow & PULL_REQUEST_BYPASS_POLICY)
+        and not deny & PULL_REQUEST_BYPASS_POLICY,
+        f"allow={allow}, deny={deny}",
     )
 
 
@@ -509,6 +598,7 @@ def verify(
     report_pr_validation_policy(
         repo_id, pipelines, org_url, project, repo_name, failures
     )
+    report_bypass_permission(repo_id, org_url, project, failures)
     return pipelines
 
 
