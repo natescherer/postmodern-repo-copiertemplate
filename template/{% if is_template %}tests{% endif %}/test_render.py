@@ -144,18 +144,13 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
     Covers the one class of bug the copy-only test above can't see: logic gated on
     `_copier_operation == 'update'` (e.g. the `project_initialized` locked-on-update
     question text, `current_knope_version`) is never exercised by a fresh
-    `copier copy`, since that operation is always `'copy'`.
+    `copier copy`, since that operation is always `'copy'`. Migrations only run on
+    update too, so this also checks they did their job instead of only warning.
     """
     source, old_tag = update_source
     dest = tmp_path / "out"
 
-    # Some answer values are only valid after a specific rename in this repo's own
-    # history; see answer_matrix.py's "_old_tag_overrides" for which ones and why.
-    # The old tag can't recognize the current value, so the initial copy-at-old-tag
-    # has to use whatever value actually was valid then; the update step below still
-    # uses the current answers, so it also exercises the rename itself.
-    old_tag_answers = {**answers, **answers.get("_old_tag_overrides", {})}
-    _render(source, dest, old_tag_answers, vcs_ref=old_tag)
+    _render(source, dest, answers, vcs_ref=old_tag)
 
     _git_init_repo(dest)
     _git_commit_all(dest, "initial render")
@@ -177,6 +172,20 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
     assert result.returncode == 0, (  # noqa: S101
         f"copier update failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
     )
+
+    output = result.stdout + result.stderr
+    # A migration that can't do its job warns instead of failing the update.
+    warnings = [line for line in output.splitlines() if line.startswith("Warning:")]
+    assert not warnings, "\n".join(warnings)  # noqa: S101
+    # The source's HEAD commit is a `feat:`, so the changeset migration writes one.
+    assert list((dest / ".changeset").glob("template-update-*.md")), output  # noqa: S101
+    if answers["lifecycle"] == "Stable":
+        # current_knope_version reads the destination's version file, still 0.0.0,
+        # so _message_after_update pins the first release to 1.0.0.
+        override = json.loads(
+            (dest / ".config/knope-release-override.json").read_text(encoding="utf-8")
+        )
+        assert override["version"] == "1.0.0", override  # noqa: S101
 
     errors = _check_all(dest, zensical=False)
     assert not errors, "\n\n".join(errors)  # noqa: S101
