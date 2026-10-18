@@ -38,6 +38,7 @@ import tempfile
 import time
 from pathlib import Path
 
+from console import RepoResult, Step, check, heading, summary
 from docs_links import docs_page_url
 
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
@@ -186,30 +187,6 @@ def check_access(org_url: str, project: str) -> None:
             f"session. See {docs_page_url('reference/token-permissions.md')} for what "
             "this token needs."
         )
-
-
-def check(failures: list[str], name: str, ok: bool, detail: str = "") -> None:
-    """Record and print one named check's result immediately, without halting.
-
-    Every automated check in this script goes through here so failures accumulate
-    instead of stopping the run at the first one; a full run reports the complete
-    picture, not just whatever happened to fail first.
-    """
-    if ok:
-        print(f"  [PASS] {name}")
-    else:
-        print(f"  [FAIL] {name}" + (f": {detail}" if detail else ""))
-        failures.append(name)
-
-
-def report(label: str, failures: list[str]) -> None:
-    """Print a final summary of one repo's accumulated check results."""
-    if failures:
-        print(f"\n{label}: {len(failures)} check(s) failed:")
-        for name in failures:
-            print(f"  - {name}")
-    else:
-        print(f"\n{label}: all checks passed.")
 
 
 def template_answers(*, leaf: bool) -> list[str]:
@@ -1523,7 +1500,9 @@ def main() -> None:
         check_post_update(
             org_url, args.project, args.verify_update, args.local_path, update_failures
         )
-        report(f"Repo B ({args.verify_update})", update_failures)
+        summary(
+            [RepoResult("Repo B", args.verify_update, args.local_path, update_failures)]
+        )
         if update_failures:
             raise SystemExit(1)
         return
@@ -1533,7 +1512,7 @@ def main() -> None:
 
     timestamp = int(time.time())
 
-    print("=== Repo A: fresh copy at HEAD (code_coverage: on) ===")
+    heading("Repo A: a fresh copy at HEAD (code_coverage: on)")
     repo_a_name = f"{args.repo_prefix}-integration-test-{timestamp}-a"
     dest_a = tempfile.mkdtemp(prefix="integration-test-")
     create(
@@ -1559,10 +1538,11 @@ def main() -> None:
     )
     check_release_flow(org_url, args.project, repo_a_name, dest_a, failures_a)
     check_prerelease_flow(org_url, args.project, repo_a_name, dest_a, failures_a)
-    report(f"Repo A ({repo_a_name})", failures_a)
 
     old_ref = latest_stable_tag(args.source)
-    print(f"=== Repo B: {old_ref}, for you to update by hand (code_coverage: off) ===")
+    heading(
+        f"Repo B: a copy at {old_ref}, for you to update by hand (code_coverage: off)"
+    )
     repo_b_name = f"{args.repo_prefix}-integration-test-{timestamp}-b"
     dest_b = tempfile.mkdtemp(prefix="integration-test-")
     create(
@@ -1579,17 +1559,39 @@ def main() -> None:
     verify(repo_b_name, org_url, args.project, failures_b)
     provision_test_secrets(org_url, args.project, repo_b_name)
     check_copier_update_check(org_url, args.project, repo_b_name, failures_b)
-    report(f"Repo B ({repo_b_name}, before updating)", failures_b)
-
-    print(
-        f"\nLeaving {repo_a_name} ({dest_a}) and {repo_b_name} ({dest_b}) in place; "
-        "delete them and their pipelines with `mise run integration-test-cleanup-azdo` "
-        f"when you're done. {repo_b_name} "
-        f"is still at {old_ref}; cd into {dest_b} and run `mise run copier-update` "
-        "yourself to test the update path, then `mise run "
-        f"integration-test-verify-update-azdo -- --repo {repo_b_name} --local-path "
-        f'{dest_b}` to verify it applied cleanly (see "Repo B" in '
-        f"{docs_page_url('maintaining/integration-testing/manual-verification-azdo.md')})."
+    scope = f'--org {args.org} --project "{args.project}"'
+    checklist = docs_page_url(
+        "maintaining/integration-testing/manual-verification-azdo.md"
+    )
+    summary(
+        [
+            RepoResult("Repo A", repo_a_name, dest_a, failures_a),
+            RepoResult(
+                f"Repo B (at {old_ref}, before updating)",
+                repo_b_name,
+                dest_b,
+                failures_b,
+            ),
+        ],
+        [
+            Step(
+                "Update Repo B the way a user would:",
+                [f'cd "{dest_b}"', "mise run copier-update"],
+            ),
+            Step(
+                "Once the update merges, rename its pipelines and verify it:",
+                [
+                    "mise run migrate-azdo-pipeline-names",
+                    f"mise run integration-test-verify-update-azdo -- {scope} "
+                    f'--repo {repo_b_name} --local-path "{dest_b}"',
+                ],
+            ),
+            Step(f"Work through the manual checklist: {checklist}"),
+            Step(
+                "When you're done, delete both repos and their pipelines:",
+                [f"mise run integration-test-cleanup-azdo -- {scope}"],
+            ),
+        ],
     )
 
     if failures_a or failures_b:
