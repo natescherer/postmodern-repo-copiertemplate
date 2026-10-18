@@ -81,6 +81,33 @@ def gh_value(*args: str) -> str:
     return run("gh", *args, capture=True).stdout.strip()
 
 
+def confirm(prompt: str, *, yes: bool) -> bool:
+    """Ask a yes/no question, unless `yes` already answered it.
+
+    With no terminal to answer from, the answer is no.
+
+    Returns:
+        True to go ahead.
+
+    """
+    if yes:
+        return True
+    try:
+        return input(f"{prompt} [y/N] ").strip().lower() == "y"
+    except EOFError:
+        return False
+
+
+def test_repo_pattern(repo_prefix: str) -> re.Pattern[str]:
+    """Match the names main() gives its test repos, and nothing else.
+
+    Returns:
+        A pattern for `<repo_prefix>-integration-test-<timestamp>-a` (or `-b`).
+
+    """
+    return re.compile(rf"{re.escape(repo_prefix)}-integration-test-\d+-[ab]")
+
+
 def check_gh_installed() -> None:
     """Verify the `gh` CLI is resolvable on PATH.
 
@@ -1258,6 +1285,42 @@ def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
     run("gh", "pr", "merge", pr_number, "--repo", repo, "--squash", "--delete-branch")
 
 
+def cleanup(owner: str, repo_prefix: str, *, yes: bool) -> None:
+    """Delete every test repo main() created under `owner`, after confirming.
+
+    It finds them by name, so it covers runs that stopped partway, such as when the
+    machine slept, as well as finished ones. Deleting a GitHub repo removes its
+    workflows too.
+
+    Raises:
+        SystemExit: if the gh token lacks the delete_repo scope.
+
+    """
+    pattern = test_repo_pattern(repo_prefix)
+    repos = json.loads(
+        gh_value("repo", "list", owner, "--limit", "1000", "--json", "name")
+    )
+    names = sorted(r["name"] for r in repos if pattern.fullmatch(r["name"]))
+    if not names:
+        print(f"No integration-test repos under {owner}.")
+        return
+    print("Integration-test repos to delete:")
+    for name in names:
+        print(f"  {owner}/{name}")
+    status = run("gh", "auth", "status", check=False, capture=True)
+    if "'delete_repo'" not in status.stdout + status.stderr:
+        raise SystemExit(
+            "Deleting repos needs the delete_repo scope. Add it with "
+            "`gh auth refresh -h github.com -s delete_repo`, then rerun."
+        )
+    if not confirm(f"Delete these {len(names)} repo(s)?", yes=yes):
+        print("Nothing deleted.")
+        return
+    for name in names:
+        run("gh", "repo", "delete", f"{owner}/{name}", "--yes")
+    print(f"Deleted {len(names)} repo(s).")
+
+
 def main() -> None:
     """Create and verify two throwaway repos, each covering a different scenario.
 
@@ -1300,10 +1363,29 @@ def main() -> None:
         default=os.environ.get("usage_local_path"),
         help="Local clone path for --verify-update (printed when Repo B was created).",
     )
+    parser.add_argument(
+        "--cleanup",
+        action="store_true",
+        help=(
+            "Skip creating repos; instead delete every test repo a run made (finished "
+            "or not), after confirming. Requires --repo-prefix."
+        ),
+    )
+    parser.add_argument(
+        "--yes", action="store_true", help="Don't ask before --cleanup deletes."
+    )
     args = parser.parse_args()
 
     check_gh_installed()
     check_scopes()
+
+    if args.cleanup:
+        if not args.repo_prefix:
+            raise SystemExit("--cleanup requires --repo-prefix.")
+        cleanup(
+            gh_value("api", "user", "--jq", ".login"), args.repo_prefix, yes=args.yes
+        )
+        return
 
     if args.verify_update:
         if not args.local_path:
@@ -1378,7 +1460,8 @@ def main() -> None:
 
     print(
         f"\nLeaving {repo_a} ({dest_a}) and {repo_b} ({dest_b}) in place; delete "
-        f"them yourself when you're done. {repo_b} is still at {old_ref}; cd into "
+        "them with `mise run integration-test-cleanup-gh` when you're done. "
+        f"{repo_b} is still at {old_ref}; cd into "
         f"{dest_b} and run `mise run copier-update` yourself to test the update path, "
         "then `mise run integration-test-verify-update-gh -- --repo "
         f"{repo_b} --local-path {dest_b}` to verify it applied cleanly "

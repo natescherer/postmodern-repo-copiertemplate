@@ -110,5 +110,6 @@ that the update brought in current content, left no conflict markers, and that
 
 ## Cleaning Up
 
-- [ ] Delete both repos (`gh repo delete <repo> --yes`, or the web UI). Deleting a GitHub repo
-  removes its workflows too.
+- [ ] Run `mise run integration-test-cleanup-gh`. It lists every integration-test repo under
+  your account, including any left by a run that stopped partway, and deletes them once you
+  confirm. It needs the `delete_repo` scope: `gh auth refresh -h github.com -s delete_repo`.

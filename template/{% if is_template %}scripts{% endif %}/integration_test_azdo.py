@@ -6,8 +6,8 @@ then verify, leaving both repos for you to delete. It differs where the platform
 - No Settings App equivalent, so there's nothing to poll for.
 - `az` can't list a token's scopes the way `gh auth status` can, so this checks only
   that it can see the target project.
-- Azure DevOps has no bulk delete for pipelines, and deleting a repo doesn't remove
-  them, so each repo gets a cleanup_pipelines.py in its local directory.
+- Deleting an Azure DevOps repo doesn't remove its pipelines, so `--cleanup` deletes
+  those too.
 - `az` can't easily read a run's step output the way `gh run view --json jobs` can, so
   Maint (Auto) - Copier Update Check is checked only for a successful run. Whether it
   detected an update stays on this platform's manual checklist.
@@ -87,6 +87,33 @@ def az_value(*args: str) -> str:
 
     """
     return run("az", *args, capture=True).stdout.strip()
+
+
+def confirm(prompt: str, *, yes: bool) -> bool:
+    """Ask a yes/no question, unless `yes` already answered it.
+
+    With no terminal to answer from, the answer is no.
+
+    Returns:
+        True to go ahead.
+
+    """
+    if yes:
+        return True
+    try:
+        return input(f"{prompt} [y/N] ").strip().lower() == "y"
+    except EOFError:
+        return False
+
+
+def test_repo_pattern(repo_prefix: str) -> re.Pattern[str]:
+    """Match the names main() gives its test repos, and nothing else.
+
+    Returns:
+        A pattern for `<repo_prefix>-integration-test-<timestamp>-a` (or `-b`).
+
+    """
+    return re.compile(rf"{re.escape(repo_prefix)}-integration-test-\d+-[ab]")
 
 
 def check_az_installed() -> None:
@@ -313,78 +340,63 @@ def list_tags(org_url: str, project: str, repo_name: str) -> set[str]:
     return {r.removeprefix("refs/tags/") for r in refs}
 
 
-CLEANUP_PIPELINES_SCRIPT = '''"""Delete every Azure Pipeline registered for {repo_name}.
+def cleanup(org_url: str, project: str, repo_prefix: str, *, yes: bool) -> None:
+    """Delete every test repo main() created in `project`, and its pipelines.
 
-Written by integration_test_azdo.py; not part of the template itself, and never
-committed to the repo it's dropped into. Azure DevOps has no bulk-delete UI for
-pipelines; each one otherwise has to be removed by hand through its own settings page.
-Run this before deleting {repo_name} itself.
-"""
+    It finds them by name, so it covers runs that stopped partway, such as when the
+    machine slept, as well as finished ones. Deleting an Azure DevOps repo leaves its
+    pipelines behind, so this matches pipelines by their `[<repo>] ` name prefix too,
+    including those of a repo that's already gone, and deletes them first.
 
-import json
-import shutil
-import subprocess  # noqa: S404
-import sys
-
-ORG = {org_url!r}
-PROJECT = {project!r}
-REPO_NAME = {repo_name!r}
-
-
-def run(*args: str, capture: bool = False) -> subprocess.CompletedProcess:
-    """Run a CLI command, echoing it first."""
-    print(f"$ {{' '.join(args)}}")
-    resolved = (shutil.which(args[0]) or args[0], *args[1:])
-    return subprocess.run(  # noqa: S603
-        resolved, check=True, text=True, capture_output=capture
+    """
+    pattern = test_repo_pattern(repo_prefix)
+    scope = ("--org", org_url, "--project", project, "-o", "json")
+    repos = sorted(
+        (
+            repo
+            for repo in json.loads(
+                az_value("repos", "list", *scope, "--query", "[].{id:id,name:name}")
+            )
+            if pattern.fullmatch(repo["name"])
+        ),
+        key=lambda repo: repo["name"],
     )
-
-
-def main() -> None:
-    """Delete every pipeline registered for REPO_NAME in PROJECT."""
-    pipeline_ids = json.loads(
-        run(
-            "az", "pipelines", "list",
-            "--repository", REPO_NAME,
-            "--org", ORG,
-            "--project", PROJECT,
-            "--query", "[].id",
-            capture=True,
-        ).stdout
-        or "[]"
+    pipeline_name = re.compile(rf"\[({pattern.pattern})\] ")
+    pipelines = sorted(
+        (
+            pipeline
+            for pipeline in json.loads(
+                az_value("pipelines", "list", *scope, "--query", "[].{id:id,name:name}")
+            )
+            if pipeline_name.match(pipeline["name"])
+        ),
+        key=lambda pipeline: pipeline["name"],
     )
-    if not pipeline_ids:
-        print(f"No pipelines registered for {{REPO_NAME}}.")
+    if not repos and not pipelines:
+        print(f"No integration-test repos or pipelines in {project}.")
         return
-    for pipeline_id in pipeline_ids:
+    print("Integration-test pipelines and repos to delete:")
+    for item in (*pipelines, *repos):
+        print(f"  {item['name']}")
+    if not confirm(
+        f"Delete these {len(pipelines)} pipeline(s) and {len(repos)} repo(s)?",
+        yes=yes,
+    ):
+        print("Nothing deleted.")
+        return
+    for pipeline in pipelines:
         run(
-            "az", "pipelines", "delete",
-            "--id", str(pipeline_id),
-            "--org", ORG,
-            "--project", PROJECT,
+            "az",
+            "pipelines",
+            "delete",
+            "--id",
+            str(pipeline["id"]),
+            *scope[:4],
             "--yes",
         )
-    print(f"Deleted {{len(pipeline_ids)}} pipeline(s) for {{REPO_NAME}}.")
-
-
-if __name__ == "__main__":
-    sys.exit(main())
-'''
-
-
-def write_cleanup_script(dest: str, org_url: str, project: str, repo_name: str) -> None:
-    """Drop a standalone script into `dest` that deletes every pipeline for this repo.
-
-    Self-contained (no import from this module) so it still works after this process
-    exits, whenever you're ready to delete the throwaway repo; and never
-    committed, since it has no reason to exist once the repo itself is gone.
-    """
-    Path(dest, "cleanup_pipelines.py").write_text(
-        CLEANUP_PIPELINES_SCRIPT.format(
-            org_url=org_url, project=project, repo_name=repo_name
-        ),
-        encoding="utf-8",
-    )
+    for repo in repos:
+        run("az", "repos", "delete", "--id", repo["id"], *scope[:4], "--yes")
+    print(f"Deleted {len(pipelines)} pipeline(s) and {len(repos)} repo(s).")
 
 
 def report_pr_validation_policy(
@@ -1464,6 +1476,17 @@ def main() -> None:
         default=os.environ.get("usage_local_path"),
         help="Local clone path for --verify-update (printed when Repo B was created).",
     )
+    parser.add_argument(
+        "--cleanup",
+        action="store_true",
+        help=(
+            "Skip creating repos; instead delete every test repo a run made (finished "
+            "or not), after confirming. Requires --repo-prefix."
+        ),
+    )
+    parser.add_argument(
+        "--yes", action="store_true", help="Don't ask before --cleanup deletes."
+    )
     args = parser.parse_args()
 
     check_az_installed()
@@ -1478,6 +1501,12 @@ def main() -> None:
 
     org_url = f"https://dev.azure.com/{args.org}/"
     check_access(org_url, args.project)
+
+    if args.cleanup:
+        if not args.repo_prefix:
+            raise SystemExit("--cleanup requires --repo-prefix.")
+        cleanup(org_url, args.project, args.repo_prefix, yes=args.yes)
+        return
 
     if args.verify_update:
         if not args.local_path:
@@ -1522,9 +1551,6 @@ def main() -> None:
     )
     check_release_flow(org_url, args.project, repo_a_name, dest_a, failures_a)
     check_prerelease_flow(org_url, args.project, repo_a_name, dest_a, failures_a)
-    # Dropped last: it's an untracked file never meant to be committed, and
-    # check_noop_update() above requires a clean working tree.
-    write_cleanup_script(dest_a, org_url, args.project, repo_a_name)
     report(f"Repo A ({repo_a_name})", failures_a)
 
     old_ref = latest_stable_tag(args.source)
@@ -1545,15 +1571,12 @@ def main() -> None:
     verify(repo_b_name, org_url, args.project, failures_b)
     provision_test_secrets(org_url, args.project, repo_b_name)
     check_copier_update_check(org_url, args.project, repo_b_name, failures_b)
-    # Dropped last: an untracked file, and dest_b is left for you to run a real
-    # `mise run copier-update` against, which should start from a clean tree.
-    write_cleanup_script(dest_b, org_url, args.project, repo_b_name)
     report(f"Repo B ({repo_b_name}, before updating)", failures_b)
 
     print(
-        f"\nLeaving {repo_a_name} ({dest_a}) and {repo_b_name} ({dest_b}) in place. "
-        "Run `python cleanup_pipelines.py` in each directory before deleting the "
-        f"repos; Azure DevOps has no bulk-delete UI for pipelines. {repo_b_name} "
+        f"\nLeaving {repo_a_name} ({dest_a}) and {repo_b_name} ({dest_b}) in place; "
+        "delete them and their pipelines with `mise run integration-test-cleanup-azdo` "
+        f"when you're done. {repo_b_name} "
         f"is still at {old_ref}; cd into {dest_b} and run `mise run copier-update` "
         "yourself to test the update path, then `mise run "
         f"integration-test-verify-update-azdo -- --repo {repo_b_name} --local-path "

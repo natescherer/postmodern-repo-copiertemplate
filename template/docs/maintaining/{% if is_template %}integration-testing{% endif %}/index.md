@@ -56,4 +56,6 @@ Work through the checklist for each platform, by hand, against the repos the run
 - [Manual Verification Checklist (GitHub)](manual-verification-github.md)
 - [Manual Verification Checklist (Azure DevOps)](manual-verification-azdo.md)
 
-Each checklist ends with steps for cleaning up the test repos.
+Each checklist ends with cleaning up the test repos. When a run stops partway (for example,
+because the machine slept), `mise run integration-test-cleanup-gh` or
+`integration-test-cleanup-azdo` still finds and deletes what it created.
