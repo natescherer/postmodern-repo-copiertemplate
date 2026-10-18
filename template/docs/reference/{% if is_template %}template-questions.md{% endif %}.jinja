@@ -76,8 +76,9 @@ Asked only for `Template`: whether other Copier templates will be built from thi
 
 - **No** (the default for a new copy) makes a leaf template. Its projects are always
   Standard, so its copy of `template/` leaves out the template-only files (the child
-  `copier.yml`, tests, scripts, and template docs), and its own `copier.yml` doesn't ask
-  `project_type`. Most templates, such as a company's internal deployment template, are
+  `copier.yml`, tests, scripts, and template docs) and has the `is_template`,
+  `is_standard`, and `is_extensible` conditions folded out of the files it keeps. Its own
+  `copier.yml` doesn't ask `project_type`. Most templates, such as a company's internal deployment template, are
   leaf templates.
 - **Yes** makes an extensible template. It keeps the whole `template/`, so its projects
   can be templates too, as this template's are.

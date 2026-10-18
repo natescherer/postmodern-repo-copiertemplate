@@ -848,7 +848,8 @@ _tasks:
 
   # Makes nested templates work: every Template project gets an unrendered copy of
   # the parent's template/ directory. A leaf template's copy leaves out the paths gated
-  # on is_template or is_extensible, since its own projects are never templates.
+  # on is_template or is_extensible, since its own projects are never templates, and
+  # has those gates folded out of the files it keeps.
   # copytree only adds and overwrites, so on update this also removes the files the
   # parent deleted or renamed since the previous version, which it reads from the
   # answers file committed at HEAD.
@@ -911,6 +912,13 @@ _tasks:
                 os.path.join(d, "template"), "template", dirs_exist_ok=True,
                 ignore=None if extensible == "True" else skip_template_only,
             )
+            if extensible != "True":
+                # Its projects are always Standard, so fold is_template, is_standard,
+                # and is_extensible out of the copy; see the script's docstring.
+                scripts = template_only[0] + "scripts{" + "% endif %" + "}"
+                script = template_only[1] + "fold_leaf_gates.py{" + "% endif %" + "}"
+                fold = os.path.join(d, "template", scripts, script)
+                subprocess.run([sys.executable, fold, "template"], check=True)
       - "{{ _copier_conf.src_path }}"
       - "{{ _copier_conf.vcs_ref if _copier_conf.vcs_ref else '' }}"
       - "{{ _copier_conf.answers_file }}"
