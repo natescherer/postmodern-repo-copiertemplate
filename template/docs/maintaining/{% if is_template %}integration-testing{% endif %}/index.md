@@ -9,7 +9,9 @@ regressions a local render can't: repo creation, pipeline registration, and work
 - `mise run integration-test-gh` creates two GitHub repos from this template, named
   `<prefix>-integration-test-<timestamp>-a` and `...-b`.
 - `mise run integration-test-azdo` does the same on Azure DevOps. Pass `--org` and `--project`,
-  or let them default to this project's own when it uses Azure DevOps.
+  or let them default to this project's own when it uses Azure DevOps. It also needs a GitHub
+  token for Renovate, which skips every dependency hosted on github.com without one: set
+  `GITHUB_COM_TOKEN`, or log in with `gh auth login`.
 
 Run both before a release, whichever platform this repo uses: the template ships for both.
 
@@ -21,7 +23,7 @@ Each checklist has a section for each repo.
 - **Repo A** is a `copier copy` at `HEAD`. The script runs every automated check against it
   before returning: it dispatches pipelines, opens PRs, and cuts a release.
 - **Repo B** is a `copier copy` at the last stable release tag, left there for you to update by
-  hand with the command in its checklist section. Running the command a real user runs, prompts
+  hand with the commands in its checklist section. Running the command a real user runs, prompts
   included, shows each new question the way they'll see it. Afterward,
   `mise run integration-test-verify-update-gh` or `integration-test-verify-update-azdo` checks
   that the update applied cleanly.
@@ -37,11 +39,11 @@ and confirm they're blocked or pass, push commits and confirm the release flow r
 a release and a prerelease. Each check prints a `[PASS]` or `[FAIL]` line as it runs, and a
 summary at the end; a failure doesn't stop the run, so one run reports everything.
 
-The manual checklists cover the rest: anything that needs human judgment (whether a badge looks
-right, whether the setup checklist was really addressed) and anything in a system the scripts
-can't inspect (whether an Apprise notification arrived, whether Renovate or All Contributors
-responded). Each checklist lists only those steps, and notes where a nearby check is already
-automated.
+The manual checklists cover the rest, as fixed steps that are the same on every run: anything
+that needs human judgment (whether a badge renders, whether each setup checklist item applies)
+and anything the scripts can't read (a pipeline step's log on Azure DevOps, or whether Renovate
+or All Contributors responded). Each checklist lists only those steps, and notes where a nearby
+check is already automated.
 
 ## How It Differs from `pytest tests/`
 

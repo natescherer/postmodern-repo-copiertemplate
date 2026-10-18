@@ -36,10 +36,12 @@ import subprocess  # noqa: S404
 import sys
 import tempfile
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 from console import RepoResult, Step, check, heading, summary
 from docs_links import docs_page_url
+from repo_edits import let_renovate_bump_typos
 
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
@@ -86,6 +88,57 @@ def run(
     return subprocess.run(  # noqa: S603
         resolved, check=check, text=True, capture_output=capture, cwd=cwd
     )
+
+
+def run_and_keep(*args: str) -> str:
+    """Run a CLI command like run(), streaming its output, and return that output.
+
+    Returns:
+        Everything the command wrote to stdout and stderr.
+
+    Raises:
+        subprocess.CalledProcessError: if the command exits nonzero.
+
+    """
+    print(f"$ {' '.join(args)}")
+    resolved = (shutil.which(args[0]) or args[0], *args[1:])
+    # Python tools such as Copier write UTF-8 to a pipe only when told to.
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
+    lines: list[str] = []
+    # S603: args are always a fixed list built by this module; no shell=True.
+    with subprocess.Popen(  # noqa: S603
+        resolved,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=env,
+    ) as process:
+        for line in process.stdout:
+            print(line, end="")
+            lines.append(line)
+    if process.returncode:
+        raise subprocess.CalledProcessError(process.returncode, resolved)
+    return "".join(lines)
+
+
+def setup_checklist(copy_output: str) -> list[str]:
+    """Return the items of the setup checklist `copier copy` prints at the end.
+
+    Returns:
+        Each "- [ ] ..." line under "Setup checklist:", or an empty list.
+
+    """
+    lines = [line.strip() for line in copy_output.splitlines()]
+    if "Setup checklist:" not in lines:
+        return []
+    items = []
+    for line in lines[lines.index("Setup checklist:") + 1 :]:
+        if not line.startswith("- [ ]"):
+            break
+        items.append(line)
+    return items
 
 
 def az_value(*args: str) -> str:
@@ -223,7 +276,7 @@ def create(
     *,
     code_coverage: bool,
     leaf: bool = False,
-) -> None:
+) -> list[str]:
     """Run the template to create the test repo and register its pipelines.
 
     `code_coverage` is explicit, so the two repos cover it on and off instead of both
@@ -232,8 +285,13 @@ def create(
     `--defaults` covers the questions without an explicit -d below (author_name and
     zensical_target); without it, copier prompts for them. Explicit -d values take
     priority over --defaults.
+
+    Returns:
+        The setup checklist `copier copy` printed, which the summary repeats: on
+        Azure DevOps it exists only in that output, long since scrolled away.
+
     """
-    run(
+    output = run_and_keep(
         "copier",
         "copy",
         "--trust",
@@ -265,6 +323,7 @@ def create(
         source,
         dest,
     )
+    return setup_checklist(output)
 
 
 def latest_stable_tag(source: str) -> str:
@@ -849,21 +908,100 @@ def check_repo_health_check(
     )
 
 
-def check_renovate(
-    org_url: str, project: str, repo_name: str, failures: list[str]
-) -> None:
-    """Dispatch Maint (Auto) - Renovate and confirm it authenticates successfully.
+def provide_github_token(org_url: str, project: str, pipeline: str) -> bool:
+    """Set GITHUB_COM_TOKEN on `pipeline`, from the environment or `gh auth token`.
 
-    GitHub's counterpart to this check doesn't exist: Renovate there runs as an
-    external GitHub App on its own schedule, not a dispatchable workflow. Azure DevOps
-    runs it as a self-hosted pipeline instead, so it's dispatchable here.
+    Renovate skips every dependency hosted on github.com without one. The value goes
+    through az's AZURE_DEVOPS_EXT_PIPELINE_VAR_* environment variable, never the
+    command line, so it's never echoed.
+
+    Returns:
+        False if there's no token to set.
+
+    """
+    token = os.environ.get("GITHUB_COM_TOKEN", "")
+    if not token and shutil.which("gh"):
+        token = run("gh", "auth", "token", check=False, capture=True).stdout.strip()
+    if not token:
+        return False
+    args = (
+        "az", "pipelines", "variable", "create",
+        "--name", "GITHUB_COM_TOKEN",
+        "--pipeline-name", pipeline,
+        "--secret", "true",
+        "--org", org_url,
+        "--project", project,
+    )  # fmt: skip
+    print(f"$ {' '.join(args)}")
+    # S603: args are a fixed list built here; no shell=True.
+    subprocess.run(  # noqa: S603
+        (shutil.which(args[0]) or args[0], *args[1:]),
+        check=True,
+        capture_output=True,
+        env={**os.environ, "AZURE_DEVOPS_EXT_PIPELINE_VAR_GITHUB_COM_TOKEN": token},
+    )
+    return True
+
+
+def check_renovate(
+    org_url: str, project: str, repo_name: str, dest: str, failures: list[str]
+) -> None:
+    """Dispatch Maint (Auto) - Renovate and confirm it opens a PR for an old dependency.
+
+    It first merges let_renovate_bump_typos()'s changes, so Renovate has something to
+    bump whenever this runs. GitHub's counterpart is a manual check: Renovate there runs
+    as an external GitHub App on its own cadence, not a dispatchable workflow.
     """
     print("Checking Maint (Auto) - Renovate...")
-    run_id = dispatch_pipeline(
-        org_url, project, f"[{repo_name}] Maint (Auto) - Renovate"
+    pipeline = f"[{repo_name}] Maint (Auto) - Renovate"
+    if not provide_github_token(org_url, project, pipeline):
+        check(
+            failures,
+            "Renovate has a GitHub token for github.com dependencies",
+            False,
+            "set GITHUB_COM_TOKEN, or log in with `gh auth login`",
+        )
+        return
+    open_pr_wait_and_merge(
+        org_url,
+        project,
+        repo_name,
+        dest,
+        "integration-test/renovate-setup",
+        "chore: let Renovate bump an old typos",
+        edit=let_renovate_bump_typos,
     )
+    run_id = dispatch_pipeline(org_url, project, pipeline)
     result = wait_for_pipeline_run(org_url, project, run_id)
     check(failures, "Renovate pipeline succeeds", result == "succeeded", result)
+    prs = json.loads(
+        az_value(
+            "repos",
+            "pr",
+            "list",
+            "--repository",
+            repo_name,
+            "--status",
+            "active",
+            "--org",
+            org_url,
+            "--project",
+            project,
+            "--query",
+            "[].{title: title, branch: sourceRefName}",
+        )
+        or "[]"
+    )
+    check(
+        failures,
+        "Renovate opens a PR bumping typos",
+        any(
+            pr["branch"].startswith("refs/heads/renovate/")
+            and "typos" in pr["title"].lower()
+            for pr in prs
+        ),
+        f"active PRs: {[pr['title'] for pr in prs]}",
+    )
 
 
 def wait_for_pr_policy(org_url: str, pr_id: str, *, timeout: int = 900) -> str:
@@ -931,9 +1069,13 @@ def open_pr_wait_and_merge(
     dest: str,
     branch: str,
     commit_message: str,
-    filename: str,
+    filename: str = "",
+    *,
+    edit: Callable[[Path], None] | None = None,
 ) -> None:
     """Open a passing PR and merge it, the only way commits reach main.
+
+    The PR adds a scratch file named `filename`, or makes `edit`'s changes instead.
 
     The branch policy rejects a direct `git push` to main, even from the project owner
     (TF402455, "Pushes to this branch are not permitted"). Merging a PR also matches how
@@ -947,7 +1089,10 @@ def open_pr_wait_and_merge(
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
     run("git", "switch", "-c", branch, cwd=dest)
-    Path(dest, filename).write_text(SCRATCH_FILE_CONTENT, newline="\n")
+    if edit is None:
+        Path(dest, filename).write_text(SCRATCH_FILE_CONTENT, newline="\n")
+    else:
+        edit(Path(dest))
     run("git", "add", "-A", cwd=dest)
     run("git", "commit", "-m", commit_message, cwd=dest)
     run("git", "push", "-u", "origin", branch, cwd=dest)
@@ -1571,7 +1716,7 @@ def main() -> None:
         raise SystemExit(
             "--org/--project are required. Pass them directly, or (when running "
             "via `mise run integration-test-azdo`) via "
-            "`mise run integration-test-azdo -- --org X --project Y`."
+            "`mise run integration-test-azdo --org X --project Y`."
         )
 
     org_url = f"https://dev.azure.com/{args.org}/"
@@ -1605,7 +1750,7 @@ def main() -> None:
     heading("Repo A: a fresh copy at HEAD (code_coverage: on)")
     repo_a_name = f"{args.repo_prefix}-integration-test-{timestamp}-a"
     dest_a = tempfile.mkdtemp(prefix="integration-test-")
-    create(
+    checklist_a = create(
         args.source,
         "HEAD",
         repo_a_name,
@@ -1621,13 +1766,15 @@ def main() -> None:
     check_copier_update_check(org_url, args.project, repo_a_name, failures_a)
     check_noop_update(dest_a, "HEAD", failures_a)
     check_repo_health_check(org_url, args.project, repo_a_name, failures_a)
-    check_renovate(org_url, args.project, repo_a_name, failures_a)
     check_bad_title_blocks_merge(org_url, args.project, repo_a_name, dest_a, failures_a)
     check_failing_tests_block_merge(
         org_url, args.project, repo_a_name, dest_a, failures_a
     )
     check_release_flow(org_url, args.project, repo_a_name, dest_a, failures_a)
     check_prerelease_flow(org_url, args.project, repo_a_name, dest_a, failures_a)
+    # Last: Renovate's PR starts more PR Validation runs, which would queue ahead of
+    # the checks above.
+    check_renovate(org_url, args.project, repo_a_name, dest_a, failures_a)
 
     old_ref = latest_stable_tag(args.source)
     heading(
@@ -1635,7 +1782,7 @@ def main() -> None:
     )
     repo_b_name = f"{args.repo_prefix}-integration-test-{timestamp}-b"
     dest_b = tempfile.mkdtemp(prefix="integration-test-")
-    create(
+    checklist_b = create(
         args.source,
         old_ref,
         repo_b_name,
@@ -1655,31 +1802,34 @@ def main() -> None:
     )
     summary(
         [
-            RepoResult("Repo A", repo_a_name, dest_a, failures_a),
+            RepoResult("Repo A", repo_a_name, dest_a, failures_a, checklist_a),
             RepoResult(
                 f"Repo B (at {old_ref}, before updating)",
                 repo_b_name,
                 dest_b,
                 failures_b,
+                checklist_b,
             ),
         ],
         [
             Step(
-                "Update Repo B the way a user would:",
-                [f'cd "{dest_b}"', "mise run copier-update"],
+                "Work through the manual checklist, which updates Repo B along the "
+                f"way: {checklist}"
             ),
             Step(
-                "Once the update merges, rename its pipelines and verify it:",
+                "Once Repo B's update merges, rename its pipelines and verify it:",
                 [
+                    f'cd "{dest_b}"',
+                    "git switch main",
+                    "git pull",
                     "mise run migrate-azdo-pipeline-names",
-                    f"mise run integration-test-verify-update-azdo -- {scope} "
+                    f"mise run integration-test-verify-update-azdo {scope} "
                     f'--repo {repo_b_name} --local-path "{dest_b}"',
                 ],
             ),
-            Step(f"Work through the manual checklist: {checklist}"),
             Step(
                 "When you're done, delete both repos and their pipelines:",
-                [f"mise run integration-test-cleanup-azdo -- {scope}"],
+                [f"mise run integration-test-cleanup-azdo {scope}"],
             ),
         ],
     )

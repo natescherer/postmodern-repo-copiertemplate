@@ -77,6 +77,7 @@ class RepoResult:
     repo: str
     local_path: str
     failures: list[str] = field(default_factory=list)
+    setup_checklist: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -100,6 +101,10 @@ def summary(results: list[RepoResult], steps: list[Step] = ()) -> None:
         print(f"    {result.local_path}")
         for name in result.failures:
             print(f"    {_red('-')} {name}")
+        if result.setup_checklist:
+            print("    Setup checklist, from copier copy:")
+            for item in result.setup_checklist:
+                print(f"      {item}")
     if steps:
         heading("Next steps")
         for number, step in enumerate(steps, 1):
