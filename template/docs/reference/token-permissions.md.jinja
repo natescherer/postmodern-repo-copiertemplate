@@ -41,10 +41,12 @@ service's URL format.
 
 ### GITHUB_COM_TOKEN
 
-(Azure DevOps only, optional.) Renovate looks up most dependency versions on github.com, and
-the Repo Health Check pipeline checks github.com links; without a token, both hit github.com's
+(Azure DevOps only.) Renovate looks up most dependency versions on github.com, and skips every
+dependency hosted there without a token, so the Renovate pipeline fails without one. The Repo
+Health Check pipeline uses it too, to check github.com links without hitting github.com's
 unauthenticated rate limit. Create a [personal access token](https://github.com/settings/tokens)
-with **no scopes** on any GitHub account, then add it to both pipelines:
+with **no scopes** on any GitHub account, then add it to both pipelines (`mise run
+provision-secrets` does this):
 
 ```bash
 az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name "[<repo>] Maint (Auto) - Renovate" --secret true

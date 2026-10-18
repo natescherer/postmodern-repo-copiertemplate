@@ -1217,6 +1217,7 @@ _message_after_copy: |-
   {%- elif using_azdo -%}
   Before CI works, set these as secret variables on the pipelines that use them:
     - APPRISE_URL
+    - GITHUB_COM_TOKEN
   Run `mise run provision-secrets`, or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }} to set them by hand.
   {%- endif %}
 
