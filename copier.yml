@@ -7,7 +7,7 @@ _jinja_extensions:
 # renovate: datasource=pypi depName=copier
 _min_copier_version: "9.19.1"
 
-_message_before_copy: Thanks for using this template! See https://natescherer.github.io/postmodern-repo-copiertemplate/latest/reference/template-questions/ for a deeper explanation of each question.
+_message_before_copy: Thanks for using this template. See https://natescherer.github.io/postmodern-repo-copiertemplate/latest/reference/template-questions/ for what each question controls.
 
 _subdirectory: template
 # endregion Copier Settings
@@ -45,16 +45,12 @@ parent_template_docs_suffix:
 # its descendants. Each one runs on every update instead, so it must be safe to rerun.
 _migrations:
   # region Backfill Legacy Version Into knope-current-version.json (all versions)
-  # v0.8.0 is what replaced release-please (GitHub) and commitizen (Azure
-  # DevOps) with Knope, introducing knope-current-version.json. A project
-  # updating past that point tracked its version via one of those two tools
-  # or their own predecessor commit-and-tag-version instead; all three tag
-  # releases as `vX.Y.Z` the same way Knope does, so the latest such tag is
-  # the real version regardless of which one was in use. The file is seeded
-  # with a "0.0.0" placeholder the moment a project first receives it, so
-  # this only overwrites that placeholder, never a real version. The same
-  # command runs as a copy task (see _tasks), for an existing project that
-  # applies the template with its release tags already in place.
+  # v0.8.0 replaced release-please (GitHub) and commitizen (Azure DevOps) with Knope,
+  # which tracks the version in knope-current-version.json. Those tools, and the
+  # commit-and-tag-version before them, all tagged releases `vX.Y.Z` as Knope does, so
+  # the latest such tag is the real version. A project receives the file with a "0.0.0"
+  # placeholder, and this overwrites only that placeholder. The same command runs as a
+  # copy task (see _tasks) for an existing project with release tags already in place.
   - command: &seed_version_from_tag
       - "{{ _copier_python }}"
       - -c
@@ -103,12 +99,9 @@ _migrations:
 
   # region Knope Changelog Reformatter (all versions)
   # release-please wrote CHANGELOG.md headings as `## [X.Y.Z](url) (date)`, which
-  # Knope's changelog writer can't parse; it silently appends new releases at the
-  # end of the file instead of the top once it can't find a heading it recognizes. A
-  # project that adopted this template before the Knope switch has that same stale
-  # formatting, so it needs the same one-time reformat this repo's own CHANGELOG.md
-  # got when this fix landed. Idempotent: a heading already in Knope's format doesn't
-  # match the pattern below, so re-running this is a no-op.
+  # Knope can't parse: without a heading it recognizes, it appends new releases at the
+  # end of the file. This rewrites them as `## X.Y.Z (date)`. A heading already in that
+  # form doesn't match, so rerunning it changes nothing.
   - command:
       - "{{ _copier_python }}"
       - -c
@@ -133,13 +126,11 @@ _migrations:
   # endregion Knope Changelog Reformatter (all versions)
 
   # region Reminder to Remove REPO_MAINTENANCE_PAT (all versions)
-  # v0.8.2 dropped REPO_MAINTENANCE_PAT: every GitHub workflow that used it now runs
-  # under the default GITHUB_TOKEN instead, at the cost of a one-time manual approval
-  # per bot-authored push. A project updating past this
-  # point may still have the secret set from before; checks via `gh secret list`
-  # rather than printing unconditionally, since a project that never set it (or
-  # already removed it) shouldn't be nagged; skipped quietly when `gh` isn't installed,
-  # so the update itself (and the changeset generator after it) still runs.
+  # v0.8.2 dropped REPO_MAINTENANCE_PAT: the GitHub workflows that used it run as the
+  # default GITHUB_TOKEN, at the cost of a manual approval for each bot-authored push.
+  # A project updating past v0.8.2 may still have the secret set. This checks with
+  # `gh secret list` and prints a reminder only when it's there, and exits quietly
+  # without `gh`, so the update and the changeset generator after it still run.
   - command:
       - "{{ _copier_python }}"
       - -c
@@ -168,14 +159,12 @@ _migrations:
   # endregion Reminder to Remove REPO_MAINTENANCE_PAT (all versions)
 
   # region Upstream Change to Changeset Generator (all versions)
-  # This runs on every update, so upstream changes can be easily added to this
-  # project's changelog instead of vanishing into an opaque "chore: apply parent template"
-  # commit. Computes the content by running Knope's compute-upstream-bump workflow
-  # inside a throwaway clone of the template, prepared by removing all tags after this
-  # project's pre-update version so Knope's own "most recent tag" baseline
-  # lands on the actual delta; see that workflow's comment in knope.toml for why.
-  # Silently does nothing if there's no qualifying commit to bump (e.g. an
-  # internal-only template change).
+  # Writes a changeset for each relevant upstream change, so it reaches this project's
+  # changelog instead of disappearing into a "chore: apply parent template" commit. It
+  # runs Knope's compute-upstream-bump workflow in a temporary clone of the template,
+  # with every tag but this project's pre-update version removed so Knope's "most
+  # recent tag" baseline lands on that version; see the workflow's comment in
+  # knope.toml. It writes nothing when no upstream commit is release-worthy.
   - command:
       - "{{ _copier_python }}"
       - -c
@@ -217,12 +206,9 @@ _migrations:
                 if tag != version_from:
                     run("git", "tag", "-d", tag, cwd=scratch, check=False)
 
-            # Truncated before running: compute-upstream-bump computes the bump
-            # from git tags/commits, not from existing changelog content, so
-            # nothing is lost. It does mean the freshly-written entry ends up
-            # the only thing in the file, so there's no older (possibly
-            # hand-edited) entry left for the extraction below to mistake for
-            # part of it.
+            # Emptied first: compute-upstream-bump works from tags and commits, not the
+            # changelog, so nothing is lost, and the new entry is then the only one in
+            # the file for the extraction below to read.
             (scratch / "CHANGELOG.md").write_text("", encoding="utf-8")
 
             result = run(
@@ -247,10 +233,9 @@ _migrations:
                 entry = f.read().strip()
             body = entry.split("\n", 1)[1].strip() if "\n" in entry else ""
 
-            # Knope's default changelog section names (Breaking Changes/Features/
-            # Fixes) can be overridden per-package via `extra_changelog_sections`
-            # in knope.toml, so this reads the upstream's own config instead of
-            # assuming its defaults still hold.
+            # knope.toml's `extra_changelog_sections` can rename Knope's default
+            # sections (Breaking Changes, Features, Fixes), so read the upstream's
+            # config instead of assuming the defaults.
             section_names = {
                 "major": "Breaking Changes",
                 "minor": "Features",
@@ -283,19 +268,14 @@ _migrations:
                 for heading, content in section_pattern.findall(body)
             }
 
-            # Knope promotes a changeset's first line to a "###" heading
-            # when the file has more than one line, so one changeset file per
-            # change keeps everything a flat list.
+            # Knope turns a multi-line changeset's first line into a "###" heading, so
+            # one file per change keeps the changelog a flat list.
             #
-            # Each bullet is also attributed to where it came from: GitHub's
-            # bare "(#1234)" squash-merge suffix is
-            # rewritten to a repo-qualified link ("owner/repo#1234") instead.
-            # Azure DevOps has no such suffix, its bullets get a
-            # link to the source repo instead. A bullet that
-            # already ends in a markdown link is left alone: it was already
-            # attributed correctly at an earlier hop (e.g. a grandparent
-            # template), and relinking it here would misattribute it to the
-            # immediate parent.
+            # Each bullet links to where it came from. GitHub's bare "(#1234)"
+            # squash-merge suffix becomes a repo-qualified link ("owner/repo#1234");
+            # Azure DevOps has no such suffix, so its bullets link to the source repo.
+            # A bullet that already ends in a link was attributed at an earlier hop
+            # (such as a grandparent template) and stays as it is.
             github_match = re.match(
                 r"^gh:([^/\s]+)/([^/\s]+)$", upstream
             ) or re.search(r"github\.com[:/]+([^/\s]+)/([^/\s.]+)", upstream)
@@ -373,8 +353,7 @@ _migrations:
 
 # region Pre-Question Computed Values
 lifecycle_previous:
-  # Records the value of lifecycle before it is asked, so that it can be used as
-  # part of the validator on the lifecycle question itself.
+  # The lifecycle answer from before this run, for the lifecycle question's validator.
   type: str
   default: "{{ lifecycle | default('') }}"
   when: false
@@ -384,9 +363,8 @@ lifecycle_previous:
 developer_platform:
   type: str
   help: |-
-    The platform where you are going to host your Git repo and CI/CD. Azure DevOps
-    support is deprecated and will eventually be removed; prefer GitHub unless you
-    specifically need Azure DevOps.
+    Where to host the Git repo and CI/CD. Azure DevOps support is deprecated; use GitHub
+    unless you need Azure DevOps.
   ask: "{{ not project_initialized }}"
   choices:
     - GitHub
@@ -396,7 +374,7 @@ developer_platform:
 repo_setup_actions:
   type: str
   help: |-
-    New project? 'Create Repo'. Existing project? 'Set Repo Rules' on GitHub, 'None' on Azure DevOps. Don't want to do anything? 'None'.
+    New project: 'Create Repo'. Existing project: 'Set Repo Rules' on GitHub, 'None' on Azure DevOps. No setup: 'None'.
   ask: "{{ not project_initialized }}"
   choices:
     Create Repo:
@@ -404,7 +382,7 @@ repo_setup_actions:
     Set Repo Rules:
       value: Set Repo Rules
       # Azure DevOps registers pipelines from YAML on the remote main, which an existing
-      # project hasn't pushed yet at copy time.
+      # project hasn't pushed at copy time.
       validator: |-
         {%- if developer_platform == 'Azure DevOps' -%}
           Not Supported on Azure DevOps: choose None, push the generated files, then follow {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }}
@@ -412,7 +390,7 @@ repo_setup_actions:
     None:
       value: None
   default: Create Repo
-  # This validator makes sure you have the proper CLI for your platform both installed and logged in
+  # Checks that the platform's CLI is installed and logged in.
   validator: |-
     {%- if not project_initialized and repo_setup_actions != 'None' -%}
       {%- if developer_platform == 'GitHub' -%}
@@ -456,17 +434,17 @@ repo_setup_actions:
 github_username:
   type: str
   help: |-
-    Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.
+    Your GitHub username; the repo is created under it unless you name an org. Defaults to the username in your Git 'user.email'.
   ask: "{{ not project_initialized }}"
-  # Assumes GitHub's noreply-email pattern (12345+username@users.noreply.github.com); for any
-  # other "+"-tagged email (e.g. user+tag@gmail.com) this will incorrectly default to the tag.
+  # Assumes GitHub's noreply email form (12345+username@users.noreply.github.com). Any
+  # other "+"-tagged email (such as user+tag@gmail.com) defaults to the tag instead.
   default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
   when: "{{ developer_platform == 'GitHub' }}"
 
 github_org:
   type: str
   help: |-
-    If this repo is part of a GitHub organization, supply its name here, otherwise leave the default value of 'None'.
+    The GitHub organization that owns the repo, or 'None' to create it under your username.
   ask: "{{ not project_initialized }}"
   default: None
   when: "{{ developer_platform == 'GitHub' }}"
@@ -474,21 +452,21 @@ github_org:
 azdo_org:
   type: str
   help: |-
-    The Azure DevOps organization for this project.
+    The Azure DevOps organization for the repo.
   ask: "{{ not project_initialized }}"
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
 azdo_project:
   type: str
   help: |-
-    The Azure DevOps project for your repo.
+    The Azure DevOps project for the repo.
   ask: "{{ not project_initialized }}"
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
 repo_name:
   type: str
   help: |-
-    The name of this project's Git repository. Defaults to the name of the destination folder.
+    The Git repo's name. Defaults to the destination folder's name.
   ask: "{{ not project_initialized }}"
   default: "{{ _copier_conf.dst_path | realpath | basename }}"
   validator: |-
@@ -498,13 +476,13 @@ repo_name:
 
 author_name:
   type: str
-  help: The name to whom this project will be credited. Autodetect attempted from Git 'user.name'.
+  help: Who the project is credited to. Defaults to your Git 'user.name'.
   default: "{{ 'git config --global user.name' | shell() | trim }}"
 
 project_type:
   type: str
   help: |-
-    If you are creating a basic repo, choose Standard. If you are creating a child template, choose Template.
+    Standard for a project repo; Template for a child Copier template.
   ask: "{{ not project_initialized }}"
   choices:
     - Standard
@@ -513,7 +491,7 @@ project_type:
 
 project_name:
   type: str
-  help: The friendly name of this project, which can include capitals, spaces, etc.
+  help: The project's display name; capitals and spaces are fine.
   validator: |-
     {%- if '"' in project_name or '\\' in project_name -%}
       The project name can't contain '"' or '\', since it's written into quoted TOML/YAML strings.
@@ -521,7 +499,7 @@ project_name:
 
 project_description:
   type: str
-  help: A short (two-ish sentence) description for this project, to be used in documentation and packaging.
+  help: A one- or two-sentence description, used in docs and packaging.
   validator: |-
     {%- if '"' in project_description or '\\' in project_description -%}
       The project description can't contain '"' or '\', since it's written into quoted TOML/YAML strings.
@@ -530,7 +508,7 @@ project_description:
 project_visibility:
   type: str
   help: |-
-    Choose if you want this project to be Public or Private.
+    Public (open source) or Private.
   ask: "{{ not project_initialized }}"
   choices:
     Public:
@@ -570,7 +548,7 @@ license:
 zensical_target:
   type: str
   help: |-
-    Choose how you want to publish your documentation
+    Where to publish the docs.
   ask: "{{ not project_initialized }}"
   choices:
     GitHub Pages:
@@ -590,7 +568,7 @@ zensical_target:
 
 lifecycle:
   type: str
-  help: Choose what state this project is in.
+  help: The project's current stage.
   choices:
     - Pre-Alpha
     - Alpha
@@ -610,7 +588,7 @@ agent_instructions:
 
 code_coverage:
   type: bool
-  help: Report code coverage via Codecov (GitHub) or Azure Pipelines' built-in publishing (Azure DevOps). This wires up reporting only, your test command needs to produce coverage.xml (Cobertura) at the repo root.
+  help: Publish code coverage through Codecov (GitHub) or Azure Pipelines (Azure DevOps). This publishes a Cobertura coverage.xml from the repo root; your test command produces it.
   default: false
 # endregion Questions
 
@@ -771,18 +749,18 @@ current_knope_version_is_pre_1:
 setup_checklist:
   type: str
   default: |-
-    - [ ] Add/remove badges to the top of README.md.
+    - [ ] Add or remove badges at the top of README.md.
     - [ ] Replace docs/assets/images/readme-logo.png with your own logo, or remove that section from README.md.
-    - [ ] Replace docs/assets/images/readme-screenshot.png with a real screenshot of your project, or remove that section from README.md.
-    - [ ] Set required secrets/pipeline variables: run `mise run provision-secrets` or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }}.
+    - [ ] Replace docs/assets/images/readme-screenshot.png with a screenshot of your project, or remove that section from README.md.
+    - [ ] Set the required secrets: run `mise run provision-secrets`, or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }}.
     {%- if using_github %}
     - [ ] If the Renovate GitHub App only has access to selected repositories, add this one.
-    - [ ] Once Renovate opens its **Dependency Dashboard** issue, pin it (**Pin issue** in the issue sidebar) so it stays at the top of the Issues tab.
-    - [ ] On the first release PR, approve its PR Validation run (**Approve and run workflow**); GitHub holds runs on bot-opened PRs until a person approves them.
+    - [ ] When Renovate opens its **Dependency Dashboard** issue, pin it (**Pin issue** in the sidebar) to keep it at the top of the Issues tab.
+    - [ ] On the first release PR, approve its PR Validation run (**Approve and run workflow**); GitHub holds runs on bot-opened PRs until someone approves them.
     {%- endif %}
     - [ ] Merge the first release PR once PR Validation passes.
     {%- if is_public and license == 'None' %}
-    - [ ] Add a license. Until one is added, no one may legally use, copy, modify, or distribute this code without your explicit permission.
+    - [ ] Add a license. Without one, nobody may legally use, copy, modify, or distribute this code without your permission.
     {%- endif %}
   when: false
 # endregion Post-Question Computed Values
@@ -796,17 +774,16 @@ copyright_year:
 
 # region Tasks
 _tasks:
-  # Applying the template to an existing project: seeds knope-current-version.json
-  # from its latest vX.Y.Z tag (see the 0.8.0 migration that shares this command),
-  # so the first release continues from there instead of from 0.0.0.
+  # For an existing project, seeds knope-current-version.json from its latest vX.Y.Z
+  # tag (the backfill migration shares this command), so the first release continues
+  # from there instead of from 0.0.0.
   - command: *seed_version_from_tag
     when: "{{ _copier_operation == 'copy' }}"
 
-  # This is the secret sauce that makes nested templates work. Every template gets
-  # a copy of the parent template's 'template' directory added back unrendered. On
-  # update, files the parent deleted (or renamed) since the previous version are
-  # removed too, since copytree only adds and overwrites; the previous version comes
-  # from the answers file still committed at HEAD.
+  # Makes nested templates work: every Template project gets an unrendered copy of
+  # the parent's template/ directory. copytree only adds and overwrites, so on update
+  # this also removes the files the parent deleted or renamed since the previous
+  # version, which it reads from the answers file committed at HEAD.
   - command:
       - "{{ _copier_python }}"
       - -c
@@ -957,9 +934,7 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # This ensures that a built copy of the docs will exist immediately after the
-  # pipeline is created, so that "docs-site" will be available even if the first
-  # PR to add docs hasn't been merged yet.
+  # Runs the docs pipeline once, so docs-site/ exists before the first docs PR merges.
   - command: >-
       az pipelines run
       --name "[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish"
@@ -980,13 +955,12 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Requires the pr_validation build to pass before a PR can be completed, and lets
-  # Project Administrators override that when completing a PR (mirrors GitHub's
-  # admin bypass_actors entry in settings.yml.jinja). `az repos policy` has no flag
-  # for the override part; it's a branch-level security permission instead, set
-  # via the raw security-namespace API since `az repos`/`az devops` has no
-  # higher-level command for it. Namespace ID, permission bit, and token format
-  # aren't in Microsoft's own CLI docs; cross-checked against
+  # Requires the pr_validation build to pass before a PR completes, and lets Project
+  # Administrators override it (matching GitHub's admin bypass_actors entry in
+  # settings.yml.jinja). `az repos policy` has no flag for the override: it's a
+  # branch-level security permission, set through the raw security-namespace API
+  # because `az repos` and `az devops` have no command for it. Microsoft's CLI docs
+  # don't give the namespace ID, permission bit, or token format; they come from
   # https://github.com/Azure/azure-devops-cli-extension/blob/master/doc/security_tokens.md
   # and https://devblogs.microsoft.com/devops/git-repo-tokens-for-the-security-service/.
   - command:
@@ -997,11 +971,9 @@ _tasks:
 
         ORG = "https://dev.azure.com/{{ azdo_org }}/"
         PROJECT = "{{ azdo_project }}"
-        # az is an az.cmd batch wrapper on Windows, not a real .exe; subprocess with
-        # shell=False (the default, used throughout below) won't find it from the bare
-        # name alone, failing with FileNotFoundError: [WinError 2]. which() finds the
-        # actual resolvable path on any platform, sidestepping that gap without
-        # needing shell=True.
+        # On Windows, az is an az.cmd batch wrapper, which subprocess without a shell
+        # can't find by bare name (FileNotFoundError: [WinError 2]). which() resolves
+        # its path on any platform without needing shell=True.
         AZ = shutil.which("az") or "az"
 
 
@@ -1045,8 +1017,8 @@ _tasks:
             for g in groups["graphGroups"]
             if g["displayName"] == "Project Administrators"
         )
-        # refs/heads/main, UTF-16LE hex-encoded per character; Azure DevOps's Git
-        # ACL token format for a specific branch.
+        # refs/heads/main, UTF-16LE hex-encoded per character: Azure DevOps's Git ACL
+        # token format for a branch.
         token = f"repoV2/{project_id}/{repo_id}/refs/heads/6d00610069006e00"
         subprocess.run(
             [
@@ -1074,7 +1046,7 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # See the docs pipeline's warm-up task above for why this is needed.
+  # Runs the release pipeline once, so the first release PR opens right away.
   - command: >-
       az pipelines run
       --name "[{{ repo_name }}] Release (Auto) - Prepare & Publish Release"
@@ -1095,13 +1067,11 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Lets the default GITHUB_TOKEN open/update pull requests (off by default on a new
-  # repo); Release (Auto): Prepare Release PR and Docs (Auto): Zensical Build & Commit
-  # both need this to run without a Personal Access Token. Doesn't grant approving
-  # reviews, just opening/updating PRs, despite the API field's name. Leaves
-  # default_workflow_permissions at GitHub's own secure "read" default: every job in
-  # this template already declares its own explicit `permissions:` block, so nothing
-  # depends on a permissive repo-wide fallback.
+  # Lets the default GITHUB_TOKEN open and update pull requests, which a new repo
+  # doesn't allow; Release (Auto): Prepare Release PR and Docs (Auto): Zensical Build &
+  # Commit need it to run without a Personal Access Token. Despite the API field's name,
+  # it doesn't let the token approve reviews. default_workflow_permissions stays at
+  # GitHub's "read" default, since every job here declares its own `permissions:`.
   - command: >-
       gh api repos/{{ github_repo_owner }}/{{ repo_name }}/actions/permissions/workflow
       -X PUT -F can_approve_pull_request_reviews=true
@@ -1110,8 +1080,8 @@ _tasks:
         true
       {%- endif %}
 
-  # Sets up GitHub Pages; an existing repo (Set Repo Rules) may already have a site,
-  # which POST rejects with 409, so that case switches its build type instead.
+  # Sets up GitHub Pages. An existing repo (Set Repo Rules) may already have a site,
+  # which POST rejects with 409; then PUT switches its build type instead.
   - command: >-
       gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
       || gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X PUT -f build_type=workflow
@@ -1120,8 +1090,8 @@ _tasks:
         true
       {%- endif %}
 
-  # Enables CodeQL code scanning's default setup; free for public repos, needs
-  # GitHub Advanced Security (paid) on private ones, so scoped to public only.
+  # Enables CodeQL default setup, for public repos only: private repos need a paid
+  # GitHub Advanced Security license.
   - command: >-
       gh api repos/{{ github_repo_owner }}/{{ repo_name }}/code-scanning/default-setup
       -X PATCH -f state=configured
@@ -1130,9 +1100,9 @@ _tasks:
         true
       {%- endif %}
 
-  # Lets anyone privately report a security vulnerability (Security > Advisories)
-  # instead of only via a public issue; meaningful for public repos specifically,
-  # since a private repo's issues are already restricted to invited collaborators.
+  # Lets anyone report a vulnerability privately (Security > Advisories) instead of in a
+  # public issue. Public repos only: a private repo's issues are already limited to its
+  # collaborators.
   - command: gh api repos/{{ github_repo_owner }}/{{ repo_name }}/private-vulnerability-reporting -X PUT
     when: *when_copy_public_github
 
@@ -1162,37 +1132,37 @@ _message_after_copy: |-
 
   {% endif -%}
   {%- if using_github -%}
-    Repo settings (labels, merge options, branch protection) are not being applied automatically. See {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }} for how to replicate them by hand, or install the Settings GitHub App (https://github.com/apps/settings) and it will pick up the already-generated .github/settings.yml on its own.
+    If the Settings GitHub App (https://github.com/apps/settings) isn't installed, nothing applies .github/settings.yml (labels, merge options, branch protection). Install the app, or apply the settings by hand: {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }}
 
   {% endif -%}
   {%- if using_azdo and not should_set_repo_settings -%}
-    Azure Pipelines and the PR-validation build policy were not created automatically since repo setup was skipped. See {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }} for how to set these up by hand.
+    Repo setup was skipped, so the pipelines and the PR Validation build policy don't exist yet. Set them up by hand: {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }}
 
   {% endif -%}
   {%- if using_github -%}
-  Before CI works, add these as GitHub Actions secrets (Settings > Secrets and variables > Actions):
+  Before CI works, add these GitHub Actions secrets (Settings > Secrets and variables > Actions):
     - APPRISE_URL
   {%- if code_coverage %}
     - CODECOV_TOKEN
   {%- endif %}
-  Run `mise run provision-secrets`, or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }} for manual provisioning details.
+  Run `mise run provision-secrets`, or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }} to set them by hand.
   {%- elif using_azdo -%}
-  Before CI works, add these as secret Azure DevOps pipeline variables (Pipelines > Library):
+  Before CI works, set these as secret variables on the pipelines that use them:
     - APPRISE_URL
-  Run `mise run provision-secrets`, or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }} for manual provisioning details.
+  Run `mise run provision-secrets`, or see {{ parent_template_docs_url }}reference/token-permissions{{ parent_template_docs_suffix }} to set them by hand.
   {%- endif %}
 
 _message_after_update: |-
   {%- if lifecycle == 'Stable' and current_knope_version_is_pre_1 -%}
-  This project's lifecycle is 'Stable' but it hasn't released 1.0.0 yet. This update pins
-  the next release to 1.0.0 in .config/knope-release-override.json; once it's merged to main,
-  the release PR proposes 1.0.0.
+  This project's lifecycle is 'Stable', but it hasn't released 1.0.0. This update pins the
+  next release to 1.0.0 in .config/knope-release-override.json; once it's merged to main, the
+  release PR proposes 1.0.0.
   {%- endif %}
   {%- set changesets = (('"' ~ _copier_python ~ '" -c "import glob, os, sys; print(chr(10).join(glob.glob(os.path.join(sys.argv[1], \'.changeset\', \'template-update-*.md\'))))" "' ~ _copier_conf.dst_path ~ '"') | shell()) -%}
   {%- if changesets.strip() %}
 
-  This project has pending changesets describing upstream template updates in the '.changeset' folder.
-  Some of what changed upstream (platform-specific fixes, template-internal
-  tooling, etc.) may not be relevant here, review and remove irrelevant files before merging.
+  The '.changeset' folder has new changesets describing upstream template changes. Some (such as
+  platform-specific fixes or template-internal tooling) may not apply here; delete those before
+  merging.
   {%- endif %}
 # endregion Messages
