@@ -564,7 +564,7 @@ project_visibility:
       value: Public
       validator: |-
         {%- if developer_platform == 'Azure DevOps' -%}
-          Not Supported on Azure DevOps
+          Not Supported on Azure DevOps: choose Private
         {%- endif %}
     Private:
       value: Private
@@ -583,7 +583,7 @@ license:
       value: MIT
       validator: |-
         {%- if project_visibility == 'Private' -%}
-          Not Supported on Private repos
+          Not Supported on Private repos: choose None
         {%- endif %}
     None:
       value: None
@@ -607,7 +607,7 @@ zensical_target:
       value: GitHub Pages
       validator: |-
         {%- if developer_platform == 'Azure DevOps' -%}
-          Not Supported on Azure DevOps
+          Not Supported on Azure DevOps: choose docs-site Directory in Repo
         {%- endif %}
     docs-site Directory in Repo:
       value: docs-site Directory in Repo
