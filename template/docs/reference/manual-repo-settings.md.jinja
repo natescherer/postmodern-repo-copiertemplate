@@ -1,4 +1,5 @@
 # Manual Repo Settings
+{%- if is_template or using_github %}
 
 === "GitHub"
 
@@ -81,6 +82,8 @@
     - If `zensical_target` is `GitHub Pages`, set **Settings > Pages > Source** to **GitHub Actions**
     - If the repo is public, enable CodeQL's default setup and private vulnerability reporting under
       **Settings > Advanced Security**
+{%- endif %}
+{%- if is_template or using_azdo %}
 
 === "Azure DevOps"
 
@@ -133,3 +136,4 @@
     Under **Project Settings > Repositories > (this repo) > Security**, select **Project
     Administrators** and set **Bypass policies when completing pull requests** to **Allow**; this
     lets project admins use the "Complete" button's bypass option instead of being blocked entirely.
+{%- endif %}

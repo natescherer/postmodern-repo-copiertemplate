@@ -1,6 +1,7 @@
 # Prerequisites
 
 ## Platform-Level Prerequisites
+{%- if is_template or using_github %}
 
 === "GitHub"
 
@@ -26,6 +27,8 @@
     To be alerted when a workflow run fails, open [Notification settings](https://github.com/settings/notifications), and under **Actions**, choose how you want to be notified and enable **Only notify for failed workflows**.
 
     Notifications for scheduled workflows go to the user who created the workflow, or to whoever last changed its cron schedule, not to everyone with access to the repo.
+{%- endif %}
+{%- if is_template or using_azdo %}
 
 === "Azure DevOps"
 
@@ -54,6 +57,7 @@
                         - `Contribute`
                         - `Contribute to pull requests`
                         - `Create branch`
+{%- endif %}
 
 ## Workstation Prerequisites
 
@@ -63,6 +67,7 @@
 1. Ensure you have followed the steps to [activate mise in your shell](https://mise.jdx.dev/getting-started.html#activate-mise).
 
 ### Platform-Specific
+{%- if is_template or using_github %}
 
 === "GitHub"
 
@@ -75,6 +80,8 @@
     1. Set up Git authentication for HTTPS. Either option works:
         - Run `gh auth setup-git` to let Git reuse the GitHub CLI's credentials.
         - Install [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager), which also handles Azure DevOps if you use both. It comes bundled with Git for Windows; on macOS and Linux it's a separate install (see the link above).
+{%- endif %}
+{%- if is_template or using_azdo %}
 
 === "Azure DevOps"
 
@@ -86,3 +93,4 @@
         ```
     1. Install [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager) to authenticate git over HTTPS
         - Git Credential Manager comes bundled with Git for Windows; on macOS and Linux it's a separate install (see the link above).
+{%- endif %}
