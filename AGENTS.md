@@ -72,57 +72,41 @@ Reference: <https://docs.renovatebot.com/key-concepts/scheduling/>
 
 ## Dogfooding architecture
 
-This section is hand-maintained, not templated; `template/AGENTS.md.jinja` doesn't
-carry it, since dogfooding is specific to this repo and never applies to a generated
-child. Treat it like the root `copier.yml` exception: a deliberate, permanent addendum,
-not something a future `copier update` should reconcile away.
+This section is hand-maintained, not templated: `template/AGENTS.md.jinja` doesn't carry it,
+since dogfooding applies only to this repo. Like the root `copier.yml` exception, it's a
+permanent addendum that a `copier update` must not remove.
 
-This repo is both a Copier template (source of truth under `template/`) and,
-via dogfooding, a rendered instance of that same template
-(`project_type: Template` in `.config/copier-answers.yml`). Root-level files
-like `mise.toml`, `README.md`, `docs/`, and `.github/workflows/` are
-**rendered output**, not hand-maintained; they lag behind `template/` until
-an explicit `copier update` (or a new release) re-renders them. **Never
-hand-edit a root-level dogfooded file; edit the matching `template/` source
-instead.**
+This repo is a Copier template (source of truth under `template/`) and, through dogfooding, a
+rendered instance of that template (`project_type: Template` in `.config/copier-answers.yml`).
+Root-level files such as `mise.toml`, `README.md`, `docs/`, and `.github/workflows/` are
+**rendered output**. They lag behind `template/` until a `copier update` re-renders them.
+**Never hand-edit a root-level dogfooded file; edit its `template/` source instead.**
 
 Two exceptions:
 
-- **Root `copier.yml`** must be kept in sync **immediately**, in the same
-  turn as any edit to `template/{% if is_template %}copier.yml{% endif %}.jinja`'s
-  raw-block body. Copier reads root `copier.yml` directly (not from inside
-  `template/`) when this repo is used as a Copier source, so a stale root
-  copy breaks real usage, not just documentation. Safe method: render just
-  `copier.yml` from the updated template against this repo's own recorded
-  answers, diff against the current root file to confirm the delta is exactly
-  the intended edit, then replace it wholesale. Render from a plain-directory
-  copy of `template/` plus root `copier.yml` (not this repo's `.git` source
-  directly): a git-source render reads from HEAD, so it silently ignores any
-  edit that isn't committed yet.
-- Occasionally another root file is operationally load-bearing enough that
-  staleness causes an active problem right now (not just "missing a new
-  feature until the next update"); e.g. `renovate.json`, which Renovate
-  reads directly on its own schedule regardless of `copier update`. Treat
-  syncing those as a deliberate, flagged exception, not the default. Root
-  `knope.toml` joins this list specifically for any workflow that
-  `copier.yml`'s `_migrations` scripts invoke by cloning this repo (e.g.
-  `compute-upstream-bump`); that clone gets whatever's actually committed to
-  root `knope.toml`, not `template/knope.toml.jinja`, so a workflow that only
-  exists in the template source silently fails with "unrecognized subcommand"
-  in every child's migration until root catches up.
+- **Root `copier.yml`** must stay in sync **immediately**, in the same change as any edit to
+  the raw-block body of `template/{% if is_template %}copier.yml{% endif %}.jinja`. Copier reads
+  root `copier.yml` when this repo is the source, so a stale copy breaks real use. To sync it,
+  render `copier.yml` from the updated template with this repo's recorded answers, confirm the
+  diff against the current root file is exactly the intended edit, then replace the file. Render
+  from a plain-directory copy of `template/` plus root `copier.yml`, not from this repo's `.git`:
+  a git-source render reads HEAD and ignores uncommitted edits.
+- **Root files something reads directly.** When staleness causes a problem now, not just a
+  missing feature until the next update, sync the root file as a deliberate, flagged exception.
+  `renovate.json` is one: Renovate reads it on its own schedule. Root `knope.toml` is another,
+  for any workflow a `copier.yml` migration runs by cloning this repo (such as
+  `compute-upstream-bump`): the clone gets root `knope.toml`, not `template/knope.toml.jinja`,
+  so a workflow defined only in the template fails with "unrecognized subcommand" in every
+  child's migration until root catches up.
 
-When validating template changes (e.g. testing uncommitted edits), don't copy
-this repo's root as a Copier source; either render fresh from `template/` or
-run a real `copier update --vcs-ref=HEAD` first, since the root will be stale.
-A git-source render (unlike a plain local-directory source) reads from git
-HEAD, not the working tree, so even a fresh `template/` checkout won't pick up
-*uncommitted* edits unless the source is a plain directory copy (strip `.git`
-so Copier treats it as files, not a repo to check out from) or the edits are
-committed first.
+To test template changes, render from `template/`, or run `copier update --vcs-ref=HEAD` on
+root first; never use the stale root as a Copier source. A git-source render reads HEAD, not
+the working tree, so to include uncommitted edits, render from a plain-directory copy (with
+`.git` removed) or commit first.
 
-If `copier update`/`copier recopy` ever deadlocks trying to render an old
-baseline tag (e.g. a removed extension module the old tag still references),
-`copier copy --overwrite --data-file <answers-file-with-underscore-keys-stripped>
---vcs-ref=HEAD gh:<owner>/<repo> .` is the escape hatch, but it has no
-"preserve unless template changed" diffing, so treat its output as a rough
-draft and diff every changed file against the pre-copy `HEAD` before staging.
+If `copier update` can't render an old baseline (for example, the old version needs a Jinja
+extension or `invoke` task that no longer exists), update once with that version's extensions
+installed and `--skip-tasks`, as the Upgrading from 0.x guide shows. Use
+`copier copy --overwrite --data-file <answers without _ keys> --vcs-ref=HEAD <source> .` only as
+a last resort: it overwrites local edits, so diff every changed file against `HEAD` before
+staging.

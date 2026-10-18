@@ -3,12 +3,11 @@
 
 === "GitHub"
 
-    When you use the [Settings GitHub App](https://github.com/apps/settings), it syncs the repo
-    settings, labels, and branch protection ruleset described below from the committed
-    `.github/settings.yml` automatically. If you don't want to install that app (or can't, e.g. it's
-    not been approved for your organization), here's how to apply the same configuration by hand
-    through the GitHub UI. `.github/settings.yml` is the source of truth for the exact values below;
-    if the two ever disagree, trust the file.
+    The [Settings GitHub App](https://github.com/apps/settings) applies the settings, labels, and
+    branch protection ruleset below from the committed `.github/settings.yml`. Without the app
+    (for example, if your organization hasn't approved it), apply them by hand in the GitHub UI as
+    described here. `.github/settings.yml` holds the exact values; where this page and the file
+    differ, the file is right.
 
     ### Description and Homepage
 
@@ -29,9 +28,9 @@
 
     Under **Settings > General > Pull Requests**:
 
-    - Disable **Allow merge commits** and **Allow rebase merging**, leaving **Allow squash merging**
-      as the only option: a squashed PR's title becomes its commit on `main`, which is what the
-      Conventional Commits checks and release automation read
+    - Disable **Allow merge commits** and **Allow rebase merging**, leaving only **Allow squash
+      merging**: a squashed PR's title becomes its commit on `main`, which the Conventional
+      Commits checks and release automation read
     - Enable **Allow auto-merge**
     - Enable **Automatically delete head branches**
 
@@ -54,17 +53,15 @@
         - **Require status checks to pass**, with:
             - Require branches to be up to date before merging: on
             - Status check: `tests` (the job in `Test (Auto): PR Validation`)
-    - Bypass list: add **Repository admin**, with bypass mode **Pull requests only**; this lets
-      repo admins use the "Merge without waiting for requirements to be met" button instead of being
-      blocked entirely.
+    - Bypass list: add **Repository admin**, with bypass mode **Pull requests only**, so repo
+      admins can use the "Merge without waiting for requirements to be met" button.
 
     ### GitHub Pages Environment
 
     (`zensical_target: GitHub Pages` only.)
 
-    After the first successful Pages deployment, an environment named `github-pages` will exist under
-    **Settings > Environments**. Open it and ensure **Deployment branches and tags** is set to
-    **All branches** (no restriction).
+    The first Pages deployment creates a `github-pages` environment under **Settings >
+    Environments**. Open it and set **Deployment branches and tags** to **All branches**.
 
     ### Security and Analysis
 
@@ -74,8 +71,8 @@
 
     ### Settings Repo Setup Applies
 
-    With `repo_setup_actions: None`, these aren't covered by `.github/settings.yml` or applied
-    during the copy, so set them by hand:
+    `.github/settings.yml` doesn't cover these, and with `repo_setup_actions: None` the copy
+    doesn't apply them, so set them by hand:
 
     - Under **Settings > Actions > General**, enable **Allow GitHub Actions to create and approve
       pull requests**
@@ -87,16 +84,16 @@
 
 === "Azure DevOps"
 
-    If you chose `repo_setup_actions: None` (or need to reapply this after the fact), here's how to
-    recreate what `Create Repo`/`Set Repo Rules` would otherwise set up automatically, through the
-    Azure DevOps UI.
+    With `repo_setup_actions: None`, or to reapply settings later, set up in the Azure DevOps UI
+    what `Create Repo` would otherwise configure.
 
     ### Pipelines
 
-    Push the generated files to `main` first: Azure DevOps reads each pipeline's YAML from the
-    repo. Then, under **Pipelines > New pipeline** (**Azure Repos Git**, this repo, **Existing Azure
-    Pipelines YAML file**), create these, using exactly these names with `<repo>` replaced by your
-    repo's name; other automation (e.g. `mise run provision-secrets`) finds pipelines by name:
+    Push the generated files to `main` first, since Azure DevOps reads each pipeline's YAML from
+    the repo. Then, under **Pipelines > New pipeline** (**Azure Repos Git**, this repo, **Existing
+    Azure Pipelines YAML file**), create each pipeline below with exactly this name, replacing
+    `<repo>` with your repo's name. Other automation, such as `mise run provision-secrets`, finds
+    pipelines by name:
 
     | Name | YAML file |
     | --- | --- |
@@ -108,8 +105,8 @@
     | `[<repo>] Release (Auto) - Prepare & Publish Release` | `.azurepipelines/release-auto-release.yml` |
     | `[<repo>] Release (Manual) - Create Prerelease` | `.azurepipelines/release-manual-createprerelease.yml` |
 
-    Or, with the Azure CLI and its `azure-devops` extension installed and `az login` done, run this
-    once per row:
+    Or, with the Azure CLI and its `azure-devops` extension installed and logged in, run this for
+    each row:
 
     ```bash
     az pipelines create --name "<name>" --repository <repo> --repository-type tfsgit \
@@ -118,8 +115,8 @@
     ```
 
     Then run **Docs (Auto) - Zensical Build & Publish** and **Release (Auto) - Prepare & Publish
-    Release** once each, so the built docs and the first release PR exist right away, and set the
-    pipeline variables in [Secrets and Tokens](token-permissions.md).
+    Release** once each, to build the docs and open the first release PR, and set the pipeline
+    variables listed in [Secrets and Tokens](token-permissions.md).
 
     ### PR-Validation Branch Policy
 
@@ -134,6 +131,6 @@
     ### Bypass Permission
 
     Under **Project Settings > Repositories > (this repo) > Security**, select **Project
-    Administrators** and set **Bypass policies when completing pull requests** to **Allow**; this
-    lets project admins use the "Complete" button's bypass option instead of being blocked entirely.
+    Administrators** and set **Bypass policies when completing pull requests** to **Allow**, so
+    project admins can use the bypass option on the **Complete** button.
 {%- endif %}

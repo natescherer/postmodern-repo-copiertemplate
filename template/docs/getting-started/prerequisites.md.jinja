@@ -9,24 +9,29 @@
 
     #### GitHub App Installations
 
-    Each of these apps should be installed for the user or organization where you plan to create your repo. It is recommended that you give each app access to all your repositories, which means you only need to do this step once rather than for each new repo.
+    Install each of these apps for the user or organization that will own your repos. Give each
+    one access to all repositories, so you only do this once instead of for every new repo.
 
     1. [Renovate GitHub App](https://github.com/apps/renovate)
-        - This app provides automatic dependency updates for your project
+        - Opens dependency update PRs.
     1. **[Optional]** [Settings GitHub App](https://github.com/apps/settings)
-        - This app syncs repo settings (labels, merge options, branch protection, etc) from `.github/settings.yml`, allowing you to manage (most) GitHub repo settings in code.
-        - If you don't want to use the settings app, manual settings workflow is documented and will be provided during the course of template setup.
+        - Applies repo settings (labels, merge options, branch protection, and more) from
+          `.github/settings.yml`, so most GitHub settings live in code.
+        - Without it, apply the settings by hand; setup links you to the steps.
     1. **[Optional]** [Codecov GitHub App](https://github.com/apps/codecov)
-        - This app powers Codecov's PR comments/checks and connects your repo to codecov.io for uploads
-        - If you don't want code coverage, skip installing and say no to code coverage when setting up the template
+        - Connects the repo to codecov.io for coverage uploads, PR comments, and checks.
+        - Skip it if you'll answer no to `code_coverage`.
     1. **[Skip for Private Repos]** [AllContributors GitHub App](https://github.com/apps/allcontributors/installations/new)
-        - This app provides automatic README crediting when other people contribute to your project
+        - Credits contributors in the README.
 
     #### Failed Workflow Alerts
 
-    To be alerted when a workflow run fails, open [Notification settings](https://github.com/settings/notifications), and under **Actions**, choose how you want to be notified and enable **Only notify for failed workflows**.
+    To get alerts when a workflow run fails, open
+    [Notification settings](https://github.com/settings/notifications), choose how to be notified
+    under **Actions**, and enable **Only notify for failed workflows**.
 
-    Notifications for scheduled workflows go to the user who created the workflow, or to whoever last changed its cron schedule, not to everyone with access to the repo.
+    GitHub sends a scheduled workflow's notifications to whoever created the workflow or last
+    changed its cron schedule, not to everyone with access to the repo.
 {%- endif %}
 {%- if is_template or using_azdo %}
 
@@ -34,63 +39,60 @@
 
     ### One-Time Actions per Azure DevOps Project
 
-    In order to support the proper parsing of Conventional Commits, the following settings must be set:
+    So that squash-merge commit titles stay valid Conventional Commits, turn off **Include PR ID
+    in the completion commit message title by default** under **Project settings >
+    Repositories > Settings > All Repositories Settings**.
 
-    - `Project settings`
-        - `Repositories`
-            - `Settings` tab
-                - `All Repositories Settings` section
-                    - Ensure `Include PR ID in the completion commit message title by default` is set to `Off`
+    The release, docs, and Renovate pipelines push branches and open PRs as the pipeline's build
+    service identity. Which identity that is depends on **Project settings > Pipelines > Settings >
+    Limit job authorization scope to current project for non-release pipelines**: when it's on
+    (the default for new projects), pipelines run as `<Project> Build Service (<Org>)`; when it's
+    off, as `Project Collection Build Service (<Org>)`.
 
-    The release, docs, and Renovate pipelines push branches and open pull requests as the
-    pipeline's build service identity, which needs these permissions. Which identity that is
-    depends on **Project settings > Pipelines > Settings > Limit job authorization scope to current
-    project for non-release pipelines**: when it's on (the default for new projects), pipelines run
-    as `<Project> Build Service (<Org>)`; when it's off, as `Project Collection Build Service
-    (<Org>)`.
+    Under **Project settings > Repositories > Security**, select that identity and set these to
+    **Allow**:
 
-    - `Project settings`
-        - `Repositories`
-            - `Security` tab
-                - The build service identity above
-                    - Set these to `Allow`:
-                        - `Contribute`
-                        - `Contribute to pull requests`
-                        - `Create branch`
+    - `Contribute`
+    - `Contribute to pull requests`
+    - `Create branch`
 {%- endif %}
 
 ## Workstation Prerequisites
 
 ### Universal
 
-1. Install [mise](https://mise.jdx.dev/getting-started.html), the dependency manager for this project.
-1. Ensure you have followed the steps to [activate mise in your shell](https://mise.jdx.dev/getting-started.html#activate-mise).
+1. Install [mise](https://mise.jdx.dev/getting-started.html), which installs every other tool
+   this project uses.
+1. [Activate mise in your shell](https://mise.jdx.dev/getting-started.html#activate-mise).
 
 ### Platform-Specific
 {%- if is_template or using_github %}
 
 === "GitHub"
 
-    1. Install the [GitHub CLI](https://cli.github.com)
-        - The template uses the GitHub CLI to create your repo and configure the settings that the Settings App is unable to.
-    1. Run the below to authenticate the GitHub CLI:
+    1. Install the [GitHub CLI](https://cli.github.com). Setup uses it to create the repo and
+       apply the settings the Settings app can't.
+    1. Log in to the GitHub CLI:
         ```
         gh auth login
         ```
-    1. Set up Git authentication for HTTPS. Either option works:
-        - Run `gh auth setup-git` to let Git reuse the GitHub CLI's credentials.
-        - Install [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager), which also handles Azure DevOps if you use both. It comes bundled with Git for Windows; on macOS and Linux it's a separate install (see the link above).
+    1. Set up Git authentication over HTTPS, with either:
+        - `gh auth setup-git`, so Git reuses the GitHub CLI's credentials.
+        - [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager), which
+          also handles Azure DevOps. Git for Windows includes it; on macOS and Linux, install it
+          separately.
 {%- endif %}
 {%- if is_template or using_azdo %}
 
 === "Azure DevOps"
 
-    1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
-    1. Run the below to install the Azure DevOps extension and authenticate:
+    1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli).
+    1. Install its Azure DevOps extension and log in:
         ```
         az extension add --name azure-devops
         az login
         ```
-    1. Install [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager) to authenticate git over HTTPS
-        - Git Credential Manager comes bundled with Git for Windows; on macOS and Linux it's a separate install (see the link above).
+    1. Install [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager) to
+       authenticate Git over HTTPS. Git for Windows includes it; on macOS and Linux, install it
+       separately.
 {%- endif %}

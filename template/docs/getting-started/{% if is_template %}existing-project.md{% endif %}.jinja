@@ -1,15 +1,13 @@
 # Applying to Existing Projects
 
-To apply this template to an existing project, follow these steps:
+1. Complete the [Prerequisites](prerequisites.md), including
+   [Secrets and Tokens](../reference/token-permissions.md).
 
-1. Review the [Prerequisites](prerequisites.md), including [Secrets and Tokens](../reference/token-permissions.md)
+1. Get the existing project ready: cloned locally, with all changes committed and its default
+   branch (usually `main` or `master`) checked out.
 
-1. Make sure your existing project is ready:
-    1. It's cloned to your local computer
-    1. All changes are committed
-    1. Its default branch (usually `main` or `master`) is checked out
-
-1. In the existing project, create a new branch (`copier-template-apply`, for example) from your default branch
+1. In the existing project, create a branch from the default branch, such as
+   `copier-template-apply`.
 
 1. Clone this repository, open it in your terminal, and install the tools the template needs:
 
@@ -18,7 +16,8 @@ To apply this template to an existing project, follow these steps:
     mise install
     ```
 
-1. From this repository, run the command below, replacing the path at the end with your existing project's root:
+1. From this repository, run the command below, replacing the path at the end with your
+   existing project's root:
 
     ```bash
     mise x "--" copier copy --trust {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} ~/path-to-existing-project
@@ -26,14 +25,15 @@ To apply this template to an existing project, follow these steps:
 
     See [Template Questions](../reference/template-questions.md) for what each prompt controls.
 
-1. For the Repo Setup Actions question, choose `Set Repo Rules` on GitHub or `None` on Azure DevOps; Azure DevOps reads pipeline YAML from the remote repo, so its pipelines are registered by hand once the files are pushed (see [Manual Repo Settings](../reference/manual-repo-settings.md))
+1. For the Repo Setup Actions question, choose `Set Repo Rules` on GitHub or `None` on Azure
+   DevOps. Azure DevOps reads pipeline YAML from the remote repo, so register its pipelines by
+   hand once the files are pushed; see [Manual Repo Settings](../reference/manual-repo-settings.md).
 
-1. Set all other settings as appropriate for your project
+1. Answer the other questions for your project.
 
-1. Once the template is applied, review files that have been changed using git, and stage, discard, or modify as appropriate
+1. Review each changed file with `git diff`, and keep, discard, or adjust the change.
 
-1. Commit and push the changes, then merge them via a Pull Request
+1. Commit and push, then merge through a pull request.
 
-1. Delete your clone of this repository if you like; the project doesn't need it, since future updates (`mise run copier-update`) fetch the template from its URL
-
-1. You are done, and your project will now operate the same as one that was generated from this template.
+The project now works the same as one generated from this template. You can delete your clone
+of this repository: `mise run copier-update` fetches the template from its URL.

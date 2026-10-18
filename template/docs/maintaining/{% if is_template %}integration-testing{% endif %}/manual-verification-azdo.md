@@ -1,88 +1,112 @@
 # Manual Verification Checklist (Azure DevOps)
 
-Run through this **in full**, by hand, as the last step before cutting a release. See [Integration Testing](index.md) for what `mise run integration-test-azdo` creates and why the update step below isn't automated. Most of Repo A's checks are now automated; each `mise run integration-test-*-azdo` invocation prints its own PASS/FAIL per check, plus a summary; what's below is what's left for a human.
+Work through this whole list by hand as the last step before a release. It covers only what
+`mise run integration-test-azdo` can't check; each `integration-test-*-azdo` task prints its
+own `[PASS]` or `[FAIL]` per check and a summary. See [Integration Testing](index.md) for what
+the run creates and why Repo B's update is manual.
 
 !!! bug "Checkbox state isn't saved"
-    Boxes on this page are clickable so you can tick items off as you go, but nothing
-    persists that; reloading or leaving the page resets every box to unchecked. Treat
-    it as a scratchpad for one sitting, not a record you can come back to.
+    You can tick the boxes as you go, but reloading or leaving the page clears them. Finish the
+    list in one sitting.
 
 ## Repo A
 
-Fresh copy at `HEAD`, `code_coverage` on.
+A copy at `HEAD`, with `code_coverage` on.
 
 ### After First Setup
 
-*Branch protection actually blocking a bad PR is automated; see "a bad-title PR fails Test (Auto) - PR Validation" and its blocked-merge counterpart in the script's own output.*
+*Automated: a bad PR title fails PR Validation, and the branch policy blocks completing it.*
 
-- [ ] The setup checklist (printed to the console at the end of `copier copy`) exists and every item on it has been addressed.
-- [ ] Badges at the top of README.md render correctly (no broken image icons).
-- [ ] `docs/assets/images/readme-logo.png` and `docs/assets/images/readme-screenshot.png` display correctly in README.md, or that section has been removed if unused.
-- [ ] Required secrets/pipeline variables are provisioned (`mise run provision-secrets`, or see [Secrets and Tokens](../../reference/token-permissions.md)); confirmed by the pipelines below not failing with authentication errors.
+- [ ] The setup checklist (printed at the end of `copier copy`) exists, and every item on it is
+  done.
+- [ ] The badges at the top of README.md render, with no broken images.
+- [ ] `docs/assets/images/readme-logo.png` and `docs/assets/images/readme-screenshot.png`
+  display in README.md, or that section is removed.
+- [ ] The required pipeline variables are set (`mise run provision-secrets`, or see
+  [Secrets and Tokens](../../reference/token-permissions.md)): none of the pipelines below fails
+  on authentication.
 
 ### Maint (Auto) - Copier Update Check
 
-*Dispatching it and confirming it completes without error are automated. Whether it correctly reports no update available isn't; `az` has no cheap way to read a pipeline run's own step output, see the script's own module docstring for why.*
+*Automated: it runs and completes. Whether it reports no update available isn't, since `az`
+can't easily read a run's step output; see the script's module docstring.*
 
-- [ ] Confirm it correctly reports **no update available**; this repo is already at `HEAD`.
+- [ ] It reports **no update available**, since this repo is at `HEAD`.
 
 ### Maint (Auto) - Repo Health Check
 
-*Dispatching it and confirming it completes clean is automated.*
+*Automated: it runs and completes clean.*
 
-- [ ] Temporarily introduce a broken link (e.g. a typo'd URL in a doc) and confirm the next run catches it, then revert.
+- [ ] Add a broken link (a mistyped URL in a doc), confirm the next run reports it, then
+  revert.
 
 ### Maint (Auto) - Renovate
 
-*Dispatching it and confirming it authenticates successfully are automated.*
+*Automated: it runs and authenticates.*
 
-- [ ] With at least one outdated dependency present, confirm it opens (or updates) a real pull request proposing the bump.
-- [ ] Confirm the build service permission grant described in [Prerequisites](../../getting-started/prerequisites.md) is actually in place; a missing grant surfaces as a push/PR-creation failure here, not a clear permissions error.
+- [ ] With an outdated dependency present, it opens or updates a PR for the bump.
+- [ ] The build service has the permissions listed in
+  [Prerequisites](../../getting-started/prerequisites.md). Without them, this pipeline fails to
+  push or open its PR, with no clear permissions error.
 
 ### Docs (Auto) - Zensical Build & Publish
 
-- [ ] Push a docs change to `main` and confirm `docs-site/` is committed back to the repo with the freshly built HTML.
+- [ ] Push a docs change to `main`, and confirm `docs-site/` is committed back with the new
+  HTML.
 
 ### Test (Auto) - PR Validation
 
-*A bad-title PR failing, and a PR with a failing test suite failing and being blocked from merging, are both automated.*
+*Automated: a bad PR title fails, and a failing test suite fails and blocks completing the PR.*
 
-- [ ] Confirm `coverage.xml` publishes successfully and shows up on the build; `code_coverage` is on for this repo.
-- [ ] Azure Repos has no native PR-triggered pipeline run; this pipeline is triggered solely by the build-validation branch policy. Confirm pushing a new commit to an open PR actually kicks off a fresh run (not just the PR's initial creation).
+- [ ] `coverage.xml` publishes and shows on the build (`code_coverage` is on for this repo).
+- [ ] Pushing a new commit to an open PR starts a new run. Azure Repos has no PR trigger, so
+  only the build validation policy starts this pipeline.
 
 ### Release (Auto) - Prepare & Publish Release
 
-*The full flow is automated: a docs-only commit staying a no-op, a feat commit opening a release PR with a version-bump title, and merging that PR publishing a tag.*
+*Automated: a docs-only commit releases nothing, a `feat:` commit opens a release PR with the
+bumped version in its title, and merging that PR creates a tag.*
 
-- [ ] Confirm the pipeline correctly tells "a normal push to `main`" apart from "this push is the release PR's own merge"; it does this via an API check, not a native trigger, so push a second, unrelated commit right after a release and confirm it doesn't also try to publish.
+- [ ] Right after a release, push an unrelated commit and confirm the pipeline doesn't publish
+  again. It tells the release PR's own merge from a normal push through an API check, not a
+  native trigger.
 
 ### Release (Manual) - Create Prerelease
 
-*The full flow is automated: dispatching each label produces a matching tag, re-dispatching the same label at the same commit is blocked, and dispatching a different label at the same commit is allowed.*
+*Automated: each label produces a matching tag, the same label at the same commit is blocked,
+and a different label at the same commit is allowed.*
 
-Nothing left here for Repo A.
+Nothing left to check for Repo A.
 
 ## Repo B
 
-Copied at the last stable release tag, `code_coverage` off. Still at that tag; nothing here has been updated for you.
+A copy at the last stable release tag, with `code_coverage` off. It stays at that tag until you
+update it.
 
 ### Before Updating
 
-*Dispatching Maint (Auto) - Copier Update Check and confirming it completes without error are automated (part of `mise run integration-test-azdo`, before you update anything).*
+*Automated, before you update anything: Maint (Auto) - Copier Update Check runs and completes.*
 
-- [ ] Confirm it correctly detects a newer version is available and the Apprise notification actually arrives at `APPRISE_URL`.
+- [ ] It detects the newer version, and the Apprise notification arrives at `APPRISE_URL`.
 
 ### Running the Update
 
-- [ ] `cd` into the repo and run `mise run copier-update` yourself. If it prompts for a new question, answer it the way you'd want a real user updating from the last release to answer it, not whatever's quickest.
+- [ ] In the repo, run `mise run copier-update`. Answer any new question the way a real user
+  updating from the last release would.
 - [ ] Commit and push the result.
 - [ ] Run `mise run migrate-azdo-pipeline-names` to repoint any renamed pipeline registrations.
 
 ### After Updating
 
-Run `mise run integration-test-verify-update-azdo -- --repo <repo> --local-path <path>` (the repo/path are printed at the end of the original `mise run integration-test-azdo` run). It automates everything that needs checking here: the update actually pulled in current content, applied with no leftover conflict markers, every pipeline is registered only under its current name (not left duplicated under the old one), and `Test (Auto) - PR Validation` still triggers and passes on a fresh PR against the updated repo.
+Run `mise run integration-test-verify-update-azdo -- --repo <repo> --local-path <path>`, with
+the repo and path printed at the end of the original `mise run integration-test-azdo` run. It
+checks that the update brought in current content, left no conflict markers, registered each
+pipeline only under its current name, and that `Test (Auto) - PR Validation` triggers and
+passes on a new PR.
 
 ## Cleaning Up
 
-- [ ] Run `python cleanup_pipelines.py` in each throwaway repo's local directory (left there by the integration test, next to the repo's own files) before deleting the repos; Azure DevOps has no bulk-delete UI for pipelines, so skipping this means removing each one by hand through its own settings page.
-- [ ] Delete both repos (Project Settings > Repositories, or `az repos delete`).
+- [ ] In each repo's local directory, run `python cleanup_pipelines.py`, which the integration
+  test leaves there. Azure DevOps has no bulk delete for pipelines, so otherwise each one has to
+  be deleted from its own settings page.
+- [ ] Delete both repos (**Project Settings > Repositories**, or `az repos delete`).

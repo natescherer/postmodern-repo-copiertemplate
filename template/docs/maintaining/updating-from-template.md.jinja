@@ -7,12 +7,12 @@ This project was generated from the [{{ parent_template_name }}]({{ parent_templ
 
 To pull in its latest changes:
 
-1. Start from a clean working tree on a new branch; Copier refuses to update with
-   uncommitted changes.
+1. Start from a clean working tree on a new branch; Copier won't update over uncommitted
+   changes.
 1. If the update crosses a major version, read that release's **Breaking Changes** in the
    template's changelog first; see its [Stability Policy]({{ parent_template_docs_url }}reference/stability-policy{{ parent_template_docs_suffix }}).
-1. Run `mise run copier-update`. Your recorded answers are reused, so you're only
-   asked about questions added since your last update.
+1. Run `mise run copier-update`. It reuses your recorded answers and asks only the questions
+   added since your last update.
 1. Resolve any conflicts where your own edits overlap a template change; Copier marks
    them inline.
 {%- if is_template or using_azdo %}
@@ -20,17 +20,16 @@ To pull in its latest changes:
    `.azurepipelines/`. It repoints the existing pipeline registrations at the new names,
    keeping their run history and variables. It's safe to run when nothing needs migrating.
 {%- endif %}
-1. Review any new files in `.changeset/` (one per relevant upstream change) and delete
-   the ones that don't apply to your project. Each entry links back to the upstream {{ 'PR' if using_github else 'repo' }} it came
-   from, so you can check the source before deciding.
-1. Commit and open a pull request as usual. The remaining changes described by files in `.changeset/` are folded into
-   your [next release](releasing.md) alongside your own commits.
+1. Review the new files in `.changeset/`, one per relevant upstream change, and delete the
+   ones that don't apply to your project. Each links to the upstream {{ 'PR' if using_github else 'repo' }} it came from.
+1. Commit and open a pull request as usual. The remaining changesets go into your
+   [next release](releasing.md) with your own commits.
 
 ## Troubleshooting
 
 If `copier update` fails while rendering your project's *old* template version (for example,
 because that version depends on something that no longer exists), re-apply the current template
-over your project instead:
+over the project:
 
 1. Copy `.config/copier-answers.yml` to a temporary file outside the repo and delete every key
    that starts with `_` from the copy.
@@ -40,6 +39,5 @@ over your project instead:
     mise x -- copier copy --trust --overwrite --data-file <temporary-answers-file> {{ parent_template_url }} .
     ```
 
-1. This doesn't preserve your own edits the way `copier update` does. Review every changed file
-   against your last commit with `git diff`, and restore anything you had customized before
-   committing.
+1. Unlike `copier update`, this overwrites your own edits. Review every changed file with
+   `git diff`, and restore what you'd customized before committing.
