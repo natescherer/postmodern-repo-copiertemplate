@@ -22,17 +22,13 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout Repository
-        # token: the default GITHUB_TOKEN, explicitly, not a PAT. Since June 2026,
-        # GitHub gates pull_request-triggered runs (e.g. PR Validation on the release
-        # PR below) behind manual approval whenever the PR traces back to the default
-        # token's github-actions[bot] identity; see
+        # The default GITHUB_TOKEN, not a PAT. GitHub holds pull_request runs (such as
+        # PR Validation on the release PR) for manual approval when the PR traces back
+        # to the token's github-actions[bot] identity, on every push to the PR; see
         # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow.
-        # That means every push here requires a human to click "Approve and run
-        # workflow" on the resulting PR Validation run before branch protection lets
-        # the release PR merge; confirmed live, including that the gate reapplies on
-        # every subsequent push to the same PR, not just once. Accepted deliberately:
-        # a PAT (or GitHub App) avoids the approval step but doesn't work in an
-        # enterprise context where PATs are commonly restricted.
+        # So each push here needs someone to click "Approve and run workflow" before the
+        # release PR can merge. A PAT or GitHub App avoids that, but enterprises often
+        # restrict PATs.
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
@@ -47,10 +43,9 @@ jobs:
           version: 2026.10.10 # jdx/mise
       - name: Prepare Release PR
         shell: bash
-        # .config/knope-release-override.json can pin the next release's version (e.g. a
-        # project's first release, or 1.0.0); it's ignored once the released version
-        # reaches it. "Nothing release-worthy since the last release" is a normal outcome,
-        # not a failure, so only that specific knope error is tolerated.
+        # .config/knope-release-override.json can pin the next release's version (such as
+        # 1.0.0), and is ignored once the released version reaches it. Nothing to release
+        # is a normal outcome, so that one knope error is tolerated.
         run: |
           args=()
           override=""

@@ -96,10 +96,9 @@ ANSWER_MATRIX = [
     },
 ]
 
-# Combinations copier.yml.jinja's `validator:` blocks are supposed to reject, used by
-# test_validators.py to confirm those guardrails actually work, not just that valid
-# combinations render. Each entry's `expected_error` is the substring Copier's
-# "Invalid choice for '<question>': <validator message>" is expected to contain.
+# Combinations copier.yml.jinja's `validator:` blocks should reject; test_validators.py
+# checks that they do. Each entry's `expected_error` is a substring of Copier's
+# "Invalid choice for '<question>': <validator message>".
 INVALID_ANSWER_MATRIX = [
     {
         "id": "azdo-public-visibility-rejected",
@@ -194,9 +193,8 @@ INVALID_ANSWER_MATRIX = [
 # Questions test_answer_matrix_coverage.py's choices-completeness check should skip,
 # with the reason it's a deliberate gap rather than an oversight.
 COVERAGE_EXEMPT_QUESTIONS = {
-    # "Create Repo"/"Set Repo Rules" only gate which _tasks run (real GitHub/Azure
-    # DevOps API calls via should_create_repo/should_set_repo_settings); they never
-    # affect rendered file content, and this suite always renders with --skip-tasks.
-    # COMMON pins this to "None" everywhere specifically to keep tests offline.
+    # "Create Repo" and "Set Repo Rules" only decide which _tasks run (real GitHub or
+    # Azure DevOps API calls); they don't change rendered files, and this suite skips
+    # tasks. COMMON sets "None" everywhere to keep the tests offline.
     "repo_setup_actions",
 }

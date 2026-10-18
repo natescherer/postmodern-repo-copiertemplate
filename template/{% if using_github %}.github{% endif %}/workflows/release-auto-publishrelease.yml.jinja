@@ -34,18 +34,14 @@ jobs:
 {%- if zensical_ghpages %}
       - name: Trigger Docs Latest-Alias Deploy
         shell: bash
-        # A release created with the default GITHUB_TOKEN doesn't fire a `release:
-        # published` event that docs-auto-zensical.yml's own `release:` trigger could
-        # react to (GitHub doesn't cascade-trigger workflow runs from GITHUB_TOKEN-
-        # authenticated actions, to prevent recursion; see
-        # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
-        # workflow_dispatch is a documented exception to that rule, so dispatching it
-        # directly here reaches the same result without needing a PAT.
-        # Reads the version straight from knope-current-version.json (already updated
-        # by PrepareRelease and merged in with this PR, no separate API round-trip
-        # needed) rather than local `git describe`: knope creates the release through
-        # the GitHub API, so the job's own checkout never locally fetches the new tag
-        # ref.
+        # A release created with the default GITHUB_TOKEN fires no `release: published`
+        # event for docs-auto-zensical.yml to react to: GitHub doesn't trigger workflows
+        # from GITHUB_TOKEN actions, to prevent recursion. workflow_dispatch is the
+        # documented exception, so this dispatches it directly; see
+        # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow.
+        # The version comes from knope-current-version.json, merged with this PR, not
+        # `git describe`: knope creates the tag through the API, so this checkout
+        # doesn't have it.
         run: |
           version=$(mise x -- jq -r .version .config/knope-current-version.json)
           mise x -- gh workflow run docs-auto-zensical.yml -f tag="v$version"

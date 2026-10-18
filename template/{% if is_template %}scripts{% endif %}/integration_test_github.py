@@ -636,13 +636,10 @@ def verify(
 
     run("gh", "api", f"repos/{repo}/contents/.github/workflows", capture=True)
 
-    # Labels and the branch ruleset come from .github/settings.yml, applied
-    # asynchronously by the Settings GitHub App (https://github.com/apps/settings)
-    # reacting to the push above; not something this script sets directly, so this
-    # polls rather than checking once. Requires that app be installed on the
-    # authenticated account with access to all repositories (a new repo isn't
-    # automatically visible to an app installed on "only select repositories"); see
-    # the Prerequisites docs page.
+    # The Settings GitHub App (https://github.com/apps/settings) applies the labels and
+    # branch ruleset from .github/settings.yml some time after the push above, so this
+    # polls. The app must have access to all repositories on the account: one limited
+    # to selected repositories can't see a new repo. See the Prerequisites docs page.
     for attempt in range(12):
         if settings_synced(repo, homepage, zensical_ghpages=zensical_ghpages):
             print(f"Settings App sync: OK (after {attempt * 10}s)")
@@ -754,9 +751,8 @@ def check_copier_update_check(
         conclusion,
     )
     notify_step = step_conclusion(repo, run_id, "Notify if Update is Available")
-    # Whether the step *ran* (its `if:` is gated on update_available), not whether
-    # its own delivery succeeded; a real notification failure (bad endpoint, etc.)
-    # would otherwise look identical to "no update was detected".
+    # Whether the step ran (its `if:` checks update_available), not whether delivery
+    # succeeded, so a failed notification doesn't look like "no update detected".
     detected_available = notify_step not in (None, "skipped")
     check(
         failures,
@@ -1352,10 +1348,8 @@ def main() -> None:
     check_bad_title_blocks_merge(repo_a, dest_a, failures_a)
     check_failing_tests_block_merge(repo_a, dest_a, failures_a)
     check_release_flow(repo_a, dest_a, failures_a)
-    # Run last: a GitHub Pages repo's own homepage link (in README.md) 404s until the
-    # first Pages deployment finishes propagating; by now enough real wall-clock
-    # time and several PR/merge cycles have passed for that to be reliably live,
-    # rather than racing it right after repo creation.
+    # Run last: a GitHub Pages repo's homepage link in README.md returns 404 until the
+    # first Pages deployment propagates, which it has by this point.
     check_repo_health_check(repo_a, failures_a)
     check_prerelease_flow(repo_a, dest_a, failures_a)
     report(f"Repo A ({repo_a})", failures_a)
