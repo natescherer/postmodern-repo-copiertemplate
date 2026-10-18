@@ -40,6 +40,21 @@ ANSWER_MATRIX = [
         "license": "None",
         "zensical_target": "docs-site Directory in Repo",
         "lifecycle": "Stable",
+        "code_coverage": True,
+    },
+    {
+        # The only GitHub Template that builds docs into the repo (docs_base()'s
+        # blob/main/docs/ branch), and the only entry with a GitHub organization.
+        "id": "github-template-public-mit-docs-site-beta",
+        **COMMON,
+        "developer_platform": "GitHub",
+        "github_username": "octocat",
+        "github_org": "test-org",
+        "project_type": "Template",
+        "project_visibility": "Public",
+        "license": "MIT",
+        "zensical_target": "docs-site Directory in Repo",
+        "lifecycle": "Beta",
     },
     {
         "id": "github-standard-public-none-ghpages-inactive",
