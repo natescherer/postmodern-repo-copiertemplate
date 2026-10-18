@@ -31,6 +31,7 @@ import tempfile
 import time
 from pathlib import Path
 
+from console import RepoResult, Step, check, heading, summary
 from docs_links import docs_page_url
 
 # Default `gh auth login` scopes cover both; see the Secrets and Tokens docs page.
@@ -145,30 +146,6 @@ def check_scopes() -> None:
             f"{docs_page_url('reference/token-permissions.md')} for what this token "
             "needs."
         )
-
-
-def check(failures: list[str], name: str, ok: bool, detail: str = "") -> None:
-    """Record and print one named check's result immediately, without halting.
-
-    Every automated check in this script goes through here so failures accumulate
-    instead of stopping the run at the first one; a full run reports the complete
-    picture, not just whatever happened to fail first.
-    """
-    if ok:
-        print(f"  [PASS] {name}")
-    else:
-        print(f"  [FAIL] {name}" + (f": {detail}" if detail else ""))
-        failures.append(name)
-
-
-def report(label: str, failures: list[str]) -> None:
-    """Print a final summary of one repo's accumulated check results."""
-    if failures:
-        print(f"\n{label}: {len(failures)} check(s) failed:")
-        for name in failures:
-            print(f"  - {name}")
-    else:
-        print(f"\n{label}: all checks passed.")
 
 
 def template_answers(*, leaf: bool) -> list[str]:
@@ -419,13 +396,13 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
             )
         )["statusCheckRollup"]
         latest_by_name: dict[str, dict] = {}
-        for check in rollup:
-            name = check.get("name")
+        for status_check in rollup:
+            name = status_check.get("name")
             existing = latest_by_name.get(name)
-            if existing is None or (check.get("completedAt") or "") >= (
+            if existing is None or (status_check.get("completedAt") or "") >= (
                 existing.get("completedAt") or ""
             ):
-                latest_by_name[name] = check
+                latest_by_name[name] = status_check
         new_latest = list(latest_by_name.values())
         all_complete = bool(new_latest) and all(
             c.get("status") == "COMPLETED" for c in new_latest
@@ -1392,7 +1369,9 @@ def main() -> None:
             raise SystemExit("--verify-update requires --local-path too.")
         update_failures: list[str] = []
         check_post_update(args.verify_update, args.local_path, update_failures)
-        report(f"Repo B ({args.verify_update})", update_failures)
+        summary(
+            [RepoResult("Repo B", args.verify_update, args.local_path, update_failures)]
+        )
         if update_failures:
             raise SystemExit(1)
         return
@@ -1403,9 +1382,9 @@ def main() -> None:
     owner = gh_value("api", "user", "--jq", ".login")
     timestamp = int(time.time())
 
-    print(
-        "=== Repo A: fresh copy at HEAD "
-        "(zensical_target: GitHub Pages, code_coverage: on) ==="
+    heading(
+        "Repo A: a fresh copy at HEAD "
+        "(zensical_target: GitHub Pages, code_coverage: on)"
     )
     repo_a_name = f"{args.repo_prefix}-integration-test-{timestamp}-a"
     dest_a = tempfile.mkdtemp(prefix="integration-test-")
@@ -1432,12 +1411,11 @@ def main() -> None:
     # first Pages deployment propagates, which it has by this point.
     check_repo_health_check(repo_a, failures_a)
     check_prerelease_flow(repo_a, dest_a, failures_a)
-    report(f"Repo A ({repo_a})", failures_a)
 
     old_ref = latest_stable_tag(args.source)
-    print(
-        f"=== Repo B: {old_ref}, for you to update by hand (zensical_target: "
-        "docs-site Directory in Repo, code_coverage: off) ==="
+    heading(
+        f"Repo B: a copy at {old_ref}, for you to update by hand (zensical_target: "
+        "docs-site Directory in Repo, code_coverage: off)"
     )
     repo_b_name = f"{args.repo_prefix}-integration-test-{timestamp}-b"
     dest_b = tempfile.mkdtemp(prefix="integration-test-")
@@ -1456,17 +1434,34 @@ def main() -> None:
     failures_b: list[str] = []
     verify(repo_b, homepage_for(owner, repo_b_name), failures_b, zensical_ghpages=False)
     check_copier_update_check(repo_b, failures_b, expect_update_available=True)
-    report(f"Repo B ({repo_b}, before updating)", failures_b)
-
-    print(
-        f"\nLeaving {repo_a} ({dest_a}) and {repo_b} ({dest_b}) in place; delete "
-        "them with `mise run integration-test-cleanup-gh` when you're done. "
-        f"{repo_b} is still at {old_ref}; cd into "
-        f"{dest_b} and run `mise run copier-update` yourself to test the update path, "
-        "then `mise run integration-test-verify-update-gh -- --repo "
-        f"{repo_b} --local-path {dest_b}` to verify it applied cleanly "
-        '(see "Repo B" in '
-        f"{docs_page_url('maintaining/integration-testing/manual-verification-github.md')})."
+    checklist = docs_page_url(
+        "maintaining/integration-testing/manual-verification-github.md"
+    )
+    summary(
+        [
+            RepoResult("Repo A", repo_a, dest_a, failures_a),
+            RepoResult(
+                f"Repo B (at {old_ref}, before updating)", repo_b, dest_b, failures_b
+            ),
+        ],
+        [
+            Step(
+                "Update Repo B the way a user would:",
+                [f'cd "{dest_b}"', "mise run copier-update"],
+            ),
+            Step(
+                "Once the update merges, verify it:",
+                [
+                    "mise run integration-test-verify-update-gh -- "
+                    f'--repo {repo_b} --local-path "{dest_b}"',
+                ],
+            ),
+            Step(f"Work through the manual checklist: {checklist}"),
+            Step(
+                "When you're done, delete both repos:",
+                ["mise run integration-test-cleanup-gh"],
+            ),
+        ],
     )
 
     if failures_a or failures_b:
