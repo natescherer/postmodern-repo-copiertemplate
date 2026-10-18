@@ -674,7 +674,6 @@ def provision_test_secrets(org_url: str, project: str, repo_name: str) -> None:
     """
     for pipeline in (
         "Maint (Auto) - Copier Update Check",
-        "Release (Auto) - Prepare & Publish Release",
         "Docs (Auto) - Zensical Build & Publish",
         "Maint (Auto) - Renovate",
     ):

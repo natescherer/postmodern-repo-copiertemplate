@@ -32,9 +32,9 @@ e.g. to rotate a value.
 ### APPRISE_URL
 
 Both platforms' Copier update-check job needs a secret/variable called **APPRISE_URL**. Azure
-DevOps additionally needs it for the Renovate pipeline and the release/docs pipelines, since
-those merge without a human in the loop and notify on both successful auto-merge and on PR
-validation failing to pass. It's an [Apprise](https://github.com/caronc/apprise) notification URL
+DevOps also needs it for the Renovate pipeline, which notifies when it opens PRs, and the docs
+pipeline, which merges its own PR and notifies when that succeeds or PR validation fails. It's
+an [Apprise](https://github.com/caronc/apprise) notification URL
 pointing at wherever you want these notifications sent (email, Slack, Discord, ntfy, Pushover,
 and 80+ others; see Apprise's own docs for the URL format for your service of choice).
 {%- if is_template or using_azdo %}
