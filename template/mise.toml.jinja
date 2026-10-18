@@ -65,7 +65,8 @@ node = "24.22.0"
 {#- renovate: datasource=npm depName=renovate #}
 version = "44.158.1"
 # @yarnpkg/libzip@3.2.2 (a renovate transitive dependency) lost the provenance
-# attestation 3.2.0 had, so mise's trust policy refuses it; remove once resolved.
+# attestation 3.2.0 had, so mise's trust policy refuses it; remove once
+# https://github.com/yarnpkg/berry/issues/7182 is fixed.
 trust_policy_excludes = ["@yarnpkg/libzip@3.2.2"]
 {%- if using_azdo %}
 
