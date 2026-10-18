@@ -130,7 +130,7 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 
 ## Support Files
 
-- `.gitignore`, set to ignore macOS `.DS_Store` files, Windows `Thumbs.db` files, Python virtual environments, and tool caches
+- `.gitignore`, set to ignore macOS `.DS_Store` files, Windows `Thumbs.db` files, and tool caches{% if is_template %} (plus Python bytecode caches in Template projects){% endif %}
 - `CHANGELOG.md`, maintained by Knope
 {%- if is_template or agent_instructions %}
 - `AGENTS.md`, instructions for AI coding agents
