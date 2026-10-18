@@ -35,7 +35,7 @@ stages:
         displayName: Renovate
         steps:
           - pwsh: |
-              $Secrets = @("APPRISE_URL")
+              $Secrets = @("APPRISE_URL", "GITHUB_COM_TOKEN")
               $MissingSecret = $False
               foreach ($Secret in $Secrets) {
                 if (!([Environment]::GetEnvironmentVariable($Secret)) -or ([Environment]::GetEnvironmentVariable($Secret) -eq "`$($Secret)")) {
@@ -48,6 +48,7 @@ stages:
               }
             env:
               APPRISE_URL: $(APPRISE_URL)
+              GITHUB_COM_TOKEN: $(GITHUB_COM_TOKEN)
             displayName: Validate Secrets Exist
           - checkout: self
             fetchDepth: 0
@@ -67,10 +68,8 @@ stages:
           - bash: mise install
             displayName: Run 'mise install'
           - bash: |
-              # The optional GITHUB_COM_TOKEN pipeline variable lifts github.com's
-              # unauthenticated rate limit for release lookups; when it isn't defined,
-              # Azure Pipelines passes the literal macro text, so that's treated as unset.
-              case "$GITHUB_COM_TOKEN" in ''|'$('*) unset GITHUB_COM_TOKEN ;; esac
+              # Renovate skips every dependency hosted on github.com without
+              # GITHUB_COM_TOKEN, so Validate Secrets Exist requires it.
               mise x -- renovate "{{ azdo_project }}/{{ repo_name }}"
             env:
               GITHUB_COM_TOKEN: $(GITHUB_COM_TOKEN)
