@@ -30,9 +30,22 @@ update-from-last-tag path), `test_content.py` (config/content consistency,
 e.g. nav completeness, hook-tool availability), `test_validators.py` (asserts
 `copier.yml.jinja`'s `validator:` blocks actually reject what they claim to,
 via `INVALID_ANSWER_MATRIX`), `test_answer_matrix_coverage.py` (audits
-`answer_matrix.py` itself against the real question set). **Update
-`answer_matrix.py` whenever a Copier question is added, removed, or renamed,
-or a new `validator:` constraint is added.**
+`answer_matrix.py` itself against the real question set).
+
+Keep `answer_matrix.py` in step with `copier.yml.jinja` in the same change:
+
+- **New question or new choice value:** use every value in at least one
+  `ANSWER_MATRIX` entry, respecting the question's `when:` and any `validator:`.
+  Prefer changing an existing entry over adding one, since each entry costs a
+  full render. `test_answer_matrix_coverage.py` catches a missing `choices:`
+  value, but not a missing yes/no value, so cover both of those by hand.
+- **A value the last release doesn't accept** (new or renamed): the
+  update-path test copies each entry at that release first, so give the entry
+  `"_old_tag_overrides": {"<question>": "<value that release accepts>"}` until
+  the next release ships, then remove it.
+- **New `validator:` constraint:** add a combination it should reject to
+  `INVALID_ANSWER_MATRIX`, with an `expected_error` substring of its message.
+- **Renamed or removed question or value:** update every entry that uses it.
 
 Always run it via the command above, against `template/`'s own path, not a
 plain {% raw %}`pytest tests/`{% endraw %}: if this project also renders a

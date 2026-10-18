@@ -250,7 +250,7 @@ def _render(source: Path, dest: Path, answers: dict, vcs_ref: str | None = None)
     if vcs_ref is not None:
         args.append(f"--vcs-ref={vcs_ref}")
     for key, value in answers.items():
-        if key == "id":
+        if key in ("id", "_old_tag_overrides"):
             continue
         args.extend(["-d", f"{key}={value}"])
     args.extend([str(source), str(dest)])

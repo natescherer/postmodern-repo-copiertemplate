@@ -150,11 +150,17 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
     source, old_tag = update_source
     dest = tmp_path / "out"
 
-    _render(source, dest, answers, vcs_ref=old_tag)
+    # The copy at the last release uses that release's question set, so an answer it
+    # doesn't accept yet (a newly added or renamed choice value) would fail here. An
+    # entry's `_old_tag_overrides` swaps in a value that release does accept, and the
+    # update below passes the entry's real value back in.
+    overrides = answers.get("_old_tag_overrides", {})
+    _render(source, dest, {**answers, **overrides}, vcs_ref=old_tag)
 
     _git_init_repo(dest)
     _git_commit_all(dest, "initial render")
 
+    real_values = [arg for key in overrides for arg in ("-d", f"{key}={answers[key]}")]
     result = _run(
         [
             "copier",
@@ -165,6 +171,7 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
             "--vcs-ref=HEAD",
             "-a",
             ".config/copier-answers.yml",
+            *real_values,
         ],
         cwd=dest,
     )
