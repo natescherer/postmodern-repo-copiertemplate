@@ -6,6 +6,7 @@ should edit alongside its own copier.yml changes.
 """
 
 import io
+import os
 import shutil
 
 # S404: drives real CLI tools below; no untrusted input, no shell=True.
@@ -44,6 +45,32 @@ def _find_repo_root() -> Path:
 REPO_ROOT = _find_repo_root()
 
 
+# Git can run maintenance in a detached background process after commands such as
+# commit. One still writing into a temporary repo while Copier deletes it fails the
+# update with "Directory not empty". Turning automatic maintenance off for every git
+# these tests start, Copier's own calls included, rules that out.
+_GIT_NO_BACKGROUND_MAINTENANCE = (("gc.auto", "0"), ("maintenance.auto", "false"))
+
+
+def _subprocess_env() -> dict[str, str]:
+    """Return os.environ plus git settings that disable background maintenance.
+
+    Appends to any GIT_CONFIG_COUNT entries already set instead of replacing them.
+
+    Returns:
+        A copy of the environment for subprocess.run.
+
+    """
+    env = dict(os.environ)
+    count = int(env.get("GIT_CONFIG_COUNT") or 0)
+    for key, value in _GIT_NO_BACKGROUND_MAINTENANCE:
+        env[f"GIT_CONFIG_KEY_{count}"] = key
+        env[f"GIT_CONFIG_VALUE_{count}"] = value
+        count += 1
+    env["GIT_CONFIG_COUNT"] = str(count)
+    return env
+
+
 def _run(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess:
     """Run subprocess.run with output always captured as UTF-8 text.
 
@@ -60,6 +87,7 @@ def _run(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProces
     return subprocess.run(  # noqa: S603
         args,
         cwd=cwd,
+        env=_subprocess_env(),
         capture_output=True,
         text=True,
         encoding="utf-8",
