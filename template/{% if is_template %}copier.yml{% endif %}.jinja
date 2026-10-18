@@ -411,14 +411,11 @@ lifecycle_previous:
 # region Questions
 developer_platform:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      The platform where you are going to host your Git repo and CI/CD. Azure DevOps
-      support is deprecated and will eventually be removed; prefer GitHub unless you
-      specifically need Azure DevOps.
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    The platform where you are going to host your Git repo and CI/CD. Azure DevOps
+    support is deprecated and will eventually be removed; prefer GitHub unless you
+    specifically need Azure DevOps.
+  ask: "{{ not project_initialized }}"
   choices:
     - GitHub
     - Azure DevOps
@@ -426,12 +423,9 @@ developer_platform:
 
 repo_setup_actions:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      New project? 'Create Repo'. Existing project? 'Set Repo Rules' on GitHub, 'None' on Azure DevOps. Don't want to do anything? 'None'.
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    New project? 'Create Repo'. Existing project? 'Set Repo Rules' on GitHub, 'None' on Azure DevOps. Don't want to do anything? 'None'.
+  ask: "{{ not project_initialized }}"
   choices:
     Create Repo:
       value: Create Repo
@@ -489,12 +483,9 @@ repo_setup_actions:
 
 github_username:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    Your GitHub username. Repo will be created under this user unless an org is specified. Autodetect attempted from Git 'user.email'.
+  ask: "{{ not project_initialized }}"
   # Assumes GitHub's noreply-email pattern (12345+username@users.noreply.github.com); for any
   # other "+"-tagged email (e.g. user+tag@gmail.com) this will incorrectly default to the tag.
   default: "{{ (('git config --global user.email' | shell()).split('+') | last).split('@') | first }}"
@@ -502,43 +493,31 @@ github_username:
 
 github_org:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      If this repo is part of a GitHub organization, supply its name here, otherwise leave the default value of 'None'.
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    If this repo is part of a GitHub organization, supply its name here, otherwise leave the default value of 'None'.
+  ask: "{{ not project_initialized }}"
   default: None
   when: "{{ developer_platform == 'GitHub' }}"
 
 azdo_org:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      The Azure DevOps organization for this project.
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    The Azure DevOps organization for this project.
+  ask: "{{ not project_initialized }}"
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
 azdo_project:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      The Azure DevOps project for your repo.
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    The Azure DevOps project for your repo.
+  ask: "{{ not project_initialized }}"
   when: "{{ developer_platform == 'Azure DevOps' }}"
 
 repo_name:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      The name of this project's Git repository. Defaults to the name of the destination folder.
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    The name of this project's Git repository. Defaults to the name of the destination folder.
+  ask: "{{ not project_initialized }}"
   default: "{{ _copier_conf.dst_path | realpath | basename }}"
   validator: |-
     {%- if not (repo_name | regex_search('^[A-Za-z0-9._-]+$')) -%}
@@ -552,12 +531,9 @@ author_name:
 
 project_type:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      If you are creating a basic repo, choose Standard. If you are creating a child template, choose Template.
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    If you are creating a basic repo, choose Standard. If you are creating a child template, choose Template.
+  ask: "{{ not project_initialized }}"
   choices:
     - Standard
     - Template
@@ -581,12 +557,9 @@ project_description:
 
 project_visibility:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      Choose if you want this project to be Public or Private.
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    Choose if you want this project to be Public or Private.
+  ask: "{{ not project_initialized }}"
   choices:
     Public:
       value: Public
@@ -624,12 +597,9 @@ license:
 
 zensical_target:
   type: str
-  help: |
-    {%- if not project_initialized -%}
-      Choose how you want to publish your documentation
-    {%- else -%}
-      Changing this after the first copy isn't supported; press Enter to keep it.
-    {%- endif %}
+  help: |-
+    Choose how you want to publish your documentation
+  ask: "{{ not project_initialized }}"
   choices:
     GitHub Pages:
       value: GitHub Pages

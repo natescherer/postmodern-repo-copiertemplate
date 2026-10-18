@@ -142,10 +142,11 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
     """Copy at this repo's last tag, update to current, and re-run every check.
 
     Covers the one class of bug the copy-only test above can't see: logic gated on
-    `_copier_operation == 'update'` (e.g. the `project_initialized` locked-on-update
-    question text, `current_knope_version`) is never exercised by a fresh
-    `copier copy`, since that operation is always `'copy'`. Migrations only run on
-    update too, so this also checks they did their job instead of only warning.
+    `_copier_operation == 'update'` or on `project_initialized` (e.g. the `ask:`
+    conditions that stop setup-only questions prompting, `current_knope_version`) is
+    never exercised by a fresh `copier copy`, since that operation is always `'copy'`.
+    Migrations only run on update too, so this also checks they did their job instead
+    of only warning.
     """
     source, old_tag = update_source
     dest = tmp_path / "out"
