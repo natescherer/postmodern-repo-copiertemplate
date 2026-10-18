@@ -45,8 +45,11 @@ jobs:
         # prereleases count up toward it (e.g. 1.0.0-rc.0, 1.0.0-rc.1) instead of the
         # version knope would compute.
         run: |
-          override=$(jq -r '.version // empty' .config/knope-release-override.json 2>/dev/null || true)
-          current=$(jq -r .version .config/knope-current-version.json)
+          override=""
+          if [ -f .config/knope-release-override.json ]; then
+            override=$(mise x -- jq -r '.version // empty' .config/knope-release-override.json)
+          fi
+          current=$(mise x -- jq -r .version .config/knope-current-version.json)
           if printf '%s' "$override" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
             && [ "$override" != "$current" ] \
             && [ "$(printf '%s\n%s\n' "$current" "$override" | sort -V | tail -n 1)" = "$override" ]; then
