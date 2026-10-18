@@ -26,7 +26,8 @@ records the answer.
       tests, scripts, and template docs), so you only maintain what your projects use.
     - The files it keeps have no `is_template`, `is_standard`, or `is_extensible`
       conditions: each update folds them out, so only the conditions that still vary remain.
-    - Your `copier.yml` has no `project_type` question; every project it creates is Standard.
+    - Your `copier.yml` has no project-type questions or `copy-template-files` task; every
+      project it creates is Standard.
     - The obligations below about your own template's extensibility don't apply.
 
 === "Extensible template"

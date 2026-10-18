@@ -254,8 +254,8 @@ def test_nested_template(update_source, tmp_path, extensible):
     touches a remote) and then renders a grandchild from the result. An extensible
     template child gets the parent's whole `template/`. A leaf template child gets it
     without the paths gated on is_template or is_extensible and with the project-type
-    gates folded out, its copier.yml doesn't ask `project_type`, and its own copy of
-    this suite passes.
+    gates folded out, its copier.yml has no project-type questions or
+    copy-template-files task, and its own copy of this suite passes.
     """
     source, _ = update_source
     child_answers = {
@@ -279,9 +279,19 @@ def test_nested_template(update_source, tmp_path, extensible):
         _leaf_template(source / "template", expected)
     assert _files(child / "template") == _files(expected)  # noqa: S101
 
+    # A leaf template's copier.yml drops what only a Template project uses.
     child_questions = yaml.safe_load((child / "copier.yml").read_text(encoding="utf-8"))
-    project_type_asked = child_questions["project_type"].get("when") is not False
-    assert project_type_asked == extensible, child_questions["project_type"]  # noqa: S101
+    project_type_keys = {
+        "project_type",
+        "extensible_template",
+        "is_standard",
+        "is_template",
+        "is_extensible",
+    }
+    present = project_type_keys & child_questions.keys()
+    assert present == (project_type_keys if extensible else set()), present  # noqa: S101
+    copies_template = "template_only" in str(child_questions["_tasks"])
+    assert copies_template == extensible  # noqa: S101
 
     grandchild = tmp_path / "grandchild"
     _render(child, grandchild, _first_entry(project_type="Standard"))

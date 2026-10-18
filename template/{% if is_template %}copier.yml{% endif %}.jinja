@@ -508,6 +508,8 @@ author_name:
   default: "{{ 'git config --global user.name' | shell() | trim }}"
 
 {%- endraw %}
+{#- A leaf template's projects are always Standard, so its copier.yml has no
+    project-type questions or computed values, and no copy-template-files task. #}
 {%- if is_extensible %}
 {%- raw %}
 
@@ -531,17 +533,6 @@ extensible_template:
   default: "{{ project_initialized | default(false) }}"
   when: "{{ project_type == 'Template' }}"
 {%- endraw %}
-{%- else %}
-{# A leaf template's projects are never templates themselves. #}
-project_type:
-  type: str
-  default: Standard
-  when: false
-
-extensible_template:
-  type: bool
-  default: false
-  when: false
 {%- endif %}
 {%- raw %}
 
@@ -703,6 +694,9 @@ is_private:
       true
     {%- endif %}
   when: false
+{%- endraw %}
+{%- if is_extensible %}
+{%- raw %}
 
 is_standard:
   type: bool
@@ -729,6 +723,9 @@ is_extensible:
       true
     {%- endif %}
   when: false
+{%- endraw %}
+{%- endif %}
+{%- raw %}
 
 lifecycle_is_pre_stable:
   type: bool
@@ -845,6 +842,9 @@ _tasks:
   # from there instead of from 0.0.0.
   - command: *seed_version_from_tag
     when: "{{ _copier_operation == 'copy' }}"
+{%- endraw %}
+{%- if is_extensible %}
+{%- raw %}
 
   # Makes nested templates work: every Template project gets an unrendered copy of
   # the parent's template/ directory. A leaf template's copy leaves out the paths gated
@@ -927,6 +927,9 @@ _tasks:
       {%- if is_template -%}
         true
       {%- endif %}
+{%- endraw %}
+{%- endif %}
+{%- raw %}
 
   # Creates GitHub Repo
   - command: >-
