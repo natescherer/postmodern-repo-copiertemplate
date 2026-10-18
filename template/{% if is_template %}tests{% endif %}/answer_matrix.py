@@ -111,7 +111,7 @@ INVALID_ANSWER_MATRIX = [
         "license": "None",
         "zensical_target": "docs-site Directory in Repo",
         "lifecycle": "Pre-Alpha",
-        "expected_error": "Not Supported on Azure DevOps",
+        "expected_error": "Not Supported on Azure DevOps: choose Private",
     },
     {
         "id": "private-mit-license-rejected",
@@ -122,7 +122,7 @@ INVALID_ANSWER_MATRIX = [
         "license": "MIT",
         "zensical_target": "GitHub Pages",
         "lifecycle": "Pre-Alpha",
-        "expected_error": "Not Supported on Private repos",
+        "expected_error": "Not Supported on Private repos: choose None",
     },
     {
         "id": "azdo-ghpages-target-rejected",
@@ -134,7 +134,9 @@ INVALID_ANSWER_MATRIX = [
         "license": "None",
         "zensical_target": "GitHub Pages",
         "lifecycle": "Pre-Alpha",
-        "expected_error": "Not Supported on Azure DevOps",
+        "expected_error": (
+            "Not Supported on Azure DevOps: choose docs-site Directory in Repo"
+        ),
     },
     {
         # repo_name lands unquoted in shell-string tasks (gh repo create, git remote
