@@ -1,15 +1,39 @@
-# Manual Verification Checklist (GitHub)
+# Integration Test Runbook (GitHub)
 
-Work through this whole list by hand as the last step before a release. It covers only what
-`mise run integration-test-gh` can't check; each `integration-test-*-gh` task prints its own
-`[PASS]` or `[FAIL]` per check and a summary. See [Integration Testing](index.md) for what the
-run creates and why Repo B's update is manual.
+Every step of a GitHub integration test run, from setup to cleanup, as the last step before a
+release. See [Integration Testing](index.md) for what the run does and why.
 
-Run each command from the repo's local clone, at the path the run's summary prints for it.
+The commands use these values from the run's summary: `<repo-a-path>` and `<repo-b-path>`, each
+test repo's local clone, and `<owner>/<repo-b>`, Repo B's full name. `<template-repo-path>` is
+this template's own clone.
 
 !!! bug "Checkbox state isn't saved"
     You can tick the boxes as you go, but reloading or leaving the page clears them. Finish the
     list in one sitting.
+
+## Before You Start
+
+- [ ] The GitHub [Prerequisites](../../getting-started/prerequisites.md) are in place for your
+  account: all four GitHub apps, including the optional ones, each with access to all
+  repositories, since the test repos are public with `code_coverage` on; and the GitHub CLI,
+  logged in, with Git authentication set up.
+- [ ] Give the GitHub CLI the scopes the run and its cleanup need:
+
+    ```sh
+    gh auth refresh -h github.com -s repo,workflow,delete_repo
+    ```
+
+## Running the Test
+
+- [ ] Start the run:
+
+    ```sh
+    cd <template-repo-path>
+    mise run integration-test-gh
+    ```
+
+- [ ] When it finishes, its summary says "all checks passed" for both repos. If a check failed,
+  fix it, clean up (see [Cleaning Up](#cleaning-up)), and start again.
 
 ## Repo A
 
@@ -39,6 +63,7 @@ Nothing left to check for Repo A.
 - [ ] Run it on a branch with a broken link:
 
     ```sh
+    cd <repo-a-path>
     git switch main
     git pull
     git switch -c integration-test/broken-link
@@ -71,6 +96,7 @@ this repo's CI, so there's nothing to dispatch.
 - [ ] Merge a docs change through a PR:
 
     ```sh
+    cd <repo-a-path>
     git switch main
     git pull
     git switch -c integration-test/docs-change
@@ -125,6 +151,7 @@ detects the newer version.*
 - [ ] Update on a branch, pressing Enter at each prompt to accept the default:
 
     ```sh
+    cd <repo-b-path>
     git switch -c integration-test/copier-update
     mise run copier-update
     git add -A
@@ -136,12 +163,24 @@ detects the newer version.*
 
 ### After Updating
 
-Once the update's PR merges, run the verify command in step 2 of the run's summary. It checks
-that the update brought in current content, left no conflict markers, and that
-`Test (Auto): PR Validation` triggers and passes on a new PR.
+- [ ] Once the update's PR merges, verify it:
+
+    ```sh
+    cd <template-repo-path>
+    mise run integration-test-verify-update-gh --repo <owner>/<repo-b> --local-path <repo-b-path>
+    ```
+
+    It checks that the update brought in current content, left no conflict markers, and that
+    `Test (Auto): PR Validation` triggers and passes on a new PR. Every check prints `[PASS]`.
 
 ## Cleaning Up
 
-- [ ] Run the cleanup command in the run's summary, and confirm. It deletes every
-  integration-test repo under your account, including any left by a run that stopped partway.
-  It needs the `delete_repo` scope: `gh auth refresh -h github.com -s delete_repo`.
+- [ ] Delete the test repos, and confirm when it asks:
+
+    ```sh
+    cd <template-repo-path>
+    mise run integration-test-cleanup-gh
+    ```
+
+    It deletes every integration-test repo under your account, including any left by a run
+    that stopped partway.

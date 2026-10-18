@@ -11,8 +11,8 @@ site_dir = ".cache/zensical_serve"
 site_dir = "docs-site"
 {%- endif %}
 {%- if is_template %}
-# Makes the manual verification checklists clickable (scoped to those pages)
-extra_javascript = ["assets/javascripts/manual-verification-checkboxes.js"]
+# Makes the integration test runbooks' checkboxes clickable (scoped to those pages)
+extra_javascript = ["assets/javascripts/runbook-checkboxes.js"]
 {%- endif %}
 # Every page under docs_dir must be listed here; test_content.py enforces it
 nav = [
@@ -33,8 +33,8 @@ nav = [
     { "Releasing" = "maintaining/releasing.md" },
     { "Integration Testing" = [
       "maintaining/integration-testing/index.md",
-      { "Manual Checklist: GitHub" = "maintaining/integration-testing/manual-verification-github.md" },
-      { "Manual Checklist: Azure DevOps" = "maintaining/integration-testing/manual-verification-azdo.md" }
+      { "Runbook: GitHub" = "maintaining/integration-testing/runbook-github.md" },
+      { "Runbook: Azure DevOps" = "maintaining/integration-testing/runbook-azdo.md" }
     ] },
     { "Troubleshooting" = "maintaining/troubleshooting.md" }
   ] },

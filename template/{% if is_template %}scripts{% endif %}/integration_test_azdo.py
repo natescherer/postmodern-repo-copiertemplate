@@ -10,7 +10,7 @@ then verify, leaving both repos for you to delete. It differs where the platform
   those too.
 - `az` can't easily read a run's step output the way `gh run view --json jobs` can, so
   Maint (Auto) - Copier Update Check is checked only for a successful run. Whether it
-  detected an update stays on this platform's manual checklist.
+  detected an update stays in this platform's runbook.
 
 It always runs against HEAD, to verify a release candidate on main before a release.
 Each run creates two repos with different answers, to cover more combinations. Repo A is
@@ -1654,7 +1654,7 @@ def main() -> None:
 
     After updating Repo B, rerun this script with `--verify-update <repo> --local-path
     <path>` (or `mise run integration-test-verify-update-azdo`) to check the update; see
-    the "Repo B" section of the Azure DevOps manual verification checklist.
+    the "Repo B" section of the Azure DevOps runbook.
 
     Raises:
         SystemExit: if `az` or its azure-devops extension aren't installed, if
@@ -1745,6 +1745,8 @@ def main() -> None:
     if not args.source or not args.repo_prefix:
         raise SystemExit("--source and --repo-prefix are required.")
 
+    # The verify and cleanup tasks live in this template's repo, where the run starts.
+    template_repo = os.getcwd()
     timestamp = int(time.time())
 
     heading("Repo A: a fresh copy at HEAD (code_coverage: on)")
@@ -1797,9 +1799,7 @@ def main() -> None:
     provision_test_secrets(org_url, args.project, repo_b_name)
     check_copier_update_check(org_url, args.project, repo_b_name, failures_b)
     scope = f'--org {args.org} --project "{args.project}"'
-    checklist = docs_page_url(
-        "maintaining/integration-testing/manual-verification-azdo.md"
-    )
+    checklist = docs_page_url("maintaining/integration-testing/runbook-azdo.md")
     summary(
         [
             RepoResult("Repo A", repo_a_name, dest_a, failures_a, checklist_a),
@@ -1813,7 +1813,7 @@ def main() -> None:
         ],
         [
             Step(
-                "Work through the manual checklist, which updates Repo B along the "
+                "Work through the runbook, which updates Repo B along the "
                 f"way: {checklist}"
             ),
             Step(
@@ -1823,6 +1823,7 @@ def main() -> None:
                     "git switch main",
                     "git pull",
                     "mise run migrate-azdo-pipeline-names",
+                    f'cd "{template_repo}"',
                     f"mise run integration-test-verify-update-azdo {scope} "
                     f'--repo {repo_b_name} --local-path "{dest_b}"',
                 ],
