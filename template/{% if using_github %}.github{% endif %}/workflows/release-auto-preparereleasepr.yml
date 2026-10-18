@@ -9,6 +9,9 @@ concurrency:
   group: knope-release-pr
   cancel-in-progress: true
 
+env:
+  MISE_ENV: ci
+
 jobs:
   autoupdate-knope-pr:
     if: "!contains(github.event.head_commit.message, 'chore: prepare release')"
@@ -50,13 +53,16 @@ jobs:
         # not a failure, so only that specific knope error is tolerated.
         run: |
           args=()
-          override=$(jq -r '.version // empty' .config/knope-release-override.json 2>/dev/null || true)
+          override=""
+          if [ -f .config/knope-release-override.json ]; then
+            override=$(mise x -- jq -r '.version // empty' .config/knope-release-override.json)
+          fi
           if [ -n "$override" ]; then
             if ! printf '%s' "$override" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
               echo "::error::.config/knope-release-override.json has version '$override', which isn't X.Y.Z."
               exit 1
             fi
-            current=$(jq -r .version .config/knope-current-version.json)
+            current=$(mise x -- jq -r .version .config/knope-current-version.json)
             if [ "$override" != "$current" ] && [ "$(printf '%s\n%s\n' "$current" "$override" | sort -V | tail -n 1)" = "$override" ]; then
               echo "Pinning this release to $override (from .config/knope-release-override.json)."
               args=(--override-version "$override")

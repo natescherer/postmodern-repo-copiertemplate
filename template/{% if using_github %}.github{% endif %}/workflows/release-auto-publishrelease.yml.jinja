@@ -5,6 +5,9 @@ on:
     types: [closed]
     branches: [main]
 
+env:
+  MISE_ENV: ci
+
 jobs:
   release-on-knope-pr-merge:
     if: github.head_ref == 'knope/release' && github.event.pull_request.merged == true
@@ -44,8 +47,8 @@ jobs:
         # the GitHub API, so the job's own checkout never locally fetches the new tag
         # ref.
         run: |
-          version=$(jq -r .version .config/knope-current-version.json)
-          gh workflow run docs-auto-zensical.yml -f tag="v$version"
+          version=$(mise x -- jq -r .version .config/knope-current-version.json)
+          mise x -- gh workflow run docs-auto-zensical.yml -f tag="v$version"
         env:
           GH_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
 {%- endif %}

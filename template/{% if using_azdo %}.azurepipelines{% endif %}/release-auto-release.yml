@@ -85,7 +85,13 @@ stages:
               # reaches it. "Nothing release-worthy since the last release" is a normal outcome,
               # not a failure, so only that specific knope error is tolerated.
               args=()
-              override=$(mise x -- jq -r '.version // empty' .config/knope-release-override.json 2>/dev/null || true)
+              override=""
+              if [ -f .config/knope-release-override.json ]; then
+                override=$(mise x -- jq -r '.version // empty' .config/knope-release-override.json) || {
+                  echo "##vso[task.logissue type=error]Couldn't read .config/knope-release-override.json."
+                  exit 1
+                }
+              fi
               if [ -n "$override" ]; then
                 if ! printf '%s' "$override" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
                   echo "##vso[task.logissue type=error].config/knope-release-override.json has version '$override', which isn't X.Y.Z."

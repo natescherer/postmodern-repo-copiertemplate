@@ -19,4 +19,5 @@ apply on top of that, and Renovate keeps both current:
 ## CI
 
 {% if is_template %}GitHub Actions workflows and Azure Pipelines both run{% elif using_github %}GitHub Actions workflows run{% else %}Azure Pipelines run{% endif %} on hosted `ubuntu-latest` runners. A
-self-hosted runner needs Linux with Bash, Git, and curl; mise installs everything else.
+self-hosted runner needs Linux with Bash, Git, and curl{% if is_template %}, plus PowerShell 7 and jq on
+Azure DevOps{% elif using_azdo %}, plus PowerShell 7 and jq{% endif %}; mise installs everything else.
