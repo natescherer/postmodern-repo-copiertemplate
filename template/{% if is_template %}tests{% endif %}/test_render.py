@@ -196,3 +196,47 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
 
     errors = _check_all(dest, zensical=False)
     assert not errors, "\n\n".join(errors)  # noqa: S101
+
+
+def _first_entry(**match) -> dict:
+    return next(
+        entry
+        for entry in ANSWER_MATRIX
+        if all(entry.get(key) == value for key, value in match.items())
+    )
+
+
+def test_nested_template(update_source, tmp_path):
+    """Copy a Template child with its tasks, then copy a project from that child.
+
+    The render tests skip tasks, so they never run `copy-template-files`, the task
+    that gives a Template child its own copy of `template/`; without it, the child
+    can't be copied from at all. This runs it (repo setup stays off, so nothing
+    touches a remote) and then renders a grandchild from the result.
+    """
+    source, _ = update_source
+    child_answers = _first_entry(project_type="Template", developer_platform="GitHub")
+    child = tmp_path / "child"
+    args = ["copier", "copy", "--trust", "--defaults", "--vcs-ref=HEAD"]
+    for key, value in child_answers.items():
+        if key not in ("id", "_old_tag_overrides"):
+            args.extend(["-d", f"{key}={value}"])
+    result = _run([*args, str(source), str(child)])
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert result.returncode == 0, (  # noqa: S101
+        f"copier copy failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+    )
+
+    def files(root: Path) -> dict[str, bytes]:
+        return {
+            path.relative_to(root).as_posix(): path.read_bytes()
+            for path in root.rglob("*")
+            if path.is_file()
+        }
+
+    assert files(child / "template") == files(source / "template")  # noqa: S101
+
+    grandchild = tmp_path / "grandchild"
+    _render(child, grandchild, _first_entry(project_type="Standard"))
+    errors = _check_all(grandchild, zensical=False)
+    assert not errors, "\n\n".join(errors)  # noqa: S101
