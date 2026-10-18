@@ -79,8 +79,10 @@ On GitHub:
 
 On Azure DevOps:
 
-- **Repoint renamed pipelines.** v0.8.0 renamed the files under `.azurepipelines/`; run
-  `mise run migrate-azdo-pipeline-names` to repoint existing registrations at the new names.
+- **Repoint renamed pipelines.** v0.8.0 renamed the files under `.azurepipelines/`. Once the
+  update has merged to `main`, run `mise run migrate-azdo-pipeline-names` to repoint the
+  existing registrations at the new names. Azure DevOps reads pipeline YAML from `main`, so
+  running it before the merge breaks every pipeline run until the renamed files get there.
 - **Register new pipelines.** Pipelines added since your version (such as Renovate and the repo
   health check) aren't registered by an update. Register each `.yml` under `.azurepipelines/`
   that isn't yet, and delete any registration whose file no longer exists; see

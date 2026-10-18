@@ -15,15 +15,18 @@ To pull in its latest changes:
    added since your last update.
 1. Resolve any conflicts where your own edits overlap a template change; Copier marks
    them inline.
-{%- if is_template or using_azdo %}
-1. {% if is_template %}On Azure DevOps, run{% else %}Run{% endif %} `mise run migrate-azdo-pipeline-names` if the update renamed any files under
-   `.azurepipelines/`. It repoints the existing pipeline registrations at the new names,
-   keeping their run history and variables. It's safe to run when nothing needs migrating.
-{%- endif %}
 1. Review the new files in `.changeset/`, one per relevant upstream change, and delete the
    ones that don't apply to your project. Each links to the upstream {{ 'PR' if using_github else 'repo' }} it came from.
 1. Commit and open a pull request as usual. The remaining changesets go into your
    [next release](releasing.md) with your own commits.
+{%- if is_template or using_azdo %}
+1. {% if is_template %}On Azure DevOps, if{% else %}If{% endif %} the update renamed files under `.azurepipelines/`, run
+   `mise run migrate-azdo-pipeline-names` once the pull request has merged to `main`. It
+   repoints the existing pipeline registrations at the new names, keeping their run history
+   and variables. Wait for the merge: Azure DevOps reads pipeline YAML from `main`, so
+   repointing earlier breaks every run until the renamed files get there. It's safe to run
+   when nothing needs migrating.
+{%- endif %}
 
 ## Troubleshooting
 
