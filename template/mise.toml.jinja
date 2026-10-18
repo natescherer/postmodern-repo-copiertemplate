@@ -93,7 +93,7 @@ run = "uv run scripts/template_docs_server.py"
 # for inspection; delete them when you're done. See
 # {{ docs_url }}maintaining/integration-testing/index.html and
 # {{ docs_url }}maintaining/integration-testing/manual-verification-github{{ docs_page_suffix }}.
-run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}"
+run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}{% if not is_extensible %} --leaf{% endif %}"
 
 [tasks.integration-test-verify-update-gh]
 # Run after updating Repo B by hand (see the "Repo B" section of
@@ -127,7 +127,7 @@ usage = '''
 flag "--org <org>" help="Azure DevOps organization"{% if org_default %} default="{{ org_default }}"{% endif %}
 flag "--project <project>" help="Azure DevOps project"{% if project_default %} default="{{ project_default }}"{% endif %}
 '''
-run = "python scripts/integration_test_azdo.py --source {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} --repo-prefix {{ repo_name }}"
+run = "python scripts/integration_test_azdo.py --source {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} --repo-prefix {{ repo_name }}{% if not is_extensible %} --leaf{% endif %}"
 
 [tasks.integration-test-verify-update-azdo]
 # Run after updating Repo B by hand (see the "Repo B" section of

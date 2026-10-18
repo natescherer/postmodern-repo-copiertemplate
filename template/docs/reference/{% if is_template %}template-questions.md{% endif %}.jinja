@@ -53,6 +53,8 @@ first copy.
 - **`azdo_org`** / **`azdo_project`**: the Azure DevOps organization and project the repo is
   created in. The project name can contain spaces.
 
+{%- if is_extensible %}
+
 ## `project_type`: Standard / Template
 
 The other foundational decision, with `developer_platform`; see
@@ -67,6 +69,23 @@ The other foundational decision, with `developer_platform`; see
 
 See [Extending This Template](../maintaining/extending-the-template.md) for what comes next:
 whether your template will be extended in turn, and checklists for adding to it.
+
+## `extensible_template`: Yes / No
+
+Asked only for `Template`: whether other Copier templates will be built from this one.
+
+- **No** (the default for a new copy) makes a leaf template. Its projects are always
+  Standard, so its copy of `template/` leaves out the template-only files (the child
+  `copier.yml`, tests, scripts, and template docs), and its own `copier.yml` doesn't ask
+  `project_type`. Most templates, such as a company's internal deployment template, are
+  leaf templates.
+- **Yes** makes an extensible template. It keeps the whole `template/`, so its projects
+  can be templates too, as this template's are.
+
+An existing Template project is asked once on its next update, with yes preselected, which
+keeps its current behavior. Answering no then removes the template-only files from its
+`template/`. See [Extending This Template](../maintaining/extending-the-template.md#start-here-will-other-templates-build-on-yours).
+{%- endif %}
 
 ## `project_visibility`: Public / Private
 

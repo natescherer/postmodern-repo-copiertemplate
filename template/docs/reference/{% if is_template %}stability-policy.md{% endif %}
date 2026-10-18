@@ -14,7 +14,7 @@ manual action after `copier update` to keep working the way it did. That include
   such as a workflow or pipeline file, or a CI job whose name a branch protection rule or
   required check points at.
 - Removing a supported option, such as a `developer_platform`.
-- Moving or removing a page in these docs, since child templates and their docs link into them.
+- Moving or removing a page in these docs, since generated projects' docs link into them.
 
 A change that a `_migrations` step in `copier.yml` handles completely, with nothing left for
 the project to do, isn't breaking.

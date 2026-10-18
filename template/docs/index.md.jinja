@@ -14,17 +14,20 @@ Template Author: describe what your template does here.
 - License and Policies
 - Contribution Guide and Automatic Contributor Crediting
 
+{%- if is_extensible %}
+
 ## The Big Decision
 
 Make one decision before you use this template:
 
 - **`project_type`** (Standard or Template): whether the generated project is a repo to build
   in (**Standard**) or a child Copier template that others can build on (**Template**).
+{%- endif %}
 
 ## Inheritance
 
-This template was built from [{{ parent_template_name }}]({{ parent_template_url }}), and its
-own child templates inherit from it the same way. `copier update` carries that inheritance: run
+This template was built from [{{ parent_template_name }}]({{ parent_template_url }}), and the
+{% if is_extensible %}projects and child templates{% else %}projects{% endif %} it generates inherit from it the same way. `copier update` carries that inheritance: run
 against a generated project, it brings in what changed upstream (features, fixes, security
 patches) and keeps local customizations.
 

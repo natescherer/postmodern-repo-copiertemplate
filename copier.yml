@@ -489,6 +489,16 @@ project_type:
     - Template
   default: Standard
 
+# Defaults to no on a new copy (most templates are leaf templates) and to yes for an
+# existing Template project, which was extensible before this question existed. No
+# `ask:` yet, so every existing Template project answers it once on its next update.
+extensible_template:
+  type: bool
+  help: |-
+    Will other Copier templates be built from this one? No makes a leaf template, whose projects are always Standard; yes makes an extensible template.
+  default: "{{ project_initialized | default(false) }}"
+  when: "{{ project_type == 'Template' }}"
+
 project_name:
   type: str
   help: The project's display name; capitals and spaces are fine.
@@ -664,6 +674,16 @@ is_template:
     {%- endif %}
   when: false
 
+# An extensible template, whose own projects can be templates too. A leaf template
+# gets the parent's template/ without the template-only files.
+is_extensible:
+  type: bool
+  default: |-
+    {%- if project_type == 'Template' and extensible_template -%}
+      true
+    {%- endif %}
+  when: false
+
 lifecycle_is_pre_stable:
   type: bool
   default: |-
@@ -781,15 +801,28 @@ _tasks:
     when: "{{ _copier_operation == 'copy' }}"
 
   # Makes nested templates work: every Template project gets an unrendered copy of
-  # the parent's template/ directory. copytree only adds and overwrites, so on update
-  # this also removes the files the parent deleted or renamed since the previous
-  # version, which it reads from the answers file committed at HEAD.
+  # the parent's template/ directory. A leaf template's copy leaves out the paths gated
+  # on is_template or is_extensible, since its own projects are never templates.
+  # copytree only adds and overwrites, so on update this also removes the files the
+  # parent deleted or renamed since the previous version, which it reads from the
+  # answers file committed at HEAD.
   - command:
       - "{{ _copier_python }}"
       - -c
       - |
         import os, re, shutil, subprocess, sys, tempfile, time
-        src, ref, answers_file = sys.argv[1], sys.argv[2], sys.argv[3]
+        src, ref, answers_file, extensible = sys.argv[1:5]
+        # Split so Copier doesn't read them as Jinja tags when it renders this task.
+        template_only = ("{" + "% if is_template %" + "}", "{" + "% if is_extensible %" + "}")
+
+
+        def is_template_only(name):
+            return any(gate in name for gate in template_only)
+
+
+        def skip_template_only(_directory, names):
+            return [n for n in names if is_template_only(n)]
+
         old = subprocess.run(
             ["git", "show", "HEAD:" + answers_file.replace("\\", "/")],
             capture_output=True, text=True,
@@ -820,10 +853,22 @@ _tasks:
                         while parent != "template" and os.path.isdir(parent) and not os.listdir(parent):
                             os.rmdir(parent)
                             parent = os.path.dirname(parent)
-            shutil.copytree(os.path.join(d, "template"), "template", dirs_exist_ok=True)
+            if extensible != "True" and os.path.isdir("template"):
+                # A leaf template that was extensible still has the template-only paths.
+                for root, dirs, names in os.walk("template"):
+                    for name in [*dirs, *names]:
+                        if is_template_only(name):
+                            path = os.path.join(root, name)
+                            shutil.rmtree(path) if os.path.isdir(path) else os.remove(path)
+                    dirs[:] = [x for x in dirs if not is_template_only(x)]
+            shutil.copytree(
+                os.path.join(d, "template"), "template", dirs_exist_ok=True,
+                ignore=None if extensible == "True" else skip_template_only,
+            )
       - "{{ _copier_conf.src_path }}"
       - "{{ _copier_conf.vcs_ref if _copier_conf.vcs_ref else '' }}"
       - "{{ _copier_conf.answers_file }}"
+      - "{{ is_extensible }}"
     when: |-
       {%- if is_template -%}
         true

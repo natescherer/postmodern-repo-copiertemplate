@@ -26,7 +26,7 @@ The template can create a new project or apply to an existing repo. See [Applyin
 ### Support for Template Updates
 
 [Copier](https://github.com/copier-org/copier) keeps projects in sync with their parent template. A scheduled {% if is_template %}GitHub Actions workflow/Azure DevOps pipeline{% elif using_github %}GitHub Actions workflow{% else %}Azure DevOps pipeline{% endif %} checks for new template releases, and `mise run copier-update` applies them. See [Updating from the Parent Template](../maintaining/updating-from-template.md).
-{%- if is_template %}
+{%- if is_extensible %}
 
 ### Support for Child/Recursive Templates
 
@@ -109,7 +109,7 @@ Documentation is set up with [Zensical](https://zensical.org/), the successor to
 {%- endif %}
     - Link checking via [lychee](https://github.com/lycheeverse/lychee)
     - Markdown linting via [rumdl](https://github.com/rvben/rumdl)
-{%- if is_template %}
+{%- if is_extensible %}
     - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff) (Template projects only)
 {%- endif %}
     - Shell script linting via [ShellCheck](https://github.com/koalaman/shellcheck)
@@ -130,7 +130,7 @@ Documentation is set up with [Zensical](https://zensical.org/), the successor to
 
 ## Support Files
 
-- `.gitignore`, set to ignore macOS `.DS_Store` files, Windows `Thumbs.db` files, and tool caches{% if is_template %} (plus Python bytecode caches in Template projects){% endif %}
+- `.gitignore`, set to ignore macOS `.DS_Store` files, Windows `Thumbs.db` files, and tool caches{% if is_extensible %} (plus Python bytecode caches in Template projects){% endif %}
 - `CHANGELOG.md`, maintained by Knope
 {%- if is_template or agent_instructions %}
 - `AGENTS.md`, instructions for AI coding agents
@@ -144,7 +144,7 @@ Documentation is set up with [Zensical](https://zensical.org/), the successor to
 {%- if is_template or using_mit %}
 - `LICENSE`, a copy of the [MIT License](https://choosealicense.com/licenses/mit/){% if is_template %} (public projects only){% endif %}
 {%- endif %}
-{%- if is_template %}
+{%- if is_extensible %}
 - `README.md`, laid out for a product (Standard projects) or a template (Template projects)
 {%- else %}
 - `README.md`, laid out for a product
@@ -152,13 +152,13 @@ Documentation is set up with [Zensical](https://zensical.org/), the successor to
 {%- if is_template or is_public %}
 - `SECURITY.md`, pointing vulnerability reports to GitHub's private reporting{% if is_template %} (public projects only){% endif %}
 {%- endif %}
-{%- if is_template %}
+{%- if is_extensible %}
 
 ## Template Projects
 
 Choosing `project_type: Template` adds tooling for building and maintaining a template of your own (see [Development](../maintaining/development.md#tasks) for the full task list):
 
-- An unrendered copy of the parent template's `template/` directory, so your template starts from (and can keep receiving) everything above
+- An unrendered copy of the parent template's `template/` directory, so your template starts from (and can keep receiving) everything above. A leaf template (`extensible_template: No`) gets it without the template-only files, since its projects are never templates
 - A pytest render-validation suite that renders every answer combination in an answer matrix and checks the output (`mise run test`)
 - [Integration tests](../maintaining/integration-testing/index.md) that create real throwaway repos on GitHub or Azure DevOps (`mise run integration-test-gh` / `mise run integration-test-azdo`)
 - `mise run template-docs-server`, a live preview of your template's docs rendered under every answer combination

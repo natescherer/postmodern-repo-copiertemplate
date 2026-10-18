@@ -144,6 +144,22 @@ def report(label: str, failures: list[str]) -> None:
         print(f"\n{label}: all checks passed.")
 
 
+def template_answers(*, leaf: bool) -> list[str]:
+    """Return the -d flags that make a test repo a Template project.
+
+    A leaf template's projects can't be templates, so a leaf template source gets none.
+    Otherwise the repo is an extensible template, which exercises everything a template
+    can be.
+
+    Returns:
+        Copier -d arguments.
+
+    """
+    if leaf:
+        return []
+    return ["-d", "project_type=Template", "-d", "extensible_template=true"]
+
+
 def create(
     source: str,
     vcs_ref: str,
@@ -153,6 +169,7 @@ def create(
     zensical_target: str,
     *,
     code_coverage: bool,
+    leaf: bool = False,
 ) -> None:
     """Run the template to create the test repo.
 
@@ -185,8 +202,7 @@ def create(
         f"github_username={owner}",
         "-d",
         f"project_description={PROJECT_DESCRIPTION}",
-        "-d",
-        "project_type=Template",
+        *template_answers(leaf=leaf),
         "-d",
         "project_name=Integration Test",
         "-d",
@@ -1266,6 +1282,11 @@ def main() -> None:
     parser.add_argument("--source", help="Copier template source URL")
     parser.add_argument("--repo-prefix", help="This repo's own name")
     parser.add_argument(
+        "--leaf",
+        action="store_true",
+        help="The source is a leaf template, whose projects can't be templates.",
+    )
+    parser.add_argument(
         "--verify-update",
         metavar="REPO",
         default=os.environ.get("usage_repo"),
@@ -1315,6 +1336,7 @@ def main() -> None:
         owner,
         "GitHub Pages",
         code_coverage=True,
+        leaf=args.leaf,
     )
     provision_test_secrets(repo_a)
     failures_a: list[str] = []
@@ -1346,6 +1368,7 @@ def main() -> None:
         owner,
         "docs-site Directory in Repo",
         code_coverage=False,
+        leaf=args.leaf,
     )
     provision_test_secrets(repo_b)
     failures_b: list[str] = []

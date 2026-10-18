@@ -12,8 +12,7 @@ from pathlib import Path
 
 import pytest
 import yaml
-from answer_matrix import ANSWER_MATRIX
-from conftest import _render
+from conftest import RENDERABLE_ANSWERS, _render
 
 
 def _extract_nav_paths(nav: list) -> list[str]:
@@ -99,7 +98,7 @@ def _check_docs_in_nav(root: Path) -> list[str]:
     ]
 
 
-@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
 def test_nav_completeness(template_source, tmp_path, answers):
     """Verify zensical.toml's nav and the rendered docs/ tree agree both ways."""
     dest = tmp_path / "out"
@@ -170,7 +169,7 @@ def _check_hook_tools_available(prek_toml: Path, mise_toml: Path) -> list[str]:
     return errors
 
 
-@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
 def test_hook_tools_available(template_source, tmp_path, answers):
     """Verify every prek hook in the render has its tool installed."""
     dest = tmp_path / "out"
@@ -228,7 +227,7 @@ def _check_azdo_pipelines_registered(dest: Path) -> list[str]:
     ]
 
 
-@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
 def test_azdo_pipelines_registered(template_source, tmp_path, answers):
     """Verify every Azure Pipelines file in the render has a matching _tasks entry."""
     dest = tmp_path / "out"

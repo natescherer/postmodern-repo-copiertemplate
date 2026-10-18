@@ -16,6 +16,7 @@ from pathlib import Path
 
 import jinja2
 import pytest
+from answer_matrix import ANSWER_MATRIX
 from jinja2_ansible_filters import AnsibleCoreFiltersExtension
 
 
@@ -42,6 +43,20 @@ def _find_repo_root() -> Path:
 
 
 REPO_ROOT = _find_repo_root()
+
+# copy-template-files leaves copier.yml.jinja out of a leaf template's template/,
+# and the leaf's copier.yml makes every project Standard.
+IS_LEAF = not (
+    REPO_ROOT / "template" / "{% if is_template %}copier.yml{% endif %}.jinja"
+).is_file()
+
+# The ANSWER_MATRIX entries this source can render: a leaf template renders only its
+# Standard ones.
+RENDERABLE_ANSWERS = [
+    entry
+    for entry in ANSWER_MATRIX
+    if not (IS_LEAF and entry["project_type"] == "Template")
+]
 
 
 # Git can run maintenance in a detached background process after commands such as
@@ -169,6 +184,8 @@ def _assemble_source(repo_root: Path, dest: Path) -> None:
             azdo_org="",
             azdo_project_encoded="",
             repo_name="test-parent-template",
+            # The test source is an extensible template, so it asks project_type.
+            is_extensible=True,
         )
         (dest / "copier.yml").write_text(rendered, encoding="utf-8")
     else:
