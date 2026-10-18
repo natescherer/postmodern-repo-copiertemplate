@@ -1107,13 +1107,8 @@ def check_release_flow(
     check(
         failures,
         "a docs-only merge keeps the release pipeline green",
-        # `az repos pr create` always fails with TF401179 ("an active pull request
-        # ... already exists") once the first knope/release PR is open; see the feat
-        # merge check below for the full explanation. A docs-only commit that finds
-        # nothing release-worthy can *also* legitimately surface as partiallySucceeded
-        # (matching releasing.md's "shows a failed step but stays green overall" note
-        # for the equivalent GitHub case), so either way this isn't a hard failure.
-        result in ("succeeded", "partiallySucceeded"),
+        # Nothing to release is a normal outcome the pipeline handles, so it succeeds.
+        result == "succeeded",
         result,
     )
     docs_noop_after = knope_release_pr_title(org_url, project, repo_name)
@@ -1139,13 +1134,8 @@ def check_release_flow(
     check(
         failures,
         "a feat merge's release pipeline succeeds",
-        # `az repos pr create` always fails with TF401179 ("an active pull request
-        # ... already exists") once the first knope/release PR is open; every push
-        # after the first hits this, regardless of commit type. Azure DevOps still
-        # refreshes the PR's title from the new commit despite that failed step (the
-        # final title and the eventual release come out correct), so this is a
-        # real but non-blocking imperfection, not a failure worth hard-failing on.
-        result in ("succeeded", "partiallySucceeded"),
+        # The pipeline updates the existing release PR instead of opening a second one.
+        result == "succeeded",
         result,
     )
     release_prs = json.loads(
