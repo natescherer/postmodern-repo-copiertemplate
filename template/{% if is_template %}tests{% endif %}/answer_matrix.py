@@ -3,9 +3,10 @@
 Edit this file when you add, remove, or rename a Copier question in copier.yml; each
 entry should be a real, reachable combination (respecting copier.yml's
 `when:`/`validator:` constraints, e.g. `Public` + `MIT` isn't valid on Azure DevOps)
-that exercises a distinct rendering path. This file is repo-specific by design; the
-test modules that consume it (conftest.py, test_render.py, test_content.py, ...) are
-not.
+that exercises a distinct rendering path. An entry using a value the last release
+doesn't accept also needs `_old_tag_overrides` (see test_update_from_last_tag). This
+file is repo-specific by design; the test modules that consume it (conftest.py,
+test_render.py, test_content.py, ...) are not.
 """
 
 COMMON = {
