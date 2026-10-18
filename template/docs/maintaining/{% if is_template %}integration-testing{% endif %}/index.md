@@ -1,40 +1,59 @@
 # Integration Testing
 
-**Run this as the last step before cutting every release.** It's the only way to catch a real regression in this template's own scaffolding; a local render can't create a repo, register a pipeline, or trigger a workflow, and those are exactly the things a release needs to still work.
-
-Integration testing means actually running the template: creating a real throwaway repo from the current template source and confirming the result holds up, not just inspecting a local render.
+Run the integration tests as the last step before every release. They create real repos from the
+current template source and exercise them on GitHub and Azure DevOps, which catches the
+regressions a local render can't: repo creation, pipeline registration, and workflow runs.
 
 ## Running It
 
-- `mise run integration-test-gh`: creates two real GitHub repos from this template, named `<prefix>-integration-test-<timestamp>-a` and `...-b`.
-- `mise run integration-test-azdo`: the same shape, on Azure DevOps (pass `--org`/`--project`, or let them default to this project's own if it already uses Azure DevOps).
+- `mise run integration-test-gh` creates two GitHub repos from this template, named
+  `<prefix>-integration-test-<timestamp>-a` and `...-b`.
+- `mise run integration-test-azdo` does the same on Azure DevOps. Pass `--org` and `--project`,
+  or let them default to this project's own when it uses Azure DevOps.
 
-Run both, regardless of which platform this template's own repo happens to use; a release has to be good for every platform this template supports, not just the one you personally host on.
+Run both before a release, whichever platform this repo uses: the template ships for both.
 
 ## Repo A and Repo B
 
-Each run creates two repos with deliberately different answers, so between them a single run covers more of the answer space instead of exercising the same fixed answers twice. Each checklist below has a matching section per repo.
+Each run creates two repos with different answers, so one run covers more of the answer space.
+Each checklist has a section for each repo.
 
-- **Repo A** is a plain `copier copy` at `HEAD`, ready to check immediately; both `mise run integration-test-gh`/`integration-test-azdo` run every automated check they can against it directly (dispatching pipelines, opening real PRs, cutting a real release) before returning.
-- **Repo B** is copied at the last stable release tag and left there; it does *not* get updated for you. Applying that update is deliberately a manual step, spelled out in each checklist's own Repo B section: running the exact command a real user runs, prompts included, is the only way to see a new question land the way it actually would for them, not however a script might have answered it. Once you've updated it by hand, `mise run integration-test-verify-update-gh`/`integration-test-verify-update-azdo` automates checking that it applied cleanly.
+- **Repo A** is a `copier copy` at `HEAD`. The script runs every automated check against it
+  before returning: it dispatches pipelines, opens PRs, and cuts a release.
+- **Repo B** is a `copier copy` at the last stable release tag, left there for you to update by
+  hand with the command in its checklist section. Running the command a real user runs, prompts
+  included, shows each new question the way they'll see it. Afterward,
+  `mise run integration-test-verify-update-gh` or `integration-test-verify-update-azdo` checks
+  that the update applied cleanly.
 
-The two repos also split every other either/or answer this template offers, so both branches get exercised somewhere: `code_coverage` is on for Repo A and off for Repo B on both platforms; on GitHub, `zensical_target` is `GitHub Pages` for Repo A and `docs-site Directory in Repo` for Repo B.
+The two repos also split each either/or answer: `code_coverage` is on for Repo A and off for
+Repo B on both platforms, and on GitHub, `zensical_target` is `GitHub Pages` for Repo A and
+`docs-site Directory in Repo` for Repo B.
 
-## What It Checks, and What It Doesn't
+## What It Checks
 
-Both scripts check as much as is feasible for them to automatically: they dispatch real pipelines and wait for them to finish, open real PRs and confirm they're blocked or pass, push real commits and confirm the release flow reacts correctly, and cut a real release and prerelease. Every check prints its own `[PASS]`/`[FAIL]` line as it runs, plus a summary at the end; nothing stops at the first failure, so one run gives the full picture.
+The scripts automate every check they can: they dispatch pipelines and wait for them, open PRs
+and confirm they're blocked or pass, push commits and confirm the release flow responds, and cut
+a release and a prerelease. Each check prints a `[PASS]` or `[FAIL]` line as it runs, and a
+summary at the end; a failure doesn't stop the run, so one run reports everything.
 
-What's still out of reach: anything that depends on a human's judgment (does a badge actually look right, was the setup checklist genuinely addressed) or an external system this script can't inspect (whether an Apprise notification actually landed at your configured endpoint, whether a third-party bot like Renovate or All Contributors responded). That's what the checklists are for; each one only lists what's actually left for a human, with a note wherever a check nearby is already automated.
+The manual checklists cover the rest: anything that needs human judgment (whether a badge looks
+right, whether the setup checklist was really addressed) and anything in a system the scripts
+can't inspect (whether an Apprise notification arrived, whether Renovate or All Contributors
+responded). Each checklist lists only those steps, and notes where a nearby check is already
+automated.
 
-## vs. `pytest tests/`
+## How It Differs from `pytest tests/`
 
-`pytest tests/` (`mise run test`; CI runs the same command directly on every PR) already covers a lot of this template's own correctness, including an update-path check (`test_update_from_last_tag`) that runs a real `copier update` against a real git history, but entirely locally: it renders into a temp directory, never touches GitHub or Azure DevOps, and skips every `_tasks` entry (`--skip-tasks`), so it can't create a repo, register a pipeline, or apply a branch policy for real. It's what catches broken Jinja, invalid YAML/JSON, dead links, and template-diff bugs, fast and on every PR, with no external side effects.
+`pytest tests/` (`mise run test`, and CI on every PR) checks the template locally: it renders
+into a temporary directory, never contacts GitHub or Azure DevOps, and runs no repo setup tasks.
+It catches broken Jinja, invalid YAML and JSON, dead links, and update-path bugs, including a
+real `copier update` against a git history (`test_update_from_last_tag`). Integration testing
+covers what needs a real API call, a running pipeline, or an external system.
 
-Integration testing picks up exactly where that stops: anything gated on a real API call, a real running pipeline, or an external system's own behavior; none of which a local render can exercise, which is why this has to be a manual, pre-release step rather than something CI runs on every PR.
-
-Run through **all of** the relevant checklist, by hand, against the repos the integration test just created:
+Work through the checklist for each platform, by hand, against the repos the run just created:
 
 - [Manual Verification Checklist (GitHub)](manual-verification-github.md)
 - [Manual Verification Checklist (Azure DevOps)](manual-verification-azdo.md)
 
-Each checklist ends with its own cleanup steps for tearing the throwaway repos back down once you're done.
+Each checklist ends with steps for cleaning up the test repos.
