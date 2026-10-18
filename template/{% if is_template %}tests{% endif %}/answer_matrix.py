@@ -25,6 +25,7 @@ ANSWER_MATRIX = [
         "developer_platform": "GitHub",
         "github_username": "octocat",
         "project_type": "Template",
+        "extensible_template": True,
         "project_visibility": "Public",
         "license": "MIT",
         "zensical_target": "GitHub Pages",
@@ -45,13 +46,17 @@ ANSWER_MATRIX = [
     },
     {
         # The only GitHub Template that builds docs into the repo (docs_base()'s
-        # blob/main/docs/ branch), and the only entry with a GitHub organization.
+        # blob/main/docs/ branch), the only entry with a GitHub organization, and the
+        # only leaf template. On update, extensible_template isn't asked and defaults to
+        # true for an existing project, so _old_tag_overrides passes false back in.
         "id": "github-template-public-mit-docs-site-beta",
         **COMMON,
         "developer_platform": "GitHub",
         "github_username": "octocat",
         "github_org": "test-org",
         "project_type": "Template",
+        "extensible_template": False,
+        "_old_tag_overrides": {"extensible_template": False},
         "project_visibility": "Public",
         "license": "MIT",
         "zensical_target": "docs-site Directory in Repo",
@@ -76,6 +81,7 @@ ANSWER_MATRIX = [
         "azdo_org": "test-org",
         "azdo_project": "Test Project",
         "project_type": "Template",
+        "extensible_template": True,
         "project_visibility": "Private",
         "license": "None",
         "zensical_target": "docs-site Directory in Repo",

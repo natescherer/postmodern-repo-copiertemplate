@@ -185,6 +185,22 @@ def report(label: str, failures: list[str]) -> None:
         print(f"\n{label}: all checks passed.")
 
 
+def template_answers(*, leaf: bool) -> list[str]:
+    """Return the -d flags that make a test repo a Template project.
+
+    A leaf template's projects can't be templates, so a leaf template source gets none.
+    Otherwise the repo is an extensible template, which exercises everything a template
+    can be.
+
+    Returns:
+        Copier -d arguments.
+
+    """
+    if leaf:
+        return []
+    return ["-d", "project_type=Template", "-d", "extensible_template=true"]
+
+
 def create(
     source: str,
     vcs_ref: str,
@@ -194,6 +210,7 @@ def create(
     project: str,
     *,
     code_coverage: bool,
+    leaf: bool = False,
 ) -> None:
     """Run the template to create the test repo and register its pipelines.
 
@@ -222,8 +239,7 @@ def create(
         f"azdo_project={project}",
         "-d",
         f"project_description={PROJECT_DESCRIPTION}",
-        "-d",
-        "project_type=Template",
+        *template_answers(leaf=leaf),
         "-d",
         "project_name=Integration Test",
         "-d",
@@ -1417,6 +1433,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", help="Copier template source URL")
     parser.add_argument("--repo-prefix", help="This repo's own name")
+    parser.add_argument(
+        "--leaf",
+        action="store_true",
+        help="The source is a leaf template, whose projects can't be templates.",
+    )
     # `mise run integration-test-azdo` sets usage_org and usage_project from the flags
     # its `usage` field defines. mise passes them as environment variables instead of
     # templating them into the command line, which works in any shell (cmd.exe can't
@@ -1486,6 +1507,7 @@ def main() -> None:
         args.org,
         args.project,
         code_coverage=True,
+        leaf=args.leaf,
     )
     failures_a: list[str] = []
     verify(repo_a_name, org_url, args.project, failures_a)
@@ -1517,6 +1539,7 @@ def main() -> None:
         args.org,
         args.project,
         code_coverage=False,
+        leaf=args.leaf,
     )
     failures_b: list[str] = []
     verify(repo_b_name, org_url, args.project, failures_b)

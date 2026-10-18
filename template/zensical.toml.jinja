@@ -24,7 +24,9 @@ nav = [
     { "Applying to an Existing Project" = "getting-started/existing-project.md" }
   ] },
   { "Maintaining This Template" = [
+{%- if is_extensible %}
     { "Extending This Template" = "maintaining/extending-the-template.md" },
+{%- endif %}
     { "Development" = "maintaining/development.md" },
     { "Updating from the Parent Template" = "maintaining/updating-from-template.md" },
     { "Upgrading from 0.x" = "maintaining/upgrading-from-0x.md" },

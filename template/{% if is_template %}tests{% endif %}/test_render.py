@@ -7,13 +7,20 @@ along with its own copier.yml.
 """
 
 import json
+import sys
 import tomllib
 from pathlib import Path
 
 import pytest
 import yaml
-from answer_matrix import ANSWER_MATRIX
-from conftest import _git_commit_all, _git_init_repo, _render, _run
+from conftest import (
+    IS_LEAF,
+    RENDERABLE_ANSWERS,
+    _git_commit_all,
+    _git_init_repo,
+    _render,
+    _run,
+)
 
 # VS Code parses these specific files as JSONC (comments and trailing commas allowed),
 # never as strict JSON; see
@@ -124,7 +131,7 @@ def _check_all(root: Path, *, zensical: bool = True) -> list[str]:
     return errors
 
 
-@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
 def test_render_combination(template_source, tmp_path, answers):
     """Render one answer_matrix.py combination and run every structural check on it."""
     dest = tmp_path / "out"
@@ -134,7 +141,7 @@ def test_render_combination(template_source, tmp_path, answers):
     assert not errors, "\n\n".join(errors)  # noqa: S101
 
 
-@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
 def test_update_from_last_tag(update_source, tmp_path, answers):
     """Copy at this repo's last tag, update to current, and re-run every check.
 
@@ -197,21 +204,29 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
 def _first_entry(**match) -> dict:
     return next(
         entry
-        for entry in ANSWER_MATRIX
+        for entry in RENDERABLE_ANSWERS
         if all(entry.get(key) == value for key, value in match.items())
     )
 
 
-def test_nested_template(update_source, tmp_path):
+@pytest.mark.skipif(IS_LEAF, reason="A leaf template's projects are never templates.")
+@pytest.mark.parametrize("extensible", [True, False], ids=["extensible", "leaf"])
+def test_nested_template(update_source, tmp_path, extensible):
     """Copy a Template child with its tasks, then copy a project from that child.
 
     The render tests skip tasks, so they never run `copy-template-files`, the task
     that gives a Template child its own copy of `template/`; without it, the child
     can't be copied from at all. This runs it (repo setup stays off, so nothing
-    touches a remote) and then renders a grandchild from the result.
+    touches a remote) and then renders a grandchild from the result. An extensible
+    template child gets the parent's whole `template/`. A leaf template child gets it
+    without the paths gated on is_template or is_extensible, its copier.yml doesn't
+    ask `project_type`, and its own copy of this suite passes.
     """
     source, _ = update_source
-    child_answers = _first_entry(project_type="Template", developer_platform="GitHub")
+    child_answers = {
+        **_first_entry(project_type="Template", developer_platform="GitHub"),
+        "extensible_template": extensible,
+    }
     child = tmp_path / "child"
     args = ["copier", "copy", "--trust", "--defaults", "--vcs-ref=HEAD"]
     for key, value in child_answers.items():
@@ -230,9 +245,37 @@ def test_nested_template(update_source, tmp_path):
             if path.is_file()
         }
 
-    assert files(child / "template") == files(source / "template")  # noqa: S101
+    expected = files(source / "template")
+    if not extensible:
+        expected = {
+            path: content
+            for path, content in expected.items()
+            if not any(
+                gate in path
+                for gate in ("{% if is_template %}", "{% if is_extensible %}")
+            )
+        }
+    assert files(child / "template") == expected  # noqa: S101
+
+    child_questions = yaml.safe_load((child / "copier.yml").read_text(encoding="utf-8"))
+    project_type_asked = child_questions["project_type"].get("when") is not False
+    assert project_type_asked == extensible, child_questions["project_type"]  # noqa: S101
 
     grandchild = tmp_path / "grandchild"
     _render(child, grandchild, _first_entry(project_type="Standard"))
     errors = _check_all(grandchild, zensical=False)
     assert not errors, "\n\n".join(errors)  # noqa: S101
+
+    if not extensible:
+        # The leaf's own suite, run as its maintainers run it.
+        result = _run(
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/",
+                f"--basetemp={tmp_path / 'suite'}",
+            ],
+            cwd=child,
+        )
+        assert result.returncode == 0, result.stdout[-10000:]  # noqa: S101

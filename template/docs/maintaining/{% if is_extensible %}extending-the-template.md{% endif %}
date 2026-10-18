@@ -12,36 +12,40 @@ covers applying them to what you add, starting with the decision that shapes the
 
 ## Start here: will other templates build on yours?
 
-Decide this first; it sets how much of this page applies to you.
+Decide this first; it sets how much of this page applies to you. The
+[`extensible_template`](../reference/template-questions.md#extensible_template-yes-no) question
+records the answer.
 
 === "Leaf template (most common)"
 
     Your template produces finished projects, and nothing copies from it again. This is the
-    lower-maintenance path, and the right default unless you know otherwise:
+    lower-maintenance path, and the right default unless you know otherwise. Answer no to
+    `extensible_template`, and the template handles the rest:
 
-    - Drop the `project_type` question from your `copier.yml`, or hardcode its one value: no
-      `Template` branch is needed when nothing downstream is a template.
-    - Skip the `is_template`-gated `template/` subtree.
-    - Skip the obligations below about your own template's extensibility.
+    - Your `template/` leaves out this template's template-only files (its `copier.yml`,
+      tests, scripts, and template docs), so you only maintain what your projects use.
+    - Your `copier.yml` has no `project_type` question; every project it creates is Standard.
+    - The obligations below about your own template's extensibility don't apply.
 
 === "Extensible template"
 
     Your template can itself be copied with `project_type: Template`, the relationship this
-    repo has to yours. That costs maintenance for as long as the template exists:
+    repo has to yours. Answer yes to `extensible_template`. That costs maintenance for as long
+    as the template exists:
 
-    - Keep `project_type`, or your own equivalent, so children can choose `Template` or
-      `Standard`.
-    - Carry the `template/` subtree forward, gated the same way this one is.
+    - Your `copier.yml` keeps `project_type` and `extensible_template`, so your projects can be
+      templates too.
+    - Your `template/` keeps the whole `is_template`-gated subtree, to carry forward.
     - Write a guide like this page for whoever extends your template. Adapt this one: most of
       it (dependency pinning, Renovate coverage, the CI checklist, the testing layers) applies
       to any Copier template.
 
-!!! tip "When leaf is the right call"
-    An internal, single-company template usually belongs on the leaf path. Nobody will fork
+!!! tip "When a leaf template is the right call"
+    An internal, single-company template is usually a leaf template. Nobody will fork
     it, and the `Template`/`Standard` branch costs its maintainers indefinitely: an extra
     question to explain, extra conditionals, and extra answer combinations for the
-    render-validation suite. Choose extensible when you know another template will build on
-    yours.
+    render-validation suite. Choose an extensible template when you know another template
+    will build on yours.
 
 ## The mental model
 
