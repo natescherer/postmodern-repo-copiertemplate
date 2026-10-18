@@ -19,6 +19,24 @@ hook against the whole repo:
 mise x -- prek run -c .config/prek.toml --all-files
 ```
 
+## Branching
+
+This project uses [GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow):
+one long-lived branch, `main`, plus a short-lived branch for each change.
+
+- **`main` is always releasable.** Everything on it has passed PR Validation, and any push to
+  it can become the next release; see [Releasing](releasing.md). Nothing lands on `main` except
+  through a pull request; {% if is_template %}branch protection on GitHub and branch policies on
+  Azure DevOps enforce{% elif using_github %}branch protection enforces{% else %}branch policies
+  enforce{% endif %} that.
+- **One change per branch, branched from the latest `main`.** Keep it short-lived: open the pull
+  request early, merge it once it's green, and delete the branch.
+- **Branches stay independent.** Branch from `main`, not from another unmerged branch, so pull
+  requests can merge in any order. If `main` moves on, rebase onto it.
+- **There are no `develop`, release, or hotfix branches.** A fix for something already released
+  is just another branch from `main`, and the release PR picks up whatever has merged since the
+  last release.
+
 ## Commits and Pull Requests
 
 Commit messages and PR titles follow [Conventional Commits](https://www.conventionalcommits.org/)
