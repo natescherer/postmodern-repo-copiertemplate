@@ -799,18 +799,24 @@ def check_renovate(
     check(failures, "Renovate pipeline succeeds", result == "succeeded", result)
 
 
-def wait_for_pr_policy(org_url: str, pr_id: str) -> str:
+def wait_for_pr_policy(org_url: str, pr_id: str, *, timeout: int = 900) -> str:
     """Poll a PR's build-validation policy until it settles past queued/running.
 
-    `az repos pr policy list` takes no `--project`; a PR ID is unique within the
-    whole organization, not scoped per-project the way a repo name is.
+    The timeout matches wait_for_pipeline_run()'s: PR Validation can wait in the queue
+    behind other runs, such as the ones a release merge starts, since a free Azure
+    DevOps organization gets one parallel job. `az repos pr policy list` takes no
+    `--project`; a PR ID is unique within the whole organization, not scoped
+    per-project the way a repo name is.
 
     Returns:
-        The joined set of distinct settled statuses (e.g. "approved" or "rejected"),
-        or "unknown" if none ever left queued/running within the timeout.
+        The joined set of distinct settled statuses (e.g. "approved" or "rejected").
+        After `timeout` seconds, "timed out" and the last statuses seen, or "timed out
+        (no build evaluation)" if PR Validation never started.
 
     """
-    for _ in range(24):
+    statuses: set[str] = set()
+    deadline = time.time() + timeout
+    while time.time() < deadline:
         evaluations = json.loads(
             az_value(
                 "repos",
@@ -833,7 +839,9 @@ def wait_for_pr_policy(org_url: str, pr_id: str) -> str:
         if statuses and not statuses & {"queued", "running"}:
             return "/".join(sorted(statuses))
         time.sleep(10)
-    return "unknown"
+    if not statuses:
+        return "timed out (no build evaluation)"
+    return f"timed out ({'/'.join(sorted(statuses))})"
 
 
 def assert_pr_blocked(
