@@ -7,6 +7,7 @@ along with its own copier.yml.
 """
 
 import json
+import shutil
 import sys
 import tomllib
 from pathlib import Path
@@ -18,6 +19,7 @@ from conftest import (
     RENDERABLE_ANSWERS,
     _git_commit_all,
     _git_init_repo,
+    _leaf_template,
     _render,
     _run,
 )
@@ -201,6 +203,38 @@ def test_update_from_last_tag(update_source, tmp_path, answers):
     assert not errors, "\n\n".join(errors)  # noqa: S101
 
 
+def _files(root: Path, skip: tuple[str, ...] = ()) -> dict[str, bytes]:
+    return {
+        path.relative_to(root).as_posix(): path.read_bytes()
+        for path in root.rglob("*")
+        if path.is_file() and path.relative_to(root).as_posix() not in skip
+    }
+
+
+@pytest.mark.skipif(IS_LEAF, reason="A leaf template's template/ is already folded.")
+@pytest.mark.parametrize(
+    "answers",
+    [entry for entry in RENDERABLE_ANSWERS if entry["project_type"] == "Standard"],
+    ids=lambda a: a["id"],
+)
+def test_leaf_fold_keeps_output(template_source, tmp_path, answers):
+    """Render a Standard project from a leaf template's folded template/, and compare.
+
+    copy-template-files folds the project-type gates out of a leaf template's copy of
+    template/ with fold_leaf_gates.py. A leaf's projects are always Standard, so every
+    Standard project must render byte for byte the same from the folded copy.
+    """
+    folded = tmp_path / "folded"
+    _leaf_template(template_source / "template", folded / "template")
+    shutil.copy2(template_source / "copier.yml", folded / "copier.yml")
+    _render(template_source, tmp_path / "original-out", answers)
+    _render(folded, tmp_path / "folded-out", answers)
+    # The answers file records each source's own path.
+    skip = (".config/copier-answers.yml",)
+    original = _files(tmp_path / "original-out", skip)
+    assert _files(tmp_path / "folded-out", skip) == original  # noqa: S101
+
+
 def _first_entry(**match) -> dict:
     return next(
         entry
@@ -219,8 +253,9 @@ def test_nested_template(update_source, tmp_path, extensible):
     can't be copied from at all. This runs it (repo setup stays off, so nothing
     touches a remote) and then renders a grandchild from the result. An extensible
     template child gets the parent's whole `template/`. A leaf template child gets it
-    without the paths gated on is_template or is_extensible, its copier.yml doesn't
-    ask `project_type`, and its own copy of this suite passes.
+    without the paths gated on is_template or is_extensible and with the project-type
+    gates folded out, its copier.yml doesn't ask `project_type`, and its own copy of
+    this suite passes.
     """
     source, _ = update_source
     child_answers = {
@@ -238,24 +273,11 @@ def test_nested_template(update_source, tmp_path, extensible):
         f"copier copy failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
     )
 
-    def files(root: Path) -> dict[str, bytes]:
-        return {
-            path.relative_to(root).as_posix(): path.read_bytes()
-            for path in root.rglob("*")
-            if path.is_file()
-        }
-
-    expected = files(source / "template")
+    expected = source / "template"
     if not extensible:
-        expected = {
-            path: content
-            for path, content in expected.items()
-            if not any(
-                gate in path
-                for gate in ("{% if is_template %}", "{% if is_extensible %}")
-            )
-        }
-    assert files(child / "template") == expected  # noqa: S101
+        expected = tmp_path / "leaf-template"
+        _leaf_template(source / "template", expected)
+    assert _files(child / "template") == _files(expected)  # noqa: S101
 
     child_questions = yaml.safe_load((child / "copier.yml").read_text(encoding="utf-8"))
     project_type_asked = child_questions["project_type"].get("when") is not False

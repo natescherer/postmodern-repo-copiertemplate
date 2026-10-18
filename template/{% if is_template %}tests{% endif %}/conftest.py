@@ -11,6 +11,7 @@ import shutil
 
 # S404: drives real CLI tools below; no untrusted input, no shell=True.
 import subprocess  # noqa: S404
+import sys
 import tarfile
 from pathlib import Path
 
@@ -49,6 +50,16 @@ REPO_ROOT = _find_repo_root()
 IS_LEAF = not (
     REPO_ROOT / "template" / "{% if is_template %}copier.yml{% endif %}.jinja"
 ).is_file()
+
+# copy-template-files leaves paths carrying these gates out of a leaf template's
+# template/, and folds the project-type gates out of the files it keeps.
+TEMPLATE_ONLY_GATES = ("{% if is_template %}", "{% if is_extensible %}")
+FOLD_SCRIPT = (
+    REPO_ROOT
+    / "template"
+    / "{% if is_template %}scripts{% endif %}"
+    / "{% if is_extensible %}fold_leaf_gates.py{% endif %}"
+)
 
 # The ANSWER_MATRIX entries this source can render: a leaf template renders only its
 # Standard ones.
@@ -283,6 +294,20 @@ def update_source(tmp_path_factory):
     src = tmp_path_factory.mktemp("update-source")
     _assemble_update_scratch_repo(REPO_ROOT, old_tag, src)
     return src, old_tag
+
+
+def _leaf_template(template_dir: Path, dest: Path) -> None:
+    """Copy `template_dir` to `dest` the way copy-template-files does for a leaf."""
+    shutil.copytree(
+        template_dir,
+        dest,
+        ignore=lambda _directory, names: [
+            name for name in names if any(gate in name for gate in TEMPLATE_ONLY_GATES)
+        ],
+    )
+    result = _run([sys.executable, str(FOLD_SCRIPT), str(dest)])
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert result.returncode == 0, result.stderr  # noqa: S101
 
 
 def _render(source: Path, dest: Path, answers: dict, vcs_ref: str | None = None):

@@ -158,7 +158,7 @@ Documentation is set up with [Zensical](https://zensical.org/), the successor to
 
 Choosing `project_type: Template` adds tooling for building and maintaining a template of your own (see [Development](../maintaining/development.md#tasks) for the full task list):
 
-- An unrendered copy of the parent template's `template/` directory, so your template starts from (and can keep receiving) everything above. A leaf template (`extensible_template: No`) gets it without the template-only files, since its projects are never templates
+- An unrendered copy of the parent template's `template/` directory, so your template starts from (and can keep receiving) everything above. A leaf template (`extensible_template: No`) gets it without the template-only files or the project-type conditions in the rest, since its projects are never templates
 - A pytest render-validation suite that renders every answer combination in an answer matrix and checks the output (`mise run test`)
 - [Integration tests](../maintaining/integration-testing/index.md) that create real throwaway repos on GitHub or Azure DevOps (`mise run integration-test-gh` / `mise run integration-test-azdo`)
 - `mise run template-docs-server`, a live preview of your template's docs rendered under every answer combination
