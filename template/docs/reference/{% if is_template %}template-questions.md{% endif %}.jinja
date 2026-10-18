@@ -96,7 +96,7 @@ Chooses where rendered documentation ends up:
 
 - **GitHub Pages**: deploys via `.github/workflows/docs-auto-zensical.yml`, using `mike` to keep a version-aliased
   history (`latest`, `dev`, and per-release versions) of the docs site.
-- **docs-site Directory in Repo**: builds via `.github/workflows/docs-auto-mkdocs.yml` (GitHub) or
+- **docs-site Directory in Repo**: builds via `.github/workflows/docs-auto-zensicalcommit.yml` (GitHub) or
   `.azurepipelines/docs-auto-zensical.yml` (Azure DevOps) into a `docs-site/` folder committed to
   the repo, always reflecting the latest `main`, with no version history. This is the only option
   for Azure DevOps projects.
