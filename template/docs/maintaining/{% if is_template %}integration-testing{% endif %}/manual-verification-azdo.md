@@ -15,7 +15,8 @@ A copy at `HEAD`, with `code_coverage` on.
 
 ### After First Setup
 
-*Automated: a bad PR title fails PR Validation, and the branch policy blocks completing it.*
+*Automated: a bad PR title fails PR Validation, the branch policy blocks completing it, and
+Project Administrators can bypass the policy.*
 
 - [ ] The setup checklist (printed at the end of `copier copy`) exists, and every item on it is
   done.
