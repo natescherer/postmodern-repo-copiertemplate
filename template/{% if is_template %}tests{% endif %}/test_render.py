@@ -91,10 +91,9 @@ def _check_zensical_build(root: Path) -> list[str]:
 
 
 def _check_lychee(root: Path) -> list[str]:
-    # Mirrors prek.toml's own lychee hook, which excludes docs-site: built HTML's
-    # root-relative links (e.g. "/assets/...") resolve against the filesystem root
-    # without a running server, producing bogus failures unrelated to the source
-    # markdown this check is meant to validate.
+    # Excludes docs-site, like prek.toml's lychee hook: without a server, the built
+    # HTML's root-relative links ("/assets/...") resolve against the filesystem root
+    # and fail for reasons unrelated to the Markdown source.
     result = _run(
         ["lychee", "--no-progress", "--offline", "--exclude-path", "docs-site", "."],
         cwd=root,

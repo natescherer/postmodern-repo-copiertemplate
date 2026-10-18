@@ -70,20 +70,16 @@ console = Console()
 
 IGNORE_PATTERNS = shutil.ignore_patterns("__pycache__", ".cache")
 
-# How long the watched directories must go quiet before a save triggers a
-# re-render, and how often the watch loop checks for that. Some editors fire more
-# than one filesystem event per save (a write, then a rename for an atomic save):
-# debouncing coalesces those into one re-render instead of several overlapping
-# ones. Also long enough to collapse a burst of autosave-on-pause events while
-# actively typing into one render, without making a single deliberate edit wait
-# an unreasonably long time to see its result.
+# How long the watched directories must stay quiet before a re-render, and how often
+# the watch loop checks. Some editors fire several filesystem events per save (a
+# write, then a rename), and autosave fires bursts while typing; the delay turns each
+# burst into one re-render without making a single edit wait long.
 DEBOUNCE_SECONDS = 5.0
 POLL_SECONDS = 0.1
 
-# Matches a whole Jinja tag ("{% if is_template %}", "{% endif %}", "{# ... #}"),
-# never a partial one: this template's own convention gates a whole path segment
-# at a time, never part of a name, so stripping every tag leaves exactly the literal
-# name a "true" render would produce.
+# Matches a whole Jinja tag ("{% if is_template %}", "{% endif %}", "{# ... #}").
+# This template gates whole path segments, never part of a name, so stripping every
+# tag leaves the name a "true" render produces.
 JINJA_TAG = re.compile(r"\{[%#].*?[%#]\}")
 
 
@@ -216,10 +212,9 @@ def render_all_variants() -> tuple[list[tuple[dict, Path]], list[str]]:
             return f"{entry['id']}:\n{exc.output}"
         return (entry, dest)
 
-    # map() yields results in matrix order regardless of completion order, which
-    # keeps "the first applicable entry" (used to pick each section's primary
-    # render) deterministic across runs rather than a race between the render
-    # subprocesses.
+    # map() yields results in matrix order, whatever order they finish in, so the
+    # "first applicable entry" that picks each section's primary render is the same on
+    # every run.
     with ThreadPoolExecutor(max_workers=len(matrix)) as pool:
         results = list(pool.map(_one, matrix))
 
@@ -625,12 +620,10 @@ def main() -> None:
             change, which just keeps serving the last good version).
 
     """
-    # sys.stdout is typed as TextIO, which doesn't declare reconfigure(): it's a
-    # real TextIOWrapper at runtime, though. Without this, Windows' default console
-    # codepage (cp1252) can't encode the status glyphs below (rich hits the same
-    # UnicodeEncodeError regardless of which internal render path it takes, since
-    # both end up calling sys.stdout.write() directly). Assumes whoever runs this has
-    # a Unicode-capable terminal.
+    # Windows' default console codepage (cp1252) can't encode the status glyphs below,
+    # and rich raises UnicodeEncodeError on any render path. sys.stdout is typed as
+    # TextIO, which lacks reconfigure(), but it's a TextIOWrapper at runtime. Assumes a
+    # Unicode-capable terminal.
     sys.stdout.reconfigure(encoding="utf-8")  # ty: ignore[unresolved-attribute]
 
     parser = argparse.ArgumentParser(

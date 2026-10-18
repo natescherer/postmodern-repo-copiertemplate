@@ -46,25 +46,23 @@ stages:
           - bash: mise install
             displayName: Run 'mise install'
           - bash: az extension add --name azure-devops
-            # Deliberately unpinned as of 2026-08; no Renovate-trackable version
-            # source could be found. Its GitHub releases are date-tagged (don't match
-            # the real version number), and the matching-named PyPI package is an
-            # unrelated SDK. The real version list lives in Azure/azure-cli-extensions'
-            # src/index.json, which would need a custom JSONata datasource to track;
-            # revisit if Renovate gains native support for Azure CLI extensions.
+            # Unpinned: there's no version source Renovate can track. Its GitHub
+            # releases are date-tagged, the PyPI package of the same name is an unrelated
+            # SDK, and the real version list (src/index.json in Azure/azure-cli-extensions)
+            # would need a custom JSONata datasource. Pin it if Renovate gains support for
+            # Azure CLI extensions.
             displayName: Install azure-devops CLI Extension
           - bash: az devops configure --defaults organization=$(System.CollectionUri) project="$(System.TeamProject)"
             displayName: Configure az CLI Defaults
             env:
               AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
           - bash: |
-              # Commit-message sniffing isn't reliable here: AzDO's regular (non-squash)
-              # merge commit message is "Merge pull request NNN from knope/release into
-              # main"; it doesn't reproduce the PR title at all, unlike a squash merge.
-              # Ask the API directly instead: is the most recently *completed* PR from
-              # knope/release into main's merge commit the same commit that triggered
-              # this run? That's true exactly once, for the run immediately after that
-              # PR is completed, regardless of which merge strategy was used.
+              # The commit message can't tell this run apart: a regular (non-squash)
+              # merge's message is "Merge pull request NNN from knope/release into main",
+              # not the PR title. Instead, ask the API whether the merge commit of the last
+              # completed PR from knope/release into main is the commit that started this
+              # run. That's true exactly once, right after the PR completes, whatever the
+              # merge strategy.
               MERGE_COMMIT=$(az repos pr list --source-branch knope/release --target-branch main --status completed --top 1 --query "[0].lastMergeCommit.commitId" -o tsv)
               if [[ "$MERGE_COMMIT" == "$(Build.SourceVersion)" ]]; then
                 echo "##vso[task.setvariable variable=IS_RELEASE_MERGE]true"
@@ -80,10 +78,9 @@ stages:
             env:
               AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
           - bash: |
-              # .config/knope-release-override.json can pin the next release's version (e.g. a
-              # project's first release, or 1.0.0); it's ignored once the released version
-              # reaches it. "Nothing release-worthy since the last release" is a normal outcome,
-              # not a failure, so only that specific knope error is tolerated.
+              # .config/knope-release-override.json can pin the next release's version (such
+              # as 1.0.0), and is ignored once the released version reaches it. Nothing to
+              # release is a normal outcome, so that one knope error is tolerated.
               args=()
               override=""
               if [ -f .config/knope-release-override.json ]; then
@@ -115,10 +112,10 @@ stages:
                 fi
                 exit "$status"
               fi
-              # Knope only pushes knope/release here; the PR is opened (or, once it
-              # exists, updated) below instead of by a knope Command step, so the
-              # changelog is passed as one argument and never parsed by a shell. Azure
-              # DevOps caps PR descriptions at 4000 characters.
+              # Knope only pushes knope/release. This step opens the PR, or updates it once
+              # it exists, instead of a knope Command step, so the changelog goes in as one
+              # argument that no shell parses. Azure DevOps caps PR descriptions at 4000
+              # characters.
               version=$(mise x -- jq -r .version .config/knope-current-version.json)
               notes=$(awk '/^## /{n++; next} n==1' CHANGELOG.md | sed '/./,$!d')
               title="chore: prepare release $version"

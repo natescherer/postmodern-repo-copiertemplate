@@ -1,6 +1,6 @@
-# Managed by the "Settings" GitHub App (https://github.com/apps/settings); do not
-# edit repo settings in the GitHub UI, edit this file instead. Install the app with
-# access to this repo for changes here to take effect; see
+# The Settings GitHub App (https://github.com/apps/settings) applies this file to the
+# repo. Change repo settings here, not in the GitHub UI. Changes take effect once the
+# app has access to this repo; see
 # {{ docs_url }}getting-started/prerequisites{{ docs_page_suffix }}.
 
 repository:
@@ -15,10 +15,9 @@ repository:
   delete_branch_on_merge: true
 {%- if is_public %}
 
-  # Free for public repos; needs a paid GitHub Advanced Security license on private
-  # ones, so scoped to public only. New public repos under a personal account get
-  # this by default already, but org-owned ones don't; this makes it explicit
-  # either way rather than depending on that default.
+  # Public repos only: private repos need a paid GitHub Advanced Security license.
+  # Personal accounts' new public repos have it by default and org-owned ones don't,
+  # so this sets it explicitly.
   security_and_analysis:
     secret_scanning:
       status: enabled
@@ -26,10 +25,8 @@ repository:
       status: enabled
 {%- endif %}
 
-# The Settings App treats this list as authoritative: any label that exists on the
-# repo but isn't listed here gets deleted on sync; including GitHub's own
-# auto-created defaults (bug, enhancement, etc.), which is why they're listed
-# explicitly below rather than left for GitHub to create on its own.
+# The Settings App deletes any label not in this list, including GitHub's defaults
+# (bug, enhancement, and so on), so those are listed too.
 labels:
   # GitHub Defaults
   - name: accessibility
@@ -75,11 +72,11 @@ rulesets:
   - name: default-branch-protection
     target: branch
     enforcement: active
-    # actor_id 5 = the built-in "admin" repository role (undocumented by GitHub, but
-    # widely confirmed: https://github.com/github/rest-api-description/issues/4406).
-    # bypass_mode "pull_request" only lets an admin skip requirements when merging a
-    # PR (the "Merge without waiting for requirements" button); it doesn't grant a
-    # direct push past this ruleset the way "always" would.
+    # actor_id 5 is the built-in "admin" repository role (undocumented, but see
+    # https://github.com/github/rest-api-description/issues/4406). bypass_mode
+    # "pull_request" lets an admin skip requirements only when merging a PR (the "Merge
+    # without waiting for requirements" button), not push past the ruleset as "always"
+    # would.
     bypass_actors:
       - actor_type: RepositoryRole
         actor_id: 5
@@ -101,13 +98,13 @@ rulesets:
       - type: required_status_checks
         parameters:
           do_not_enforce_on_create: true
-          # Matches the AzDO side's forced behavior (queue-on-source-update-only
-          # false requires valid-duration 0, i.e. "recheck immediately when the
-          # target branch updates"); keeps both platforms equally strict.
+          # Matches Azure DevOps, where queue-on-source-update-only false requires
+          # valid-duration 0 (recheck as soon as the target branch updates), so both
+          # platforms are equally strict.
           strict_required_status_checks_policy: true
           required_status_checks:
-            # Job id from test-auto-prvalidation.yml.jinja's "tests" job (no `name:` set,
-            # so its check run name is the job id verbatim).
+            # The job id of test-auto-prvalidation.yml.jinja's "tests" job, which has no
+            # `name:`, so its check run uses the id.
             - context: tests
 {%- if zensical_ghpages %}
 

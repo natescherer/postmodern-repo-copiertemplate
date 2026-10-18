@@ -1,9 +1,8 @@
 name: $(BuildId)-pr_validation
 
-# Azure Repos Git doesn't support YAML `pr:` triggers at all (they only work for GitHub/
-# Bitbucket Cloud sources); this pipeline is triggered solely by the "PR Validation"
-# build-validation branch policy set up in copier.yml.jinja's repo-setup tasks, so there's
-# no `pr:` block here and no `autoCancel` (a `pr:`-trigger-only feature) to rely on.
+# Azure Repos Git doesn't support YAML `pr:` triggers (only GitHub and Bitbucket Cloud
+# sources do). The "PR Validation" build policy from copier.yml.jinja's repo setup is
+# this pipeline's only trigger, so there's no `pr:` block and no `pr:`-only autoCancel.
 trigger:
   branches:
     exclude:
@@ -24,13 +23,11 @@ stages:
         displayName: PR Validation
         steps:
           - bash: |
-              # The branch-policy trigger above has no documented equivalent of GitHub's
-              # concurrency/cancel-in-progress or the YAML `pr:` trigger's autoCancel, so a
-              # rapid series of pushes to the same PR can leave multiple runs of this
-              # pipeline racing each other. Cancel any other still-running run of this same
-              # pipeline definition, triggered by a pull request, for the same source
-              # branch (Azure Repos only allows one open PR per source/target branch pair,
-              # so this reliably scopes to "this PR").
+              # A build policy trigger has no equivalent of GitHub's cancel-in-progress or
+              # the `pr:` trigger's autoCancel, so quick pushes to one PR can leave several
+              # runs racing. This cancels this pipeline's other unfinished PR runs for the
+              # same source branch, which means this PR: Azure Repos allows one open PR per
+              # source and target branch pair.
               set -euo pipefail
               API="$(System.CollectionUri)$(System.TeamProject)/_apis/build"
               AUTH=(-u "user:$SYSTEM_ACCESSTOKEN")
@@ -88,10 +85,9 @@ stages:
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - bash: |
-              # Scopes the lint run to files actually changed on this PR, matching
-              # GitHub's counterpart (which runs the same git diff); identical PR
-              # content could otherwise pass on GitHub and fail on Azure DevOps (or vice
-              # versa) depending on unrelated pre-existing lint state elsewhere in the repo.
+              # Lints only the files this PR changes, with the same git diff as GitHub, so
+              # the same PR passes or fails on both platforms whatever the rest of the repo
+              # looks like.
               git fetch origin $(System.PullRequest.TargetBranchName)
               CHANGED_FILES=$(git diff --name-only "origin/$(System.PullRequest.TargetBranchName)...HEAD")
               if [ -z "$CHANGED_FILES" ]; then

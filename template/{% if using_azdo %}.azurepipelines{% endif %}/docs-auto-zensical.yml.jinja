@@ -175,13 +175,11 @@ stages:
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - pwsh: |
-              # Polls the PR-validation build-validation policy (set up by "az repos policy
-              # build create" in copier.yml.jinja's repo-setup tasks) until it reaches a
-              # terminal state, instead of bypassing it. Unlike the Knope-based release flow
-              # on either platform (which only ever opens/updates a PR for a human to merge),
-              # this pipeline auto-merges its own PR, so it must earn a real pass through the
-              # same policy every other PR on this repo is required to pass, rather than
-              # silently skipping it.
+              # Polls the PR Validation build policy (created by `az repos policy build
+              # create` in copier.yml.jinja's repo setup) until it finishes, instead of
+              # bypassing it. This pipeline merges its own PR, unlike the release flow, which
+              # leaves the merge to a person, so the PR has to pass the same policy as any
+              # other.
               $ProjectBaseUri = "$(System.CollectionUri)/$(System.TeamProject)/_apis"
               $BaseSplat = @{
                 ContentType = "application/json"
