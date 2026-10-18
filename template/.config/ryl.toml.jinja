@@ -7,7 +7,7 @@ yaml = [
   "*.yml{% raw %}{% endif %}{% endraw %}",{% endif %}
 ]
 
-[rules]
+[lint.rules]
 anchors = "enable"
 braces = "enable"
 brackets = "enable"
@@ -29,18 +29,18 @@ octal-values = "disable"
 quoted-strings = "disable"
 trailing-spaces = "enable"
 
-[rules.comments]
+[lint.rules.comments]
 level = "warning"
 min-spaces-from-content = 1
 
-[rules.comments-indentation]
+[lint.rules.comments-indentation]
 level = "warning"
 allow-any-open-indent = true
 
-[rules.truthy]
+[lint.rules.truthy]
 level = "warning"
 
-[[per-line-ignores]]
+[[lint.per-line-ignores]]
 # GitHub Actions files are improper YAML in some ways
 regex = "^on:$"
 rules = ["truthy"]
