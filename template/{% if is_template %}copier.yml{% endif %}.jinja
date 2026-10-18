@@ -879,6 +879,8 @@ _tasks:
         with tempfile.TemporaryDirectory() as d:
             args = ["git", "-c", "advice.detachedHead=false", "clone", "--quiet"]
             if ref and ref != "HEAD":
+                # A tag created moments ago (e.g. right after a release) may not be
+                # cloneable yet; give it a few seconds to propagate.
                 time.sleep(5)
                 args += ["--branch", ref]
             args += [src, d]
