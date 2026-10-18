@@ -163,6 +163,13 @@ def _latest_tag(repo_root: Path) -> str | None:
     return tags[0] if tags else None
 
 
+UPDATE_SOURCE_ROOT_FILES = (
+    "knope.toml",
+    "mise.toml",
+    ".config/knope-current-version.json",
+)
+
+
 def _assemble_update_scratch_repo(repo_root: Path, old_tag: str, dest: Path) -> None:
     """Build a 2-commit copier source for testing the update path: old_tag -> current.
 
@@ -198,7 +205,13 @@ def _assemble_update_scratch_repo(repo_root: Path, old_tag: str, dest: Path) -> 
             continue
         shutil.rmtree(child) if child.is_dir() else child.unlink()
     _assemble_source(repo_root, dest)
-    _git_commit_all(dest, "current")
+    # The changeset migration clones the source and runs `knope compute-upstream-bump`
+    # at its root, the way a real one (this repo) has these files. The `feat:` subject
+    # gives Knope something release-worthy, so the migration writes a changeset.
+    for rel in UPDATE_SOURCE_ROOT_FILES:
+        (dest / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(repo_root / rel, dest / rel)
+    _git_commit_all(dest, "feat: current template")
 
 
 @pytest.fixture(scope="session")
@@ -237,7 +250,7 @@ def _render(source: Path, dest: Path, answers: dict, vcs_ref: str | None = None)
     if vcs_ref is not None:
         args.append(f"--vcs-ref={vcs_ref}")
     for key, value in answers.items():
-        if key in ("id", "_old_tag_overrides"):
+        if key == "id":
             continue
         args.extend(["-d", f"{key}={value}"])
     args.extend([str(source), str(dest)])
