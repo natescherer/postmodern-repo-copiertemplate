@@ -1,5 +1,5 @@
 # README
 
-The contents of this folder are automatically generated based on the contents of the 'docs' folder.
+CI builds this folder from the `docs` folder; don't edit it by hand.
 
-Clone this repo and open index.html for the ideal viewing experience.
+To read the docs, clone this repo and open `index.html` in a browser.

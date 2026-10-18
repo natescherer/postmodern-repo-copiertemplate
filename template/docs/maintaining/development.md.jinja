@@ -86,9 +86,8 @@ Where it goes depends on what it is:
 Then:
 
 1. **Confirm Renovate detects it.** Run `mise run renovate-lookup` and check that the dependency
-   appears, with the right version, in the `packageFiles with updates` log entry. A missing or
-   garbled entry fails silently otherwise, both for a manifest Renovate doesn't support and for a
-   custom manager whose regex captures too much.
+   appears, with the right version, in the `packageFiles with updates` log entry. Renovate skips
+   an unsupported manifest, and a custom manager regex that captures too much, without an error.
 1. **Add a custom manager if it doesn't.** A regex entry under `customManagers` in
    `renovate.json` can track a version Renovate can't find on its own, such as one inside a
    script.

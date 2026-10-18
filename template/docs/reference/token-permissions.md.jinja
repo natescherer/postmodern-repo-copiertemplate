@@ -1,8 +1,8 @@
 # Secrets and Tokens
 
-This doc details the credentials this project needs, along with reasons why. No
-workflow or pipeline needs a Personal Access Token: CI runs under each platform's own built-in
-identity (`GITHUB_TOKEN` / `$(System.AccessToken)`), and repo setup uses your own CLI session.
+This page lists the credentials this project needs and why. No workflow or pipeline needs a
+Personal Access Token: CI runs as each platform's built-in identity (`GITHUB_TOKEN` /
+`$(System.AccessToken)`), and repo setup uses your own CLI session.
 
 ## CLI Session
 {%- if is_template or using_github %}
@@ -24,27 +24,27 @@ identity (`GITHUB_TOKEN` / `$(System.AccessToken)`), and repo setup uses your ow
 
 ## Secrets
 
-Once you've created each secret below, run `mise run provision-secrets`: each value is entered
-via that platform's own CLI prompt (`gh secret set` / `az pipelines variable create`), masked as
-you type and never passed as a command-line argument. It's opt-in and safe to re-run any time,
-e.g. to rotate a value.
+Once you have each value below, run `mise run provision-secrets`. It prompts for each one
+through the platform's CLI (`gh secret set` / `az pipelines variable create`), masked as you
+type and never passed as a command-line argument. Rerun it any time, for example to rotate a
+value.
 
 ### APPRISE_URL
 
-Both platforms' Copier update-check job needs a secret/variable called **APPRISE_URL**. Azure
-DevOps also needs it for the Renovate pipeline, which notifies when it opens PRs, and the docs
-pipeline, which merges its own PR and notifies when that succeeds or PR validation fails. It's
-an [Apprise](https://github.com/caronc/apprise) notification URL
-pointing at wherever you want these notifications sent (email, Slack, Discord, ntfy, Pushover,
-and 80+ others; see Apprise's own docs for the URL format for your service of choice).
+The Copier update check on both platforms needs a secret or variable named **APPRISE_URL**.
+Azure DevOps also needs it for the Renovate pipeline, which notifies when it opens PRs, and the
+docs pipeline, which merges its own PR and notifies when that succeeds or PR validation fails.
+It's an [Apprise](https://github.com/caronc/apprise) URL for wherever the notifications should go:
+email, Slack, Discord, ntfy, Pushover, or one of 80+ other services. Apprise's docs give each
+service's URL format.
 {%- if is_template or using_azdo %}
 
 ### GITHUB_COM_TOKEN
 
-(Azure DevOps only, optional.) Renovate looks up most dependency versions on github.com, and the
-Repo Health Check pipeline checks github.com links; both hit github.com's unauthenticated rate
-limit without a token. Create a [personal access token](https://github.com/settings/tokens) on any
-GitHub account with **no scopes**, then add it to both pipelines:
+(Azure DevOps only, optional.) Renovate looks up most dependency versions on github.com, and
+the Repo Health Check pipeline checks github.com links; without a token, both hit github.com's
+unauthenticated rate limit. Create a [personal access token](https://github.com/settings/tokens)
+with **no scopes** on any GitHub account, then add it to both pipelines:
 
 ```bash
 az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name "[<repo>] Maint (Auto) - Renovate" --secret true

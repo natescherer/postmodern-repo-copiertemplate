@@ -12,25 +12,25 @@ What this project gets from its parent template, [{{ parent_template_name }}]({{
 - GitHub **Recommended**
     - Creating repos under both users and orgs is supported
 - Azure DevOps **Deprecated**
-    - See [Azure DevOps Limitations](azure-devops.md) for details about features missing for AzDO, and why this platform is being phased out
+    - See [Azure DevOps Limitations](azure-devops.md) for the features it lacks and why it's being phased out
 
 ### Support for Public (Open-Source) and Private (Closed-Source) Repositories
 
-This template fully supports both public/open-source and private/closed-source repositories. See [`project_visibility`](template-questions.md#project_visibility-public-private) for what differs.
+Both public (open-source) and private (closed-source) repos are supported. See [`project_visibility`](template-questions.md#project_visibility-public-private) for what differs.
 
 ### Support for Existing Projects
 
-Postmodern templates are designed to allow either the creation of new templates from scratch or adoption for existing projects with existing code repos. See [Applying to an Existing Project](../getting-started/existing-project.md).
+The template can create a new project or apply to an existing repo. See [Applying to an Existing Project](../getting-started/existing-project.md).
 {%- endif %}
 
 ### Support for Template Updates
 
-Keeping projects in sync with their parent template is a core feature of [Copier](https://github.com/copier-org/copier). A scheduled {% if is_template %}GitHub Actions workflow/Azure DevOps pipeline{% elif using_github %}GitHub Actions workflow{% else %}Azure DevOps pipeline{% endif %} checks for new template releases, and `mise run copier-update` applies them. See [Updating from the Parent Template](../maintaining/updating-from-template.md).
+[Copier](https://github.com/copier-org/copier) keeps projects in sync with their parent template. A scheduled {% if is_template %}GitHub Actions workflow/Azure DevOps pipeline{% elif using_github %}GitHub Actions workflow{% else %}Azure DevOps pipeline{% endif %} checks for new template releases, and `mise run copier-update` applies them. See [Updating from the Parent Template](../maintaining/updating-from-template.md).
 {%- if is_template %}
 
 ### Support for Child/Recursive Templates
 
-It is highly encouraged for you to take this template and make your own child template that meets your needs. Your child template can (optionally) receive updates from this template. See [Template Projects](#template-projects) and [Extending This Template](../maintaining/extending-the-template.md).
+Build your own template from this one; it can keep receiving this template's updates. See [Template Projects](#template-projects) and [Extending This Template](../maintaining/extending-the-template.md).
 {%- endif %}
 
 ### Project Lifecycle
@@ -85,24 +85,24 @@ It is highly encouraged for you to take this template and make your own child te
 
 ## Documentation
 
-Rich Markdown documentation is pre-configured using [Zensical](https://zensical.org/), the successor to the extremely popular (but end of life) [mkdocs-material](https://squidfunk.github.io/mkdocs-material/).
+Documentation is set up with [Zensical](https://zensical.org/), the successor to the end-of-life [mkdocs-material](https://squidfunk.github.io/mkdocs-material/).
 
 {% if is_template -%}
 - Multiple choices of documentation target:
-    - GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
-    - A `docs-site` folder in your repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
+    - GitHub Pages: built and versioned for each release, keeping earlier versions
+    - A `docs-site` folder in the repo: rendered HTML for offline use, rebuilt from the latest `main`
 {%- elif zensical_ghpages -%}
-- Published to GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
+- Published to GitHub Pages: built and versioned for each release, keeping earlier versions
 {%- else -%}
-- Built into a `docs-site` folder in this repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
+- Built into a `docs-site` folder in this repo: rendered HTML for offline use, rebuilt from the latest `main`
 {%- endif %}
 - Local preview via `mise run docs-server`
 - Starter pages for prerequisites, releasing, updating from the parent template, secrets, and manual repo settings
 
 ## Code Management and Formatting
 
-- Automatic, repository-local dev tool installation via [mise](https://github.com/jdx/mise), with tool caches kept under `.cache/`; see [Development](../maintaining/development.md)
-- Automatic code linting and formatting via [prek](https://prek.j178.dev/):
+- Repo-local dev tool installation via [mise](https://github.com/jdx/mise), with tool caches kept under `.cache/`; see [Development](../maintaining/development.md)
+- Linting and formatting on every commit via [prek](https://prek.j178.dev/):
     - Commit message linting via [committed](https://github.com/crate-ci/committed)
 {%- if is_template or using_github %}
     - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
@@ -137,7 +137,7 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 {%- endif %}
 {%- if is_template or is_public %}
 - `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant](https://www.contributor-covenant.org/){% if is_template %} (public projects only){% endif %}
-- `CONTRIBUTING.md`, designed to help novices make their first contribution{% if is_template %} (public projects only){% endif %}
+- `CONTRIBUTING.md`, a guide for first-time contributors{% if is_template %} (public projects only){% endif %}
 - Issue forms for bug reports, feature requests, and questions, plus a chooser link for private vulnerability reports{% if is_template %} (public projects only){% endif %}
 - A pull request template reminding contributors that PR titles must be Conventional Commits{% if is_template %} (public projects only){% endif %}
 {%- endif %}
@@ -145,9 +145,9 @@ Rich Markdown documentation is pre-configured using [Zensical](https://zensical.
 - `LICENSE`, a copy of the [MIT License](https://choosealicense.com/licenses/mit/){% if is_template %} (public projects only){% endif %}
 {%- endif %}
 {%- if is_template %}
-- `README.md`, designed for general products (Standard projects) or for describing a template (Template projects)
+- `README.md`, laid out for a product (Standard projects) or a template (Template projects)
 {%- else %}
-- `README.md`, designed for general products
+- `README.md`, laid out for a product
 {%- endif %}
 {%- if is_template or is_public %}
 - `SECURITY.md`, pointing vulnerability reports to GitHub's private reporting{% if is_template %} (public projects only){% endif %}
@@ -168,4 +168,4 @@ Choosing `project_type: Template` adds tooling for building and maintaining a te
 
 ## Editor Configuration
 
-Optimal settings and plugin recommendations are included for [Visual Studio Code](http://code.visualstudio.com/).
+[Visual Studio Code](https://code.visualstudio.com/) settings and extension recommendations are included.

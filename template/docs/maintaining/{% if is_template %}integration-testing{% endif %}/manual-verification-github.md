@@ -1,93 +1,114 @@
 # Manual Verification Checklist (GitHub)
 
-Run through this **in full**, by hand, as the last step before cutting a release. See [Integration Testing](index.md) for what `mise run integration-test-gh` creates and why the update step below isn't automated. Most of Repo A's checks are now automated; each `mise run integration-test-*-gh` invocation prints its own PASS/FAIL per check, plus a summary; what's below is what's left for a human.
+Work through this whole list by hand as the last step before a release. It covers only what
+`mise run integration-test-gh` can't check; each `integration-test-*-gh` task prints its own
+`[PASS]` or `[FAIL]` per check and a summary. See [Integration Testing](index.md) for what the
+run creates and why Repo B's update is manual.
 
 !!! bug "Checkbox state isn't saved"
-    Boxes on this page are clickable so you can tick items off as you go, but nothing
-    persists that; reloading or leaving the page resets every box to unchecked. Treat
-    it as a scratchpad for one sitting, not a record you can come back to.
+    You can tick the boxes as you go, but reloading or leaving the page clears them. Finish the
+    list in one sitting.
 
 ## Repo A
 
-Fresh copy at `HEAD`, `zensical_target: GitHub Pages`, `code_coverage` on.
+A copy at `HEAD`, with `zensical_target: GitHub Pages` and `code_coverage` on.
 
 ### After First Setup
 
-*Branch protection actually blocking a bad PR is automated; see "a bad-title PR fails Test (Auto): PR Validation" and "branch protection blocks merging a PR with a bad PR title" in the script's own output.*
+*Automated: a bad PR title fails PR Validation, and branch protection blocks merging it.*
 
-- [ ] The setup checklist (a GitHub Issue titled "Template Setup Checklist," opened automatically on first copy) exists and every item on it has been addressed.
-- [ ] Badges at the top of README.md render correctly (no broken image icons).
-- [ ] `docs/assets/images/readme-logo.png` and `docs/assets/images/readme-screenshot.png` display correctly in README.md, or that section has been removed if unused.
-- [ ] Required secrets/pipeline variables are provisioned (`mise run provision-secrets`, or see [Secrets and Tokens](../../reference/token-permissions.md)); confirmed by the pipelines below not failing with authentication errors.
+- [ ] The setup checklist (the "Template Setup Checklist" issue, opened on first copy) exists,
+  and every item on it is done.
+- [ ] The badges at the top of README.md render, with no broken images.
+- [ ] `docs/assets/images/readme-logo.png` and `docs/assets/images/readme-screenshot.png`
+  display in README.md, or that section is removed.
+- [ ] The required secrets are set (`mise run provision-secrets`, or see
+  [Secrets and Tokens](../../reference/token-permissions.md)): none of the workflows below fails
+  on authentication.
 
 ### Maint (Auto): Copier Update Check
 
-*Dispatching it, confirming it completes without error, and confirming it correctly reports no update available are all automated.*
+*Automated: it runs, completes, and reports no update available.*
 
-Nothing left here for Repo A.
+Nothing left to check for Repo A.
 
 ### Maint (Auto): Repo Health Check
 
-*Dispatching it and confirming it completes clean is automated.*
+*Automated: it runs and completes clean.*
 
-- [ ] Temporarily introduce a broken link (e.g. a typo'd URL in a doc) and confirm the next run catches it, then revert.
+- [ ] Add a broken link (a mistyped URL in a doc), confirm the next run reports it, then
+  revert.
 
 ### Maint (Auto): Renovate
 
-Renovate on GitHub runs as the externally-hosted [Renovate GitHub App](https://github.com/apps/renovate), not a workflow in this repo; there's nothing to dispatch or verify from inside this repo's own CI.
+On GitHub, Renovate runs as the [Renovate GitHub App](https://github.com/apps/renovate), outside
+this repo's CI, so there's nothing to dispatch.
 
-- [ ] Confirm the app is installed with access to this repo (Settings > Integrations, or your account/org's installed GitHub Apps).
-- [ ] Wait for its own schedule (or check its dashboard for how to trigger an out-of-schedule run) and confirm it authenticates successfully.
-- [ ] With at least one outdated dependency present, confirm it opens (or updates) a real pull request proposing the bump.
+- [ ] The app is installed with access to this repo (**Settings > Integrations**, or the
+  account's or org's installed apps).
+- [ ] On its next scheduled run (or a manual run from its dashboard), it authenticates.
+- [ ] With an outdated dependency present, it opens or updates a PR for the bump.
 
 ### Maint (Auto): All Contributors
 
-(Public repos only; both repos are Public, so either would do; this repo is as good a place as any.)
+Public repos only. Both repos are public; use this one.
 
-- [ ] Comment `@all-contributors please add @<username> for <contribution>` on an issue or PR, and confirm the bot opens a PR adding that person to the Contributors section of README.md.
+- [ ] Comment `@all-contributors please add @<username> for <contribution>` on an issue or PR,
+  and confirm the bot opens a PR adding them to README.md's Contributors section.
 
 ### Docs (Auto): Zensical Publish to GitHub Pages
 
-- [ ] Push a docs change to `main` and confirm the `dev` version of the docs site updates at `.../dev/`.
-- [ ] Publish a release and confirm a new versioned copy is published, `latest` updates to point at it, and it becomes the default version served at the site root.
+- [ ] Push a docs change to `main`, and confirm the site's `dev` version updates at `.../dev/`.
+- [ ] Publish a release, and confirm a new version is published, `latest` points at it, and the
+  site root serves it.
 
 ### Test (Auto): PR Validation
 
-*A bad-title PR failing, and a PR with a failing test suite failing and being blocked from merging, are both automated.*
+*Automated: a bad PR title fails, and a failing test suite fails and blocks the merge.*
 
-- [ ] Confirm `coverage.xml` uploads to Codecov successfully and the report/badge reflects it; `code_coverage` is on for this repo.
+- [ ] `coverage.xml` uploads to Codecov, and the report and badge reflect it (`code_coverage`
+  is on for this repo).
 
 ### Release (Auto): Prepare/Publish Release
 
-*The full flow is automated: a docs-only commit staying a no-op, a feat commit opening a release PR with a version-bump title, and merging that PR creating a tag and a GitHub Release.*
+*Automated: a docs-only commit releases nothing, a `feat:` commit opens a release PR with the
+bumped version in its title, and merging that PR creates a tag and a GitHub Release.*
 
-Nothing left here for Repo A.
+Nothing left to check for Repo A.
 
 ### Release (Manual): Create Prerelease
 
-*The full flow is automated: dispatching each label produces a matching tag, re-dispatching the same label at the same commit is blocked, and dispatching a different label at the same commit is allowed.*
+*Automated: each label produces a matching tag, the same label at the same commit is blocked,
+and a different label at the same commit is allowed.*
 
-Nothing left here for Repo A.
+Nothing left to check for Repo A.
 
 ## Repo B
 
-Copied at the last stable release tag, `zensical_target: docs-site Directory in Repo`, `code_coverage` off. Still at that tag; nothing here has been updated for you.
+A copy at the last stable release tag, with `zensical_target: docs-site Directory in Repo` and
+`code_coverage` off. It stays at that tag until you update it.
 
 ### Before Updating
 
-*Dispatching Maint (Auto): Copier Update Check, confirming it completes without error, and confirming it correctly detects a newer version is available are all automated (part of `mise run integration-test-gh`, before you update anything).*
+*Automated, before you update anything: Maint (Auto): Copier Update Check runs, completes, and
+detects the newer version.*
 
-- [ ] Confirm the Apprise notification actually arrives at the endpoint configured in `APPRISE_URL`.
+- [ ] The Apprise notification arrives at the endpoint in `APPRISE_URL`.
 
 ### Running the Update
 
-- [ ] `cd` into the repo and run `mise run copier-update` yourself. If it prompts for a new question, answer it the way you'd want a real user updating from the last release to answer it, not whatever's quickest.
+- [ ] In the repo, run `mise run copier-update`. Answer any new question the way a real user
+  updating from the last release would.
 - [ ] Commit and push the result.
 
 ### After Updating
 
-Run `mise run integration-test-verify-update-gh -- --repo <repo> --local-path <path>` (the repo/path are printed at the end of the original `mise run integration-test-gh` run). It automates everything that needs checking here: the update actually pulled in current content, applied with no leftover conflict markers, and `Test (Auto): PR Validation` still triggers and passes on a fresh PR against the updated repo.
+Run `mise run integration-test-verify-update-gh -- --repo <repo> --local-path <path>`, with the
+repo and path printed at the end of the original `mise run integration-test-gh` run. It checks
+that the update brought in current content, left no conflict markers, and that
+`Test (Auto): PR Validation` triggers and passes on a new PR.
 
 ## Cleaning Up
 
-- [ ] Delete both throwaway repos (`gh repo delete <repo> --yes`, or via the web UI); deleting a GitHub repo removes everything registered against it, workflows included.
+- [ ] Delete both repos (`gh repo delete <repo> --yes`, or the web UI). Deleting a GitHub repo
+  removes its workflows too.

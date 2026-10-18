@@ -2,35 +2,32 @@
 
 ## Git workflow
 
-- Commit message style: `type: summary` as the first line (Conventional
-  Commits, enforced by `.config/committed.toml`; keep the subject at or
-  under 72 characters). A short body paragraph explaining non-obvious
-  rationale is fine when it adds real context; don't pad a trivial change with
-  one just to have one.
+- Write commit messages as `type: summary` (Conventional Commits, enforced by
+  `.config/committed.toml`), with the subject at most 72 characters. Add a short body only
+  when it explains rationale the diff doesn't show.
 {%- if is_template %}
-- Never push a git tag to this repo without explicit user approval for that
-  specific tag, and never push one shaped like a version number (e.g.
-  `v99.0.0`) even as a throwaway testing workaround; this repo's tags are
-  visible to any downstream project that copies from it, and a real one could
-  resolve against a stray tag. A non-version-shaped tag for local testing is
-  fine to create without asking, but delete it immediately once the test that
-  needed it is done.
+- Never push a git tag to this repo without the user's approval for that specific tag, and
+  never push one shaped like a version number (such as `v99.0.0`), even as a testing
+  workaround. Projects that copy from this repo can see its tags, and a stray one could resolve
+  as a real release. A local testing tag that isn't version-shaped needs no approval; delete
+  it as soon as the test is done.
 
 ## Render-validation test suite
 
-Location: {% raw %}`template/{% if is_template %}tests{% endif %}/`{% endraw %}. Run via:
+The suite lives in {% raw %}`template/{% if is_template %}tests{% endif %}/`{% endraw %}. Run it with:
 
 ```sh
 {% raw %}mise x -- pytest "template/{% if is_template %}tests{% endif %}/"{% endraw %}
 ```
 
-Files: `conftest.py` (shared fixtures), `test_render.py` (structural
-validation across `answer_matrix.py`'s `ANSWER_MATRIX`, including an
-update-from-last-tag path), `test_content.py` (config/content consistency,
-e.g. nav completeness, hook-tool availability), `test_validators.py` (asserts
-`copier.yml.jinja`'s `validator:` blocks actually reject what they claim to,
-via `INVALID_ANSWER_MATRIX`), `test_answer_matrix_coverage.py` (audits
-`answer_matrix.py` itself against the real question set).
+- `conftest.py`: shared fixtures.
+- `test_render.py`: renders every `ANSWER_MATRIX` entry in `answer_matrix.py` and checks the
+  output, including an update from the last tag and a copy from a Template child.
+- `test_content.py`: config and content consistency, such as nav completeness and hook-tool
+  availability.
+- `test_validators.py`: checks that `copier.yml.jinja`'s `validator:` blocks reject each
+  `INVALID_ANSWER_MATRIX` entry.
+- `test_answer_matrix_coverage.py`: audits `answer_matrix.py` against the real question set.
 
 Keep `answer_matrix.py` in step with `copier.yml.jinja` in the same change:
 
@@ -47,90 +44,71 @@ Keep `answer_matrix.py` in step with `copier.yml.jinja` in the same change:
   `INVALID_ANSWER_MATRIX`, with an `expected_error` substring of its message.
 - **Renamed or removed question or value:** update every entry that uses it.
 
-Always run it via the command above, against `template/`'s own path, not a
-plain {% raw %}`pytest tests/`{% endraw %}: if this project also renders a
-copy of itself at its own root (the way this template's own upstream does),
-that root copy lags behind `template/` the same way any other dogfooded root
-file does, so a newly added or edited test *function* only exists under
-`template/` and silently never runs from root until the next full sync, even
-though root's copy still executes without error.
+Run the suite with the command above, against `template/`, never with a plain
+{% raw %}`pytest tests/`{% endraw %}. A project that renders a copy of itself at its root (as
+this template's upstream does) has a root `tests/` that lags behind `template/` like any other
+dogfooded file, so a new or edited test function runs only from `template/` until the next
+sync.
 
-A hook's `mise.toml.jinja` tool entry and its `prek.toml.jinja` gating
-condition must match exactly: `test_hook_tools_available` verifies every
-local prek hook's tool is installed for that answer combination, and it only
-works because each hook is gated behind the identical condition as its tool.
-{% raw %}`actionlint`{% endraw %} specifically needs `is_template or
-using_github`, not just `using_github`: `copy-template-files` embeds a full,
-unrendered copy of `template/` (workflows included) into every Template-type
-project regardless of *that* project's own `developer_platform`, so an Azure
-DevOps-hosted Template project still needs actionlint available. Narrowing
-that condition to just `using_github` is a real regression this template has
-hit before.
+A hook's tool entry in `mise.toml.jinja` and its gate in `prek.toml.jinja` must use the same
+condition. `test_hook_tools_available` checks that every local prek hook's tool is installed
+for each answer combination, and relies on that match. {% raw %}`actionlint`{% endraw %} needs
+`is_template or using_github`, not `using_github` alone: `copy-template-files` copies all of
+`template/`, workflows included, into every Template project, so an Azure DevOps Template
+project still runs actionlint.
 
 ## Setup checklist
 
-`setup_checklist` in `copier.yml.jinja` (opened as a GitHub Issue, or printed, on
-`copier copy`) is the single source of truth for what a new project's owner needs to
-manually finish. **Update its default list whenever a new template feature requires
-the end user to manually configure, replace, or complete something after copying.**
+`setup_checklist` in `copier.yml.jinja` lists what a new project's owner has to finish by hand;
+`copier copy` opens it as a GitHub Issue or prints it. **Add to it whenever a new feature needs
+the user to configure, replace, or complete something after copying.**
 
 ## Manual verification checklist
 
-The `manual-verification-*.md` checklists in `docs/maintaining/integration-testing/` (both
-static, unconditional; a template author tests every feature this template offers on
-both platforms, not just whichever one this repo's own answers happen to use) cover
-what a fresh `copier copy` can't verify on its own: whether a pipeline/workflow
-actually authenticates, triggers, and does what it claims, not just that it's
-registered with the right name. **Update the relevant file whenever a new or changed
-pipeline/workflow needs its own real-world behavior hand-verified**, the same way a
-new template feature gets added to
-the setup checklist above.
+The `manual-verification-*.md` checklists in `docs/maintaining/integration-testing/` cover what
+a `copier copy` can't verify: whether a workflow or pipeline authenticates, triggers, and does
+its job. Both are static and unconditional, since a template author tests every feature on both
+platforms. **Add to the relevant one whenever a new or changed workflow or pipeline needs its
+behavior checked by hand.**
 {%- endif %}
 
 ## Renovate `schedule` cron syntax is not standard cron
 
-Renovate's `schedule` option (see `renovate.json`{% if is_template %} / `template/renovate.json.jinja`{% endif %})
-looks like 5-field cron but isn't interpreted the same way; this applies to
-any platform Renovate runs on:
+Renovate's `schedule` option (in `renovate.json`{% if is_template %} and `template/renovate.json.jinja`{% endif %})
+looks like 5-field cron, but Renovate reads it differently on every platform:
 
-- The minutes field **must** be `*`: Renovate doesn't support minute-level
-  granularity, and a schedule that restricts it is invalid.
-- A cron schedule defines an allowed **time window**, not an exact trigger
-  instant: Renovate itself runs on its own polling cadence (external to
-  this project) and only acts during the window the schedule describes.
+- The minutes field **must** be `*`. Renovate has no minute-level granularity, and a schedule
+  that restricts minutes is invalid.
+- A schedule defines an allowed **time window**, not a trigger time. Renovate runs on its own
+  polling cadence, outside this project, and acts only inside the window.
 
-So `"* 0 1 * *"` is the *correct* idiomatic form for "once a month, on the
-1st, during hour 0"; it is not a bug, even though it looks like a broken
-"every minute" cron at a glance. Do not change it to `"0 0 1 * *"` (a
-standard-cron-style fix): that's invalid for Renovate specifically, since it
-constrains the minutes field.
+So `"* 0 1 * *"` is the correct form for "once a month, on the 1st, during hour 0". Don't
+change it to `"0 0 1 * *"`: that restricts the minutes field, which Renovate rejects.
 
 Reference: <https://docs.renovatebot.com/key-concepts/scheduling/>
 
 ## Tooling
 
-Every dev tool is pinned in `mise.toml`; run them as `mise x -- <tool>` rather than
-relying on whatever is on `PATH`. prek's Git hooks (`.config/prek.toml`) run the
-linters and formatters on every commit and check the commit message; fix what they
-report rather than bypassing them with `--no-verify`.
+`mise.toml` pins every dev tool; run them as `mise x -- <tool>`, not from `PATH`. prek's Git
+hooks (`.config/prek.toml`) run the linters and formatters on every commit and check the commit
+message. Fix what they report instead of bypassing them with `--no-verify`.
 
 ## Managed files
 
-These are written by tooling; don't hand-edit them:
+Tooling writes these; don't edit them by hand:
 
 - `.config/copier-answers.yml`: Copier's record of this project's answers.
-- `CHANGELOG.md` and `.config/knope-current-version.json`: Knope updates both when
-  it prepares a release.
-- The README's lifecycle notice: driven by the `lifecycle` answer; change it with
+- `CHANGELOG.md` and `.config/knope-current-version.json`: Knope updates both when it prepares
+  a release.
+- The README's lifecycle notice: set by the `lifecycle` answer; change it with
   `mise run set-lifecycle`.
 {%- if is_template or zensical_repo %}
 - `docs-site/`{% if is_template %} (when docs are built into the repo){% endif %}: CI rebuilds
   it from `docs/` whenever docs change on `main`.
 {%- endif %}
 
-Files that came from the parent template change through `mise run copier-update`,
-not by hand; a local edit to one is kept, but every later update has to merge
-around it.
+Files from the parent template change through `mise run copier-update`. A local edit to one is
+kept, but every later update has to merge around it.
 
 ## Documentation
 
