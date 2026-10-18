@@ -106,6 +106,11 @@ flag "--local-path <path>" help="Local clone path printed when Repo B was create
 '''
 run = "python scripts/integration_test_github.py"
 
+[tasks.integration-test-cleanup-gh]
+# Deletes every repo integration-test-gh created, including those of a run that
+# stopped partway, after listing them and asking.
+run = "python scripts/integration_test_github.py --cleanup --repo-prefix {{ repo_name }}"
+
 [tasks.integration-test-azdo]
 {%- set org_default = azdo_org if using_azdo else '' %}
 {%- set project_default = azdo_project if using_azdo else '' %}
@@ -141,6 +146,16 @@ flag "--repo <repo>" help="Name of the already-updated Repo B"
 flag "--local-path <path>" help="Local clone path printed when Repo B was created"
 '''
 run = "python scripts/integration_test_azdo.py"
+
+[tasks.integration-test-cleanup-azdo]
+# Deletes every repo integration-test-azdo created, and their pipelines, including
+# those of a run that stopped partway, after listing them and asking. --org and
+# --project work as in integration-test-azdo.
+usage = '''
+flag "--org <org>" help="Azure DevOps organization"{% if org_default %} default="{{ org_default }}"{% endif %}
+flag "--project <project>" help="Azure DevOps project"{% if project_default %} default="{{ project_default }}"{% endif %}
+'''
+run = "python scripts/integration_test_azdo.py --cleanup --repo-prefix {{ repo_name }}"
 {%- endif %}
 
 [tools]

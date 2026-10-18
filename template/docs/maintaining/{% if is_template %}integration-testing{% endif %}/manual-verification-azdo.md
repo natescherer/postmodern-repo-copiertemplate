@@ -106,7 +106,7 @@ passes on a new PR.
 
 ## Cleaning Up
 
-- [ ] In each repo's local directory, run `python cleanup_pipelines.py`, which the integration
-  test leaves there. Azure DevOps has no bulk delete for pipelines, so otherwise each one has to
-  be deleted from its own settings page.
-- [ ] Delete both repos (**Project Settings > Repositories**, or `az repos delete`).
+- [ ] Run `mise run integration-test-cleanup-azdo -- --org <org> --project <project>`. It lists
+  every integration-test repo and pipeline in the project, including any left by a run that
+  stopped partway, and deletes them once you confirm. Deleting a repo by hand leaves its
+  pipelines behind, which this also finds.
