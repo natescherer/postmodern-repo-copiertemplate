@@ -1,9 +1,9 @@
-"""Renders this template across a boundary answer matrix and structurally validates it.
+"""Render this template across a boundary answer matrix and validate the output.
 
-Generic by design: every check here operates on whatever actually got rendered (globbing
-for file types, checking for known top-level files) rather than hardcoding this repo's
-specific doc set or question values; see answer_matrix.py for the repo-specific piece,
-which a child template should edit alongside its own copier.yml changes.
+Generic by design: every check works on whatever was rendered (globbing for file types,
+looking for known top-level files) instead of hardcoding this repo's docs or question
+values. answer_matrix.py holds the repo-specific part, which a child template edits
+along with its own copier.yml.
 """
 
 import json
@@ -106,11 +106,9 @@ def _check_lychee(root: Path) -> list[str]:
 def _check_all(root: Path, *, zensical: bool = True) -> list[str]:
     """Run every structural check against a rendered project.
 
-    `zensical` is skippable: `test_update_from_last_tag` renders the same combo
-    `test_render_combination` already builds docs for, just via `copier update`
-    instead of a fresh copy; re-running the (comparatively slow) zensical build
-    there would only re-confirm docs content that hasn't changed, not exercise
-    anything update-path-specific.
+    `zensical` can be skipped: `test_update_from_last_tag` renders the same combination
+    `test_render_combination` already builds docs for, only through `copier update`, so
+    rebuilding the docs there would recheck unchanged content.
 
     Returns:
         All collected error strings, each prefixed by which check produced it.
@@ -140,12 +138,10 @@ def test_render_combination(template_source, tmp_path, answers):
 def test_update_from_last_tag(update_source, tmp_path, answers):
     """Copy at this repo's last tag, update to current, and re-run every check.
 
-    Covers the one class of bug the copy-only test above can't see: logic gated on
-    `_copier_operation == 'update'` or on `project_initialized` (e.g. the `ask:`
-    conditions that stop setup-only questions prompting, `current_knope_version`) is
-    never exercised by a fresh `copier copy`, since that operation is always `'copy'`.
-    Migrations only run on update too, so this also checks they did their job instead
-    of only warning.
+    A fresh `copier copy` never exercises logic gated on `_copier_operation == 'update'`
+    or on `project_initialized`, such as the `ask:` conditions that keep setup-only
+    questions from prompting and `current_knope_version`. Migrations run only on update
+    too, so this also checks that they did their job instead of only warning.
     """
     source, old_tag = update_source
     dest = tmp_path / "out"

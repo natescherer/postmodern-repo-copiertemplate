@@ -1,16 +1,15 @@
-"""Fix up this repo's Azure Pipeline registrations after a naming-scheme rename.
+"""Repoint this repo's Azure DevOps pipeline registrations after a rename.
 
-`copier update` renames `.azurepipelines/*.yml` files on disk (ordinary template-diff
-behavior), but it can't touch pipeline *registrations* already living in Azure DevOps:
-those are live objects the original `_tasks` bootstrap created via `az pipelines
-create`, and `_tasks` only ever run on a fresh `copier copy`, never on `update`. Run
-this once after a `copier update` that renamed pipelines, to repoint each existing
-registration at its new name and YAML path in place; preserving its ID, run history,
-and any manually-set variables (e.g. APPRISE_URL, set via `mise run provision-secrets`)
-instead of losing them to a delete-and-recreate.
+`copier update` renames files under `.azurepipelines/` like any other template change,
+but it can't reach the pipeline registrations in Azure DevOps: `_tasks` created them
+with `az pipelines create`, and `_tasks` runs only on `copier copy`. Run this once after
+an update that renamed pipelines has merged to main. It repoints each registration at
+its new name and YAML path in place, keeping its ID, run history, and variables (such as
+APPRISE_URL from `mise run provision-secrets`) that deleting and recreating it would
+lose.
 
-Safe to run more than once: a no-op on a project that's already migrated, or one that
-never had the old names.
+It's safe to rerun: it does nothing on a project that's already migrated or never had
+the old names.
 """
 
 import argparse
@@ -82,11 +81,10 @@ def run(
 ) -> subprocess.CompletedProcess:
     """Run a CLI command, echoing it first.
 
-    Resolves argv[0] via shutil.which() first: on Windows, `az` is an `az.cmd` batch
-    wrapper rather than a real .exe, and subprocess with shell=False (unlike cmd.exe's
-    own PATH resolution) won't find it from the bare name alone, failing with
-    `FileNotFoundError: [WinError 2]`. which() finds the actual resolvable path on any
-    platform, sidestepping that gap without needing shell=True.
+    Resolves argv[0] with shutil.which() first. On Windows, `az` is an `az.cmd` batch
+    wrapper, which subprocess without a shell can't find by bare name
+    (`FileNotFoundError: [WinError 2]`). which() resolves the path on any platform
+    without shell=True.
 
     Returns:
         The completed process, with captured stdout/stderr if `capture` is True.
@@ -111,7 +109,7 @@ def az_value(*args: str) -> str:
 
 
 def check_az_installed() -> None:
-    """Verify the `az` CLI is actually resolvable on PATH.
+    """Verify the `az` CLI is resolvable on PATH.
 
     Raises:
         SystemExit: if `az` can't be found.

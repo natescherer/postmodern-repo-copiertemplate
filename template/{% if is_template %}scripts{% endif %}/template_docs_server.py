@@ -7,34 +7,28 @@
 # ]
 # ///
 
-"""Preview template/'s docs through a real zensical render.
+"""Preview template/'s docs through a real Zensical build.
 
-A template project's docs can be gated by `{% if %}` conditionals both in their
-path (e.g. `template/docs/reference/{% if is_template %}azure-devops.md{% endif %}`)
-and in their content (a `.md.jinja` file with an `{% if is_public %}...{% endif %}`
-paragraph). Thus, there's no single "correct" answer set to render the whole
-docs/ tree with.
+A template's docs can depend on its answers in their paths
+(`template/docs/reference/{% if is_template %}azure-devops.md{% endif %}`) and in their
+content (an `{% if is_public %}` paragraph in a `.md.jinja` file), so no single answer
+set renders the whole docs/ tree.
 
-So instead of picking one answer set, this renders the whole tree once per entry
-in tests/answer_matrix.py's ANSWER_MATRIX (the same curated, valid combinations
-the render-validation suite itself tests against), run in parallel: each entry's
-a real `copier copy` subprocess call, releasing the GIL while it waits. Rather
-than assume a fixed axis like this project's own project_type (a downstream
-template can rename it, add values, or drop it), renders are grouped by what
-they actually produced: any two whose docs/ end up with the exact same set of
-files are the same "shape" and share one labeled top-level nav section, built
-from that shape's own real nav (theme, CSS, JS unmodified); a page whose content
-still differs *within* a shape gets its own nav entry expanded into labeled
-sibling pages. This project's own Template and Standard project_types are one
-example of two shapes, not an assumption baked into how shapes get found.
+Instead, this renders the tree once per ANSWER_MATRIX entry in tests/answer_matrix.py,
+the combinations the render-validation suite tests, in parallel `copier copy`
+subprocesses. It groups the renders by what they produced instead of assuming an axis
+such as project_type, which a downstream template can rename, extend, or drop. Renders
+whose docs/ contain the same set of files form one "shape", which gets a labeled
+top-level nav section built from that shape's own nav, with the theme, CSS, and JS
+unchanged. A page whose content still differs within a shape becomes labeled sibling
+pages. This project's Template and Standard project types are one example of two
+shapes.
 
-This script watches all *docs* source directories the whole time it runs and
-re-renders on every save, so `zensical serve`'s own live-reload refreshes the
-browser.
+It watches every docs source directory and re-renders on each save, so
+`zensical serve`'s live reload refreshes the browser.
 
-Run via `uv run` (its PEP 723 header above pulls in rich, tomlkit, and watchdog)
-rather than plain `python`, since none of the three are otherwise a project
-dependency.
+Run it with `uv run`, not plain `python`: its PEP 723 header supplies rich, tomlkit,
+and watchdog, which the project doesn't otherwise depend on.
 """
 
 import argparse
@@ -132,12 +126,10 @@ def load_answer_matrix() -> list[dict]:
 def find_docs_source_dirs() -> list[Path]:
     """Locate every docs source directory directly under template/.
 
-    This project's own template/ has one plain docs/ (per-page conditionals
-    inside it), but a downstream template may instead split docs into several
-    directories, each gated on its own condition. Matched purely by each
-    directory's own name stripping down to "docs" once any Jinja conditional is
-    removed (doesn't need to know what condition or axis is gating it, or what
-    values it takes), so either layout works.
+    This project's template/ has one docs/ with per-page conditionals, but a downstream
+    template may split its docs across several directories, each gated on its own
+    condition. A directory matches when its name reduces to "docs" once its Jinja tags
+    are removed, whatever the condition, so either layout works.
 
     Returns:
         Every "docs"-shaped directory found.
@@ -238,7 +230,7 @@ def variants_for_path(
     """Check `docs_rel` across every already-rendered tree, relative to render root.
 
     Returns:
-        A Variant for each render that actually has this file.
+        A Variant for each render that has this file.
 
     """
     variants = []
@@ -357,16 +349,13 @@ def build_section(
 ) -> object:
     """Build one project_type's nav section, writing its pages under `path_prefix`.
 
-    `type_renders` must already be filtered to a single project_type, in
-    ANSWER_MATRIX order. `path_prefix` relocates every page under it (relative to
-    docs_dir) so this section's pages don't collide with another section sharing
-    the same `dest`; pass None only for the one section whose relative links
-    were authored assuming they sit at docs_dir's own root: this template's own
-    Template-type docs cross-reference each other extensively with plain relative
-    links like "releasing.md" or "../index.md#..." (prefixing them without also
-    rewriting every link target breaks every one of those, confirmed: zensical's
-    own build reported "page does not exist" for exactly these links the first
-    time every section got prefixed uniformly).
+    `type_renders` must already be filtered to a single project_type, in ANSWER_MATRIX
+    order. `path_prefix` moves every page under it (relative to docs_dir), so this
+    section's pages don't collide with another section's in the same `dest`. Pass None
+    only for the section whose links assume it sits at docs_dir's root: this template's
+    own docs link to each other with plain relative links such as "releasing.md" and
+    "../index.md#...", and prefixing their pages without rewriting those links breaks
+    every one ("page does not exist" in Zensical's build).
 
     Returns:
         This section's nav: the first applicable render's own real nav, prefixed
@@ -449,15 +438,11 @@ def group_by_docs_shape(
 ) -> list[list[tuple[dict, Path]]]:
     """Group renders whose docs/ trees have the exact same set of files.
 
-    Different answer combinations can produce structurally different docs/ trees
-    (this project's own template/ has an is_template docs source and a completely
-    separate, smaller is_standard one); rather than hardcode which answer (e.g.
-    project_type) drives that, or what its values are called, this groups purely
-    by what each render actually produced. Whatever axis a downstream template
-    ends up using for the same purpose (however many values, whatever they're
-    named) falls out of this for free. Two renders sharing a shape but differing
-    in per-page *content* still land in the same group here; that's exactly what
-    build_section()'s own per-page variant expansion is for.
+    Different answers can produce docs/ trees with different files. Instead of
+    hardcoding which answer drives that (such as project_type) or its values, this
+    groups by what each render produced, so it works for whatever axis a downstream
+    template uses, however many values it has. Renders with the same files but different
+    page content share a group; build_section() expands those pages into variants.
 
     Returns:
         Groups of (entry, dest) pairs sharing an identical docs/ file set, in the
@@ -480,7 +465,7 @@ def section_label(type_renders: list[tuple[dict, Path]], index: int) -> str:
 
     Returns:
         `"<project_type> Project"` if every render in this group agrees on a
-        project_type answer (whatever it's actually called downstream), else a
+        project_type answer (whatever it's called downstream), else a
         generic positional fallback for a template that doesn't have one.
 
     """
@@ -495,17 +480,15 @@ def section_label(type_renders: list[tuple[dict, Path]], index: int) -> str:
 def assemble_whole_tree(dest: Path, renders: list[tuple[dict, Path]]) -> None:
     """Build one nav section per distinct docs "shape" found in `renders`.
 
-    The theme/CSS/JS/etc. from whichever render happens to be first becomes
-    `dest`'s shared assets; those don't vary by shape. Each distinct shape gets
-    its own labeled top-level nav group, built from that group's own real nav
-    with any page whose content varies within the group expanded into labeled
-    sibling pages (see group_by_docs_shape()'s docstring for why shape, not a
-    hardcoded answer key, is what defines a section).
+    The first render supplies `dest`'s shared theme, CSS, and JS, which don't vary by
+    shape. Each shape gets a labeled top-level nav group, built from that group's own
+    nav, with each page whose content varies within the group expanded into labeled
+    sibling pages. group_by_docs_shape() explains why a shape, not an answer key,
+    defines a section.
 
-    The first shape found (ANSWER_MATRIX order) is left unprefixed, since this
-    project's own docs cross-reference each other with plain relative links (see
-    build_section()'s docstring) and prefixing breaks those; every other shape is
-    prefixed to avoid colliding with it.
+    The first shape found (ANSWER_MATRIX order) stays unprefixed, since this project's
+    docs link to each other with plain relative links that prefixing breaks (see
+    build_section()); every other shape is prefixed so it doesn't collide.
     """
     shutil.copytree(renders[0][1], dest, dirs_exist_ok=True)
 

@@ -1,24 +1,21 @@
 """Create two throwaway repos from this template and verify them.
 
-Run via `mise run integration-test-gh`; a human's own gh/GCM session, both repos
-left in place afterward for inspection (delete them yourself when you're done). Not
-templated itself; the caller passes this repo's own source URL and name as arguments,
-so there's nothing here for Jinja to render.
+Run it with `mise run integration-test-gh`. It works through your own gh and Git
+Credential Manager sessions, and leaves both repos for you to inspect and delete. The
+script itself isn't templated: the task passes this repo's source URL and name as
+arguments.
 
-Always runs against HEAD; this is meant to verify a release candidate on main is
-good before cutting a release, not to smoke-test an arbitrary branch. Creates two
-repos every run, each covering a different scenario so a single run exercises more of
-the answer space, not the same fixed answers twice: Repo A is a plain `copier copy`
-with `zensical_target: GitHub Pages` and `code_coverage` on; Repo B is copied at the
-last stable tag with `zensical_target: docs-site Directory in Repo` and
-`code_coverage` off, left there for you to run `mise run copier-update` against
-yourself; deliberately not automated, see main()'s own docstring for why.
+It always runs against HEAD, to verify a release candidate on main before a release.
+Each run creates two repos with different answers, to cover more combinations. Repo A
+is a `copier copy` with `zensical_target: GitHub Pages` and `code_coverage` on. Repo B
+is a copy at the last stable tag with `zensical_target: docs-site Directory in Repo`
+and `code_coverage` off, left for you to update with `mise run copier-update`;
+main()'s docstring says why that's manual.
 
-Every check this script runs prints its own PASS/FAIL line as it happens, plus a
-summary per repo at the end; it never stops at the first failure, so one run gives
-the full picture. It only checks things that need a real GitHub API call or a real
-pipeline run; anything `tests/` already covers by rendering locally (structure,
-Jinja/YAML validity, links, nav) isn't repeated here.
+Each check prints a PASS or FAIL line as it runs, and each repo gets a summary at the
+end. A failure doesn't stop the run. It checks only what needs a real GitHub API call
+or workflow run; `tests/` covers what a local render can (structure, Jinja and YAML
+validity, links, nav).
 """
 
 import argparse
@@ -56,13 +53,11 @@ def run(
 ) -> subprocess.CompletedProcess:
     """Run a CLI command, echoing it first.
 
-    Resolves argv[0] via shutil.which() first: some CLIs (e.g. Azure CLI's `az`) are
-    `.cmd` batch wrappers on Windows rather than real .exe files, and subprocess with
-    shell=False (unlike cmd.exe's own PATH resolution) won't find those from the bare
-    name alone, failing with `FileNotFoundError: [WinError 2]`. which() finds the
-    actual resolvable path on any platform, sidestepping that gap without needing
-    shell=True. gh/copier don't hit this today, but there's no downside to guarding
-    every invocation here the same way.
+    Resolves argv[0] with shutil.which() first. Some CLIs, such as the Azure CLI's `az`,
+    are `.cmd` batch wrappers on Windows, which subprocess without a shell can't find by
+    bare name (`FileNotFoundError: [WinError 2]`). which() resolves the path on any
+    platform without shell=True. gh and copier don't need it, but every call goes
+    through it.
 
     Returns:
         The completed process, with captured stdout/stderr if `capture` is True.
@@ -87,7 +82,7 @@ def gh_value(*args: str) -> str:
 
 
 def check_gh_installed() -> None:
-    """Verify the `gh` CLI is actually resolvable on PATH.
+    """Verify the `gh` CLI is resolvable on PATH.
 
     Without this, a missing `gh` surfaces as a raw FileNotFoundError traceback from
     deep inside the first real `gh` call instead of a clear message up front.
@@ -159,23 +154,20 @@ def create(
     *,
     code_coverage: bool,
 ) -> None:
-    """Render+run the template to create the test repo.
+    """Run the template to create the test repo.
 
-    `github_username` is pinned to the already-resolved `owner` rather than left to
-    auto-detect from local git config: copier.yml.jinja's `.github/settings.yml`
-    content (e.g. `homepage`) is templated from `github_repo_owner`, which defaults to
-    `github_username`; letting that auto-detect could silently diverge from the
-    account gh actually authenticated as, breaking verify() for reasons unrelated to
-    what it's actually trying to test.
+    `github_username` is set to the resolved `owner` instead of auto-detected from local
+    git config. copier.yml.jinja templates `.github/settings.yml` (such as `homepage`)
+    from `github_repo_owner`, which defaults to `github_username`, so an auto-detected
+    value that differs from the account gh is logged in as would break verify() for an
+    unrelated reason.
 
-    `zensical_target` and `code_coverage` are explicit, not left to `--defaults`, so
-    the two repos this script creates can each cover a different value instead of
-    silently both getting whatever the question's own default is.
+    `zensical_target` and `code_coverage` are explicit, so the two repos can cover
+    different values instead of both getting each question's default.
 
-    `--defaults` falls back to each question's own default for anything not covered
-    by an explicit -d below (currently github_org, author_name); without it, copier
-    drops into an interactive prompt for those. Explicit -d values below still take
-    priority over --defaults regardless of order.
+    `--defaults` covers the questions without an explicit -d below (github_org and
+    author_name); without it, copier prompts for them. Explicit -d values take priority
+    over --defaults.
     """
     run(
         "copier",
@@ -323,15 +315,12 @@ def dispatch_workflow(
 def open_pr_wait_and_merge(
     repo: str, dest: str, branch: str, commit_message: str, filename: str
 ) -> None:
-    """Open a normal, passing PR and merge it; the only way real commits reach main.
+    """Open a passing PR and merge it, the only way commits reach main.
 
-    Branch protection requires every change to go through a PR, even for the repo
-    owner; a direct `git push` to main is rejected outright once the ruleset is
-    live (confirmed the hard way: an earlier version of this script tried exactly
-    that). This also mirrors how release-auto-preparereleasepr.yml actually gets
-    triggered in practice: by the push GitHub generates when a PR merges, not by
-    anyone pushing to main directly.
-
+    Branch protection requires every change to go through a PR, even from the repo
+    owner, so a direct `git push` to main is rejected. Merging a PR also matches how
+    release-auto-preparereleasepr.yml starts in practice: from the push GitHub makes
+    when a PR merges.
     """
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
@@ -364,19 +353,15 @@ def open_pr_wait_and_merge(
 def wait_for_pr_checks(repo: str, pr_number: str) -> None:
     """Poll a PR's status checks until they all complete, and confirm they passed.
 
-    A force-push in quick succession (e.g. a branch updated twice back-to-back) can
-    leave a stale `CANCELLED` entry alongside the newer run's result for the same
-    check name; `test-auto-prvalidation.yml`'s own concurrency group cancels the
-    superseded run. Only the most recent entry per check name reflects the PR's
-    actual current state, so older duplicates are dropped before evaluating success.
+    Two force-pushes in quick succession can leave a `CANCELLED` entry beside the newer
+    run for the same check name, since `test-auto-prvalidation.yml`'s concurrency group
+    cancels the superseded run. Only each check name's latest entry reflects the PR, so
+    older duplicates are dropped.
 
-    A dedupe pass alone isn't enough: a check can be observed as COMPLETED
-    (cancelled) in the brief window before its superseding run has even been
-    created, let alone registered in the rollup; a cancelled run and its
-    replacement's SUCCESS have been observed completing within the same second. So
-    this only accepts an "all complete" result once the exact same snapshot is
-    observed on two consecutive polls, giving a just-created superseding run a
-    chance to show up first.
+    That isn't enough on its own: a cancelled run can show as COMPLETED before its
+    replacement even appears, and the two have completed within the same second. So an
+    "all complete" result counts only once the same snapshot shows on two polls in a
+    row, which gives a new replacement run time to appear.
 
     Raises:
         SystemExit: if the checks don't all complete in time, or don't all pass.
@@ -417,7 +402,7 @@ def wait_for_run(repo: str, run_id: int) -> str:
 
     `check=False`: a failing run makes `gh run watch --exit-status` exit non-zero,
     which is an expected outcome for some callers (e.g. a deliberately-broken PR), not
-    a bug in this script; the caller decides what conclusion was actually wanted.
+    a bug in this script; the caller decides what conclusion was wanted.
 
     Returns:
         The run's conclusion, e.g. "success" or "failure".
@@ -461,7 +446,7 @@ def report_settings_checks(
     """Report each part of .github/settings.yml the Settings App should have applied.
 
     Covers the `repository`, `labels`, `rulesets`, and `environments` blocks; every
-    top-level key that file actually sets, not just a sample of them. The
+    top-level key that file sets, not just a sample of them. The
     `github-pages` environment only exists when `zensical_ghpages` is true:
     settings.yml.jinja only declares it in that case.
     """
@@ -665,7 +650,7 @@ def homepage_for(owner: str, repo_name: str) -> str:
 
 
 def provision_test_secrets(repo: str) -> None:
-    """Set placeholder secrets so pipelines gated on their presence can actually run.
+    """Set placeholder secrets so pipelines gated on their presence can run.
 
     APPRISE_URL: Maint (Auto): Copier Update Check requires it to exist before its own
     logic even runs (see .github/actions/require-secrets). Points at a real, harmless
@@ -685,15 +670,13 @@ def provision_test_secrets(repo: str) -> None:
 
 
 def approve_pending_run(repo: str, branch: str, *, timeout: int = 60) -> None:
-    """Approve a pull_request run on `branch` stuck in GitHub's action_required state.
+    """Approve a pull_request run on `branch` waiting in GitHub's action_required state.
 
-    A push authenticated as the default GITHUB_TOKEN (actor github-actions[bot]) to a
-    PR it opened/updated leaves that PR's pull_request-triggered runs pending manual
-    approval in the Actions tab; this is the release PR getting a new commit from
-    Release (Auto): Prepare Release PR. Approving via the API is the same action a
-    human takes clicking "Approve and run workflow", done here so the automated flow
-    can proceed the same way a real maintainer keeps it moving in practice. Polls
-    briefly since the gated run may not exist yet the instant the triggering push
+    A push as the default GITHUB_TOKEN (github-actions[bot]) to a PR it opened or
+    updated leaves that PR's pull_request runs waiting for approval in the Actions tab,
+    as when Release (Auto): Prepare Release PR adds a commit to the release PR.
+    Approving through the API does what a maintainer does by clicking "Approve and run
+    workflow". It polls briefly, since the run may not exist yet when the push
     completes.
 
     Raises:
@@ -770,15 +753,13 @@ def check_copier_update_check(
 def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
     """Run `copier update` against an already-current repo and confirm it's a no-op.
 
-    `--defaults` is safe here specifically because nothing changed since this repo was
-    copied; there's no template diff to introduce a new question, so there's no risk
-    of silently defaulting past a real prompt the way there would be for Repo B.
+    `--defaults` is safe here: nothing changed since this repo was copied, so no
+    template diff can add a question for it to answer silently, as it could for Repo B.
 
-    `vcs_ref` must match whatever `create()` used for this repo: without an explicit
-    `--vcs-ref`, `copier update` targets the latest release *tag*, not HEAD; if
-    main has commits past the last release (the normal case), that's an earlier point
-    than what this repo was actually created at, and copier has no sane way to
-    "update" backwards to it.
+    `vcs_ref` must match what `create()` used. Without `--vcs-ref`, `copier update`
+    targets the latest release tag, not HEAD. When main has commits past the last
+    release, as it normally does, that's earlier than the version this repo was created
+    at, and copier can't update backward.
     """
     print("Checking `copier update` is a no-op on an already-current repo...")
     run(
@@ -805,7 +786,7 @@ def check_repo_health_check(repo: str, failures: list[str]) -> None:
     """Dispatch Maint (Auto): Repo Health Check and confirm it completes clean.
 
     workflow-keepalive is gated `if: github.event_name == 'schedule'`, so a manual
-    dispatch here only actually exercises link-check; that's covered by the overall
+    dispatch here only exercises link-check; that's covered by the overall
     run conclusion.
     """
     print("Checking Maint (Auto): Repo Health Check...")
@@ -933,7 +914,7 @@ def knope_release_pr_title(repo: str) -> str | None:
     The title (e.g. "chore: prepare release 0.0.1") encodes the version knope
     computed; unlike the PR's head commit SHA, it doesn't change just because
     `autoupdate-knope-pr` recreates the branch from a fresh main HEAD every run, so
-    it's the right signal for "did this merge actually change what's proposed."
+    it's the right signal for "did this merge change what's proposed."
 
     Returns:
         The PR title, or None if no such PR is currently open.
@@ -978,7 +959,7 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     wait_for_run(repo, warmup_run_id)
 
     # A release PR may already be open here (e.g. the bootstrap-time v0.1.0 one), so
-    # "no PR is open" isn't the right no-op signal; what actually matters is that a
+    # "no PR is open" isn't the right no-op signal; what matters is that a
     # docs-only merge doesn't change what version it proposes.
     docs_noop_before = knope_release_pr_title(repo)
     prepare_before = latest_run_id(repo, "release-auto-preparereleasepr.yml")
@@ -1264,22 +1245,17 @@ def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
 def main() -> None:
     """Create and verify two throwaway repos, each covering a different scenario.
 
-    Both run every time, always at HEAD (this tool exists to verify a release
-    candidate on main is good before cutting a release, not to smoke-test an
-    arbitrary branch). Repo A is a plain `copier copy` with `zensical_target: GitHub
-    Pages` and `code_coverage` on; every automated check this script can run
-    happens against it. Repo B is copied at the last stable tag with
-    `zensical_target: docs-site Directory in Repo` and `code_coverage` off, for you to
-    run `mise run copier-update` against yourself; deliberately not automated:
-    that's the exact command, with the exact prompts, a real user gets, and running it
-    by hand is the only way to see a new question's prompt land the way it actually
-    would for them, not however this script happened to answer it. Both repos are
-    left in place afterward for inspection.
+    Both run every time, at HEAD, to verify a release candidate on main before a
+    release. Repo A is a `copier copy` with `zensical_target: GitHub Pages` and
+    `code_coverage` on, and every automated check runs against it. Repo B is a copy at
+    the last stable tag with `zensical_target: docs-site Directory in Repo` and
+    `code_coverage` off, for you to update with `mise run copier-update`. That's manual
+    on purpose: running the command a real user runs, prompts included, is how a new
+    question's prompt gets seen as they'll see it. Both repos stay for inspection.
 
-    Once you've updated Repo B by hand, re-run this script with `--verify-update
-    <repo> --local-path <path>` (also available as `mise run
-    integration-test-verify-update-gh`) to check it applied cleanly; see the "Repo B"
-    section of the GitHub manual verification checklist docs page.
+    After updating Repo B, rerun this script with `--verify-update <repo> --local-path
+    <path>` (or `mise run integration-test-verify-update-gh`) to check the update; see
+    the "Repo B" section of the GitHub manual verification checklist.
 
     Raises:
         SystemExit: if required arguments are missing, or if any automated check

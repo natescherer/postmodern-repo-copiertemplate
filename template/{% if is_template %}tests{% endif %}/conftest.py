@@ -22,10 +22,9 @@ from jinja2_ansible_filters import AnsibleCoreFiltersExtension
 def _find_repo_root() -> Path:
     """Walk upward from this file to find the directory containing a template/ folder.
 
-    Deliberately not a fixed parents[N]: this file lives two levels below the repo root
-    as template source (template/{% if is_template %}tests{% endif %}/...) but only one
-    level below it once rendered into a consumer project (tests/...), so a fixed depth
-    would be wrong in one of the two contexts.
+    A fixed parents[N] would be wrong in one context: as template source, this file is
+    two levels below the repo root (template/{% if is_template %}tests{% endif %}/...),
+    and rendered into a project, it's one level below (tests/...).
 
     Returns:
         The repo root directory.
@@ -139,15 +138,13 @@ def _ignore_for_copy(directory, names):
 def _assemble_source(repo_root: Path, dest: Path) -> None:
     """Build a copier source rooted at `dest` from the current `template/` contents.
 
-    Deliberately does not copy this repo's own root copier.yml: that file is dogfooded
-    output, refreshed only by an occasional `copier update`, so it lags behind
-    uncommitted or just-committed edits under template/; exactly the edits this suite
-    exists to catch. When template/ contains a self-hosting conditional copier.yml (a
-    template that, like this one, supports generating child templates), that file's
-    non-raw header is rendered with stub values; nothing in these tests inspects
-    parent_template_name/url; while its `{% raw %}...{% endraw %}` body (the real
-    question set) passes through unprocessed, exactly as Copier itself would render it
-    into a child's copier.yml.
+    It doesn't copy this repo's root copier.yml: that's dogfooded output, refreshed only
+    by a `copier update`, so it lags behind the uncommitted and just-committed edits
+    under template/ that this suite exists to check. When template/ has a self-hosting
+    conditional copier.yml (as a template that generates child templates does), its
+    non-raw header renders with stub values, which no test inspects, and its `{% raw
+    %}...{% endraw %}` body, the real question set, passes through unchanged, as Copier
+    renders it into a child's copier.yml.
     """
     shutil.copytree(
         repo_root / "template",
@@ -201,16 +198,14 @@ UPDATE_SOURCE_ROOT_FILES = (
 def _assemble_update_scratch_repo(repo_root: Path, old_tag: str, dest: Path) -> None:
     """Build a 2-commit copier source for testing the update path: old_tag -> current.
 
-    Commit 1 is `repo_root`'s real, historical state at `old_tag` (its actual root
-    copier.yml as released, not synthesized); exactly what a real user updating from
-    that release would have used as their template source. Commit 2 (HEAD) is the
-    current on-disk template/ contents, assembled the same way _assemble_source builds
-    it for the copy-only tests, so uncommitted edits are covered here too.
+    Commit 1 is `repo_root` as it was at `old_tag`, its released root copier.yml
+    included: the source a real user updating from that release had. Commit 2 (HEAD) is
+    the current template/, assembled the way _assemble_source() does it, so uncommitted
+    edits are covered too.
 
-    Both states have to live at the same path across two commits, not two separate
-    directories: `copier update` always re-reads `_src_path` from the destination's
-    answers file and re-resolves *that same path* at update time, it can't be pointed
-    at a different "new" source.
+    Both states have to live at one path, in two commits: `copier update` reads
+    `_src_path` from the destination's answers file and resolves that same path, so it
+    can't be pointed at a different source for the new version.
     """
     _git_init_repo(dest)
 
