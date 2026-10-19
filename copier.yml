@@ -1153,10 +1153,19 @@ _tasks:
   - command: >-
       gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
       || gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X PUT -f build_type=workflow
-    when: |-
+    when: &when_copy_ghpages |-
       {%- if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' -%}
         true
       {%- endif %}
+
+  # Lets any branch or tag deploy to the github-pages environment, which the Pages
+  # setup above creates. Docs (Auto): Zensical Build & Publish deploys on release
+  # events, whose ref is a tag, so a branch-only policy would block them. PUT creates
+  # the environment if it doesn't exist yet. gh -F sends `null` as JSON null.
+  - command: >-
+      gh api repos/{{ github_repo_owner }}/{{ repo_name }}/environments/github-pages
+      -X PUT -F deployment_branch_policy=null
+    when: *when_copy_ghpages
 
   # Enables CodeQL default setup, for public repos only: private repos need a paid
   # GitHub Advanced Security license.
