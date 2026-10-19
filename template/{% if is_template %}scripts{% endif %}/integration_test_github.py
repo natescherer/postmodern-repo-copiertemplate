@@ -651,6 +651,18 @@ def verify(
             pages_build_type == "workflow",
             f"got {pages_build_type!r}",
         )
+        unrestricted = gh_value(
+            "api",
+            f"repos/{repo}/environments/github-pages",
+            "-q",
+            ".deployment_branch_policy == null",
+        )
+        check(
+            failures,
+            "github-pages environment has no deployment branch restriction",
+            unrestricted == "true",
+            f"got {unrestricted!r}",
+        )
 
     run("gh", "api", f"repos/{repo}/contents/.github/workflows", capture=True)
 

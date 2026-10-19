@@ -56,13 +56,6 @@
     - Bypass list: add **Repository admin**, with bypass mode **Pull requests only**, so repo
       admins can use the "Merge without waiting for requirements to be met" button.
 
-    ### GitHub Pages Environment
-
-    (`zensical_target: GitHub Pages` only.)
-
-    The first Pages deployment creates a `github-pages` environment under **Settings >
-    Environments**. Open it and set **Deployment branches and tags** to **All branches**.
-
     ### Security and Analysis
 
     (Public repos only; private repos need a paid GitHub Advanced Security license.)
@@ -76,7 +69,9 @@
 
     - Under **Settings > Actions > General**, enable **Allow GitHub Actions to create and approve
       pull requests**
-    - If `zensical_target` is `GitHub Pages`, set **Settings > Pages > Source** to **GitHub Actions**
+    - If `zensical_target` is `GitHub Pages`, set **Settings > Pages > Source** to **GitHub Actions**,
+      then, under **Settings > Environments**, open (or create) `github-pages` and set **Deployment
+      branches and tags** to **No restriction**, since release docs deploy from a tag
     - If the repo is public, enable CodeQL's default setup and private vulnerability reporting under
       **Settings > Advanced Security**
 {%- endif %}
