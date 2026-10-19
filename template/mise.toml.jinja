@@ -94,12 +94,12 @@ run = "uv run scripts/template_docs_server.py"
 # then check it with `mise run integration-test-verify-update-gh`. Both repos stay
 # for inspection; delete them with `mise run integration-test-cleanup-gh`. See
 # {{ docs_url }}maintaining/integration-testing/index.html and
-# {{ docs_url }}maintaining/integration-testing/manual-verification-github{{ docs_page_suffix }}.
+# {{ docs_url }}maintaining/integration-testing/runbook-github{{ docs_page_suffix }}.
 run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}{% if not is_extensible %} --leaf{% endif %}"
 
 [tasks.integration-test-verify-update-gh]
 # Run after updating Repo B by hand (see the "Repo B" section of
-# {{ docs_url }}maintaining/integration-testing/manual-verification-github{{ docs_page_suffix }}).
+# {{ docs_url }}maintaining/integration-testing/runbook-github{{ docs_page_suffix }}).
 # Checks that the update brought in current content, left no conflict markers, and that
 # PR Validation still works.
 usage = '''
@@ -123,7 +123,7 @@ run = "python scripts/integration_test_github.py --cleanup --repo-prefix {{ repo
 # `mise run integration-test-verify-update-azdo`. Both repos stay for inspection;
 # delete them with `mise run integration-test-cleanup-azdo`. See
 # {{ docs_url }}maintaining/integration-testing/index.html and
-# {{ docs_url }}maintaining/integration-testing/manual-verification-azdo{{ docs_page_suffix }}.
+# {{ docs_url }}maintaining/integration-testing/runbook-azdo{{ docs_page_suffix }}.
 #
 # --org and --project default to this project's own org and project on Azure DevOps;
 # otherwise pass them, as in `mise run integration-test-azdo --org myorg --project
@@ -138,7 +138,7 @@ run = "python scripts/integration_test_azdo.py --source {% if using_github %}htt
 
 [tasks.integration-test-verify-update-azdo]
 # Run after updating Repo B by hand (see the "Repo B" section of
-# {{ docs_url }}maintaining/integration-testing/manual-verification-azdo{{ docs_page_suffix }}).
+# {{ docs_url }}maintaining/integration-testing/runbook-azdo{{ docs_page_suffix }}).
 # Checks that the update brought in current content, left no conflict markers, renamed
 # pipelines in place, and that PR Validation still works.
 usage = '''

@@ -1336,7 +1336,7 @@ def main() -> None:
 
     After updating Repo B, rerun this script with `--verify-update <repo> --local-path
     <path>` (or `mise run integration-test-verify-update-gh`) to check the update; see
-    the "Repo B" section of the GitHub manual verification checklist.
+    the "Repo B" section of the GitHub runbook.
 
     Raises:
         SystemExit: if required arguments are missing, or if any automated check
@@ -1405,6 +1405,8 @@ def main() -> None:
         raise SystemExit("--source and --repo-prefix are required.")
 
     owner = gh_value("api", "user", "--jq", ".login")
+    # The verify and cleanup tasks live in this template's repo, where the run starts.
+    template_repo = os.getcwd()
     timestamp = int(time.time())
 
     heading(
@@ -1436,7 +1438,7 @@ def main() -> None:
     # first Pages deployment propagates, which it has by this point.
     check_repo_health_check(repo_a, failures_a)
     check_prerelease_flow(repo_a, dest_a, failures_a)
-    # Gives the Renovate app something to bump; the manual checklist confirms its PR.
+    # Gives the Renovate app something to bump; the runbook confirms its PR.
     open_pr_wait_and_merge(
         repo_a,
         dest_a,
@@ -1467,9 +1469,7 @@ def main() -> None:
     failures_b: list[str] = []
     verify(repo_b, homepage_for(owner, repo_b_name), failures_b, zensical_ghpages=False)
     check_copier_update_check(repo_b, failures_b, expect_update_available=True)
-    checklist = docs_page_url(
-        "maintaining/integration-testing/manual-verification-github.md"
-    )
+    checklist = docs_page_url("maintaining/integration-testing/runbook-github.md")
     summary(
         [
             RepoResult("Repo A", repo_a, dest_a, failures_a),
@@ -1479,12 +1479,13 @@ def main() -> None:
         ],
         [
             Step(
-                "Work through the manual checklist, which updates Repo B along the "
+                "Work through the runbook, which updates Repo B along the "
                 f"way: {checklist}"
             ),
             Step(
                 "Once Repo B's update merges, verify it:",
                 [
+                    f'cd "{template_repo}"',
                     "mise run integration-test-verify-update-gh "
                     f'--repo {repo_b} --local-path "{dest_b}"',
                 ],

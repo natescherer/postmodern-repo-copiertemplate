@@ -1,15 +1,37 @@
-# Manual Verification Checklist (Azure DevOps)
+# Integration Test Runbook (Azure DevOps)
 
-Work through this whole list by hand as the last step before a release. It covers only what
-`mise run integration-test-azdo` can't check; each `integration-test-*-azdo` task prints its
-own `[PASS]` or `[FAIL]` per check and a summary. See [Integration Testing](index.md) for what
-the run creates and why Repo B's update is manual.
+Every step of an Azure DevOps integration test run, from setup to cleanup, as the last step
+before a release. See [Integration Testing](index.md) for what the run does and why.
 
-Run each command from the repo's local clone, at the path the run's summary prints for it.
+The steps use these values from the run's summary: `<repo-a>` and `<repo-b>`, the test repos'
+names, and `<repo-a-path>` and `<repo-b-path>`, their local clones. `<template-repo-path>` is
+this template's own clone, and `<org>` and `<project>` are the Azure DevOps organization and
+project the test repos go in.
 
 !!! bug "Checkbox state isn't saved"
     You can tick the boxes as you go, but reloading or leaving the page clears them. Finish the
     list in one sitting.
+
+## Before You Start
+
+- [ ] The Azure DevOps [Prerequisites](../../getting-started/prerequisites.md) are in place for
+  `<project>`: the project settings, the build service permissions, and the Azure CLI with its
+  Azure DevOps extension, logged in.
+- [ ] A GitHub token is available for Renovate, which skips every dependency hosted on github.com
+  without one: log in with `gh auth login`, or set the `GITHUB_COM_TOKEN` environment variable
+  to a GitHub token with no scopes.
+
+## Running the Test
+
+- [ ] Start the run:
+
+    ```sh
+    cd <template-repo-path>
+    mise run integration-test-azdo --org <org> --project <project>
+    ```
+
+- [ ] When it finishes, its summary says "all checks passed" for both repos. If a check failed,
+  fix it, clean up (see [Cleaning Up](#cleaning-up)), and start again.
 
 ## Repo A
 
@@ -41,6 +63,7 @@ step output; see the script's module docstring.*
 - [ ] Push a branch with a broken link:
 
     ```sh
+    cd <repo-a-path>
     git switch main
     git pull
     git switch -c integration-test/broken-link
@@ -49,8 +72,8 @@ step output; see the script's module docstring.*
     git push -u origin integration-test/broken-link
     ```
 
-- [ ] Run **Maint (Auto) - Repo Health Check** on that branch (**Run pipeline**, then
-  **Branch/tag**: `integration-test/broken-link`). The run fails, and its log names
+- [ ] In `<project>`'s **Pipelines**, run `[<repo-a>] Maint (Auto) - Repo Health Check` on that
+  branch (**Run pipeline**, then **Branch/tag**: `integration-test/broken-link`). The run fails, and its log names
   `https://example.invalid/`.
 
 ### Maint (Auto) - Renovate
@@ -65,6 +88,7 @@ Nothing left to check for Repo A.
 - [ ] Merge a docs change through a PR:
 
     ```sh
+    cd <repo-a-path>
     git switch main
     git pull
     git switch -c integration-test/docs-change
@@ -74,8 +98,8 @@ Nothing left to check for Repo A.
     az repos pr create --source-branch integration-test/docs-change --target-branch main --title "docs: integration test docs change" --auto-complete true --squash true --delete-source-branch true
     ```
 
-- [ ] Once that PR completes, **Docs (Auto) - Zensical Build & Publish** runs, opens a PR from
-  `zensical-build`, and completes it. `docs-site/index.html` on `main` then contains
+- [ ] Once that PR completes, `[<repo-a>] Docs (Auto) - Zensical Build & Publish` runs, opens
+  a PR from `zensical-build`, and completes it. `docs-site/index.html` on `main` then contains
   "Integration test docs change."
 
 ### Test (Auto) - PR Validation
@@ -87,6 +111,7 @@ Nothing left to check for Repo A.
 - [ ] Open a PR from the broken-link branch, then push one more commit to it:
 
     ```sh
+    cd <repo-a-path>
     git switch integration-test/broken-link
     az repos pr create --source-branch integration-test/broken-link --target-branch main --title "docs: add a broken link"
     git commit --allow-empty -m "docs: push again"
@@ -130,6 +155,7 @@ update it.
 - [ ] Update on a branch, pressing Enter at each prompt to accept the default:
 
     ```sh
+    cd <repo-b-path>
     git switch -c integration-test/copier-update
     mise run copier-update
     git add -A
@@ -140,13 +166,34 @@ update it.
 
 ### After Updating
 
-Once the update's PR completes, run the commands in step 2 of the run's summary. They rename any
-pipeline registrations the update renamed, then check that the update brought in current
-content, left no conflict markers, registered each pipeline only under its current name, and
-that `Test (Auto) - PR Validation` triggers and passes on a new PR.
+- [ ] Once the update's PR completes, repoint any pipeline registrations it renamed:
+
+    ```sh
+    cd <repo-b-path>
+    git switch main
+    git pull
+    mise run migrate-azdo-pipeline-names
+    ```
+
+- [ ] Verify the update:
+
+    ```sh
+    cd <template-repo-path>
+    mise run integration-test-verify-update-azdo --org <org> --project <project> --repo <repo-b> --local-path <repo-b-path>
+    ```
+
+    It checks that the update brought in current content, left no conflict markers, registered
+    each pipeline only under its current name, and that `Test (Auto) - PR Validation` triggers
+    and passes on a new PR. Every check prints `[PASS]`.
 
 ## Cleaning Up
 
-- [ ] Run the cleanup command in the run's summary, and confirm. It deletes every
-  integration-test repo and pipeline in the project, including any left by a run that stopped
-  partway.
+- [ ] Delete the test repos and their pipelines, and confirm when it asks:
+
+    ```sh
+    cd <template-repo-path>
+    mise run integration-test-cleanup-azdo --org <org> --project <project>
+    ```
+
+    It deletes every integration-test repo and pipeline in the project, including any left by
+    a run that stopped partway.

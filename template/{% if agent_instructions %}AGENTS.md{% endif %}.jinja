@@ -73,12 +73,13 @@ project still runs actionlint.{% endif %}
 `copier copy` opens it as a GitHub Issue or prints it. **Add to it whenever a new feature needs
 the user to configure, replace, or complete something after copying.**
 
-## Manual verification checklist
+## Integration test runbooks
 
-The `manual-verification-*.md` checklists in `docs/maintaining/integration-testing/` cover what
-a `copier copy` can't verify: whether a workflow or pipeline authenticates, triggers, and does
-its job. Both are static and unconditional, since a template author tests every feature on both
-platforms. **Add to the relevant one whenever a new or changed workflow or pipeline needs its
+The `runbook-*.md` pages in `docs/maintaining/integration-testing/` hold every step of an
+integration test run, including what a `copier copy` can't verify: whether a workflow or
+pipeline authenticates, triggers, and does its job. Both are static and unconditional, since a
+template author tests every feature on both platforms, and each step is exact, the same on
+every run. **Add to the relevant one whenever a new or changed workflow or pipeline needs its
 behavior checked by hand.**
 {%- endif %}
 

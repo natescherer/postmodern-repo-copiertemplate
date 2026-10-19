@@ -100,9 +100,9 @@ them.
    it to the `az pipelines create` tasks in `_tasks`.
 1. Add a check to the integration test scripts: a `check_*()` function, and on Azure DevOps the
    pipeline's display name in `PIPELINE_DISPLAY_NAMES` in `integration_test_azdo.py`.
-1. Add what can't be automated to the manual verification checklists
-   (`docs/maintaining/integration-testing/manual-verification-github.md` and `-azdo.md`), such
-   as a notification arriving or a third-party bot responding.
+1. Add what can't be automated to the integration test runbooks
+   (`docs/maintaining/integration-testing/runbook-github.md` and `runbook-azdo.md`) as exact
+   steps, such as checking a third-party bot's response.
 1. If it needs a secret, work through the next checklist too.
 1. Put any new SHA-pinned action, Azure Pipelines task version, or embedded tool version
    through the dependency checklist above.
@@ -159,8 +159,9 @@ your domain content, in three layers:
 - **Integration testing** (`integration_test_github.py` and `integration_test_azdo.py`) creates
   real repos and runs real workflows and pipelines against them. It catches regressions that
   need a real API call, a running pipeline, or an external system. Run it before each release.
-- **The manual verification checklists** cover the rest: human judgment, and systems the
-  scripts can't inspect, such as whether a notification arrived or a bot responded.
+- **The integration test runbooks** hold every step of a run, and their manual steps cover
+  the rest: human judgment, and systems the scripts can't inspect, such as whether a bot
+  responded.
 
 A CI/CD change tested only by the first layer is untested where it's most likely to break.
 Verify it on a real platform.
