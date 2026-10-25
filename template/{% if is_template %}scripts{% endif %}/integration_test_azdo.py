@@ -34,23 +34,31 @@ import shutil
 # S404: drives real CLI tools below; no untrusted input, no shell=True.
 import subprocess  # noqa: S404
 import sys
-import tempfile
 import time
+import urllib.parse
 from collections.abc import Callable
 from pathlib import Path
 
 from console import (
     RepoResult,
-    Step,
+    ask,
     check,
     heading,
     run,
     save_log,
+    say,
     start_log,
+    step,
     summary,
 )
 from docs_links import docs_page_url
-from repo_edits import prepare_repo_a, push_older_recorded_version
+from repo_edits import (
+    local_clone_dir,
+    local_clones,
+    prepare_repo_a,
+    push_older_recorded_version,
+    remove_tree,
+)
 
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
@@ -75,6 +83,16 @@ PULL_REQUEST_BYPASS_POLICY = 32768
 # refs/heads/main, UTF-16LE hex-encoded per character: Azure DevOps's Git ACL token
 # format for a branch.
 MAIN_BRANCH_ACL_PATH = "refs/heads/6d00610069006e00"
+
+
+def repo_url(org_url: str, project: str, repo_name: str) -> str:
+    """Return a repo's web URL, for the run's summary.
+
+    Returns:
+        https://dev.azure.com/<org>/<project>/_git/<repo>, with the project encoded.
+
+    """
+    return f"{org_url}{urllib.parse.quote(project)}/_git/{repo_name}"
 
 
 def setup_checklist(copy_output: str) -> list[str]:
@@ -117,7 +135,7 @@ def confirm(prompt: str, *, yes: bool) -> bool:
     if yes:
         return True
     try:
-        return input(f"{prompt} [y/N] ").strip().lower() == "y"
+        return ask(f"{prompt} [y/N] ").strip().lower() == "y"
     except EOFError:
         return False
 
@@ -370,17 +388,21 @@ def cleanup(org_url: str, project: str, repo_prefix: str, *, yes: bool) -> None:
         ),
         key=lambda pipeline: pipeline["name"],
     )
-    if not repos and not pipelines:
-        print(f"No integration-test repos or pipelines in {project}.")
+    clones = local_clones(pattern, "dev.azure.com")
+    if not repos and not pipelines and not clones:
+        say(f"No integration-test repos, pipelines, or local clones for {project}.")
         return
-    print("Integration-test pipelines and repos to delete:")
+    say("Integration-test pipelines, repos, and local clones to delete:")
     for item in (*pipelines, *repos):
-        print(f"  {item['name']}")
+        say(f"  {item['name']}")
+    for clone in clones:
+        say(f"  {clone}")
     if not confirm(
-        f"Delete these {len(pipelines)} pipeline(s) and {len(repos)} repo(s)?",
+        f"Delete these {len(pipelines)} pipeline(s), {len(repos)} repo(s), and "
+        f"{len(clones)} local clone(s)?",
         yes=yes,
     ):
-        print("Nothing deleted.")
+        say("Nothing deleted.")
         return
     for pipeline in pipelines:
         run(
@@ -394,7 +416,12 @@ def cleanup(org_url: str, project: str, repo_prefix: str, *, yes: bool) -> None:
         )
     for repo in repos:
         run("az", "repos", "delete", "--id", repo["id"], *scope[:4], "--yes")
-    print(f"Deleted {len(pipelines)} pipeline(s) and {len(repos)} repo(s).")
+    for clone in clones:
+        remove_tree(clone)
+    say(
+        f"Deleted {len(pipelines)} pipeline(s), {len(repos)} repo(s), and "
+        f"{len(clones)} local clone(s)."
+    )
 
 
 def report_pr_validation_policy(
@@ -566,7 +593,7 @@ def verify(
             the rest of this script's checks from being meaningful.
 
     """
-    print(f"Verifying {org_url}{project}/{repo_name}...")
+    step(f"Verifying {org_url}{project}/{repo_name}")
     repo_id = az_value(
         "repos",
         "show",
@@ -841,7 +868,7 @@ def check_copier_update_check(
     module's own docstring for why that stays manual on this platform.
     """
     on = f" on {branch}" if branch else ""
-    print(f"Checking Maint (Auto) - Copier Update Check{on}...")
+    step(f"Checking Maint (Auto) - Copier Update Check{on}")
     run_id = dispatch_pipeline(
         org_url,
         project,
@@ -868,7 +895,7 @@ def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
     copier makes up a `git describe`-style version and passes it to `git clone --branch`
     as if it were a ref, which fails.
     """
-    print("Checking `copier update` is a no-op on an already-current repo...")
+    step("Checking `copier update` is a no-op on an already-current repo")
     run(
         "copier",
         "update",
@@ -893,7 +920,7 @@ def check_repo_health_check(
     org_url: str, project: str, repo_name: str, failures: list[str]
 ) -> None:
     """Dispatch Maint (Auto) - Repo Health Check and confirm it completes clean."""
-    print("Checking Maint (Auto) - Repo Health Check...")
+    step("Checking Maint (Auto) - Repo Health Check")
     run_id = dispatch_pipeline(
         org_url, project, f"[{repo_name}] Maint (Auto) - Repo Health Check"
     )
@@ -944,7 +971,7 @@ def check_renovate(
     check: Renovate there runs as an external GitHub App on its own cadence, not a
     dispatchable workflow.
     """
-    print("Checking Maint (Auto) - Renovate...")
+    step("Checking Maint (Auto) - Renovate")
     pipeline = f"[{repo_name}] Maint (Auto) - Renovate"
     if not provide_github_token(org_url, project, pipeline):
         check(
@@ -1140,7 +1167,7 @@ def check_bad_title_blocks_merge(
     org_url: str, project: str, repo_name: str, dest: str, failures: list[str]
 ) -> None:
     """Open a PR with a non-Conventional-Commit title and confirm it's blocked."""
-    print("Checking a bad-title PR fails Test (Auto) - PR Validation...")
+    step("Checking a bad-title PR fails Test (Auto) - PR Validation")
     run("git", "checkout", "main", cwd=dest)
     branch = "integration-test/bad-title"
     run("git", "switch", "-c", branch, cwd=dest)
@@ -1193,7 +1220,7 @@ def check_failing_tests_block_merge(
     org_url: str, project: str, repo_name: str, dest: str, failures: list[str]
 ) -> None:
     """Open a PR with a deliberately failing test and confirm it's blocked."""
-    print("Checking a PR with a failing test fails Test (Auto) - PR Validation...")
+    step("Checking a PR with a failing test fails Test (Auto) - PR Validation")
     run("git", "checkout", "main", cwd=dest)
     branch = "integration-test/failing-test"
     run("git", "switch", "-c", branch, cwd=dest)
@@ -1287,7 +1314,7 @@ def check_release_flow(
     push-to-main prepare step and the merge-triggered publish step, telling them apart
     via its own API check.
     """
-    print("Checking Release (Auto) - Prepare & Publish Release...")
+    step("Checking Release (Auto) - Prepare & Publish Release")
     pid = pipeline_numeric_id(
         org_url, project, f"[{repo_name}] Release (Auto) - Prepare & Publish Release"
     )
@@ -1438,7 +1465,7 @@ def check_prerelease_flow(
     org_url: str, project: str, repo_name: str, dest: str, failures: list[str]
 ) -> None:
     """Exercise Release (Manual) - Create Prerelease; a label, a dup, a new label."""
-    print("Checking Release (Manual) - Create Prerelease...")
+    step("Checking Release (Manual) - Create Prerelease")
     name = f"[{repo_name}] Release (Manual) - Create Prerelease"
 
     # PrepareRelease refuses to run with nothing to bump; without a real commit
@@ -1507,7 +1534,7 @@ def check_post_update(
     hand, on your own schedule, so this script can't chain straight from creating the
     repo into checking it; see main()'s own docstring.
     """
-    print(f"Checking {repo_name}'s update applied cleanly...")
+    step(f"Checking {repo_name}'s update applied cleanly")
     run("git", "fetch", cwd=dest)
     log = run(
         "git", "log", "--oneline", "-10", "origin/main", capture=True, cwd=dest
@@ -1693,7 +1720,7 @@ def main() -> None:
     )
     args = parser.parse_args()
     log_dir = start_log("azdo")
-    print(f"Logging this run to {log_dir}")
+    say(f"Logging this run to {log_dir}")
 
     check_az_installed()
     check_azure_devops_extension()
@@ -1722,7 +1749,15 @@ def main() -> None:
             org_url, args.project, args.verify_update, args.local_path, update_failures
         )
         summary(
-            [RepoResult("Repo B", args.verify_update, args.local_path, update_failures)]
+            [
+                RepoResult(
+                    "Repo B",
+                    args.verify_update,
+                    args.local_path,
+                    update_failures,
+                    url=repo_url(org_url, args.project, args.verify_update),
+                )
+            ]
         )
         if update_failures:
             raise SystemExit(1)
@@ -1731,13 +1766,12 @@ def main() -> None:
     if not args.source or not args.repo_prefix:
         raise SystemExit("--source and --repo-prefix are required.")
 
-    # The verify and cleanup tasks live in this template's repo, where the run starts.
-    template_repo = os.getcwd()
     timestamp = int(time.time())
 
     heading("Repo A: a fresh copy at HEAD (code_coverage: on)")
     repo_a_name = f"{args.repo_prefix}-integration-test-{timestamp}-a"
-    dest_a = tempfile.mkdtemp(prefix="integration-test-")
+    dest_a = local_clone_dir(repo_a_name)
+    step(f"Creating {repo_a_name} at HEAD")
     checklist_a = create(
         args.source,
         "HEAD",
@@ -1750,7 +1784,9 @@ def main() -> None:
     )
     failures_a: list[str] = []
     verify(repo_a_name, org_url, args.project, failures_a)
+    step("Setting test secrets")
     provision_test_secrets(org_url, args.project, repo_a_name)
+    step("Merging Repo A's setup PR")
     # Before the checks that depend on it: the Renovate edits, and a lychee exclusion
     # for this template's docs, whose new pages publish only when it releases.
     open_pr_wait_and_merge(
@@ -1780,7 +1816,8 @@ def main() -> None:
         f"Repo B: a copy at {old_ref}, for you to update by hand (code_coverage: off)"
     )
     repo_b_name = f"{args.repo_prefix}-integration-test-{timestamp}-b"
-    dest_b = tempfile.mkdtemp(prefix="integration-test-")
+    dest_b = local_clone_dir(repo_b_name)
+    step(f"Creating {repo_b_name} at {old_ref}")
     checklist_b = create(
         args.source,
         old_ref,
@@ -1793,49 +1830,40 @@ def main() -> None:
     )
     failures_b: list[str] = []
     verify(repo_b_name, org_url, args.project, failures_b)
+    step("Setting test secrets")
     provision_test_secrets(org_url, args.project, repo_b_name)
     # Repo B is at the newest release, so main has no update; a branch recording
     # the commit before that release does. The runbook reads each run's result.
     check_copier_update_check(org_url, args.project, repo_b_name, failures_b)
+    step("Pushing a branch that records an older template version")
     older = push_older_recorded_version(dest_b, args.source, old_ref)
     check_copier_update_check(
         org_url, args.project, repo_b_name, failures_b, branch=older
     )
-    scope = f'--org {args.org} --project "{args.project}"'
-    checklist = docs_page_url("maintaining/integration-testing/runbook-azdo.md")
+    # The runbook as of main, which this run tests; latest is the last release's.
+    runbook = docs_page_url(
+        "maintaining/integration-testing/runbook-azdo.md", version="dev"
+    )
     summary(
         [
-            RepoResult("Repo A", repo_a_name, dest_a, failures_a, checklist_a),
+            RepoResult(
+                "Repo A",
+                repo_a_name,
+                dest_a,
+                failures_a,
+                checklist_a,
+                url=repo_url(org_url, args.project, repo_a_name),
+            ),
             RepoResult(
                 f"Repo B (at {old_ref}, before updating)",
                 repo_b_name,
                 dest_b,
                 failures_b,
                 checklist_b,
+                url=repo_url(org_url, args.project, repo_b_name),
             ),
         ],
-        [
-            Step(
-                "Work through the runbook, which updates Repo B along the "
-                f"way: {checklist}"
-            ),
-            Step(
-                "Once Repo B's update merges, rename its pipelines and verify it:",
-                [
-                    f'cd "{dest_b}"',
-                    "git switch main",
-                    "git pull",
-                    "mise run migrate-azdo-pipeline-names",
-                    f'cd "{template_repo}"',
-                    f"mise run integration-test-verify-update-azdo {scope} "
-                    f'--repo {repo_b_name} --local-path "{dest_b}"',
-                ],
-            ),
-            Step(
-                "When you're done, delete both repos and their pipelines:",
-                [f"mise run integration-test-cleanup-azdo {scope}"],
-            ),
-        ],
+        runbook,
     )
 
     if failures_a or failures_b:

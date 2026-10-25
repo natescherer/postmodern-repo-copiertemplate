@@ -3,9 +3,9 @@
 Every step of a GitHub integration test run, from setup to cleanup, as the last step before a
 release. See [Integration Testing](index.md) for what the run does and why.
 
-The commands use these values from the run's summary: `<repo-a-path>` and `<repo-b-path>`, each
-test repo's local clone, and `<owner>/<repo-b>`, Repo B's full name. `<template-repo-path>` is
-this template's own clone.
+The commands use these values from each repo's entry in the run's summary: its **Local clone**
+for `<repo-a-path>` and `<repo-b-path>`, and Repo B's **Name** for `<owner>/<repo-b>`. Each entry's
+**Web** link opens that repo on GitHub. `<template-repo-path>` is this template's own clone.
 
 !!! bug "Checkbox state isn't saved"
     You can tick the boxes as you go, but reloading or leaving the page clears them. Finish the
@@ -189,5 +189,5 @@ that release, it detects the release.*
     mise run integration-test-cleanup-gh
     ```
 
-    It deletes every integration-test repo under your account, including any left by a run
-    that stopped partway.
+    It deletes every integration-test repo under your account, and their local clones,
+    including any left by a run that stopped partway.

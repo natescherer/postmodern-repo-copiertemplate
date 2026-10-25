@@ -1,6 +1,9 @@
 """Changes the integration test scripts make to their test repos."""
 
+import os
 import re
+import shutil
+import stat
 import tempfile
 from collections.abc import Callable
 from pathlib import Path
@@ -13,6 +16,56 @@ OLD_TYPOS = "1.50.3"
 
 # Repo B's branch for checking that the Copier Update Check detects a newer release.
 OLDER_VERSION_BRANCH = "integration-test/older-recorded-version"
+
+
+def local_clone_dir(repo_name: str) -> str:
+    """Create the empty directory for a test repo's local clone, named after the repo.
+
+    The name already carries the run's timestamp, so it's unique.
+
+    Returns:
+        `<temp directory>/<repo_name>`.
+
+    """
+    path = Path(tempfile.gettempdir(), repo_name)
+    path.mkdir()
+    return str(path)
+
+
+# How older runs named clones: tempfile.mkdtemp(prefix="integration-test-").
+_OLDER_CLONE_NAME = re.compile(r"integration-test-[a-z0-9_]{8}")
+
+
+def local_clones(repo_name: re.Pattern[str], host: str) -> list[Path]:
+    """Find the test repos' local clones for one platform in the temp directory.
+
+    Both platforms name their repos alike, so a clone counts only if its origin is on
+    `host`, or if it has no origin, which a run that stopped before pushing leaves.
+
+    Returns:
+        Each clone named after a test repo, or as older runs named them.
+
+    """
+    clones = []
+    for path in Path(tempfile.gettempdir()).iterdir():
+        named = repo_name.fullmatch(path.name) or _OLDER_CLONE_NAME.fullmatch(path.name)
+        if not named or not path.is_dir():
+            continue
+        config = path / ".git" / "config"
+        origin = config.read_text(encoding="utf-8") if config.is_file() else ""
+        if host in origin or "url = " not in origin:
+            clones.append(path)
+    return sorted(clones)
+
+
+def remove_tree(path: Path) -> None:
+    """Delete a directory tree, including a git clone's read-only files on Windows."""
+
+    def clear_read_only(function: Callable, target: str, _error: BaseException) -> None:
+        os.chmod(target, stat.S_IWRITE)
+        function(target)
+
+    shutil.rmtree(path, onexc=clear_read_only)
 
 
 def let_renovate_bump_typos(repo: Path) -> None:

@@ -3,10 +3,11 @@
 Every step of an Azure DevOps integration test run, from setup to cleanup, as the last step
 before a release. See [Integration Testing](index.md) for what the run does and why.
 
-The steps use these values from the run's summary: `<repo-a>` and `<repo-b>`, the test repos'
-names, and `<repo-a-path>` and `<repo-b-path>`, their local clones. `<template-repo-path>` is
-this template's own clone, and `<org>` and `<project>` are the Azure DevOps organization and
-project the test repos go in.
+The steps use these values from each repo's entry in the run's summary: its **Name** for
+`<repo-a>` and `<repo-b>`, and its **Local clone** for `<repo-a-path>` and `<repo-b-path>`. Each
+entry's **Web** link opens that repo in Azure DevOps. `<template-repo-path>` is this template's
+own clone, and `<org>` and `<project>` are the Azure DevOps organization and project the test
+repos go in.
 
 !!! bug "Checkbox state isn't saved"
     You can tick the boxes as you go, but reloading or leaving the page clears them. Finish the
@@ -204,5 +205,5 @@ commit just before the newest release.*
     mise run integration-test-cleanup-azdo --org <org> --project <project>
     ```
 
-    It deletes every integration-test repo and pipeline in the project, including any left by
-    a run that stopped partway.
+    It deletes every integration-test repo and pipeline in the project, and their local clones,
+    including any left by a run that stopped partway.
