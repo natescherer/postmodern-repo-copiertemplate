@@ -389,14 +389,16 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
         SystemExit: if the checks don't all complete in time, or don't all pass.
 
     """
+    print(f"Waiting for PR {pr_number}'s checks in {repo}...")
     latest: list[dict] = []
     stable = False
     for _ in range(24):
         rollup = json.loads(
             gh_value(
-                "pr", "view", pr_number, "--repo", repo, "--json", "statusCheckRollup"
+                "pr", "view", pr_number, "--repo", repo, "--json", "statusCheckRollup",
+                echo=False,
             )
-        )["statusCheckRollup"]
+        )["statusCheckRollup"]  # fmt: skip
         latest_by_name: dict[str, dict] = {}
         for status_check in rollup:
             name = status_check.get("name")
@@ -415,8 +417,23 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
         stable = all_complete
         latest = new_latest
         time.sleep(10)
+    for run_id in {
+        match[1]
+        for c in latest
+        if (match := re.search(r"/actions/runs/(\d+)/", c.get("detailsUrl") or ""))
+    }:
+        save_run_log(repo, run_id)
     if not latest or not all(c.get("conclusion") == "SUCCESS" for c in latest):
         raise SystemExit(f"PR {pr_number} in {repo} didn't pass its checks: {latest!r}")
+
+
+def save_run_log(repo: str, run_id: int | str) -> None:
+    """Save a finished workflow run's full log to the run's log directory."""
+    log = run(
+        "gh", "run", "view", str(run_id), "--repo", repo, "--log",
+        check=False, capture=True, echo=False,
+    )  # fmt: skip
+    save_log(f"{repo.rsplit('/', 1)[-1]}-run-{run_id}.log", log.stdout)
 
 
 def wait_for_run(repo: str, run_id: int, *, timeout: int = 1800) -> str:
@@ -443,11 +460,7 @@ def wait_for_run(repo: str, run_id: int, *, timeout: int = 1800) -> str:
             or "{}"
         )  # fmt: skip
         if info.get("status") == "completed":
-            log = run(
-                "gh", "run", "view", str(run_id), "--repo", repo, "--log",
-                check=False, capture=True, echo=False,
-            )  # fmt: skip
-            save_log(f"{repo.rsplit('/', 1)[-1]}-run-{run_id}.log", log.stdout)
+            save_run_log(repo, run_id)
             return info.get("conclusion", "unknown")
         time.sleep(10)
     return "timed out"
