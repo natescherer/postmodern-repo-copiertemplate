@@ -9,8 +9,16 @@ the version it was last updated to, recorded as `_commit` in its Copier answers 
 
 ## From v0.7.14 or later
 
-Update the usual way, with `mise run copier-update` (see
-[Updating from the Parent Template](updating-from-template.md)). Copier's migrations seed
+Update as [Updating from the Parent Template](updating-from-template.md) describes, but in
+place of `mise run copier-update`, run this once from your project's root:
+
+```sh
+mise x -- uvx --refresh --from copier@latest --with jinja2-shell-extension copier update --answers-file .config/copier-answers.yml --skip-answered --trust
+```
+
+A 0.x project's `copier-update` task runs the Copier its `mise.toml` pins, which is older than
+this release's `_min_copier_version`. The command above is what the task runs from this release
+on: the newest Copier and `jinja2-shell-extension`. Copier's migrations seed
 `.config/knope-current-version.json` from your latest release tag and reformat your changelog
 for Knope. An update that spans many releases writes many changesets to `.changeset/`; delete
 the ones that don't matter to your project's users, or replace them with one summary changeset.
@@ -46,7 +54,7 @@ questions have since been renamed, so update once with a command that supplies b
    `license: Provide Own`, add `-d license=None`.
 
     ```bash
-    mise x uv -- uvx --from copier --with copier-templates-extensions --with copier-template-extensions --with jinja2-time --with jinja2-shell-extension --with githubkit --with requests --with python-slugify --with packaging copier update --trust --skip-tasks --skip-answered --answers-file .config/copier-answers.yml --vcs-ref <new-version> -d repo_setup_actions=None
+    mise x uv -- uvx --refresh --from copier@latest --with copier-templates-extensions --with copier-template-extensions --with jinja2-time --with jinja2-shell-extension --with githubkit --with requests --with python-slugify --with packaging copier update --trust --skip-tasks --skip-answered --answers-file .config/copier-answers.yml --vcs-ref <new-version> -d repo_setup_actions=None
     ```
 
     `--skip-tasks` keeps your old version's setup tasks from rerunning; they'd try to create

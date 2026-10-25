@@ -16,7 +16,13 @@ RUFF_CACHE_DIR = ".cache/ruff"
 {%- endif %}
 
 [tasks.copier-update]
-run = "copier update --answers-file .config/copier-answers.yml --skip-answered --trust"
+# Runs the newest Copier, not the one pinned below: only the template version being
+# updated to knows the Copier it needs (_min_copier_version), so the pin from this
+# project's current version can fall short of it. jinja2-shell-extension, which the
+# template's copier.yml loads, is unpinned for the same reason: a newer template can
+# need a newer extension. `@latest` and --refresh make uvx resolve both afresh instead
+# of reusing a cached environment.
+run = "uvx --refresh --from copier@latest --with jinja2-shell-extension copier update --answers-file .config/copier-answers.yml --skip-answered --trust"
 
 [tasks.set-lifecycle]
 # Asks only the `lifecycle` question again (--ask overrides --skip-answered for it,
