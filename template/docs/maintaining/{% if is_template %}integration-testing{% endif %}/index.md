@@ -25,8 +25,7 @@ Repo B on both platforms, and on GitHub, `zensical_target` is `GitHub Pages` for
 
 The scripts automate every check they can: they dispatch pipelines and wait for them, open PRs
 and confirm they're blocked or pass, push commits and confirm the release flow responds, and cut
-a release and a prerelease. Each check prints a `[PASS]` or `[FAIL]` line as it runs, and a
-summary at the end; a failure doesn't stop the run, so one run reports everything.
+a release and a prerelease. A failure doesn't stop the run, so one run reports everything.
 
 Two setup steps keep the checks independent of timing. Repo A first merges a setup PR that lifts
 its Renovate schedule and pins an old dependency, so Renovate has a PR to open on any day, and
@@ -35,8 +34,11 @@ release publishes them. Repo B, at the newest release, records the commit just b
 release on a branch, so the update check finds a newer release there without rendering any other
 version.
 
-Each run logs everything it printed, every command's output, and the log of every workflow or
-pipeline run it waited on, under `.cache/integration-test/`, for analysis after the fact.
+The terminal shows only an outline of a run: each step and each check's `[PASS]` or `[FAIL]`,
+with timestamps, a spinner under the step in progress, and a summary at the end. Everything
+else goes to the run's log under `.cache/integration-test/`, for analysis after the fact: every
+command and its output, timestamped, and the log of every workflow or pipeline run it waited
+on.
 
 The runbooks' manual steps cover the rest, as fixed steps that are the same on every run:
 anything that needs human judgment (whether a badge renders, whether each setup checklist item
@@ -44,8 +46,9 @@ applies) and anything the scripts can't read (a pipeline step's log on Azure Dev
 the Renovate and All Contributors apps responded on GitHub).
 
 The scripts find test repos by name, so their cleanup also removes what a run that stopped
-partway left behind. On Azure DevOps, deleting a repo leaves its pipelines registered, so the
-cleanup deletes those too.
+partway left behind. Each repo's local clone is named after it too, so cleanup deletes those,
+and keeps the temp directory from filling up with old runs. On Azure DevOps, deleting a repo
+leaves its pipelines registered, so the cleanup deletes those as well.
 
 ## How It Differs from `pytest tests/`
 
