@@ -81,10 +81,14 @@ def _check_tombi(root: Path) -> list[str]:
     toml_files = list(root.rglob("*.toml"))
     if not toml_files:
         return []
-    result = _run(["tombi", "lint", *[str(p) for p in toml_files]], cwd=root)
-    if result.returncode != 0:
-        return [result.stdout.strip() or result.stderr.strip()]
-    return []
+    files = [str(p) for p in toml_files]
+    errors = []
+    # The tombi-format hook rewrites what `--check` flags, which fails the commit.
+    for command in (["tombi", "lint"], ["tombi", "format", "--check", "--diff"]):
+        result = _run([*command, *files], cwd=root)
+        if result.returncode != 0:
+            errors.append(result.stdout.strip() or result.stderr.strip())
+    return errors
 
 
 def _check_zensical_build(root: Path) -> list[str]:

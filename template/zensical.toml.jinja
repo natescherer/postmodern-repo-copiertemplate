@@ -21,7 +21,7 @@ nav = [
   { "Getting Started" = [
     { "Prerequisites" = "getting-started/prerequisites.md" },
     { "Creating a New Project" = "getting-started/new-project.md" },
-    { "Applying to an Existing Project" = "getting-started/existing-project.md" }
+    { "Applying to an Existing Project" = "getting-started/existing-project.md" },
   ] },
   { "Maintaining This Template" = [
 {%- if is_extensible %}
@@ -34,9 +34,9 @@ nav = [
     { "Integration Testing" = [
       "maintaining/integration-testing/index.md",
       { "Runbook: GitHub" = "maintaining/integration-testing/runbook-github.md" },
-      { "Runbook: Azure DevOps" = "maintaining/integration-testing/runbook-azdo.md" }
+      { "Runbook: Azure DevOps" = "maintaining/integration-testing/runbook-azdo.md" },
     ] },
-    { "Troubleshooting" = "maintaining/troubleshooting.md" }
+    { "Troubleshooting" = "maintaining/troubleshooting.md" },
   ] },
   { "Reference" = [
     { "Template Questions" = "reference/template-questions.md" },
@@ -45,24 +45,24 @@ nav = [
     { "Compatibility" = "reference/compatibility.md" },
     { "Secrets and Tokens" = "reference/token-permissions.md" },
     { "Manual Repo Settings" = "reference/manual-repo-settings.md" },
-    { "Azure DevOps Limitations" = "reference/azure-devops.md" }
-  ] }
+    { "Azure DevOps Limitations" = "reference/azure-devops.md" },
+  ] },
 {%- else %}
   { "Getting Started" = [
-    { "Prerequisites" = "getting-started/prerequisites.md" }
+    { "Prerequisites" = "getting-started/prerequisites.md" },
   ] },
   { "Maintaining This Project" = [
     { "Development" = "maintaining/development.md" },
     { "Updating from the Parent Template" = "maintaining/updating-from-template.md" },
     { "Releasing" = "maintaining/releasing.md" },
-    { "Troubleshooting" = "maintaining/troubleshooting.md" }
+    { "Troubleshooting" = "maintaining/troubleshooting.md" },
   ] },
   { "Reference" = [
     { "Features" = "reference/features.md" },
     { "Compatibility" = "reference/compatibility.md" },
     { "Secrets and Tokens" = "reference/token-permissions.md" },
-    { "Manual Repo Settings" = "reference/manual-repo-settings.md" }
-  ] }
+    { "Manual Repo Settings" = "reference/manual-repo-settings.md" },
+  ] },
 {%- endif %}
 ]
 {%- if zensical_ghpages %}
@@ -149,8 +149,10 @@ alias_type = "symlink" # Aliases (latest, dev) are symlinks to a version, not co
 {%- if zensical_repo %}
 
 # Makes the committed docs-site/ browsable from file:// (search included)
-# without a web server
-[project.plugins.offline]
+# without a web server. A key, not an empty [project.plugins.offline] table, since
+# tombi formats the comment after an empty table as part of it.
+[project.plugins]
+offline = {}
 {%- endif %}
 
 # ── Extensions ──────────────────────────────────────────────────────────────────
@@ -217,7 +219,7 @@ emoji_generator = "zensical.extensions.emoji.to_svg"
 # Renders ```mermaid fenced blocks as diagrams
 [project.markdown_extensions.pymdownx.superfences]
 custom_fences = [
-  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" }
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
 ]
 
 # alternate_style is the only content tabs style the 'classic' theme supports
