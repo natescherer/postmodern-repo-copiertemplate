@@ -1,5 +1,6 @@
 """Changes the integration test scripts make to their test repos."""
 
+import json
 import os
 import re
 import shutil
@@ -69,22 +70,28 @@ def remove_tree(path: Path) -> None:
 
 
 def let_renovate_bump_typos(repo: Path) -> None:
-    """Lift Renovate's schedule and pin typos to an old release, for Renovate to bump.
+    """Pin typos to an old release, and let Renovate bump it, and only it, at any time.
 
     renovate.json otherwise lets Renovate open PRs only in its monthly window, so a run
-    at any other time would have nothing to show.
+    at any other time would have nothing to show. Lifting the window for every
+    dependency would open a PR for each one that has moved on, whose PR Validation runs
+    then hold up the run's own PRs.
 
     Raises:
-        ValueError: if either file doesn't have the line it expects.
+        ValueError: if mise.toml has no typos pin to change.
 
     """
-    config = repo / "renovate.json"
-    text, count = re.subn(
-        r'"\* 0 1 \* \*"', '"at any time"', config.read_text(encoding="utf-8")
+    config_path = repo / "renovate.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["schedule"] = ["at any time"]
+    config["packageRules"] = [
+        *config.get("packageRules", []),
+        {"matchPackageNames": ["/.*/"], "enabled": False},
+        {"matchDepNames": ["aqua:crate-ci/typos"], "enabled": True},
+    ]
+    config_path.write_text(
+        json.dumps(config, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
-    if count != 1:
-        raise ValueError("renovate.json has no monthly schedule to lift")
-    config.write_text(text, encoding="utf-8", newline="\n")
 
     tools = repo / "mise.toml"
     text, count = re.subn(

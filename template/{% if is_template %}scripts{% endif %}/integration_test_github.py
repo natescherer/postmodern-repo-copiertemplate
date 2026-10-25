@@ -52,6 +52,10 @@ from repo_edits import (
 # Default `gh auth login` scopes cover both; see the Secrets and Tokens docs page.
 REQUIRED_SCOPES = ("repo", "workflow")
 
+# The status check settings.yml.jinja's ruleset requires before a PR can merge: PR
+# Validation's `tests` job.
+REQUIRED_CHECK = "tests"
+
 # Must match _tasks' project_description -d flag in create() below.
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
@@ -374,7 +378,7 @@ def open_pr_wait_and_merge(
     )
     pr_number = pr_url.rstrip("/").rsplit("/", 1)[-1]
     wait_for_pr_checks(repo, pr_number)
-    run("gh", "pr", "merge", pr_number, "--repo", repo, "--squash", "--delete-branch")
+    merge_pr(repo, pr_number)
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
 
@@ -390,7 +394,9 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
     That isn't enough on its own: a cancelled run can show as COMPLETED before its
     replacement even appears, and the two have completed within the same second. So an
     "all complete" result counts only once the same snapshot shows on two polls in a
-    row, which gives a new replacement run time to appear.
+    row, which gives a new replacement run time to appear. It also needs REQUIRED_CHECK
+    among them: a run still queued for a runner hasn't reported yet, and the ruleset
+    won't let the PR merge without it.
 
     Raises:
         SystemExit: if the checks don't all complete in time, or don't all pass.
@@ -399,7 +405,7 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
     print(f"Waiting for PR {pr_number}'s checks in {repo}...")
     latest: list[dict] = []
     stable = False
-    for _ in range(24):
+    for _ in range(90):
         rollup = json.loads(
             gh_value(
                 "pr", "view", pr_number, "--repo", repo, "--json", "statusCheckRollup",
@@ -415,7 +421,7 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
             ):
                 latest_by_name[name] = status_check
         new_latest = list(latest_by_name.values())
-        all_complete = bool(new_latest) and all(
+        all_complete = any(c.get("name") == REQUIRED_CHECK for c in new_latest) and all(
             c.get("status") == "COMPLETED" for c in new_latest
         )
         if all_complete and stable and new_latest == latest:
@@ -432,6 +438,22 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
         save_run_log(repo, run_id)
     if not latest or not all(c.get("conclusion") == "SUCCESS" for c in latest):
         raise SystemExit(f"PR {pr_number} in {repo} didn't pass its checks: {latest!r}")
+
+
+def merge_pr(repo: str, pr_number: str) -> None:
+    """Squash-merge a PR whose checks passed.
+
+    Raises:
+        SystemExit: if GitHub refuses the merge, with its reason.
+
+    """
+    result = run(
+        "gh", "pr", "merge", pr_number, "--repo", repo, "--squash", "--delete-branch",
+        check=False, capture=True,
+    )  # fmt: skip
+    if result.returncode:
+        reason = (result.stderr or result.stdout).strip()
+        raise SystemExit(f"Couldn't merge PR {pr_number} in {repo}: {reason}")
 
 
 def save_run_log(repo: str, run_id: int | str) -> None:
@@ -1107,16 +1129,7 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     zensical_before = latest_run_id(repo, "docs-auto-zensical.yml")
     approve_pending_run(repo, "knope/release")
     wait_for_pr_checks(repo, str(pr_number))
-    run(
-        "gh",
-        "pr",
-        "merge",
-        str(pr_number),
-        "--repo",
-        repo,
-        "--squash",
-        "--delete-branch",
-    )
+    merge_pr(repo, str(pr_number))
     run("git", "pull", cwd=dest)
     publish_run_id = wait_for_new_run(
         repo, "release-auto-publishrelease.yml", publish_before
@@ -1313,7 +1326,7 @@ def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
         bool(rollup) and all(c.get("conclusion") == "SUCCESS" for c in rollup),
         f"statusCheckRollup={rollup!r}",
     )
-    run("gh", "pr", "merge", pr_number, "--repo", repo, "--squash", "--delete-branch")
+    merge_pr(repo, pr_number)
 
 
 def cleanup(owner: str, repo_prefix: str, *, yes: bool) -> None:
