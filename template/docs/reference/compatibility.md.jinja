@@ -13,8 +13,8 @@ apply on top of that, and Renovate keeps both current:
 - **mise itself** must be at least the `min_version` in `mise.toml`. An older mise refuses to
   run and says so; `mise self-update` fixes it.
 - **Copier** must be at least the parent template's `_min_copier_version`. `mise run
-  copier-update` uses the Copier pinned in `mise.toml`, so this only matters if you run Copier
-  some other way, which also needs Python 3.11 or later for the template's migrations.
+  copier-update` runs the newest Copier, so this only matters if you run Copier some other
+  way, which also needs Python 3.11 or later for the template's migrations.
 
 ## CI
 
