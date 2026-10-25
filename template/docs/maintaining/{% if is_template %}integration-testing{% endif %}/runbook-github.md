@@ -123,11 +123,11 @@ this repo's CI, so there's nothing to dispatch.
 ### Test (Auto): PR Validation
 
 *Automated: a bad PR title fails, a failing test suite fails and blocks the merge, and the
-**Upload Coverage to Codecov** step uploads the `coverage.xml` that Repo A's setup PR commits.*
+**Upload Coverage to Codecov** step uploads the `coverage.xml` that Repo A's setup PR commits,
+which Codecov accepts.*
 
 - [ ] Repo A's page on Codecov, `https://app.codecov.io/gh/` followed by Repo A's **Name** from
-  the summary, shows a report for `README.md`. The upload step passes even when Codecov rejects
-  an upload, so this is the check that the upload arrived.
+  the summary, shows a report for `README.md`: Codecov processed the upload it accepted.
 
 ### Release (Auto): Prepare/Publish Release
 

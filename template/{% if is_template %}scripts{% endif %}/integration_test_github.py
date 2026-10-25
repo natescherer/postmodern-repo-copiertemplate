@@ -342,7 +342,7 @@ def open_pr_wait_and_merge(
     filename: str = "",
     *,
     edit: Callable[[Path], None] | None = None,
-) -> None:
+) -> str:
     """Open a passing PR and merge it, the only way commits reach main.
 
     The PR adds a scratch file named `filename`, or makes `edit`'s changes instead.
@@ -351,6 +351,10 @@ def open_pr_wait_and_merge(
     owner, so a direct `git push` to main is rejected. Merging a PR also matches how
     release-auto-preparereleasepr.yml starts in practice: from the push GitHub makes
     when a PR merges.
+
+    Returns:
+        The ID of the workflow run behind the PR's REQUIRED_CHECK.
+
     """
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
@@ -377,13 +381,19 @@ def open_pr_wait_and_merge(
         "Integration test.",
     )
     pr_number = pr_url.rstrip("/").rsplit("/", 1)[-1]
-    wait_for_pr_checks(repo, pr_number)
+    checks = wait_for_pr_checks(repo, pr_number)
     merge_pr(repo, pr_number)
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
+    return next(
+        match[1]
+        for c in checks
+        if c.get("name") == REQUIRED_CHECK
+        and (match := re.search(r"/actions/runs/(\d+)/", c.get("detailsUrl") or ""))
+    )
 
 
-def wait_for_pr_checks(repo: str, pr_number: str) -> None:
+def wait_for_pr_checks(repo: str, pr_number: str) -> list[dict]:
     """Poll a PR's status checks until they all complete, and confirm they passed.
 
     Two force-pushes in quick succession can leave a `CANCELLED` entry beside the newer
@@ -397,6 +407,9 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
     row, which gives a new replacement run time to appear. It also needs REQUIRED_CHECK
     among them: a run still queued for a runner hasn't reported yet, and the ruleset
     won't let the PR merge without it.
+
+    Returns:
+        Each check's latest status, as `gh pr view --json statusCheckRollup` gives it.
 
     Raises:
         SystemExit: if the checks don't all complete in time, or don't all pass.
@@ -438,6 +451,7 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
         save_run_log(repo, run_id)
     if not latest or not all(c.get("conclusion") == "SUCCESS" for c in latest):
         raise SystemExit(f"PR {pr_number} in {repo} didn't pass its checks: {latest!r}")
+    return latest
 
 
 def merge_pr(repo: str, pr_number: str) -> None:
@@ -776,21 +790,30 @@ def provide_codecov_token(repo: str, token: str) -> None:
     )  # fmt: skip
 
 
-def check_coverage_upload(repo: str, failures: list[str]) -> None:
-    """Confirm the last PR Validation run uploaded coverage.xml, not skipped it.
+def check_coverage_upload(repo: str, run_id: str, failures: list[str]) -> None:
+    """Confirm a PR Validation run uploaded coverage.xml, and Codecov accepted it.
 
     The upload step runs only when coverage.xml exists, and Repo A's setup PR commits a
-    fixture. Whether Codecov accepted the upload stays in the runbook: the step passes
-    either way, since it doesn't fail CI on an upload error.
+    fixture. The step passes even when Codecov rejects the upload, since it doesn't fail
+    CI on an upload error, so acceptance is read from the uploader's own log line.
     """
     step("Checking PR Validation uploads coverage.xml")
-    run_id = latest_run_id(repo, "test-auto-prvalidation.yml")
     conclusion = step_conclusion(repo, int(run_id), "Upload Coverage to Codecov")
     check(
         failures,
-        "PR Validation uploads coverage.xml to Codecov",
+        "PR Validation runs the Codecov upload",
         conclusion == "success",
-        f"step conclusion was {conclusion!r}",
+        f"run {run_id}'s upload step conclusion was {conclusion!r}",
+    )
+    log = run(
+        "gh", "run", "view", run_id, "--repo", repo, "--log",
+        check=False, capture=True, echo=False,
+    ).stdout  # fmt: skip
+    check(
+        failures,
+        "Codecov accepts the upload",
+        "Upload queued for processing complete" in log,
+        f"run {run_id}'s log has no 'Upload queued for processing complete'",
     )
 
 
@@ -1552,14 +1575,14 @@ def main() -> None:
     step("Merging Repo A's setup PR")
     # Before the checks that depend on it: the Renovate edits, and a lychee exclusion
     # for this template's docs, whose new pages publish only when it releases.
-    open_pr_wait_and_merge(
+    setup_run = open_pr_wait_and_merge(
         repo_a,
         dest_a,
         "integration-test/setup",
         "chore: set up Repo A for the integration test",
         edit=prepare_repo_a(args.source),
     )
-    check_coverage_upload(repo_a, failures_a)
+    check_coverage_upload(repo_a, setup_run, failures_a)
     check_copier_update_check(repo_a, failures_a, expect_update_available=False)
     check_noop_update(dest_a, "HEAD", failures_a)
     check_bad_title_blocks_merge(repo_a, dest_a, failures_a)
