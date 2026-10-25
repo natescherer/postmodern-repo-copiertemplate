@@ -987,7 +987,9 @@ def check_renovate(
     )
 
 
-def wait_for_pr_policy(org_url: str, pr_id: str, *, timeout: int = 900) -> str:
+def wait_for_pr_policy(
+    org_url: str, project: str, pr_id: str, *, timeout: int = 900
+) -> str:
     """Poll a PR's build-validation policy until it settles past queued/running.
 
     The timeout matches wait_for_pipeline_run()'s: PR Validation can wait in the queue
@@ -1020,6 +1022,10 @@ def wait_for_pr_policy(org_url: str, pr_id: str, *, timeout: int = 900) -> str:
         ]
         statuses = {e.get("status") for e in build_evals}
         if statuses and not statuses & {"queued", "running"}:
+            for build_id in {
+                e.get("context", {}).get("buildId") for e in build_evals
+            } - {None}:
+                save_pipeline_log(org_url, project, str(build_id))
             return "/".join(sorted(statuses))
         time.sleep(10)
     if not statuses:
@@ -1028,10 +1034,10 @@ def wait_for_pr_policy(org_url: str, pr_id: str, *, timeout: int = 900) -> str:
 
 
 def assert_pr_blocked(
-    org_url: str, pr_id: str, reason: str, failures: list[str]
+    org_url: str, project: str, pr_id: str, reason: str, failures: list[str]
 ) -> None:
     """Poll a PR's build-validation policy evaluation and assert it's blocked."""
-    status = wait_for_pr_policy(org_url, pr_id)
+    status = wait_for_pr_policy(org_url, project, pr_id)
     check(
         failures,
         f"PR Validation fails on {reason}",
@@ -1097,7 +1103,7 @@ def open_pr_wait_and_merge(
         or "{}"
     )
     pr_id = str(pr.get("pullRequestId"))
-    status = wait_for_pr_policy(org_url, pr_id)
+    status = wait_for_pr_policy(org_url, project, pr_id)
     if status != "approved":
         raise SystemExit(
             f"PR {pr_id} in {repo_name} didn't pass its policy: {status!r}"
@@ -1168,7 +1174,7 @@ def check_bad_title_blocks_merge(
         or "{}"
     )
     pr_id = str(pr.get("pullRequestId"))
-    assert_pr_blocked(org_url, pr_id, "a bad PR title", failures)
+    assert_pr_blocked(org_url, project, pr_id, "a bad PR title", failures)
     run(
         "az",
         "repos",
@@ -1223,7 +1229,7 @@ def check_failing_tests_block_merge(
         or "{}"
     )
     pr_id = str(pr.get("pullRequestId"))
-    assert_pr_blocked(org_url, pr_id, "a failing test suite", failures)
+    assert_pr_blocked(org_url, project, pr_id, "a failing test suite", failures)
     run(
         "az",
         "repos",
@@ -1384,7 +1390,7 @@ def check_release_flow(
 
     before_tags = list_tags(org_url, project, repo_name)
     publish_before = latest_pipeline_run_id(org_url, project, pid)
-    status = wait_for_pr_policy(org_url, pr_id)
+    status = wait_for_pr_policy(org_url, project, pr_id)
     check(
         failures,
         "the release PR's build validation passes",
@@ -1594,7 +1600,7 @@ def check_post_update(
         or "{}"
     )
     pr_id = str(pr.get("pullRequestId"))
-    status = wait_for_pr_policy(org_url, pr_id)
+    status = wait_for_pr_policy(org_url, project, pr_id)
     check(
         failures,
         "PR Validation still triggers and passes after the update",
