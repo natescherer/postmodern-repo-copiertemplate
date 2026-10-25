@@ -9,7 +9,7 @@ import tempfile
 from collections.abc import Callable
 from pathlib import Path
 
-from console import run
+from console import run, say
 
 # An old release of a tool Renovate's mise manager tracks. PR Validation checks only the
 # files a PR changes, so pinning it doesn't change what the pin's own PR runs.
@@ -67,6 +67,38 @@ def remove_tree(path: Path) -> None:
         function(target)
 
     shutil.rmtree(path, onexc=clear_read_only)
+
+
+def remove_clones(clones: list[Path]) -> int:
+    """Delete local clones, carrying on past any that can't be deleted.
+
+    It skips the clone the current directory is in, whose files this run itself has
+    open (its log, for one), and reports any other it can't delete, such as one an
+    editor or terminal has open.
+
+    Returns:
+        How many it deleted.
+
+    """
+    here = Path.cwd().resolve()
+    deleted = 0
+    for clone in clones:
+        if here.is_relative_to(clone.resolve()):
+            say(
+                f"Skipped {clone}: it's the current directory. Rerun cleanup from "
+                "elsewhere."
+            )
+            continue
+        try:
+            remove_tree(clone)
+        except OSError as error:
+            say(
+                f"Couldn't delete {clone}: {error.strerror}. Close whatever has it "
+                "open, then rerun cleanup."
+            )
+        else:
+            deleted += 1
+    return deleted
 
 
 def let_renovate_bump_typos(repo: Path) -> None:
