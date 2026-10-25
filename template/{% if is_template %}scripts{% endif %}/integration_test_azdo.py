@@ -57,7 +57,7 @@ from repo_edits import (
     local_clones,
     prepare_repo_a,
     push_older_recorded_version,
-    remove_tree,
+    remove_clones,
 )
 
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
@@ -364,6 +364,9 @@ def cleanup(org_url: str, project: str, repo_prefix: str, *, yes: bool) -> None:
     pipelines behind, so this matches pipelines by their `[<repo>] ` name prefix too,
     including those of a repo that's already gone, and deletes them first.
 
+    Raises:
+        SystemExit: if a local clone can't be deleted.
+
     """
     pattern = test_repo_pattern(repo_prefix)
     scope = ("--org", org_url, "--project", project, "-o", "json")
@@ -416,12 +419,13 @@ def cleanup(org_url: str, project: str, repo_prefix: str, *, yes: bool) -> None:
         )
     for repo in repos:
         run("az", "repos", "delete", "--id", repo["id"], *scope[:4], "--yes")
-    for clone in clones:
-        remove_tree(clone)
+    deleted = remove_clones(clones)
     say(
         f"Deleted {len(pipelines)} pipeline(s), {len(repos)} repo(s), and "
-        f"{len(clones)} local clone(s)."
+        f"{deleted} local clone(s)."
     )
+    if deleted < len(clones):
+        raise SystemExit(1)
 
 
 def report_pr_validation_policy(
@@ -1871,4 +1875,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        sys.exit("\nStopped. Run cleanup to delete what this run created.")

@@ -46,7 +46,7 @@ from repo_edits import (
     local_clones,
     prepare_repo_a,
     push_older_recorded_version,
-    remove_tree,
+    remove_clones,
 )
 
 # Default `gh auth login` scopes cover both; see the Secrets and Tokens docs page.
@@ -1392,7 +1392,8 @@ def cleanup(owner: str, repo_prefix: str, *, yes: bool) -> None:
     workflows too. It lists everything, then asks before deleting anything.
 
     Raises:
-        SystemExit: if the gh token lacks the delete_repo scope.
+        SystemExit: if the gh token lacks the delete_repo scope, or a local
+            clone can't be deleted.
 
     """
     pattern = test_repo_pattern(repo_prefix)
@@ -1423,9 +1424,10 @@ def cleanup(owner: str, repo_prefix: str, *, yes: bool) -> None:
         return
     for name in names:
         run("gh", "repo", "delete", f"{owner}/{name}", "--yes")
-    for clone in clones:
-        remove_tree(clone)
-    say(f"Deleted {len(names)} repo(s) and {len(clones)} local clone(s).")
+    deleted = remove_clones(clones)
+    say(f"Deleted {len(names)} repo(s) and {deleted} local clone(s).")
+    if deleted < len(clones):
+        raise SystemExit(1)
 
 
 def main() -> None:
@@ -1624,4 +1626,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        sys.exit("\nStopped. Run cleanup to delete what this run created.")
