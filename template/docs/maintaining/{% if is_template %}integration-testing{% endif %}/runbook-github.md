@@ -71,13 +71,13 @@ Nothing left to check for Repo A.
     git switch main
     git pull
     git switch -c integration-test/broken-link
-    echo "[Broken link](https://example.invalid/)" >> README.md
+    echo "[Broken link](https://httpbin.org/status/404)" >> README.md
     git commit -am "docs: add a broken link"
     git push -u origin integration-test/broken-link
     gh workflow run maint-auto-repohealthcheck.yml --ref integration-test/broken-link
     ```
 
-    The run fails, and its **Check for Broken Links** step names `https://example.invalid/`.
+    The run fails, and its **Check for Broken Links** step names `https://httpbin.org/status/404`.
 
 ### Maint (Auto): Renovate
 
