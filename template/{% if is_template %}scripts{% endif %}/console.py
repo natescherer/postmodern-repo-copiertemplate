@@ -208,6 +208,7 @@ def run(
     env: dict[str, str] | None = None,
     echo: bool = True,
     secret: bool = False,
+    stdin: str | None = None,
 ) -> subprocess.CompletedProcess:
     """Run a CLI command, echoing it first, and log its output.
 
@@ -218,7 +219,8 @@ def run(
 
     Without `capture`, the output streams as the command runs; once start_log() runs,
     that's to the log. Either way, the log gets it, unless `secret`. `echo=False` logs
-    the command line without printing it, for polls.
+    the command line without printing it, for polls. `stdin` feeds a captured command
+    its input, such as a secret that mustn't appear in its arguments.
 
     Returns:
         The completed process, with its stdout (and stderr, if captured).
@@ -239,7 +241,12 @@ def run(
     if capture:
         # S603: args are always a fixed list built by the caller; no shell=True.
         result = subprocess.run(  # noqa: S603
-            resolved, check=False, capture_output=True, env=full_env, **options
+            resolved,
+            check=False,
+            capture_output=True,
+            env=full_env,
+            input=stdin,
+            **options,
         )
         if not secret:
             _log_only(result.stdout + result.stderr)

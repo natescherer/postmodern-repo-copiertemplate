@@ -739,6 +739,61 @@ def settings_homepage(dest: str) -> str:
     return match[1] if match else ""
 
 
+def codecov_token() -> str:
+    """Read the Codecov upload token a full run needs, before it creates anything.
+
+    A new repo has no per-repo Codecov token yet, so this needs a Codecov global upload
+    token.
+
+    Returns:
+        The CODECOV_TOKEN environment variable's value.
+
+    Raises:
+        SystemExit: if CODECOV_TOKEN isn't set.
+
+    """
+    token = os.environ.get("CODECOV_TOKEN", "")
+    if not token:
+        runbook = docs_page_url(
+            "maintaining/integration-testing/runbook-github.md", version="dev"
+        )
+        raise SystemExit(
+            "Set CODECOV_TOKEN to your Codecov global upload token first; see Before "
+            f"You Start in {runbook}."
+        )
+    return token
+
+
+def provide_codecov_token(repo: str, token: str) -> None:
+    """Set the CODECOV_TOKEN secret on `repo`.
+
+    The value goes to `gh secret set` on stdin, never its command line, and isn't
+    logged.
+    """
+    run(
+        "gh", "secret", "set", "CODECOV_TOKEN", "--repo", repo,
+        capture=True, secret=True, stdin=token,
+    )  # fmt: skip
+
+
+def check_coverage_upload(repo: str, failures: list[str]) -> None:
+    """Confirm the last PR Validation run uploaded coverage.xml, not skipped it.
+
+    The upload step runs only when coverage.xml exists, and Repo A's setup PR commits a
+    fixture. Whether Codecov accepted the upload stays in the runbook: the step passes
+    either way, since it doesn't fail CI on an upload error.
+    """
+    step("Checking PR Validation uploads coverage.xml")
+    run_id = latest_run_id(repo, "test-auto-prvalidation.yml")
+    conclusion = step_conclusion(repo, int(run_id), "Upload Coverage to Codecov")
+    check(
+        failures,
+        "PR Validation uploads coverage.xml to Codecov",
+        conclusion == "success",
+        f"step conclusion was {conclusion!r}",
+    )
+
+
 def provision_test_secrets(repo: str) -> None:
     """Set placeholder secrets so pipelines gated on their presence can run.
 
@@ -1464,6 +1519,7 @@ def main() -> None:
 
     if not args.source or not args.repo_prefix:
         raise SystemExit("--source and --repo-prefix are required.")
+    token = codecov_token()
 
     owner = gh_value("api", "user", "--jq", ".login")
     timestamp = int(time.time())
@@ -1486,9 +1542,10 @@ def main() -> None:
         code_coverage=True,
         leaf=args.leaf,
     )
+    failures_a: list[str] = []
     step("Setting test secrets")
     provision_test_secrets(repo_a)
-    failures_a: list[str] = []
+    provide_codecov_token(repo_a, token)
     verify(repo_a, settings_homepage(dest_a), failures_a, zensical_ghpages=True)
     step("Merging Repo A's setup PR")
     # Before the checks that depend on it: the Renovate edits, and a lychee exclusion
@@ -1500,6 +1557,7 @@ def main() -> None:
         "chore: set up Repo A for the integration test",
         edit=prepare_repo_a(args.source),
     )
+    check_coverage_upload(repo_a, failures_a)
     check_copier_update_check(repo_a, failures_a, expect_update_available=False)
     check_noop_update(dest_a, "HEAD", failures_a)
     check_bad_title_blocks_merge(repo_a, dest_a, failures_a)

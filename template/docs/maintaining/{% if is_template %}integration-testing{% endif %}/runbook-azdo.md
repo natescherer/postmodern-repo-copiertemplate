@@ -111,8 +111,8 @@ Nothing left to check for Repo A.
 
 *Automated: a bad PR title fails, and a failing test suite fails and blocks completing the PR.*
 
-- [ ] The PR Validation run for the docs-change PR has a **Code Coverage** tab showing
-  `coverage.xml`'s results (`code_coverage` is on for this repo).
+- [ ] The PR Validation run for the docs-change PR has a **Code Coverage** tab showing the
+  results of the `coverage.xml` that Repo A's setup PR commits.
 - [ ] Open a PR from the broken-link branch, then push one more commit to it:
 
     ```sh

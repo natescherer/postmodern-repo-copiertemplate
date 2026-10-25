@@ -23,6 +23,10 @@ for `<repo-a-path>` and `<repo-b-path>`, and Repo B's **Name** for `<owner>/<rep
     gh auth refresh -h github.com -s repo,workflow,delete_repo
     ```
 
+- [ ] Set the `CODECOV_TOKEN` environment variable to your Codecov account's global upload
+  token, which the run stores as Repo A's secret; a new repo has no per-repo token yet. The
+  run requires it, and stops before creating anything without it.
+
 ## Running the Test
 
 - [ ] Start the run:
@@ -118,11 +122,12 @@ this repo's CI, so there's nothing to dispatch.
 
 ### Test (Auto): PR Validation
 
-*Automated: a bad PR title fails, and a failing test suite fails and blocks the merge.*
+*Automated: a bad PR title fails, a failing test suite fails and blocks the merge, and the
+**Upload Coverage to Codecov** step uploads the `coverage.xml` that Repo A's setup PR commits.*
 
-- [ ] The PR Validation run for the docs-change PR uploads `coverage.xml` (its
-  **Upload Coverage to Codecov** step succeeds), and the coverage badge in README.md shows a
-  percentage (`code_coverage` is on for this repo).
+- [ ] Repo A's page on Codecov, `https://app.codecov.io/gh/` followed by Repo A's **Name** from
+  the summary, shows a report for `README.md`. The upload step passes even when Codecov rejects
+  an upload, so this is the check that the upload arrived.
 
 ### Release (Auto): Prepare/Publish Release
 
