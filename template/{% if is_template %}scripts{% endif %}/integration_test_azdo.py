@@ -15,9 +15,9 @@ then verify, leaving both repos for you to delete. It differs where the platform
 It always runs against HEAD, to verify a release candidate on main before a release.
 Each run creates two repos with different answers, to cover more combinations. Repo A is
 a `copier copy` with `code_coverage` on, and every automated check runs against it. Repo
-B is a copy at the last stable tag with `code_coverage` off, left for you to update with
-`mise run copier-update` and `mise run migrate-azdo-pipeline-names`; main()'s docstring
-says why that's manual.
+B is a copy at the last stable tag with `code_coverage` off, left for you to update to
+HEAD with `mise run copier-update --vcs-ref=HEAD` and `mise run
+migrate-azdo-pipeline-names`; main()'s docstring says why that's manual.
 
 Each check prints a PASS or FAIL line as it runs, and each repo gets a summary at the
 end. A failure doesn't stop the run. It checks only what needs a real Azure DevOps API
@@ -39,9 +39,18 @@ import time
 from collections.abc import Callable
 from pathlib import Path
 
-from console import RepoResult, Step, check, heading, summary
+from console import (
+    RepoResult,
+    Step,
+    check,
+    heading,
+    run,
+    save_log,
+    start_log,
+    summary,
+)
 from docs_links import docs_page_url
-from repo_edits import let_renovate_bump_typos
+from repo_edits import prepare_repo_a, push_older_recorded_version
 
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
@@ -68,61 +77,6 @@ PULL_REQUEST_BYPASS_POLICY = 32768
 MAIN_BRANCH_ACL_PATH = "refs/heads/6d00610069006e00"
 
 
-def run(
-    *args: str, check: bool = True, capture: bool = False, cwd: str | None = None
-) -> subprocess.CompletedProcess:
-    """Run a CLI command, echoing it first.
-
-    Resolves argv[0] with shutil.which() first. On Windows, `az` is an `az.cmd` batch
-    wrapper, which subprocess without a shell can't find by bare name
-    (`FileNotFoundError: [WinError 2]`). which() resolves the path on any platform
-    without shell=True.
-
-    Returns:
-        The completed process, with captured stdout/stderr if `capture` is True.
-
-    """
-    print(f"$ {' '.join(args)}" + (f"  (in {cwd})" if cwd else ""))
-    resolved = (shutil.which(args[0]) or args[0], *args[1:])
-    # S603: args are always a fixed list built by this module; no shell=True.
-    return subprocess.run(  # noqa: S603
-        resolved, check=check, text=True, capture_output=capture, cwd=cwd
-    )
-
-
-def run_and_keep(*args: str) -> str:
-    """Run a CLI command like run(), streaming its output, and return that output.
-
-    Returns:
-        Everything the command wrote to stdout and stderr.
-
-    Raises:
-        subprocess.CalledProcessError: if the command exits nonzero.
-
-    """
-    print(f"$ {' '.join(args)}")
-    resolved = (shutil.which(args[0]) or args[0], *args[1:])
-    # Python tools such as Copier write UTF-8 to a pipe only when told to.
-    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
-    lines: list[str] = []
-    # S603: args are always a fixed list built by this module; no shell=True.
-    with subprocess.Popen(  # noqa: S603
-        resolved,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        env=env,
-    ) as process:
-        for line in process.stdout:
-            print(line, end="")
-            lines.append(line)
-    if process.returncode:
-        raise subprocess.CalledProcessError(process.returncode, resolved)
-    return "".join(lines)
-
-
 def setup_checklist(copy_output: str) -> list[str]:
     """Return the items of the setup checklist `copier copy` prints at the end.
 
@@ -141,14 +95,14 @@ def setup_checklist(copy_output: str) -> list[str]:
     return items
 
 
-def az_value(*args: str) -> str:
+def az_value(*args: str, echo: bool = True) -> str:
     """Run `az <args>` and return its trimmed stdout.
 
     Returns:
         The command's stdout, stripped of surrounding whitespace.
 
     """
-    return run("az", *args, capture=True).stdout.strip()
+    return run("az", *args, capture=True, echo=echo).stdout.strip()
 
 
 def confirm(prompt: str, *, yes: bool) -> bool:
@@ -291,7 +245,7 @@ def create(
         Azure DevOps it exists only in that output, long since scrolled away.
 
     """
-    output = run_and_keep(
+    output = run(
         "copier",
         "copy",
         "--trust",
@@ -322,7 +276,7 @@ def create(
         f"code_coverage={'true' if code_coverage else 'false'}",
         source,
         dest,
-    )
+    ).stdout
     return setup_checklist(output)
 
 
@@ -667,6 +621,7 @@ def dispatch_pipeline(
     pipeline_name: str,
     *,
     parameters: dict[str, str] | None = None,
+    branch: str | None = None,
 ) -> str:
     """Run a pipeline by its full display name and return the new run's ID.
 
@@ -690,6 +645,8 @@ def dispatch_pipeline(
     ]
     for key, value in (parameters or {}).items():
         args += ["--parameters", f"{key}={value}"]
+    if branch:
+        args += ["--branch", branch]
     return az_value(*args)
 
 
@@ -703,26 +660,52 @@ def wait_for_pipeline_run(
         seconds pass without the run completing.
 
     """
+    print(f"Waiting for pipeline run {run_id}...")
     deadline = time.time() + timeout
     while time.time() < deadline:
         info = json.loads(
             az_value(
-                "pipelines",
-                "runs",
-                "show",
-                "--id",
-                run_id,
-                "--org",
-                org_url,
-                "--project",
-                project,
+                "pipelines", "runs", "show", "--id", run_id,
+                "--org", org_url, "--project", project,
+                echo=False,
             )
             or "{}"
-        )
+        )  # fmt: skip
         if info.get("status") == "completed":
+            save_pipeline_log(org_url, project, run_id)
             return info.get("result", "unknown")
         time.sleep(10)
     return "timed out"
+
+
+def save_pipeline_log(org_url: str, project: str, run_id: str) -> None:
+    """Save a finished pipeline run's log, every step's, to the run's log directory.
+
+    Reads the build logs REST endpoint through `az devops invoke`; a pipeline run's
+    ID is its build ID. A log that can't be read is noted, not fatal.
+    """
+    scope = (
+        "--area", "build", "--resource", "logs", "--org", org_url,
+        "--api-version", "7.1", "-o", "json",
+    )  # fmt: skip
+    route = ("--route-parameters", f"project={project}", f"buildId={run_id}")
+    try:
+        logs = json.loads(
+            az_value("devops", "invoke", *scope, *route, echo=False) or "{}"
+        ).get("value", [])
+        parts = []
+        for entry in logs:
+            lines = json.loads(
+                az_value(
+                    "devops", "invoke", *scope, *route, f"logId={entry['id']}",
+                    echo=False,
+                )
+                or "{}"
+            ).get("value", [])  # fmt: skip
+            parts.append(f"===== log {entry['id']} =====\n" + "\n".join(lines))
+        save_log(f"pipeline-run-{run_id}.log", "\n".join(parts) + "\n")
+    except (subprocess.CalledProcessError, json.JSONDecodeError, KeyError) as error:
+        print(f"Couldn't save the log for pipeline run {run_id}: {error}")
 
 
 def pipeline_numeric_id(org_url: str, project: str, pipeline_name: str) -> str:
@@ -845,20 +828,32 @@ def provision_test_secrets(org_url: str, project: str, repo_name: str) -> None:
 
 
 def check_copier_update_check(
-    org_url: str, project: str, repo_name: str, failures: list[str]
+    org_url: str,
+    project: str,
+    repo_name: str,
+    failures: list[str],
+    *,
+    branch: str | None = None,
 ) -> None:
     """Dispatch Maint (Auto) - Copier Update Check and confirm it runs successfully.
 
     Doesn't check whether it correctly detected an update either way; see this
     module's own docstring for why that stays manual on this platform.
     """
-    print("Checking Maint (Auto) - Copier Update Check...")
+    on = f" on {branch}" if branch else ""
+    print(f"Checking Maint (Auto) - Copier Update Check{on}...")
     run_id = dispatch_pipeline(
-        org_url, project, f"[{repo_name}] Maint (Auto) - Copier Update Check"
+        org_url,
+        project,
+        f"[{repo_name}] Maint (Auto) - Copier Update Check",
+        branch=branch,
     )
     result = wait_for_pipeline_run(org_url, project, run_id)
     check(
-        failures, "Copier Update Check pipeline succeeds", result == "succeeded", result
+        failures,
+        f"Copier Update Check pipeline succeeds{on}",
+        result == "succeeded",
+        result,
     )
 
 
@@ -921,36 +916,33 @@ def provide_github_token(org_url: str, project: str, pipeline: str) -> bool:
     """
     token = os.environ.get("GITHUB_COM_TOKEN", "")
     if not token and shutil.which("gh"):
-        token = run("gh", "auth", "token", check=False, capture=True).stdout.strip()
+        token = run(
+            "gh", "auth", "token", check=False, capture=True, secret=True
+        ).stdout.strip()
     if not token:
         return False
-    args = (
+    run(
         "az", "pipelines", "variable", "create",
         "--name", "GITHUB_COM_TOKEN",
         "--pipeline-name", pipeline,
         "--secret", "true",
         "--org", org_url,
         "--project", project,
+        capture=True,
+        env={"AZURE_DEVOPS_EXT_PIPELINE_VAR_GITHUB_COM_TOKEN": token},
     )  # fmt: skip
-    print(f"$ {' '.join(args)}")
-    # S603: args are a fixed list built here; no shell=True.
-    subprocess.run(  # noqa: S603
-        (shutil.which(args[0]) or args[0], *args[1:]),
-        check=True,
-        capture_output=True,
-        env={**os.environ, "AZURE_DEVOPS_EXT_PIPELINE_VAR_GITHUB_COM_TOKEN": token},
-    )
     return True
 
 
 def check_renovate(
-    org_url: str, project: str, repo_name: str, dest: str, failures: list[str]
+    org_url: str, project: str, repo_name: str, failures: list[str]
 ) -> None:
     """Dispatch Maint (Auto) - Renovate and confirm it opens a PR for an old dependency.
 
-    It first merges let_renovate_bump_typos()'s changes, so Renovate has something to
-    bump whenever this runs. GitHub's counterpart is a manual check: Renovate there runs
-    as an external GitHub App on its own cadence, not a dispatchable workflow.
+    Repo A's setup PR already lifted its Renovate schedule and pinned an old typos, so
+    Renovate has something to bump whenever this runs. GitHub's counterpart is a manual
+    check: Renovate there runs as an external GitHub App on its own cadence, not a
+    dispatchable workflow.
     """
     print("Checking Maint (Auto) - Renovate...")
     pipeline = f"[{repo_name}] Maint (Auto) - Renovate"
@@ -962,15 +954,6 @@ def check_renovate(
             "set GITHUB_COM_TOKEN, or log in with `gh auth login`",
         )
         return
-    open_pr_wait_and_merge(
-        org_url,
-        project,
-        repo_name,
-        dest,
-        "integration-test/renovate-setup",
-        "chore: let Renovate bump an old typos",
-        edit=let_renovate_bump_typos,
-    )
     run_id = dispatch_pipeline(org_url, project, pipeline)
     result = wait_for_pipeline_run(org_url, project, run_id)
     check(failures, "Renovate pipeline succeeds", result == "succeeded", result)
@@ -1019,22 +1002,17 @@ def wait_for_pr_policy(org_url: str, pr_id: str, *, timeout: int = 900) -> str:
         (no build evaluation)" if PR Validation never started.
 
     """
+    print(f"Waiting for PR {pr_id}'s build validation policy...")
     statuses: set[str] = set()
     deadline = time.time() + timeout
     while time.time() < deadline:
         evaluations = json.loads(
             az_value(
-                "repos",
-                "pr",
-                "policy",
-                "list",
-                "--id",
-                pr_id,
-                "--org",
-                org_url,
+                "repos", "pr", "policy", "list", "--id", pr_id, "--org", org_url,
+                echo=False,
             )
             or "[]"
-        )
+        )  # fmt: skip
         build_evals = [
             e
             for e in evaluations
@@ -1517,7 +1495,7 @@ def check_prerelease_flow(
 def check_post_update(
     org_url: str, project: str, repo_name: str, dest: str, failures: list[str]
 ) -> None:
-    """Verify Repo B's state after a human has run `mise run copier-update` on it.
+    """Verify Repo B's state after a human has updated it to HEAD.
 
     This is the second entry point (`--verify-update`): the update itself happens by
     hand, on your own schedule, so this script can't chain straight from creating the
@@ -1647,7 +1625,7 @@ def main() -> None:
     Both run every time, at HEAD, to verify a release candidate on main before a
     release. Repo A is a `copier copy` with `code_coverage` on, and every automated
     check runs against it. Repo B is a copy at the last stable tag with `code_coverage`
-    off, for you to update with `mise run copier-update`, then `mise run
+    off, for you to update with `mise run copier-update --vcs-ref=HEAD`, then `mise run
     migrate-azdo-pipeline-names` once the update merges. That's manual on purpose:
     running the commands a real user runs, prompts included, is how a new question's
     prompt gets seen as they'll see it. Both repos stay for inspection.
@@ -1688,7 +1666,7 @@ def main() -> None:
         default=os.environ.get("usage_repo"),
         help=(
             "Skip creating repos; instead verify REPO (repository name) after you've "
-            "run `mise run copier-update` on it yourself. Requires --local-path."
+            "updated it to HEAD yourself. Requires --local-path."
         ),
     )
     parser.add_argument(
@@ -1708,6 +1686,8 @@ def main() -> None:
         "--yes", action="store_true", help="Don't ask before --cleanup deletes."
     )
     args = parser.parse_args()
+    log_dir = start_log("azdo")
+    print(f"Logging this run to {log_dir}")
 
     check_az_installed()
     check_azure_devops_extension()
@@ -1765,6 +1745,17 @@ def main() -> None:
     failures_a: list[str] = []
     verify(repo_a_name, org_url, args.project, failures_a)
     provision_test_secrets(org_url, args.project, repo_a_name)
+    # Before the checks that depend on it: the Renovate edits, and a lychee exclusion
+    # for this template's docs, whose new pages publish only when it releases.
+    open_pr_wait_and_merge(
+        org_url,
+        args.project,
+        repo_a_name,
+        dest_a,
+        "integration-test/setup",
+        "chore: set up Repo A for the integration test",
+        edit=prepare_repo_a(args.source),
+    )
     check_copier_update_check(org_url, args.project, repo_a_name, failures_a)
     check_noop_update(dest_a, "HEAD", failures_a)
     check_repo_health_check(org_url, args.project, repo_a_name, failures_a)
@@ -1776,7 +1767,7 @@ def main() -> None:
     check_prerelease_flow(org_url, args.project, repo_a_name, dest_a, failures_a)
     # Last: Renovate's PR starts more PR Validation runs, which would queue ahead of
     # the checks above.
-    check_renovate(org_url, args.project, repo_a_name, dest_a, failures_a)
+    check_renovate(org_url, args.project, repo_a_name, failures_a)
 
     old_ref = latest_stable_tag(args.source)
     heading(
@@ -1797,7 +1788,13 @@ def main() -> None:
     failures_b: list[str] = []
     verify(repo_b_name, org_url, args.project, failures_b)
     provision_test_secrets(org_url, args.project, repo_b_name)
+    # Repo B is at the newest release, so main has no update; a branch recording
+    # the commit before that release does. The runbook reads each run's result.
     check_copier_update_check(org_url, args.project, repo_b_name, failures_b)
+    older = push_older_recorded_version(dest_b, args.source, old_ref)
+    check_copier_update_check(
+        org_url, args.project, repo_b_name, failures_b, branch=older
+    )
     scope = f'--org {args.org} --project "{args.project}"'
     checklist = docs_page_url("maintaining/integration-testing/runbook-azdo.md")
     summary(

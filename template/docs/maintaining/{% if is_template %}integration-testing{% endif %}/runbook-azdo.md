@@ -31,7 +31,11 @@ project the test repos go in.
     ```
 
 - [ ] When it finishes, its summary says "all checks passed" for both repos. If a check failed,
-  fix it, clean up (see [Cleaning Up](#cleaning-up)), and start again.
+  find out why in the run's log directory, which the run prints at its start and end:
+  `<template-repo-path>/.cache/integration-test/<timestamp>-azdo/`. Its `run.log` holds
+  everything the run printed and every command's output, and each pipeline run the script waited
+  on has its own log beside it. Fix the cause, clean up (see [Cleaning Up](#cleaning-up)), and
+  start again.
 
 ## Repo A
 
@@ -145,19 +149,24 @@ update it.
 
 ### Before Updating
 
-*Automated, before you update anything: Maint (Auto) - Copier Update Check runs and completes.*
+*Automated, before you update anything: Maint (Auto) - Copier Update Check runs and completes,
+on `main` and on the `integration-test/older-recorded-version` branch, whose answers record the
+commit just before the newest release.*
 
-- [ ] Its run's **Check for Template Updates** step reports the newer version and sends the
-  notification without an error.
+- [ ] The `main` run's **Check for Template Updates** step reports no update available, since
+  Repo B is at the newest release.
+- [ ] The branch run's **Check for Template Updates** step reports the newest release and sends
+  the notification without an error.
 
 ### Running the Update
 
-- [ ] Update on a branch, pressing Enter at each prompt to accept the default:
+- [ ] Update on a branch to this template's `HEAD`, the release candidate, pressing Enter at
+  each prompt to accept the default:
 
     ```sh
     cd <repo-b-path>
     git switch -c integration-test/copier-update
-    mise run copier-update
+    mise run copier-update --vcs-ref=HEAD
     git add -A
     git commit -m "chore: copier update"
     git push -u origin integration-test/copier-update

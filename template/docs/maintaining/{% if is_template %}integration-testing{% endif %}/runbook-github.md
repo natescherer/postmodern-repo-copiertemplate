@@ -33,7 +33,11 @@ this template's own clone.
     ```
 
 - [ ] When it finishes, its summary says "all checks passed" for both repos. If a check failed,
-  fix it, clean up (see [Cleaning Up](#cleaning-up)), and start again.
+  find out why in the run's log directory, which the run prints at its start and end:
+  `<template-repo-path>/.cache/integration-test/<timestamp>-github/`. Its `run.log` holds
+  everything the run printed and every command's output, and each workflow run the script waited
+  on has its own log beside it. Fix the cause, clean up (see [Cleaning Up](#cleaning-up)), and
+  start again.
 
 ## Repo A
 
@@ -141,19 +145,22 @@ A copy at the last stable release tag, with `zensical_target: docs-site Director
 
 ### Before Updating
 
-*Automated, before you update anything: Maint (Auto): Copier Update Check runs, completes, and
-detects the newer version.*
+*Automated, before you update anything: Maint (Auto): Copier Update Check reports no update
+available on `main`, since Repo B is at the newest release. On the
+`integration-test/older-recorded-version` branch, whose answers record the commit just before
+that release, it detects the release.*
 
-- [ ] Its run's **Notify if Update is Available** step succeeds.
+- [ ] The branch run's **Notify if Update is Available** step succeeds.
 
 ### Running the Update
 
-- [ ] Update on a branch, pressing Enter at each prompt to accept the default:
+- [ ] Update on a branch to this template's `HEAD`, the release candidate, pressing Enter at
+  each prompt to accept the default:
 
     ```sh
     cd <repo-b-path>
     git switch -c integration-test/copier-update
-    mise run copier-update
+    mise run copier-update --vcs-ref=HEAD
     git add -A
     git commit -m "chore: copier update"
     git push -u origin integration-test/copier-update
