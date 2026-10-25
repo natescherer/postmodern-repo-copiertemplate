@@ -45,12 +45,19 @@ name = "lychee"
 description = "Checks files for broken links"
 language = "system"
 entry = "mise x -- lychee --no-progress -c .config/lychee.toml --cache"
+{%- if zensical_ghpages or (is_template and using_github) %}
 {%- if zensical_ghpages %}
 # This project's own docs publish only with its first release, and a new page only with
-# the release after it's added, so a commit or PR can't check links to them. The
-# scheduled Repo Health Check doesn't use this hook, and checks them once they exist.
+# the release after it's added, so a commit or PR can't check links to them.
+{%- set own_docs = docs_root %}
+{%- else %}
+# copier.yml links to this project's own docs on main, where a page a PR adds exists
+# only once the PR merges, so a commit or PR can't check links to them.
+{%- set own_docs = 'https://github.com/' ~ github_repo_owner ~ '/' ~ repo_name ~ '/blob/main/docs/' %}
+{%- endif %}
+# The scheduled Repo Health Check doesn't use this hook, and checks them once they exist.
 # `=` keeps lychee from reading the file names prek appends as more patterns.
-args = ['--exclude=^{{ docs_root | regex_escape }}']
+args = ['--exclude=^{{ own_docs | regex_escape }}']
 {%- endif %}
 types = ["text"]
 # renovate.json embeds a regex with a backslash-escaped domain that lychee chokes on
