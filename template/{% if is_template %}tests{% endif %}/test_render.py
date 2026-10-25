@@ -91,6 +91,13 @@ def _check_tombi(root: Path) -> list[str]:
     return errors
 
 
+def _check_rumdl(root: Path) -> list[str]:
+    result = _run(["rumdl", "check", "--no-cache", "."], cwd=root)
+    if result.returncode != 0:
+        return [result.stdout.strip() or result.stderr.strip()]
+    return []
+
+
 def _check_zensical_build(root: Path) -> list[str]:
     if not (root / "zensical.toml").is_file():
         return []
@@ -131,6 +138,7 @@ def _check_all(root: Path, *, zensical: bool = True) -> list[str]:
     errors += [f"[structured-files] {e}" for e in _check_structured_files(root)]
     errors += [f"[actionlint] {e}" for e in _check_actionlint(root)]
     errors += [f"[tombi] {e}" for e in _check_tombi(root)]
+    errors += [f"[rumdl] {e}" for e in _check_rumdl(root)]
     if zensical:
         errors += [f"[zensical] {e}" for e in _check_zensical_build(root)]
     errors += [f"[lychee] {e}" for e in _check_lychee(root)]

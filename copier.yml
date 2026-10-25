@@ -332,8 +332,9 @@ _migrations:
                     filename = (
                         f"template-update-{version_to.lstrip('v')}-{bump}-{ident}.md"
                     )
+                    # The summary is a heading, as `knope document-change` writes it
                     (changeset_dir / filename).write_text(
-                        f"---\ndefault: {bump}\n---\n\n{entry}\n",
+                        f"---\ndefault: {bump}\n---\n\n# {entry}\n",
                         encoding="utf-8",
                         newline="",
                     )
