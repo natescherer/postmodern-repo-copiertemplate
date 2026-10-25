@@ -27,8 +27,9 @@ The scripts automate every check they can: they dispatch pipelines and wait for 
 and confirm they're blocked or pass, push commits and confirm the release flow responds, and cut
 a release and a prerelease. A failure doesn't stop the run, so one run reports everything.
 
-Two setup steps keep the checks independent of timing. Repo A first merges a setup PR that lifts
-its Renovate schedule and pins an old dependency, so Renovate has a PR to open on any day, and
+Two setup steps keep the checks independent of timing. Repo A first merges a setup PR that pins
+an old dependency and lifts Renovate's schedule for it alone, so Renovate has one PR to open on
+any day, and
 has its link check skip this template's published docs, whose new pages exist only once this
 release publishes them. Repo B, at the newest release, records the commit just before that
 release on a branch, so the update check finds a newer release there without rendering any other
