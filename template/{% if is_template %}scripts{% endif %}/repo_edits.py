@@ -127,6 +127,37 @@ def skip_template_docs_links(repo: Path, docs_root: str) -> None:
     config.write_text(text, encoding="utf-8", newline="\n")
 
 
+# A minimal Cobertura report, covering the first line of README.md, which every project
+# has. A fresh project has no tests that write one, so PR Validation's coverage step
+# would have nothing to publish.
+COVERAGE_FIXTURE = """<?xml version="1.0" ?>
+<coverage version="1" timestamp="0" lines-valid="1" lines-covered="1" line-rate="1"
+          branches-valid="0" branches-covered="0" branch-rate="0" complexity="0">
+  <sources>
+    <source>.</source>
+  </sources>
+  <packages>
+    <package name="integration-test" line-rate="1" branch-rate="0" complexity="0">
+      <classes>
+        <class name="README" filename="README.md" line-rate="1" branch-rate="0"
+               complexity="0">
+          <methods/>
+          <lines>
+            <line number="1" hits="1"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>
+"""
+
+
+def add_coverage_fixture(repo: Path) -> None:
+    """Commit a coverage.xml for PR Validation's coverage step to publish."""
+    (repo / "coverage.xml").write_text(COVERAGE_FIXTURE, encoding="utf-8", newline="\n")
+
+
 def template_docs_root(source: str) -> str | None:
     """Return where a GitHub-hosted template publishes its docs, as docs_base() does.
 
@@ -145,14 +176,15 @@ def prepare_repo_a(source: str) -> Callable[[Path], None]:
     """Return the edit that sets Repo A up for the run's checks.
 
     Returns:
-        A function that applies let_renovate_bump_typos() and, for a template that
-        publishes its docs, skip_template_docs_links().
+        A function that applies let_renovate_bump_typos(), add_coverage_fixture(),
+        and, for a template that publishes its docs, skip_template_docs_links().
 
     """
     docs_root = template_docs_root(source)
 
     def edit(repo: Path) -> None:
         let_renovate_bump_typos(repo)
+        add_coverage_fixture(repo)
         if docs_root:
             skip_template_docs_links(repo, docs_root)
 
