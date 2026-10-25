@@ -31,8 +31,9 @@ Two setup steps keep the checks independent of timing. Repo A first merges a set
 pins an old dependency and lifts Renovate's schedule for it alone, so Renovate has one PR to
 open on any day; commits a minimal `coverage.xml`, so PR Validation's coverage step has a report
 to publish; and has its link check skip this template's published docs, whose new pages exist
-only once this release publishes them. Repo B, at the newest release, records the commit just
-before that release on a branch, so the update check finds a newer release there without
+only once this release publishes them. Repo B merges a setup PR with the same link check skip,
+since the update brings in links to those pages. At the newest release, it records the commit
+just before that release on a branch, so the update check finds a newer release there without
 rendering any other version.
 
 The terminal shows only an outline of a run: each step and each check's `[PASS]` or `[FAIL]`,
