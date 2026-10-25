@@ -25,9 +25,18 @@ Repo B on both platforms, and on GitHub, `zensical_target` is `GitHub Pages` for
 
 The scripts automate every check they can: they dispatch pipelines and wait for them, open PRs
 and confirm they're blocked or pass, push commits and confirm the release flow responds, and cut
-a release and a prerelease. Repo A also lifts its Renovate schedule and pins an old dependency, so
-Renovate has a PR to open on any day. Each check prints a `[PASS]` or `[FAIL]` line as it runs,
-and a summary at the end; a failure doesn't stop the run, so one run reports everything.
+a release and a prerelease. Each check prints a `[PASS]` or `[FAIL]` line as it runs, and a
+summary at the end; a failure doesn't stop the run, so one run reports everything.
+
+Two setup steps keep the checks independent of timing. Repo A first merges a setup PR that lifts
+its Renovate schedule and pins an old dependency, so Renovate has a PR to open on any day, and
+has its link check skip this template's published docs, whose new pages exist only once this
+release publishes them. Repo B, at the newest release, records the commit just before that
+release on a branch, so the update check finds a newer release there without rendering any other
+version.
+
+Each run logs everything it printed, every command's output, and the log of every workflow or
+pipeline run it waited on, under `.cache/integration-test/`, for analysis after the fact.
 
 The runbooks' manual steps cover the rest, as fixed steps that are the same on every run:
 anything that needs human judgment (whether a badge renders, whether each setup checklist item

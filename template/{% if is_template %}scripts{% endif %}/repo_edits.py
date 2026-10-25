@@ -1,11 +1,18 @@
-"""File edits the integration test scripts merge into a test repo."""
+"""Changes the integration test scripts make to their test repos."""
 
 import re
+import tempfile
+from collections.abc import Callable
 from pathlib import Path
+
+from console import run
 
 # An old release of a tool Renovate's mise manager tracks. PR Validation checks only the
 # files a PR changes, so pinning it doesn't change what the pin's own PR runs.
 OLD_TYPOS = "1.50.3"
+
+# Repo B's branch for checking that the Copier Update Check detects a newer release.
+OLDER_VERSION_BRANCH = "integration-test/older-recorded-version"
 
 
 def let_renovate_bump_typos(repo: Path) -> None:
@@ -35,3 +42,107 @@ def let_renovate_bump_typos(repo: Path) -> None:
     if count != 1:
         raise ValueError("mise.toml has no typos pin to change")
     tools.write_text(text, encoding="utf-8", newline="\n")
+
+
+def skip_template_docs_links(repo: Path, docs_root: str) -> None:
+    """Have lychee skip links into the template's published docs.
+
+    The template under test publishes its docs when it releases, so before then a link
+    to one of its new pages 404s. The template's render tests check those links
+    against its docs source instead.
+
+    Raises:
+        ValueError: if .config/lychee.toml has no `exclude` list.
+
+    """
+    config = repo / ".config" / "lychee.toml"
+    entry = f"  '^{re.escape(docs_root)}', # The template under test, unpublished\n"
+    text, count = re.subn(
+        r"(?m)^exclude = \[\n",
+        lambda match: match.group(0) + entry,
+        config.read_text(encoding="utf-8"),
+    )
+    if count != 1:
+        raise ValueError(".config/lychee.toml has no exclude list")
+    config.write_text(text, encoding="utf-8", newline="\n")
+
+
+def template_docs_root(source: str) -> str | None:
+    """Return where a GitHub-hosted template publishes its docs, as docs_base() does.
+
+    Returns:
+        `https://<owner>.github.io/<repo>/` for a github.com source, else None: a
+        template elsewhere links its docs inside its own repo, which needs no release.
+
+    """
+    match = re.match(r"^gh:([^/\s]+)/([^/\s]+)$", source) or re.search(
+        r"github\.com[:/]+([^/\s]+)/([^/\s.]+)", source
+    )
+    return f"https://{match[1]}.github.io/{match[2]}/" if match else None
+
+
+def prepare_repo_a(source: str) -> Callable[[Path], None]:
+    """Return the edit that sets Repo A up for the run's checks.
+
+    Returns:
+        A function that applies let_renovate_bump_typos() and, for a template that
+        publishes its docs, skip_template_docs_links().
+
+    """
+    docs_root = template_docs_root(source)
+
+    def edit(repo: Path) -> None:
+        let_renovate_bump_typos(repo)
+        if docs_root:
+            skip_template_docs_links(repo, docs_root)
+
+    return edit
+
+
+def push_older_recorded_version(dest: str, source: str, tag: str) -> str:
+    """Push a branch whose answers file records the commit just before `tag`.
+
+    Copier reads a project's current version by running `git describe` on the
+    template at the recorded commit, so on this branch the Copier Update Check finds
+    `tag` newer: `<tag>~1` reads as the release before `tag` plus some commits, or as
+    0.0.0 plus some commits if `tag` is the first release. Nothing at that commit is
+    rendered.
+
+    Returns:
+        The branch's name.
+
+    Raises:
+        ValueError: if the answers file has no `_commit` line.
+
+    """
+    with tempfile.TemporaryDirectory() as clone:
+        run(
+            "git",
+            "clone",
+            "--quiet",
+            "--filter=blob:none",
+            "--no-checkout",
+            source,
+            clone,
+        )
+        commit = run(
+            "git", "-C", clone, "rev-parse", f"{tag}~1", capture=True
+        ).stdout.strip()
+    answers = Path(dest, ".config", "copier-answers.yml")
+    text, count = re.subn(
+        r"(?m)^_commit: .*$", f"_commit: {commit}", answers.read_text(encoding="utf-8")
+    )
+    if count != 1:
+        raise ValueError("the answers file has no _commit line")
+    run("git", "switch", "-c", OLDER_VERSION_BRANCH, cwd=dest)
+    answers.write_text(text, encoding="utf-8", newline="\n")
+    run(
+        "git",
+        "commit",
+        "-am",
+        f"chore: record {tag}~1 as the template version",
+        cwd=dest,
+    )
+    run("git", "push", "-u", "origin", OLDER_VERSION_BRANCH, cwd=dest)
+    run("git", "switch", "main", cwd=dest)
+    return OLDER_VERSION_BRANCH
