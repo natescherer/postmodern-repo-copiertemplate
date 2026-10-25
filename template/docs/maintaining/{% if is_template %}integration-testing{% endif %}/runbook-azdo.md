@@ -71,14 +71,14 @@ step output; see the script's module docstring.*
     git switch main
     git pull
     git switch -c integration-test/broken-link
-    echo "[Broken link](https://example.invalid/)" >> README.md
+    echo "[Broken link](https://httpbin.org/status/404)" >> README.md
     git commit -am "docs: add a broken link"
     git push -u origin integration-test/broken-link
     ```
 
 - [ ] In `<project>`'s **Pipelines**, run `[<repo-a>] Maint (Auto) - Repo Health Check` on that
   branch (**Run pipeline**, then **Branch/tag**: `integration-test/broken-link`). The run fails, and its log names
-  `https://example.invalid/`.
+  `https://httpbin.org/status/404`.
 
 ### Maint (Auto) - Renovate
 
