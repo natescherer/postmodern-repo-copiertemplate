@@ -56,6 +56,7 @@ from repo_edits import (
     local_clone_dir,
     local_clones,
     prepare_repo_a,
+    prepare_repo_b,
     push_older_recorded_version,
     remove_clones,
 )
@@ -1836,6 +1837,17 @@ def main() -> None:
     verify(repo_b_name, org_url, args.project, failures_b)
     step("Setting test secrets")
     provision_test_secrets(org_url, args.project, repo_b_name)
+    if setup_b := prepare_repo_b(args.source):
+        step("Merging Repo B's setup PR")
+        open_pr_wait_and_merge(
+            org_url,
+            args.project,
+            repo_b_name,
+            dest_b,
+            "integration-test/setup",
+            "chore: set up Repo B for the integration test",
+            edit=setup_b,
+        )
     # Repo B is at the newest release, so main has no update; a branch recording
     # the commit before that release does. The runbook reads each run's result.
     check_copier_update_check(org_url, args.project, repo_b_name, failures_b)

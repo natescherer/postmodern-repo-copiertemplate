@@ -223,6 +223,23 @@ def prepare_repo_a(source: str) -> Callable[[Path], None]:
     return edit
 
 
+def prepare_repo_b(source: str) -> Callable[[Path], None] | None:
+    """Return the edit that sets Repo B up for its update by hand, if it needs one.
+
+    The update brings in links to the template's new docs pages, which the link check
+    would reject until the template releases.
+
+    Returns:
+        A function that applies skip_template_docs_links(), or None for a template
+        that doesn't publish its docs.
+
+    """
+    docs_root = template_docs_root(source)
+    if not docs_root:
+        return None
+    return lambda repo: skip_template_docs_links(repo, docs_root)
+
+
 def push_older_recorded_version(dest: str, source: str, tag: str) -> str:
     """Push a branch whose answers file records the commit just before `tag`.
 
