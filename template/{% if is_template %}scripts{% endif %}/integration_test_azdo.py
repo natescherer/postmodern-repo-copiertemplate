@@ -823,14 +823,18 @@ def wait_for_new_pipeline_run(
     )
 
 
-def provision_test_secrets(org_url: str, project: str, repo_name: str) -> None:
-    """Set a placeholder APPRISE_URL variable on every pipeline that requires it.
+def provision_test_secrets(
+    org_url: str, project: str, repo_name: str, github_token: str
+) -> None:
+    """Set APPRISE_URL and GITHUB_COM_TOKEN on every pipeline that uses them.
 
     Mirrors `mise run provision-secrets`'s own `az pipelines variable create` calls
     (see mise.toml.jinja); each pipeline needs its own copy, since Azure Pipelines
     variables are scoped per-pipeline, not project-wide the way GitHub secrets are.
-    Points at a real, harmless HTTPS endpoint, not a fake host, so a pipeline that
-    sends a notification doesn't fail on an unrelated delivery error.
+    APPRISE_URL points at a real, harmless HTTPS endpoint, not a fake host, so a
+    pipeline that sends a notification doesn't fail on an unrelated delivery error.
+    The token goes through az's AZURE_DEVOPS_EXT_PIPELINE_VAR_* environment variable,
+    never the command line, so it's never echoed.
     """
     for pipeline in (
         "Maint (Auto) - Copier Update Check",
@@ -857,6 +861,17 @@ def provision_test_secrets(org_url: str, project: str, repo_name: str) -> None:
             "--project",
             project,
         )
+    for pipeline in PIPELINE_DISPLAY_NAMES:
+        run(
+            "az", "pipelines", "variable", "create",
+            "--name", "GITHUB_COM_TOKEN",
+            "--pipeline-name", f"[{repo_name}] {pipeline}",
+            "--secret", "true",
+            "--org", org_url,
+            "--project", project,
+            capture=True,
+            env={"AZURE_DEVOPS_EXT_PIPELINE_VAR_GITHUB_COM_TOKEN": github_token},
+        )  # fmt: skip
 
 
 def check_copier_update_check(
@@ -935,15 +950,18 @@ def check_repo_health_check(
     )
 
 
-def provide_github_token(org_url: str, project: str, pipeline: str) -> bool:
-    """Set GITHUB_COM_TOKEN on `pipeline`, from the environment or `gh auth token`.
+def github_token() -> str:
+    """Read the GitHub token a full run needs, before it creates anything.
 
-    Renovate skips every dependency hosted on github.com without one. The value goes
-    through az's AZURE_DEVOPS_EXT_PIPELINE_VAR_* environment variable, never the
-    command line, so it's never echoed.
+    Every pipeline's mise install downloads tools from github.com, whose
+    unauthenticated rate limit hosted agents share by IP, and Renovate skips every
+    dependency hosted there without one.
 
     Returns:
-        False if there's no token to set.
+        The GITHUB_COM_TOKEN environment variable's value, or else `gh auth token`'s.
+
+    Raises:
+        SystemExit: if neither gives a token.
 
     """
     token = os.environ.get("GITHUB_COM_TOKEN", "")
@@ -952,18 +970,14 @@ def provide_github_token(org_url: str, project: str, pipeline: str) -> bool:
             "gh", "auth", "token", check=False, capture=True, secret=True
         ).stdout.strip()
     if not token:
-        return False
-    run(
-        "az", "pipelines", "variable", "create",
-        "--name", "GITHUB_COM_TOKEN",
-        "--pipeline-name", pipeline,
-        "--secret", "true",
-        "--org", org_url,
-        "--project", project,
-        capture=True,
-        env={"AZURE_DEVOPS_EXT_PIPELINE_VAR_GITHUB_COM_TOKEN": token},
-    )  # fmt: skip
-    return True
+        runbook = docs_page_url(
+            "maintaining/integration-testing/runbook-azdo.md", version="dev"
+        )
+        raise SystemExit(
+            "Set GITHUB_COM_TOKEN to a GitHub token with no scopes, or log in with "
+            f"`gh auth login`, first; see Before You Start in {runbook}."
+        )
+    return token
 
 
 def check_renovate(
@@ -978,14 +992,6 @@ def check_renovate(
     """
     step("Checking Maint (Auto) - Renovate")
     pipeline = f"[{repo_name}] Maint (Auto) - Renovate"
-    if not provide_github_token(org_url, project, pipeline):
-        check(
-            failures,
-            "Renovate has a GitHub token for github.com dependencies",
-            False,
-            "set GITHUB_COM_TOKEN, or log in with `gh auth login`",
-        )
-        return
     run_id = dispatch_pipeline(org_url, project, pipeline)
     result = wait_for_pipeline_run(org_url, project, run_id)
     check(failures, "Renovate pipeline succeeds", result == "succeeded", result)
@@ -1770,6 +1776,7 @@ def main() -> None:
 
     if not args.source or not args.repo_prefix:
         raise SystemExit("--source and --repo-prefix are required.")
+    token = github_token()
 
     timestamp = int(time.time())
 
@@ -1790,7 +1797,7 @@ def main() -> None:
     failures_a: list[str] = []
     verify(repo_a_name, org_url, args.project, failures_a)
     step("Setting test secrets")
-    provision_test_secrets(org_url, args.project, repo_a_name)
+    provision_test_secrets(org_url, args.project, repo_a_name, token)
     step("Merging Repo A's setup PR")
     # Before the checks that depend on it: the Renovate edits, and a lychee exclusion
     # for this template's docs, whose new pages publish only when it releases.
@@ -1836,7 +1843,7 @@ def main() -> None:
     failures_b: list[str] = []
     verify(repo_b_name, org_url, args.project, failures_b)
     step("Setting test secrets")
-    provision_test_secrets(org_url, args.project, repo_b_name)
+    provision_test_secrets(org_url, args.project, repo_b_name, token)
     if setup_b := prepare_repo_b(args.source):
         step("Merging Repo B's setup PR")
         open_pr_wait_and_merge(

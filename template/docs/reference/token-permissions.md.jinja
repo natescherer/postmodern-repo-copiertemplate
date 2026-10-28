@@ -42,16 +42,22 @@ service's URL format.
 ### GITHUB_COM_TOKEN
 
 (Azure DevOps only.) Renovate looks up most dependency versions on github.com, and skips every
-dependency hosted there without a token, so the Renovate pipeline fails without one. The Repo
-Health Check pipeline uses it too, to check github.com links without hitting github.com's
-unauthenticated rate limit. Create a [personal access token](https://github.com/settings/tokens)
-with **no scopes** on any GitHub account, then add it to both pipelines (`mise run
-provision-secrets` does this):
+dependency hosted there without a token, so the Renovate pipeline fails without one. Every other
+pipeline uses it when it's set: mise downloads tools from github.com, and the Repo Health Check
+checks github.com links, and Microsoft-hosted agents share github.com's unauthenticated rate
+limit by IP, so a run without a token can fail on a 403. Create a
+[personal access token](https://github.com/settings/tokens) with **no scopes** on any GitHub
+account, then add it to each pipeline (`mise run provision-secrets` does this, asking for the
+value once per pipeline):
 
 ```bash
-az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name "[<repo>] Maint (Auto) - Renovate" --secret true
-az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name "[<repo>] Maint (Auto) - Repo Health Check" --secret true
+az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name "[<repo>] <pipeline>" --secret true
 ```
+
+Run that for each of the seven pipelines: Maint (Auto) - Renovate, Maint (Auto) - Repo Health
+Check, Maint (Auto) - Copier Update Check, Docs (Auto) - Zensical Build & Publish, Release
+(Auto) - Prepare & Publish Release, Release (Manual) - Create Prerelease, and Test (Auto) - PR
+Validation.
 {%- endif %}
 {%- if is_template or (using_github and code_coverage) %}
 
