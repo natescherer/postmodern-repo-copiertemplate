@@ -35,10 +35,10 @@ platform CLI (`gh` or `az`) is installed and logged in before Copier continues; 
   [Manual Repo Settings](manual-repo-settings.md).
 - **None** skips all of it; create the repo and apply its settings yourself.
 
-GitHub projects get `.github/settings.yml` whatever you choose. The
-[Settings GitHub App](https://github.com/apps/settings) applies it if installed (see
-[Prerequisites](../getting-started/prerequisites.md)); otherwise apply it by hand with
-[Manual Repo Settings](manual-repo-settings.md). Every GitHub copy ends with a reminder.
+GitHub projects get `.github/settings.yml` whatever you choose. Create Repo and Set Repo Rules
+apply it with [gh-settings](https://github.com/noirbizarre/gh-settings); with None, run `mise run
+sync-repo-settings` once the repo exists, or apply it by hand with
+[Manual Repo Settings](manual-repo-settings.md).
 
 ## Repo location: `github_username` / `github_org` / `azdo_org` / `azdo_project`
 

@@ -86,9 +86,14 @@ On GitHub:
 - **Approve bot-authored workflow runs.** Without the token, someone has to click **Approve and
   run workflow** before checks run on each push a bot makes to a PR, such as the release PR;
   see [Releasing](releasing.md).
-- **Check the repo settings.** Settings a fresh copy applies when it creates a repo (Actions
-  permission to create and approve pull requests, GitHub Pages, code scanning, private vulnerability
-  reporting) aren't applied by an update; see
+- **Switch from the Settings GitHub App to gh-settings.**
+  [gh-settings](https://github.com/noirbizarre/gh-settings) now applies `.github/settings.yml`,
+  in its own format, which the update writes. Once the update has merged to `main`, remove this
+  repo from the Settings app's repository access (or uninstall the app), so it stops reading
+  the file, then run `mise run sync-repo-settings`. It shows what it will change and asks first;
+  this also applies the Actions and GitHub Pages settings `settings.yml` now covers.
+- **Check the repo settings.** Code scanning and private vulnerability reporting, which a fresh
+  copy enables when it creates a public repo, aren't applied by an update; see
   [Manual Repo Settings](../reference/manual-repo-settings.md).
 
 On Azure DevOps:

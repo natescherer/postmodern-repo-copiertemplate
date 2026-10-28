@@ -1,7 +1,10 @@
-# The Settings GitHub App (https://github.com/apps/settings) applies this file to the
-# repo. Change repo settings here, not in the GitHub UI. Changes take effect once the
-# app has access to this repo; see
-# {{ docs_url }}getting-started/prerequisites{{ docs_page_suffix }}.
+# $schema: https://noirbizarre.github.io/gh-settings/schema/v1/settings.json
+# gh-settings (https://github.com/noirbizarre/gh-settings) applies this file to the repo:
+# change repo settings here, not in the GitHub UI, then run `mise run
+# sync-repo-settings` to apply them. It uses your `gh auth login` credential, which
+# needs admin access to the repo; see
+# {{ docs_url }}reference/manual-repo-settings{{ docs_page_suffix }}.
+version: 1
 
 repository:
   description: "{{ project_description }}"
@@ -18,49 +21,29 @@ repository:
   # Public repos only: private repos need a paid GitHub Advanced Security license.
   # Personal accounts' new public repos have it by default and org-owned ones don't,
   # so this sets it explicitly.
-  security_and_analysis:
-    secret_scanning:
-      status: enabled
-    secret_scanning_push_protection:
-      status: enabled
+  security:
+    secret_scanning: true
+    secret_scanning_push_protection: true
 {%- endif %}
 
-# The Settings App deletes any label not in this list, including GitHub's defaults
-# (bug, enhancement, and so on), so those are listed too.
-labels:
-  # GitHub Defaults
-  - name: accessibility
-    color: f143ab
-    description: Barrier affecting people with disabilities
-  - name: bug
-    color: d73a4a
-    description: Something isn't working
-  - name: documentation
-    color: 0075ca
-    description: Improvements or additions to documentation
-  - name: duplicate
-    color: cfd3d7
-    description: This issue or pull request already exists
-  - name: enhancement
-    color: a2eeef
-    description: New feature or request
-  - name: good first issue
-    color: 7057ff
-    description: Good for newcomers
-  - name: help wanted
-    color: "008672"
-    description: Extra attention is needed
-  - name: invalid
-    color: e4e669
-    description: This doesn't seem right
-  - name: question
-    color: d876e3
-    description: Further information is requested
-  - name: wontfix
-    color: ffffff
-    description: This will not be worked on
+actions:
+  # Lets the default GITHUB_TOKEN open and update pull requests, which a new repo
+  # doesn't allow; Release (Auto): Prepare Release PR and Docs (Auto): Zensical Build &
+  # Commit need it to run without a Personal Access Token. Despite the field's name,
+  # it doesn't let the token approve reviews.
+  can_approve_pull_request_reviews: true
+  # GitHub's default, stated so it stays that way: every job here declares its own
+  # `permissions:`.
+  default_workflow_permissions: read
+{%- if zensical_ghpages %}
 
-  # Custom
+pages:
+  build_type: workflow
+{%- endif %}
+
+# Labels added to GitHub's defaults (bug, enhancement, and so on), which stay as GitHub
+# creates them; gh-settings leaves labels this list doesn't name alone.
+labels:
   - name: awaiting pr
     color: 668F04
     description: Awaiting completion of a PR from a contributor
@@ -109,5 +92,9 @@ rulesets:
 {%- if zensical_ghpages %}
 
 environments:
+  # Lets any branch or tag deploy, since Docs (Auto): Zensical Publish to GitHub Pages
+  # deploys on release events, whose ref is a tag; a branch-only policy would block
+  # them. Explicit null means "any branch"; omitting the key would leave it unmanaged.
   - name: github-pages
+    deployment_branch_policy: null
 {%- endif %}

@@ -74,6 +74,16 @@ version = "44.158.1"
 # attestation 3.2.0 had, so mise's trust policy refuses it; remove once
 # https://github.com/yarnpkg/berry/issues/7182 is fixed.
 trust_policy_excludes = ["@yarnpkg/libzip@3.2.2"]
+{%- if using_github %}
+
+[tasks.sync-repo-settings]
+# Applies .github/settings.yml to the repo with gh-settings, showing the changes and
+# asking before it makes them; `mise x -- gh-settings plan` only shows them. Needs
+# admin access to the repo through `gh auth login`. `raw` hands the terminal to
+# gh-settings for its prompt.
+raw = true
+run = "gh-settings sync"
+{%- endif %}
 {%- if using_azdo %}
 
 [tasks.migrate-azdo-pipeline-names]
@@ -188,6 +198,11 @@ actionlint = "1.7.12"
    whatever gh is on PATH. #}
 {#- renovate: datasource=github-releases depName=cli/cli #}
 "aqua:cli/cli" = "2.102.0"
+{#- Applies .github/settings.yml, from copier.yml's _tasks and `mise run
+   sync-repo-settings`. Its own docs install it as a gh extension, but its release
+   binaries run the same way, authenticating through `gh api`. #}
+{#- renovate: datasource=github-releases depName=noirbizarre/gh-settings #}
+"github:noirbizarre/gh-settings" = "0.3.0"
 {%- endif %}
 {#- Used by copier.yml's _tasks and the release workflows and pipelines. It uses the
    github backend because ubi is deprecated in mise and knope isn't in the aqua

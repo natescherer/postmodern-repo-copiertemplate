@@ -54,7 +54,7 @@ Build your own template from this one; it can keep receiving this template's upd
 {% if is_template -%}
 - Creation of new repos and branches
 {% endif -%}
-- Repo settings and branch protection{% if is_template or using_github %} (on GitHub, kept in sync from `.github/settings.yml` by the [Settings GitHub App](https://github.com/apps/settings)){% endif %}; see [Manual Repo Settings](manual-repo-settings.md)
+- Repo settings and branch protection{% if is_template or using_github %} (on GitHub, applied from `.github/settings.yml` by [gh-settings](https://github.com/noirbizarre/gh-settings)){% endif %}; see [Manual Repo Settings](manual-repo-settings.md)
 {%- if is_template or using_azdo %}
 - {% if is_template %}On Azure DevOps, a{% else %}A{% endif %} build validation policy requiring PR Validation to pass before a PR completes, with a Project Administrator override
 {%- endif %}
