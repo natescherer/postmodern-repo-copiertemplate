@@ -93,17 +93,24 @@ On GitHub:
 
 On Azure DevOps:
 
-- **Repoint renamed pipelines.** v0.8.0 renamed the files under `.azurepipelines/`. Once the
-  update has merged to `main`, run `mise run migrate-azdo-pipeline-names` to repoint the
-  existing registrations at the new names. Azure DevOps reads pipeline YAML from `main`, so
-  running it before the merge breaks every pipeline run until the renamed files get there.
+- **Repoint renamed and merged pipelines.** v0.8.0 renamed the files under `.azurepipelines/`,
+  and 1.0.0 merges the Copier Update Check, Renovate, and Repo Health Check pipelines into
+  `Maint (Auto) - Monthly Maintenance`, and Create Prerelease into the release pipeline. Once
+  the update has merged to `main`, run `mise run migrate-azdo-pipeline-names`. It repoints
+  the Renovate registration (or another of the three) at Monthly Maintenance, keeping its
+  variables, deletes the other merged registrations, and repoints any v0.8.0-renamed one.
+  Azure DevOps reads pipeline YAML from `main`, so running it before the merge breaks every
+  pipeline run until the new files get there. Monthly Maintenance needs `APPRISE_URL` and
+  `GITHUB_COM_TOKEN`; add whichever its registration lacks (see
+  [Secrets and Tokens](../reference/token-permissions.md)).
 - **Add `GITHUB_COM_TOKEN`.** The Renovate pipeline now requires it, since Renovate skips every
   dependency hosted on github.com without one, and the other pipelines use it to keep mise's
   downloads under github.com's rate limit; `mise run provision-secrets` sets it on all of them. See
   [Secrets and Tokens](../reference/token-permissions.md#github_com_token).
-- **Register new pipelines.** Pipelines added since your version (such as Renovate and the repo
-  health check) aren't registered by an update. Register each `.yml` under `.azurepipelines/`
-  that isn't yet, and delete any registration whose file no longer exists; see
+- **Register new pipelines.** A pipeline added since your version that no old one was merged
+  into isn't registered by an update or by `migrate-azdo-pipeline-names`, which warns about
+  it. Register each `.yml` directly in `.azurepipelines/` that isn't yet, and delete any
+  registration whose file no longer exists; see
   [Manual Repo Settings](../reference/manual-repo-settings.md).
 
 Everywhere:

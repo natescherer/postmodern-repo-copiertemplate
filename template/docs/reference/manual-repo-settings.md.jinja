@@ -92,13 +92,13 @@
 
     | Name | YAML file |
     | --- | --- |
-    | `[<repo>] Maint (Auto) - Copier Update Check` | `.azurepipelines/maint-auto-copierupdatecheck.yml` |
-    | `[<repo>] Maint (Auto) - Repo Health Check` | `.azurepipelines/maint-auto-repohealthcheck.yml` |
-    | `[<repo>] Maint (Auto) - Renovate` | `.azurepipelines/maint-auto-renovate.yml` |
+    | `[<repo>] Maint (Auto) - Monthly Maintenance` | `.azurepipelines/maint-auto-monthlymaintenance.yml` |
     | `[<repo>] Docs (Auto) - Zensical Build & Publish` | `.azurepipelines/docs-auto-zensical.yml` |
     | `[<repo>] Test (Auto) - PR Validation` | `.azurepipelines/test-auto-prvalidation.yml` |
     | `[<repo>] Release (Auto) - Prepare & Publish Release` | `.azurepipelines/release-auto-release.yml` |
-    | `[<repo>] Release (Manual) - Create Prerelease` | `.azurepipelines/release-manual-createprerelease.yml` |
+
+    `.azurepipelines/templates/` holds steps the pipelines share, not pipelines; don't
+    register its files.
 
     Or, with the Azure CLI and its `azure-devops` extension installed and logged in, run this for
     each row:

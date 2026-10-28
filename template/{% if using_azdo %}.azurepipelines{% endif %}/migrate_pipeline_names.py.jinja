@@ -1,12 +1,15 @@
-"""Repoint this repo's Azure DevOps pipeline registrations after a rename.
+"""Bring this repo's Azure DevOps pipeline registrations in line with .azurepipelines/.
 
-`copier update` renames files under `.azurepipelines/` like any other template change,
-but it can't reach the pipeline registrations in Azure DevOps: `_tasks` created them
-with `az pipelines create`, and `_tasks` runs only on `copier copy`. Run this once after
-an update that renamed pipelines has merged to main. It repoints each registration at
-its new name and YAML path in place, keeping its ID, run history, and variables (such as
-APPRISE_URL from `mise run provision-secrets`) that deleting and recreating it would
-lose.
+`copier update` renames, merges, and deletes files under `.azurepipelines/` like any
+other template change, but it can't reach the pipeline registrations in Azure DevOps:
+`_tasks` created them with `az pipelines create`, and `_tasks` runs only on `copier
+copy`. Run this once after such an update has merged to main.
+
+For each current pipeline, it repoints one old registration at the new name and YAML
+path in place, keeping its ID, run history, and variables (such as APPRISE_URL from
+`mise run provision-secrets`) that deleting and recreating it would lose. It deletes
+any other old registration merged into that pipeline, and the registration of a
+pipeline merged into another, since their YAML files no longer exist.
 
 It's safe to rerun: it does nothing on a project that's already migrated or never had
 the old names.
@@ -24,54 +27,48 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 REPO_NAME = "{{ repo_name }}"
 
-# (old display name, new display name, new yml-path relative to the repo root). Pulled
-# directly from copier.yml's `az pipelines create` _tasks entries as of the rename that
-# introduced this script; a future rename should add its own migration rather than
-# extend this table.
-MIGRATIONS = (
+# (current display name, yml-path relative to the repo root, old display names). The
+# first old name registered gets repointed; any other is deleted. Renovate comes first
+# among Monthly Maintenance's, since its registration has the most variables to keep
+# (APPRISE_URL and GITHUB_COM_TOKEN).
+PIPELINES = (
     (
-        "copier-update-check",
-        "Maint (Auto) - Copier Update Check",
-        ".azurepipelines/maint-auto-copierupdatecheck.yml",
+        "Maint (Auto) - Monthly Maintenance",
+        ".azurepipelines/maint-auto-monthlymaintenance.yml",
+        (
+            "Maint (Auto) - Renovate",
+            "renovate",
+            "Maint (Auto) - Copier Update Check",
+            "copier-update-check",
+            "Maint (Auto) - Repo Health Check",
+            "Maint (Auto) - Link Check",
+            "link-check",
+        ),
     ),
     (
-        "link-check",
-        "Maint (Auto) - Link Check",
-        ".azurepipelines/maint-auto-linkcheck.yml",
-    ),
-    ("renovate", "Maint (Auto) - Renovate", ".azurepipelines/maint-auto-renovate.yml"),
-    (
-        "docs",
         "Docs (Auto) - Zensical Build & Publish",
         ".azurepipelines/docs-auto-zensical.yml",
+        ("docs",),
     ),
     (
-        "pr_validation",
         "Test (Auto) - PR Validation",
         ".azurepipelines/test-auto-prvalidation.yml",
+        ("pr_validation",),
     ),
     (
-        "release",
         "Release (Auto) - Prepare & Publish Release",
         ".azurepipelines/release-auto-release.yml",
-    ),
-    (
-        "prerelease",
-        "Release (Manual) - Create Prerelease",
-        ".azurepipelines/release-manual-createprerelease.yml",
+        ("release",),
     ),
 )
 
-# Renamed "Maint (Auto) - Link Check" to "Maint (Auto) - Repo Health Check" when a
-# REPO_MAINTENANCE_PAT expiration check (GitHub-only) got folded into the equivalent
-# GitHub workflow; kept separate from MIGRATIONS above per that table's own note:
-# its "old" names are the pre-unified-naming-scheme originals, not a name a previous
-# migration already produced, so mixing this rename into it would be misleading.
-MIGRATIONS_REPO_HEALTH_CHECK = (
+# (current display name, old display names) for pipelines merged into one of PIPELINES
+# whose registrations have no variables worth keeping, so all of them are deleted: the
+# prerelease is now a manual run of the release pipeline with a label.
+RETIRED = (
     (
-        "Maint (Auto) - Link Check",
-        "Maint (Auto) - Repo Health Check",
-        ".azurepipelines/maint-auto-repohealthcheck.yml",
+        "Release (Auto) - Prepare & Publish Release",
+        ("Release (Manual) - Create Prerelease", "prerelease"),
     ),
 )
 
@@ -145,73 +142,64 @@ def check_azure_devops_extension() -> None:
 
 
 def migrate(org: str, project: str, *, dry_run: bool) -> None:
-    """Repoint each existing pipeline registration at its renamed name and yml-path.
+    """Repoint, then delete, registrations so each current pipeline has exactly one.
 
-    Whether a given entry even applies to this project is decided by whether its new
+    Whether a given entry even applies to this project is decided by whether its
     `.azurepipelines/*.yml` file exists on disk; the ground truth for "this project
     needs this pipeline," since that file only exists if the project's own answers
     caused copier to render it.
     """
+    scope = ("--org", org, "--project", project)
     pipelines = json.loads(
         az_value(
-            "pipelines",
-            "list",
-            "--repository",
-            REPO_NAME,
-            "--org",
-            org,
-            "--project",
-            project,
-            "--query",
-            "[].{id: id, name: name}",
-        )
+            "pipelines", "list", "--repository", REPO_NAME, *scope,
+            "--query", "[].{id: id, name: name}",
+        )  # fmt: skip
         or "[]"
     )
     by_name = {p["name"]: p["id"] for p in pipelines}
     recognized_names = set()
 
-    for old, new, yml_path in (*MIGRATIONS, *MIGRATIONS_REPO_HEALTH_CHECK):
-        old_full = f"[{REPO_NAME}] {old}"
-        new_full = f"[{REPO_NAME}] {new}"
-        recognized_names.update((old_full, new_full))
+    def full(name: str) -> str:
+        return f"[{REPO_NAME}] {name}"
+
+    def delete(name: str, replacement: str) -> None:
+        print(f"Deleting {name!r}: {replacement!r} replaces it")
+        if not dry_run:
+            run("az", "pipelines", "delete", "--id", str(by_name[name]), *scope, "--yes")
+
+    for current, yml_path, olds in PIPELINES:
+        current_full = full(current)
+        old_fulls = [full(old) for old in olds if full(old) in by_name]
+        recognized_names.update((current_full, *map(full, olds)))
 
         if not (REPO_ROOT / yml_path).exists():
             continue  # this pipeline category doesn't apply to this project
 
-        old_id = by_name.get(old_full)
-        new_id = by_name.get(new_full)
-
-        if old_id and new_id:
-            print(
-                f"WARNING: both {old_full!r} and {new_full!r} are registered; "
-                "skipping, fix manually."
-            )
-        elif old_id:
-            print(f"Migrating {old_full!r} -> {new_full!r} ({yml_path})")
+        if current_full in by_name:
+            print(f"Already up to date: {current_full!r}")
+        elif old_fulls:
+            keep = old_fulls.pop(0)
+            print(f"Migrating {keep!r} -> {current_full!r} ({yml_path})")
             if not dry_run:
                 run(
-                    "az",
-                    "pipelines",
-                    "update",
-                    "--id",
-                    str(old_id),
-                    "--new-name",
-                    new_full,
-                    "--yml-path",
-                    yml_path,
-                    "--org",
-                    org,
-                    "--project",
-                    project,
-                )
-        elif new_id:
-            print(f"Already up to date: {new_full!r}")
+                    "az", "pipelines", "update", "--id", str(by_name[keep]),
+                    "--new-name", current_full, "--yml-path", yml_path, *scope,
+                )  # fmt: skip
         else:
             print(
                 f"WARNING: {yml_path} exists locally but no pipeline is registered "
-                f"under {old_full!r} or {new_full!r}; create it manually, e.g. via "
-                "'az pipelines create'."
+                f"under {current_full!r} or an old name for it; create it manually, "
+                "e.g. via 'az pipelines create'."
             )
+        for name in old_fulls:
+            delete(name, current_full)
+
+    for current, olds in RETIRED:
+        for name in map(full, olds):
+            recognized_names.add(name)
+            if name in by_name:
+                delete(name, full(current))
 
     cruft = sorted(name for name in by_name if name not in recognized_names)
     if cruft:

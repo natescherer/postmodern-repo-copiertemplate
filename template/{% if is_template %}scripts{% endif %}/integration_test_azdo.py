@@ -9,8 +9,8 @@ then verify, leaving both repos for you to delete. It differs where the platform
 - Deleting an Azure DevOps repo doesn't remove its pipelines, so `--cleanup` deletes
   those too.
 - `az` can't easily read a run's step output the way `gh run view --json jobs` can, so
-  Maint (Auto) - Copier Update Check is checked only for a successful run. Whether it
-  detected an update stays in this platform's runbook.
+  Maint (Auto) - Monthly Maintenance's Copier Update Check job is checked only for a
+  successful run. Whether it detected an update stays in this platform's runbook.
 
 It always runs against HEAD, to verify a release candidate on main before a release.
 Each run creates two repos with different answers, to cover more combinations. Repo A is
@@ -66,6 +66,19 @@ PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 # Must match template/{% if is_template %}copier.yml{% endif %}.jinja's hardcoded
 # `az pipelines create --name "[<repo_name>] <name>"` _tasks entries.
 PIPELINE_DISPLAY_NAMES = (
+    "Maint (Auto) - Monthly Maintenance",
+    "Docs (Auto) - Zensical Build & Publish",
+    "Test (Auto) - PR Validation",
+    "Release (Auto) - Prepare & Publish Release",
+)
+MONTHLY_MAINTENANCE = "Maint (Auto) - Monthly Maintenance"
+RELEASE = "Release (Auto) - Prepare & Publish Release"
+
+# The pipelines of a release before Monthly Maintenance merged the three Maint pipelines
+# and Release took over Create Prerelease. Repo B starts at the last release, so it has
+# these until you update it and run `mise run migrate-azdo-pipeline-names`. Remove once
+# the last release has Monthly Maintenance.
+LEGACY_PIPELINE_DISPLAY_NAMES = (
     "Maint (Auto) - Copier Update Check",
     "Maint (Auto) - Repo Health Check",
     "Maint (Auto) - Renovate",
@@ -74,6 +87,27 @@ PIPELINE_DISPLAY_NAMES = (
     "Release (Auto) - Prepare & Publish Release",
     "Release (Manual) - Create Prerelease",
 )
+
+# Every pipeline, current or legacy, whose notifications need APPRISE_URL.
+APPRISE_PIPELINES = {
+    MONTHLY_MAINTENANCE,
+    "Docs (Auto) - Zensical Build & Publish",
+    "Maint (Auto) - Copier Update Check",
+    "Maint (Auto) - Renovate",
+}
+
+
+def pipeline_display_names(dest: str) -> tuple[str, ...]:
+    """Return the pipelines a clone's own .azurepipelines/ calls for, current or legacy.
+
+    Returns:
+        PIPELINE_DISPLAY_NAMES, or LEGACY_PIPELINE_DISPLAY_NAMES for a clone without
+        Monthly Maintenance.
+
+    """
+    current = Path(dest, ".azurepipelines", "maint-auto-monthlymaintenance.yml")
+    return PIPELINE_DISPLAY_NAMES if current.exists() else LEGACY_PIPELINE_DISPLAY_NAMES
+
 
 SCRATCH_FILE_CONTENT = "# Integration Test Scratch File\n\nSafe to ignore or delete.\n"
 
@@ -584,7 +618,12 @@ def report_bypass_permission(
 
 
 def verify(
-    repo_name: str, org_url: str, project: str, failures: list[str]
+    repo_name: str,
+    org_url: str,
+    project: str,
+    failures: list[str],
+    *,
+    names: tuple[str, ...] = PIPELINE_DISPLAY_NAMES,
 ) -> list[dict]:
     """Assert the created repo, its pipelines, and its PR-validation policy exist.
 
@@ -632,7 +671,7 @@ def verify(
         or "[]"
     )
     pipeline_names = {p["name"] for p in pipelines}
-    expected = {f"[{repo_name}] {name}" for name in PIPELINE_DISPLAY_NAMES}
+    expected = {f"[{repo_name}] {name}" for name in names}
     check(
         failures,
         "every expected pipeline is registered",
@@ -824,7 +863,12 @@ def wait_for_new_pipeline_run(
 
 
 def provision_test_secrets(
-    org_url: str, project: str, repo_name: str, github_token: str
+    org_url: str,
+    project: str,
+    repo_name: str,
+    github_token: str,
+    *,
+    names: tuple[str, ...] = PIPELINE_DISPLAY_NAMES,
 ) -> None:
     """Set APPRISE_URL and GITHUB_COM_TOKEN on every pipeline that uses them.
 
@@ -836,11 +880,7 @@ def provision_test_secrets(
     The token goes through az's AZURE_DEVOPS_EXT_PIPELINE_VAR_* environment variable,
     never the command line, so it's never echoed.
     """
-    for pipeline in (
-        "Maint (Auto) - Copier Update Check",
-        "Docs (Auto) - Zensical Build & Publish",
-        "Maint (Auto) - Renovate",
-    ):
+    for pipeline in (name for name in names if name in APPRISE_PIPELINES):
         run(
             "az",
             "pipelines",
@@ -861,7 +901,7 @@ def provision_test_secrets(
             "--project",
             project,
         )
-    for pipeline in PIPELINE_DISPLAY_NAMES:
+    for pipeline in names:
         run(
             "az", "pipelines", "variable", "create",
             "--name", "GITHUB_COM_TOKEN",
@@ -874,31 +914,64 @@ def provision_test_secrets(
         )  # fmt: skip
 
 
+def run_monthly_maintenance_job(
+    org_url: str,
+    project: str,
+    repo_name: str,
+    job: str,
+    *,
+    names: tuple[str, ...] = PIPELINE_DISPLAY_NAMES,
+    legacy: str = "",
+    branch: str | None = None,
+) -> str:
+    """Run one of Monthly Maintenance's jobs alone, or the legacy pipeline it replaced.
+
+    Returns:
+        The run's result.
+
+    """
+    if MONTHLY_MAINTENANCE in names:
+        pipeline, parameters = MONTHLY_MAINTENANCE, {"job": job}
+    else:
+        pipeline, parameters = legacy, None
+    run_id = dispatch_pipeline(
+        org_url,
+        project,
+        f"[{repo_name}] {pipeline}",
+        parameters=parameters,
+        branch=branch,
+    )
+    return wait_for_pipeline_run(org_url, project, run_id)
+
+
 def check_copier_update_check(
     org_url: str,
     project: str,
     repo_name: str,
     failures: list[str],
     *,
+    names: tuple[str, ...] = PIPELINE_DISPLAY_NAMES,
     branch: str | None = None,
 ) -> None:
-    """Dispatch Maint (Auto) - Copier Update Check and confirm it runs successfully.
+    """Run Monthly Maintenance's Copier Update Check job and confirm it succeeds.
 
     Doesn't check whether it correctly detected an update either way; see this
     module's own docstring for why that stays manual on this platform.
     """
     on = f" on {branch}" if branch else ""
-    step(f"Checking Maint (Auto) - Copier Update Check{on}")
-    run_id = dispatch_pipeline(
+    step(f"Checking Maint (Auto) - Monthly Maintenance's Copier Update Check{on}")
+    result = run_monthly_maintenance_job(
         org_url,
         project,
-        f"[{repo_name}] Maint (Auto) - Copier Update Check",
+        repo_name,
+        "copier_update_check",
+        names=names,
+        legacy="Maint (Auto) - Copier Update Check",
         branch=branch,
     )
-    result = wait_for_pipeline_run(org_url, project, run_id)
     check(
         failures,
-        f"Copier Update Check pipeline succeeds{on}",
+        f"Copier Update Check job succeeds{on}",
         result == "succeeded",
         result,
     )
@@ -939,15 +1012,12 @@ def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
 def check_repo_health_check(
     org_url: str, project: str, repo_name: str, failures: list[str]
 ) -> None:
-    """Dispatch Maint (Auto) - Repo Health Check and confirm it completes clean."""
-    step("Checking Maint (Auto) - Repo Health Check")
-    run_id = dispatch_pipeline(
-        org_url, project, f"[{repo_name}] Maint (Auto) - Repo Health Check"
+    """Run Monthly Maintenance's Repo Health Check job and confirm it passes."""
+    step("Checking Maint (Auto) - Monthly Maintenance's Repo Health Check")
+    result = run_monthly_maintenance_job(
+        org_url, project, repo_name, "repo_health_check"
     )
-    result = wait_for_pipeline_run(org_url, project, run_id)
-    check(
-        failures, "Repo Health Check pipeline succeeds", result == "succeeded", result
-    )
+    check(failures, "Repo Health Check job succeeds", result == "succeeded", result)
 
 
 def github_token() -> str:
@@ -983,18 +1053,16 @@ def github_token() -> str:
 def check_renovate(
     org_url: str, project: str, repo_name: str, failures: list[str]
 ) -> None:
-    """Dispatch Maint (Auto) - Renovate and confirm it opens a PR for an old dependency.
+    """Run Monthly Maintenance's Renovate job and confirm it bumps an old dependency.
 
     Repo A's setup PR already lifted its Renovate schedule and pinned an old typos, so
     Renovate has something to bump whenever this runs. GitHub's counterpart is a manual
     check: Renovate there runs as an external GitHub App on its own cadence, not a
     dispatchable workflow.
     """
-    step("Checking Maint (Auto) - Renovate")
-    pipeline = f"[{repo_name}] Maint (Auto) - Renovate"
-    run_id = dispatch_pipeline(org_url, project, pipeline)
-    result = wait_for_pipeline_run(org_url, project, run_id)
-    check(failures, "Renovate pipeline succeeds", result == "succeeded", result)
+    step("Checking Maint (Auto) - Monthly Maintenance's Renovate")
+    result = run_monthly_maintenance_job(org_url, project, repo_name, "renovate")
+    check(failures, "Renovate job succeeds", result == "succeeded", result)
     prs = json.loads(
         az_value(
             "repos",
@@ -1475,9 +1543,9 @@ def check_release_flow(
 def check_prerelease_flow(
     org_url: str, project: str, repo_name: str, dest: str, failures: list[str]
 ) -> None:
-    """Exercise Release (Manual) - Create Prerelease; a label, a dup, a new label."""
-    step("Checking Release (Manual) - Create Prerelease")
-    name = f"[{repo_name}] Release (Manual) - Create Prerelease"
+    """Exercise the release pipeline's prerelease runs; a label, a dup, a new label."""
+    step("Checking Release (Auto) - Prepare & Publish Release's prerelease runs")
+    name = f"[{repo_name}] {RELEASE}"
 
     # PrepareRelease refuses to run with nothing to bump; without a real commit
     # since the last release, every dispatch below would fail with knope's own
@@ -1601,6 +1669,17 @@ def check_post_update(
         "(migrate_pipeline_names.py ran)",
         expected <= pipeline_names,
         f"missing: {expected - pipeline_names}",
+    )
+    merged = {
+        f"[{repo_name}] {name}"
+        for name in LEGACY_PIPELINE_DISPLAY_NAMES
+        if name not in PIPELINE_DISPLAY_NAMES
+    }
+    check(
+        failures,
+        "the merged pipelines' old registrations are gone",
+        not merged & pipeline_names,
+        f"still registered: {merged & pipeline_names}",
     )
 
     run("git", "checkout", "main", cwd=dest)
@@ -1841,9 +1920,10 @@ def main() -> None:
         leaf=args.leaf,
     )
     failures_b: list[str] = []
-    verify(repo_b_name, org_url, args.project, failures_b)
+    names_b = pipeline_display_names(dest_b)
+    verify(repo_b_name, org_url, args.project, failures_b, names=names_b)
     step("Setting test secrets")
-    provision_test_secrets(org_url, args.project, repo_b_name, token)
+    provision_test_secrets(org_url, args.project, repo_b_name, token, names=names_b)
     if setup_b := prepare_repo_b(args.source):
         step("Merging Repo B's setup PR")
         open_pr_wait_and_merge(
@@ -1857,11 +1937,13 @@ def main() -> None:
         )
     # Repo B is at the newest release, so main has no update; a branch recording
     # the commit before that release does. The runbook reads each run's result.
-    check_copier_update_check(org_url, args.project, repo_b_name, failures_b)
+    check_copier_update_check(
+        org_url, args.project, repo_b_name, failures_b, names=names_b
+    )
     step("Pushing a branch that records an older template version")
     older = push_older_recorded_version(dest_b, args.source, old_ref)
     check_copier_update_check(
-        org_url, args.project, repo_b_name, failures_b, branch=older
+        org_url, args.project, repo_b_name, failures_b, names=names_b, branch=older
     )
     # The runbook as of main, which this run tests; latest is the last release's.
     runbook = docs_page_url(

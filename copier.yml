@@ -948,14 +948,14 @@ _tasks:
   - command: git push -u origin --all
     when: *when_copy_create_repo
 
-  # Creates Azure Pipeline for maint-auto-copierupdatecheck
+  # Creates Azure Pipeline for maint-auto-monthlymaintenance
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Maint (Auto) - Copier Update Check"
+      --name "[{{ repo_name }}] Maint (Auto) - Monthly Maintenance"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/maint-auto-copierupdatecheck.yml
+      --yml-path .azurepipelines/maint-auto-monthlymaintenance.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -963,32 +963,6 @@ _tasks:
       {%- if _copier_operation == 'copy' and should_set_repo_settings and using_azdo -%}
         true
       {%- endif %}
-
-  # Creates Azure Pipeline for maint-auto-repohealthcheck
-  - command: >-
-      az pipelines create
-      --name "[{{ repo_name }}] Maint (Auto) - Repo Health Check"
-      --repository {{ repo_name }}
-      --repository-type tfsgit
-      --branch main
-      --yml-path .azurepipelines/maint-auto-repohealthcheck.yml
-      --skip-first-run true
-      --org https://dev.azure.com/{{ azdo_org }}/
-      --project "{{ azdo_project }}"
-    when: *when_copy_set_repo_settings_azdo
-
-  # Creates Azure Pipeline for maint-auto-renovate
-  - command: >-
-      az pipelines create
-      --name "[{{ repo_name }}] Maint (Auto) - Renovate"
-      --repository {{ repo_name }}
-      --repository-type tfsgit
-      --branch main
-      --yml-path .azurepipelines/maint-auto-renovate.yml
-      --skip-first-run true
-      --org https://dev.azure.com/{{ azdo_org }}/
-      --project "{{ azdo_project }}"
-    when: *when_copy_set_repo_settings_azdo
 
   # Creates Azure Pipeline for docs-auto-zensical
   - command: >-
@@ -1119,19 +1093,6 @@ _tasks:
   - command: >-
       az pipelines run
       --name "[{{ repo_name }}] Release (Auto) - Prepare & Publish Release"
-      --org https://dev.azure.com/{{ azdo_org }}/
-      --project "{{ azdo_project }}"
-    when: *when_copy_set_repo_settings_azdo
-
-  # Creates Azure Pipeline for release-manual-createprerelease
-  - command: >-
-      az pipelines create
-      --name "[{{ repo_name }}] Release (Manual) - Create Prerelease"
-      --repository {{ repo_name }}
-      --repository-type tfsgit
-      --branch main
-      --yml-path .azurepipelines/release-manual-createprerelease.yml
-      --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo

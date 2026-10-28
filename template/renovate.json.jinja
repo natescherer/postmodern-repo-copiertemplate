@@ -8,7 +8,7 @@
     {%- endif %}
   ],
   "schedule": [
-    "* 0 1 * *"
+    "* 18 1 * *"
   ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
@@ -27,7 +27,7 @@
   },
   {%- endif %}
   "copier": {
-    "description": "Copier template updates are handled by the Copier Update Check workflow or pipeline",
+    "description": "Copier template updates are handled by the Copier Update Check workflow or Monthly Maintenance pipeline job",
     "enabled": false
   },
   {%- if is_template %}

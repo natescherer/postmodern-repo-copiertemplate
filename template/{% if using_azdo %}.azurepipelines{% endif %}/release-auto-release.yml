@@ -8,6 +8,18 @@ trigger:
     include:
       - main
 
+# A run from "Run pipeline" with a label cuts a prerelease instead (see Releasing).
+parameters:
+  - name: label
+    displayName: Prerelease label (none runs the usual release flow)
+    type: string
+    default: none
+    values:
+      - none
+      - alpha
+      - beta
+      - rc
+
 variables:
   CI: true
   MISE_ENV: ci
@@ -16,126 +28,161 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-  - stage: release
-    displayName: Release
-    jobs:
-      - job: release
-        timeoutInMinutes: 15
+  - ${{ if eq(parameters.label, 'none') }}:
+      - stage: release
         displayName: Release
-        steps:
-          - checkout: self
-            fetchDepth: 0
-            persistCredentials: true
-          - pwsh: |
-              git config user.email "azuredevops@microsoft.com"
-              git config user.name "Azure DevOps"
-            displayName: Set Git Config
-          - bash: |
-              # renovate: datasource=github-releases depName=jdx/mise
-              curl https://mise.run | MISE_VERSION=v2026.10.10 MISE_INSTALL_SKIP_IF_EXISTS=1 sh
-              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
-              echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
-            displayName: Install Mise
-          - task: Cache@2
-            inputs:
-              key: 'mise | "$(Agent.OS)" | mise.toml | mise.ci.toml'
-              restoreKeys: |
-                mise | "$(Agent.OS)"
-              path: $(HOME)/.local/share/mise
-            displayName: Cache Mise Tools
-          - bash: |
-              # The optional GITHUB_COM_TOKEN pipeline variable keeps mise's downloads
-              # from hitting github.com's unauthenticated rate limit, which hosted agents
-              # share by IP; when it isn't defined, Azure Pipelines passes the literal
-              # macro text, so that's treated as unset.
-              case "$GITHUB_TOKEN" in ''|'$('*) unset GITHUB_TOKEN ;; esac
-              mise install
-            displayName: Run 'mise install'
-            env:
-              GITHUB_TOKEN: $(GITHUB_COM_TOKEN)
-          - bash: az extension add --name azure-devops
-            # Unpinned: there's no version source Renovate can track. Its GitHub
-            # releases are date-tagged, the PyPI package of the same name is an unrelated
-            # SDK, and the real version list (src/index.json in Azure/azure-cli-extensions)
-            # would need a custom JSONata datasource. Pin it if Renovate gains support for
-            # Azure CLI extensions.
-            displayName: Install azure-devops CLI Extension
-          - bash: az devops configure --defaults organization=$(System.CollectionUri) project="$(System.TeamProject)"
-            displayName: Configure az CLI Defaults
-            env:
-              AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-          - bash: |
-              # The commit message can't tell this run apart: a regular (non-squash)
-              # merge's message is "Merge pull request NNN from knope/release into main",
-              # not the PR title. Instead, ask the API whether the merge commit of the last
-              # completed PR from knope/release into main is the commit that started this
-              # run. That's true exactly once, right after the PR completes, whatever the
-              # merge strategy.
-              MERGE_COMMIT=$(az repos pr list --source-branch knope/release --target-branch main --status completed --top 1 --query "[0].lastMergeCommit.commitId" -o tsv)
-              if [[ "$MERGE_COMMIT" == "$(Build.SourceVersion)" ]]; then
-                echo "##vso[task.setvariable variable=IS_RELEASE_MERGE]true"
-              else
-                echo "##vso[task.setvariable variable=IS_RELEASE_MERGE]false"
-              fi
-            displayName: Detect Release Merge
-            env:
-              AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-          - bash: mise x -- knope release-on-knope-pr-merge --verbose
-            displayName: Publish Release
-            condition: eq(variables['IS_RELEASE_MERGE'], 'true')
-            env:
-              AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-          - bash: |
-              # .config/knope-release-override.json can pin the next release's version (such
-              # as 1.0.0), and is ignored once the released version reaches it. Nothing to
-              # release is a normal outcome, so that one knope error is tolerated.
-              args=()
-              override=""
-              if [ -f .config/knope-release-override.json ]; then
-                override=$(mise x -- jq -r '.version // empty' .config/knope-release-override.json) || {
-                  echo "##vso[task.logissue type=error]Couldn't read .config/knope-release-override.json."
-                  exit 1
-                }
-              fi
-              if [ -n "$override" ]; then
-                if ! printf '%s' "$override" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-                  echo "##vso[task.logissue type=error].config/knope-release-override.json has version '$override', which isn't X.Y.Z."
-                  exit 1
-                fi
-                current=$(mise x -- jq -r .version .config/knope-current-version.json)
-                if [ "$override" != "$current" ] && [ "$(printf '%s\n%s\n' "$current" "$override" | sort -V | tail -n 1)" = "$override" ]; then
-                  echo "Pinning this release to $override (from .config/knope-release-override.json)."
-                  args=(--override-version "$override")
-                fi
-              fi
-              log=$(mktemp)
-              set +e
-              mise x -- knope autoupdate-knope-pr "${args[@]}" --verbose 2>&1 | tee "$log"
-              status=${PIPESTATUS[0]}
-              set -e
-              if [ "$status" -ne 0 ]; then
-                if grep -q 'releases::no_release' "$log"; then
-                  echo "Nothing to release yet."
-                  exit 0
-                fi
-                exit "$status"
-              fi
-              # Knope only pushes knope/release. This step opens the PR, or updates it once
-              # it exists, instead of a knope Command step, so the changelog goes in as one
-              # argument that no shell parses. Azure DevOps caps PR descriptions at 4000
-              # characters.
-              version=$(mise x -- jq -r .version .config/knope-current-version.json)
-              notes=$(awk '/^## /{n++; next} n==1' CHANGELOG.md | sed '/./,$!d')
-              title="chore: prepare release $version"
-              description=$(printf 'This PR was created by Knope. Merging it will create a new release (v%s).\n\n%s\n\n- [ ] Integration tests have been run and passed (or N/A)' "$version" "$notes")
-              description=${description:0:4000}
-              pr_id=$(az repos pr list --source-branch knope/release --target-branch main --status active --query "[0].pullRequestId" -o tsv)
-              if [ -n "$pr_id" ]; then
-                az repos pr update --id "$pr_id" --title "$title" --description "$description" --output none
-              else
-                az repos pr create --source-branch knope/release --target-branch main --title "$title" --description "$description" --squash true --auto-complete false --output none
-              fi
-            displayName: Prepare Release PR
-            condition: eq(variables['IS_RELEASE_MERGE'], 'false')
-            env:
-              AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+        jobs:
+          - job: release
+            timeoutInMinutes: 15
+            displayName: Release
+            steps:
+              - checkout: self
+                fetchDepth: 0
+                persistCredentials: true
+              - pwsh: |
+                  git config user.email "azuredevops@microsoft.com"
+                  git config user.name "Azure DevOps"
+                displayName: Set Git Config
+              - template: templates/setup-mise.yml
+              - bash: az extension add --name azure-devops
+                # Unpinned: there's no version source Renovate can track. Its GitHub
+                # releases are date-tagged, the PyPI package of the same name is an unrelated
+                # SDK, and the real version list (src/index.json in Azure/azure-cli-extensions)
+                # would need a custom JSONata datasource. Pin it if Renovate gains support for
+                # Azure CLI extensions.
+                displayName: Install azure-devops CLI Extension
+              - bash: az devops configure --defaults organization=$(System.CollectionUri) project="$(System.TeamProject)"
+                displayName: Configure az CLI Defaults
+                env:
+                  AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+              - bash: |
+                  # The commit message can't tell this run apart: a regular (non-squash)
+                  # merge's message is "Merge pull request NNN from knope/release into main",
+                  # not the PR title. Instead, ask the API whether the merge commit of the last
+                  # completed PR from knope/release into main is the commit that started this
+                  # run. That's true exactly once, right after the PR completes, whatever the
+                  # merge strategy.
+                  MERGE_COMMIT=$(az repos pr list --source-branch knope/release --target-branch main --status completed --top 1 --query "[0].lastMergeCommit.commitId" -o tsv)
+                  if [[ "$MERGE_COMMIT" == "$(Build.SourceVersion)" ]]; then
+                    echo "##vso[task.setvariable variable=IS_RELEASE_MERGE]true"
+                  else
+                    echo "##vso[task.setvariable variable=IS_RELEASE_MERGE]false"
+                  fi
+                displayName: Detect Release Merge
+                env:
+                  AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+              - bash: mise x -- knope release-on-knope-pr-merge --verbose
+                displayName: Publish Release
+                condition: eq(variables['IS_RELEASE_MERGE'], 'true')
+                env:
+                  AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+              - bash: |
+                  # .config/knope-release-override.json can pin the next release's version (such
+                  # as 1.0.0), and is ignored once the released version reaches it. Nothing to
+                  # release is a normal outcome, so that one knope error is tolerated.
+                  args=()
+                  override=""
+                  if [ -f .config/knope-release-override.json ]; then
+                    override=$(mise x -- jq -r '.version // empty' .config/knope-release-override.json) || {
+                      echo "##vso[task.logissue type=error]Couldn't read .config/knope-release-override.json."
+                      exit 1
+                    }
+                  fi
+                  if [ -n "$override" ]; then
+                    if ! printf '%s' "$override" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+                      echo "##vso[task.logissue type=error].config/knope-release-override.json has version '$override', which isn't X.Y.Z."
+                      exit 1
+                    fi
+                    current=$(mise x -- jq -r .version .config/knope-current-version.json)
+                    if [ "$override" != "$current" ] && [ "$(printf '%s\n%s\n' "$current" "$override" | sort -V | tail -n 1)" = "$override" ]; then
+                      echo "Pinning this release to $override (from .config/knope-release-override.json)."
+                      args=(--override-version "$override")
+                    fi
+                  fi
+                  log=$(mktemp)
+                  set +e
+                  mise x -- knope autoupdate-knope-pr "${args[@]}" --verbose 2>&1 | tee "$log"
+                  status=${PIPESTATUS[0]}
+                  set -e
+                  if [ "$status" -ne 0 ]; then
+                    if grep -q 'releases::no_release' "$log"; then
+                      echo "Nothing to release yet."
+                      exit 0
+                    fi
+                    exit "$status"
+                  fi
+                  # Knope only pushes knope/release. This step opens the PR, or updates it once
+                  # it exists, instead of a knope Command step, so the changelog goes in as one
+                  # argument that no shell parses. Azure DevOps caps PR descriptions at 4000
+                  # characters.
+                  version=$(mise x -- jq -r .version .config/knope-current-version.json)
+                  notes=$(awk '/^## /{n++; next} n==1' CHANGELOG.md | sed '/./,$!d')
+                  title="chore: prepare release $version"
+                  description=$(printf 'This PR was created by Knope. Merging it will create a new release (v%s).\n\n%s\n\n- [ ] Integration tests have been run and passed (or N/A)' "$version" "$notes")
+                  description=${description:0:4000}
+                  pr_id=$(az repos pr list --source-branch knope/release --target-branch main --status active --query "[0].pullRequestId" -o tsv)
+                  if [ -n "$pr_id" ]; then
+                    az repos pr update --id "$pr_id" --title "$title" --description "$description" --output none
+                  else
+                    az repos pr create --source-branch knope/release --target-branch main --title "$title" --description "$description" --squash true --auto-complete false --output none
+                  fi
+                displayName: Prepare Release PR
+                condition: eq(variables['IS_RELEASE_MERGE'], 'false')
+                env:
+                  AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+  - ${{ if ne(parameters.label, 'none') }}:
+      - stage: prerelease
+        displayName: Prerelease
+        jobs:
+          - job: prerelease
+            timeoutInMinutes: 15
+            displayName: Prerelease
+            steps:
+              - checkout: self
+                fetchDepth: 0
+                persistCredentials: true
+              - pwsh: |
+                  git config user.email "azuredevops@microsoft.com"
+                  git config user.name "Azure DevOps"
+                displayName: Set Git Config
+              - template: templates/setup-mise.yml
+              - pwsh: |
+                  $Label = "${{ parameters.label }}"
+                  $Tags = git tag --points-at HEAD
+                  $Duplicate = $Tags | Where-Object { $_ -match "-$([regex]::Escape($Label))\.\d+$" }
+                  if ($Duplicate) {
+                    Write-Host "##vso[task.logissue type=error]This commit is already tagged as $Duplicate; push a new commit before cutting another $Label prerelease."
+                    throw "Duplicate prerelease"
+                  }
+                displayName: Block Duplicate Prerelease
+              - bash: |
+                  # A version pinned in .config/knope-release-override.json (and not yet released) makes
+                  # prereleases count up toward it (e.g. 1.0.0-rc.0, 1.0.0-rc.1) instead of the
+                  # version knope would compute.
+                  override=""
+                  if [ -f .config/knope-release-override.json ]; then
+                    override=$(mise x -- jq -r '.version // empty' .config/knope-release-override.json) || {
+                      echo "##vso[task.logissue type=error]Couldn't read .config/knope-release-override.json."
+                      exit 1
+                    }
+                  fi
+                  current=$(mise x -- jq -r .version .config/knope-current-version.json)
+                  if printf '%s' "$override" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
+                    && [ "$override" != "$current" ] \
+                    && [ "$(printf '%s\n%s\n' "$current" "$override" | sort -V | tail -n 1)" = "$override" ]; then
+                    n=$(git tag -l "v$override-$LABEL.*" | wc -l)
+                    mise x -- knope create-prerelease-via-knope --override-version "$override-$LABEL.$n" --verbose
+                  else
+                    mise x -- knope create-prerelease-via-knope --prerelease-label "$LABEL" --verbose
+                  fi
+                displayName: Create Prerelease
+                env:
+                  LABEL: ${{ parameters.label }}
+              - pwsh: |
+                  $Content = Get-Content .config/knope-current-version.json -Raw | ConvertFrom-Json
+                  Write-Host "##vso[task.setvariable variable=VERSION]$($Content.version)"
+                displayName: Capture Version
+              - pwsh: |
+                  $TagUrl = "$(System.CollectionUri)$(System.TeamProject)/_git/$(Build.Repository.Name)?version=GTv$(VERSION)"
+                  Write-Host "##vso[task.logissue type=warning]Prerelease published: v$(VERSION) ($TagUrl)"
+                displayName: Emit Release Notice

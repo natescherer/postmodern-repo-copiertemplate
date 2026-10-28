@@ -1,0 +1,154 @@
+name: $(BuildId)
+
+trigger:
+  branches:
+    exclude:
+      - "*"
+
+schedules:
+  # Runs inside renovate.json's "schedule": ["* 18 1 * *"] window (hour 18 UTC on the
+  # 1st). Azure Pipelines cron is standard cron with minute granularity, so it fires
+  # once in that window instead of polling.
+  - cron: 0 18 1 * *
+    displayName: Run Monthly Maintenance on the 1st of Each Month at 6pm UTC
+    branches:
+      include:
+        - main
+    # Azure Pipelines skips a scheduled run when main hasn't changed since the last
+    # one by default; these checks matter most in a quiet repo.
+    always: true
+
+# A manual run from "Run pipeline" can run one job alone.
+parameters:
+  - name: job
+    displayName: Job to run
+    type: string
+    default: all
+    values:
+      - all
+      - copier_update_check
+      - renovate
+      - repo_health_check
+
+variables:
+  CI: true
+  MISE_ENV: ci
+
+pool:
+  vmImage: ubuntu-latest
+
+# Independent jobs, so one failing doesn't skip the others.
+jobs:
+  - {% raw %}${{ if in(parameters.job, 'all', 'copier_update_check') }}{% endraw %}:
+      - job: copier_update_check
+        timeoutInMinutes: 15
+        displayName: Copier Update Check
+        steps:
+          - pwsh: |
+              $Secrets = @("APPRISE_URL")
+              $MissingSecret = $False
+              foreach ($Secret in $Secrets) {
+                if (!([Environment]::GetEnvironmentVariable($Secret)) -or ([Environment]::GetEnvironmentVariable($Secret) -eq "`$($Secret)")) {
+                  Write-Host -Object "[error]Required Pipeline variable '$Secret' is not set! Please add it in Pipelines settings."
+                  $MissingSecret = $True
+                }
+              }
+              if ($MissingSecret) {
+                throw "Erroring as one or more required secrets are missing!"
+              }
+            env:
+              APPRISE_URL: $(APPRISE_URL)
+            displayName: Validate Secrets Exist
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
+          - template: templates/setup-mise.yml
+          - pwsh: |
+              [string]$CheckUpdateOutput = mise x -- copier check-update --output-format json --answers-file .config/copier-answers.yml
+              $UpdateData = ConvertFrom-Json -InputObject $CheckUpdateOutput
+              if ($UpdateData.update_available) {
+                Write-Host -Object "Update available! Current version is $($UpdateData.current_version), latest version is $($UpdateData.latest_version)."
+                apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Template Update Available" -b "Repository $env:BUILD_REPOSITORY_NAME has a new template update available.<br><br>Current version is $($UpdateData.current_version), latest version is $($UpdateData.latest_version)." $env:APPRISE_URL
+              } else {
+                Write-Host -Object "No update available."
+              }
+            env:
+              APPRISE_URL: $(APPRISE_URL)
+            displayName: Check for Template Updates
+
+  - {% raw %}${{ if in(parameters.job, 'all', 'renovate') }}{% endraw %}:
+      - job: renovate
+        # A cold npm:renovate install plus a full run can exceed the usual 15 minutes.
+        timeoutInMinutes: 30
+        displayName: Renovate
+        steps:
+          - pwsh: |
+              $Secrets = @("APPRISE_URL", "GITHUB_COM_TOKEN")
+              $MissingSecret = $False
+              foreach ($Secret in $Secrets) {
+                if (!([Environment]::GetEnvironmentVariable($Secret)) -or ([Environment]::GetEnvironmentVariable($Secret) -eq "`$($Secret)")) {
+                  Write-Host -Object "[error]Required Pipeline variable '$Secret' is not set! Please add it in Pipelines settings."
+                  $MissingSecret = $True
+                }
+              }
+              if ($MissingSecret) {
+                throw "Erroring as one or more required secrets are missing!"
+              }
+            env:
+              APPRISE_URL: $(APPRISE_URL)
+              GITHUB_COM_TOKEN: $(GITHUB_COM_TOKEN)
+            displayName: Validate Secrets Exist
+          - checkout: self
+            fetchDepth: 0
+          - template: templates/setup-mise.yml
+          - bash: |
+              # Renovate skips every dependency hosted on github.com without
+              # GITHUB_COM_TOKEN, so Validate Secrets Exist requires it.
+              mise x -- renovate "{{ azdo_project }}/{{ repo_name }}"
+            env:
+              GITHUB_COM_TOKEN: $(GITHUB_COM_TOKEN)
+              RENOVATE_PLATFORM: azure
+              RENOVATE_ENDPOINT: $(System.CollectionUri)
+              RENOVATE_TOKEN: $(System.AccessToken)
+              RENOVATE_CONFIG_FILE: $(Build.SourcesDirectory)/renovate.json
+              RENOVATE_AUTODISCOVER: "false"
+              RENOVATE_REPORT_TYPE: file
+              RENOVATE_REPORT_PATH: $(Build.SourcesDirectory)/renovate-report.json
+            displayName: Run Renovate
+          - pwsh: |
+              $Report = Get-Content -Raw -Path $env:REPORT_PATH | ConvertFrom-Json
+              $CreatedPrs = @()
+              foreach ($RepoName in $Report.repositories.PSObject.Properties.Name) {
+                foreach ($Branch in $Report.repositories.$RepoName.branches) {
+                  if ($Branch.result -eq "pr-created") {
+                    $CreatedPrs += $Branch
+                  }
+                }
+              }
+              if ($CreatedPrs.Count -gt 0) {
+                $Titles = ($CreatedPrs | ForEach-Object { $_.prTitle }) -join "<br>"
+                apprise -i html -t "[$env:BUILD_REPOSITORY_NAME] Renovate Opened $($CreatedPrs.Count) PR(s)" -b "Renovate opened the following PR(s):<br><br>$Titles" $env:APPRISE_URL
+              } else {
+                Write-Host -Object "No new PRs opened by Renovate this run."
+              }
+            env:
+              REPORT_PATH: $(Build.SourcesDirectory)/renovate-report.json
+              APPRISE_URL: $(APPRISE_URL)
+            displayName: Notify if Renovate Opened PRs
+
+  - {% raw %}${{ if in(parameters.job, 'all', 'repo_health_check') }}{% endraw %}:
+      - job: repo_health_check
+        timeoutInMinutes: 15
+        displayName: Repo Health Check
+        steps:
+          - checkout: self
+          - template: templates/setup-mise.yml
+          - bash: |
+              # The optional GITHUB_COM_TOKEN pipeline variable keeps github.com links from
+              # hitting its unauthenticated rate limit; unset when it isn't defined, as in
+              # templates/setup-mise.yml.
+              case "$GITHUB_TOKEN" in ''|'$('*) unset GITHUB_TOKEN ;; esac
+              mise x -- lychee --no-progress -c .config/lychee.toml .
+            displayName: Check for Broken Links
+            env:
+              GITHUB_TOKEN: $(GITHUB_COM_TOKEN)

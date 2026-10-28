@@ -1,8 +1,9 @@
 # Updating from the Parent Template
 
 This project was generated from the [{{ parent_template_name }}]({{ parent_template_url }})
-[Copier](https://copier.readthedocs.io/) template. Every Monday, the Copier Update Check
-{% if is_template %}workflow/pipeline{% elif using_github %}workflow{% else %}pipeline{% endif %} checks for a new template release and sends a notification to
+[Copier](https://copier.readthedocs.io/) template. {% if is_template %}Every Monday on GitHub, the Copier Update Check workflow, and on the 1st of each
+month on Azure DevOps, the Monthly Maintenance pipeline's Copier Update Check job,{% elif using_github %}Every Monday, the Copier Update Check workflow{% else %}On the 1st of each month, the Monthly
+Maintenance pipeline's Copier Update Check job{% endif %} checks for a new template release and sends a notification to
 `APPRISE_URL` when one is available; see [Secrets and Tokens](../reference/token-permissions.md#apprise_url).
 
 To pull in its latest changes:
@@ -20,12 +21,13 @@ To pull in its latest changes:
 1. Commit and open a pull request as usual. The remaining changesets go into your
    [next release](releasing.md) with your own commits.
 {%- if is_template or using_azdo %}
-1. {% if is_template %}On Azure DevOps, if{% else %}If{% endif %} the update renamed files under `.azurepipelines/`, run
-   `mise run migrate-azdo-pipeline-names` once the pull request has merged to `main`. It
-   repoints the existing pipeline registrations at the new names, keeping their run history
-   and variables. Wait for the merge: Azure DevOps reads pipeline YAML from `main`, so
-   repointing earlier breaks every run until the renamed files get there. It's safe to run
-   when nothing needs migrating.
+1. {% if is_template %}On Azure DevOps, if{% else %}If{% endif %} the update renamed, merged, or removed files under
+   `.azurepipelines/`, run `mise run migrate-azdo-pipeline-names` once the pull request has
+   merged to `main`. It repoints an existing registration at each new name, keeping its run
+   history and variables, and deletes the registrations of pipelines merged into another.
+   Wait for the merge: Azure DevOps reads pipeline YAML from `main`, so repointing earlier
+   breaks every run until the new files get there. It's safe to run when nothing needs
+   migrating.
 {%- endif %}
 
 ## Troubleshooting

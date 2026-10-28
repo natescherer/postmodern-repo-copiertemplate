@@ -54,18 +54,17 @@ Project Administrators can bypass the policy.*
 - [ ] README.md shows `docs/assets/images/readme-logo.png` and
   `docs/assets/images/readme-screenshot.png`.
 
-### Maint (Auto) - Copier Update Check
+### Maint (Auto) - Monthly Maintenance
 
-*Automated: it runs and completes. What it reports isn't, since `az` can't easily read a run's
-step output; see the script's module docstring.*
+*Automated: the run starts each of the pipeline's three jobs alone, through its **Job to run**
+parameter, and each succeeds. The Copier Update Check job completes; what it reports isn't
+checked, since `az` can't easily read a run's step output (see the script's module docstring).
+The Repo Health Check job completes clean. The Renovate job, with Repo A's Renovate schedule
+lifted, typos pinned to an old release, and your GitHub token set as `GITHUB_COM_TOKEN`, opens
+a PR bumping typos.*
 
-- [ ] Its run's **Check for Template Updates** step reports no update available, since this
-  repo is at `HEAD`.
-
-### Maint (Auto) - Repo Health Check
-
-*Automated: it runs and completes clean.*
-
+- [ ] The Copier Update Check job's **Check for Template Updates** step reports no update
+  available, since this repo is at `HEAD`.
 - [ ] Push a branch with a broken link:
 
     ```sh
@@ -78,16 +77,9 @@ step output; see the script's module docstring.*
     git push -u origin integration-test/broken-link
     ```
 
-- [ ] In `<project>`'s **Pipelines**, run `[<repo-a>] Maint (Auto) - Repo Health Check` on that
-  branch (**Run pipeline**, then **Branch/tag**: `integration-test/broken-link`). The run fails, and its log names
-  `https://httpbin.org/status/404`.
-
-### Maint (Auto) - Renovate
-
-*Automated: with Repo A's Renovate schedule lifted, typos pinned to an old release, and your
-GitHub token set as `GITHUB_COM_TOKEN`, it runs and opens a PR bumping typos.*
-
-Nothing left to check for Repo A.
+- [ ] In `<project>`'s **Pipelines**, run `[<repo-a>] Maint (Auto) - Monthly Maintenance` on
+  that branch (**Run pipeline**, then **Branch/tag**: `integration-test/broken-link` and **Job to
+  run**: `repo_health_check`). The run fails, and its log names `https://httpbin.org/status/404`.
 
 ### Docs (Auto) - Zensical Build & Publish
 
@@ -137,10 +129,10 @@ bumped version in its title, and merging that PR creates a tag.*
   that release, and the pipeline tells that merge apart from the release PR's own through an API
   check, not a native trigger, so it mustn't have published again.
 
-### Release (Manual) - Create Prerelease
+### Release (Auto) - Prepare & Publish Release: Prereleases
 
-*Automated: each label produces a matching tag, the same label at the same commit is blocked,
-and a different label at the same commit is allowed.*
+*Automated: a manual run with each prerelease label produces a matching tag, the same label at
+the same commit is blocked, and a different label at the same commit is allowed.*
 
 Nothing left to check for Repo A.
 
@@ -151,9 +143,9 @@ update it.
 
 ### Before Updating
 
-*Automated, before you update anything: Maint (Auto) - Copier Update Check runs and completes,
-on `main` and on the `integration-test/older-recorded-version` branch, whose answers record the
-commit just before the newest release.*
+*Automated, before you update anything: Maint (Auto) - Monthly Maintenance's Copier Update
+Check job runs and completes, on `main` and on the `integration-test/older-recorded-version`
+branch, whose answers record the commit just before the newest release.*
 
 - [ ] The `main` run's **Check for Template Updates** step reports no update available, since
   Repo B is at the newest release.
@@ -182,7 +174,8 @@ commit just before the newest release.*
 
 ### After Updating
 
-- [ ] Once the update's PR completes, repoint any pipeline registrations it renamed:
+- [ ] Once the update's PR completes, repoint or delete any pipeline registrations it renamed
+  or merged:
 
     ```sh
     cd <repo-b-path>
@@ -199,8 +192,9 @@ commit just before the newest release.*
     ```
 
     It checks that the update brought in current content, left no conflict markers, registered
-    each pipeline only under its current name, and that `Test (Auto) - PR Validation` triggers
-    and passes on a new PR. Every check prints `[PASS]`.
+    each pipeline only under its current name, removed the merged pipelines' old registrations,
+    and that `Test (Auto) - PR Validation` triggers and passes on a new PR. Every check prints
+    `[PASS]`.
 
 ## Cleaning Up
 
