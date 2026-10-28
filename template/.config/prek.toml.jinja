@@ -38,6 +38,17 @@ args = [
   "--commit-file",
 ]
 stages = ["commit-msg"]
+{%- if using_github %}
+
+[[repos.hooks]]
+id = "gh-settings-validate"
+name = "gh-settings validate"
+description = "Validates .github/settings.yml, offline"
+language = "system"
+entry = "mise x -- gh-settings validate"
+files = "^\\.github/settings\\.yml$"
+pass_filenames = false
+{%- endif %}
 
 [[repos.hooks]]
 id = "lychee"

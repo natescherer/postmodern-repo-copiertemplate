@@ -44,6 +44,16 @@ jobs:
             mapfile -t FILES <<< "$CHANGED_FILES"
             mise x -- prek run -c .config/prek.toml --files "${FILES[@]}"
           fi
+      # Applying the file needs admin access, which GITHUB_TOKEN can't have, so this
+      # reminds whoever merges the PR to apply it.
+      - name: Remind to Apply Repo Settings
+        shell: bash
+        env:
+          BASE_REF: {% raw %}${{ github.base_ref }}{% endraw %}
+        run: |
+          if ! git diff --quiet "origin/$BASE_REF...HEAD" -- .github/settings.yml; then
+            echo "::warning file=.github/settings.yml::After merging, run 'mise run sync-repo-settings' to apply this file to GitHub."
+          fi
 {%- if is_template %}
       - name: Run Template Render Tests
         shell: bash

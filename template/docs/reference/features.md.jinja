@@ -106,6 +106,7 @@ Documentation is set up with [Zensical](https://zensical.org/), the successor to
     - Commit message linting via [committed](https://github.com/crate-ci/committed)
 {%- if is_template or using_github %}
     - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
+    - `.github/settings.yml` validation via [gh-settings](https://github.com/noirbizarre/gh-settings){% if is_template %} (GitHub only){% endif %}; PR Validation also reminds you to apply a changed file after merging
 {%- endif %}
     - Link checking via [lychee](https://github.com/lycheeverse/lychee)
     - Markdown linting via [rumdl](https://github.com/rvben/rumdl)
