@@ -6,10 +6,11 @@
     [gh-settings](https://github.com/noirbizarre/gh-settings) applies the settings below, from
     the description through GitHub Pages, from the committed `.github/settings.yml`: repo setup
     runs it when the project is copied, and `mise run sync-repo-settings` reapplies the file after
-    a change. It uses your `gh auth login` credential, which needs admin access to the repo.
-    Without that access, have an admin run it, or apply the settings by hand in the GitHub UI as
-    described here. `.github/settings.yml` holds the exact values; where this page and the file
-    differ, the file is right.
+    a change. A PR that changes the file gets it validated, and a PR Validation warning reminds
+    you to run the task after merging. It uses your `gh auth login` credential, which needs admin
+    access to the repo. Without that access, have an admin run it, or apply the settings by hand
+    in the GitHub UI as described here. `.github/settings.yml` holds the exact values; where this
+    page and the file differ, the file is right.
 
     ### Description and Homepage
 
