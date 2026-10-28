@@ -1,9 +1,8 @@
 # Updating from the Parent Template
 
 This project was generated from the [{{ parent_template_name }}]({{ parent_template_url }})
-[Copier](https://copier.readthedocs.io/) template. {% if is_template %}Every Monday on GitHub, the Copier Update Check workflow, and on the 1st of each
-month on Azure DevOps, the Monthly Maintenance pipeline's Copier Update Check job,{% elif using_github %}Every Monday, the Copier Update Check workflow{% else %}On the 1st of each month, the Monthly
-Maintenance pipeline's Copier Update Check job{% endif %} checks for a new template release and sends a notification to
+[Copier](https://copier.readthedocs.io/) template. On the 1st of each month, the Monthly Maintenance
+{% if is_template %}workflow/pipeline{% elif using_github %}workflow{% else %}pipeline{% endif %}'s Copier Update Check job checks for a new template release and sends a notification to
 `APPRISE_URL` when one is available; see [Secrets and Tokens](../reference/token-permissions.md#apprise_url).
 
 To pull in its latest changes:

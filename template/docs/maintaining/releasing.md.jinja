@@ -33,9 +33,9 @@ use.
 ## Prereleases
 
 To cut a prerelease (`alpha`, `beta`, or `rc`), run the
-{%- if is_template %} "Release (Manual): Create Prerelease" workflow from the Actions tab on GitHub, or the
+{%- if is_template %} "Release (Auto): Prepare Release PR" workflow from the Actions tab on GitHub, or the
 "Release (Auto) - Prepare & Publish Release" pipeline from Azure Pipelines on Azure DevOps,
-{%- elif using_github %} "Release (Manual): Create Prerelease" workflow from the Actions tab
+{%- elif using_github %} "Release (Auto): Prepare Release PR" workflow from the Actions tab
 {%- else %} "Release (Auto) - Prepare & Publish Release" pipeline from Azure Pipelines
 {%- endif %} and choose a label{% if is_template %} (on Azure DevOps, a label other than `none`){% elif using_azdo %} other than `none`, which runs the usual release flow{% endif %}. Each run increments that label's number (`1.1.0-alpha.0`, then
 `.1`). The same label can't run twice at the same commit, so push a new commit first; a

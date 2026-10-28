@@ -53,6 +53,13 @@ from repo_edits import (
 # Default `gh auth login` scopes cover both; see the Secrets and Tokens docs page.
 REQUIRED_SCOPES = ("repo", "workflow")
 
+MONTHLY_MAINTENANCE = "maint-auto-monthlymaintenance.yml"
+
+# The workflow Monthly Maintenance's Copier Update Check job replaced. Repo B starts at
+# the last release, so it has this until you update it. Remove once the last release
+# has Monthly Maintenance.
+LEGACY_COPIER_UPDATE_CHECK = "maint-auto-copierupdatecheck.yml"
+
 # The status check settings.yml.jinja's ruleset requires before a PR can merge: PR
 # Validation's `tests` job.
 REQUIRED_CHECK = "tests"
@@ -265,8 +272,12 @@ def list_tags(repo: str) -> set[str]:
     return tags
 
 
-def latest_run_id(repo: str, workflow_file: str) -> str:
-    """Return the most recent run's ID for a workflow, or "" if none exist yet.
+def latest_run_id(repo: str, workflow_file: str, *, event: str) -> str:
+    """Return the most recent run's ID for a workflow and event, or "" if none exist.
+
+    Filtering by event matters for a workflow with more than one trigger, such as
+    release-auto-preparereleasepr.yml: a push from a merge and a manual dispatch each
+    start a run, and either can be the newest.
 
     Returns:
         The run ID as a string, or "".
@@ -279,6 +290,8 @@ def latest_run_id(repo: str, workflow_file: str) -> str:
         repo,
         "--workflow",
         workflow_file,
+        "--event",
+        event,
         "--limit",
         "1",
         "--json",
@@ -289,7 +302,7 @@ def latest_run_id(repo: str, workflow_file: str) -> str:
 
 
 def wait_for_new_run(
-    repo: str, workflow_file: str, before_id: str, *, timeout: int = 60
+    repo: str, workflow_file: str, before_id: str, *, event: str, timeout: int = 60
 ) -> int:
     """Poll for a new run of `workflow_file` to appear after `before_id`.
 
@@ -305,7 +318,7 @@ def wait_for_new_run(
     """
     deadline = time.time() + timeout
     while time.time() < deadline:
-        current = latest_run_id(repo, workflow_file)
+        current = latest_run_id(repo, workflow_file, event=event)
         if current and current != before_id:
             return int(current)
         time.sleep(5)
@@ -325,14 +338,14 @@ def dispatch_workflow(
         The new run's ID.
 
     """
-    before = latest_run_id(repo, workflow_file)
+    before = latest_run_id(repo, workflow_file, event="workflow_dispatch")
     args = ["gh", "workflow", "run", workflow_file, "--repo", repo]
     if ref:
         args += ["--ref", ref]
     for key, value in (inputs or {}).items():
         args += ["-f", f"{key}={value}"]
     run(*args)
-    return wait_for_new_run(repo, workflow_file, before)
+    return wait_for_new_run(repo, workflow_file, before, event="workflow_dispatch")
 
 
 def open_pr_wait_and_merge(
@@ -821,10 +834,11 @@ def check_coverage_upload(repo: str, run_id: str, failures: list[str]) -> None:
 def provision_test_secrets(repo: str) -> None:
     """Set placeholder secrets so pipelines gated on their presence can run.
 
-    APPRISE_URL: Maint (Auto): Copier Update Check requires it to exist before its own
-    logic even runs (see .github/actions/require-secrets). Points at a real, harmless
-    HTTPS endpoint, not a fake host, so the "Notify if Update is Available" step, when
-    it does run, doesn't fail the whole workflow on an unrelated delivery error.
+    APPRISE_URL: Monthly Maintenance's Copier Update Check requires it to exist before
+    its own logic even runs (see .github/actions/require-secrets). Points at a real,
+    harmless HTTPS endpoint, not a fake host, so the "Notify if Update is Available"
+    step, when it does run, doesn't fail the whole workflow on an unrelated delivery
+    error.
     """
     run(
         "gh",
@@ -883,14 +897,32 @@ def approve_pending_run(repo: str, branch: str, *, timeout: int = 60) -> None:
     )
 
 
+def monthly_maintenance_run(
+    repo: str, job: str, *, legacy: str = "", ref: str | None = None
+) -> int:
+    """Dispatch one of Monthly Maintenance's jobs alone, or the workflow it replaced.
+
+    Returns:
+        The run's ID.
+
+    """
+    if legacy:
+        return dispatch_workflow(repo, legacy, ref=ref)
+    return dispatch_workflow(repo, MONTHLY_MAINTENANCE, inputs={"job": job}, ref=ref)
+
+
 def check_copier_update_check(
     repo: str,
     failures: list[str],
     *,
     expect_update_available: bool,
     ref: str | None = None,
+    legacy: bool = False,
 ) -> None:
-    """Dispatch Maint (Auto): Copier Update Check and verify it ran correctly.
+    """Run Monthly Maintenance's Copier Update Check job and verify it ran correctly.
+
+    `legacy` runs the separate Copier Update Check workflow of a release before Monthly
+    Maintenance instead, as Repo B has until it's updated.
 
     Whether it detected a pending update is read from whether the "Notify if Update is
     Available" step ran (its own `if:` is gated on that) rather than by scraping log
@@ -898,12 +930,17 @@ def check_copier_update_check(
     should depend on.
     """
     on = f" on {ref}" if ref else ""
-    step(f"Checking Maint (Auto): Copier Update Check{on}")
-    run_id = dispatch_workflow(repo, "maint-auto-copierupdatecheck.yml", ref=ref)
+    step(f"Checking Maint (Auto): Monthly Maintenance's Copier Update Check{on}")
+    run_id = monthly_maintenance_run(
+        repo,
+        "copier_update_check",
+        legacy=LEGACY_COPIER_UPDATE_CHECK if legacy else "",
+        ref=ref,
+    )
     conclusion = wait_for_run(repo, run_id)
     check(
         failures,
-        f"Copier Update Check workflow succeeds{on}",
+        f"Copier Update Check job succeeds{on}",
         conclusion == "success",
         conclusion,
     )
@@ -958,18 +995,18 @@ def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
 
 
 def check_repo_health_check(repo: str, failures: list[str]) -> None:
-    """Dispatch Maint (Auto): Repo Health Check and confirm it completes clean.
+    """Run Monthly Maintenance's Repo Health Check job and confirm it completes clean.
 
     workflow-keepalive is gated `if: github.event_name == 'schedule'`, so a manual
-    dispatch here only exercises link-check; that's covered by the overall
+    dispatch here only exercises the link check; that's covered by the overall
     run conclusion.
     """
-    step("Checking Maint (Auto): Repo Health Check")
-    run_id = dispatch_workflow(repo, "maint-auto-repohealthcheck.yml")
+    step("Checking Maint (Auto): Monthly Maintenance's Repo Health Check")
+    run_id = monthly_maintenance_run(repo, "repo_health_check")
     conclusion = wait_for_run(repo, run_id)
     check(
         failures,
-        "Repo Health Check workflow succeeds",
+        "Repo Health Check job succeeds",
         conclusion == "success",
         conclusion,
     )
@@ -1120,7 +1157,9 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     # Absorb any copy-time churn on the release PR (the first runs after copy may each
     # touch it) with a throwaway merge before testing that a docs-only merge is a true
     # no-op; otherwise that churn gets misattributed to the commit under test.
-    prepare_before = latest_run_id(repo, "release-auto-preparereleasepr.yml")
+    prepare_before = latest_run_id(
+        repo, "release-auto-preparereleasepr.yml", event="push"
+    )
     open_pr_wait_and_merge(
         repo,
         dest,
@@ -1129,7 +1168,7 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
         "INTEGRATION_TEST_WARMUP.md",
     )
     warmup_run_id = wait_for_new_run(
-        repo, "release-auto-preparereleasepr.yml", prepare_before
+        repo, "release-auto-preparereleasepr.yml", prepare_before, event="push"
     )
     wait_for_run(repo, warmup_run_id)
 
@@ -1137,7 +1176,9 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     # "no PR is open" isn't the right no-op signal; what matters is that a
     # docs-only merge doesn't change what version it proposes.
     docs_noop_before = knope_release_pr_title(repo)
-    prepare_before = latest_run_id(repo, "release-auto-preparereleasepr.yml")
+    prepare_before = latest_run_id(
+        repo, "release-auto-preparereleasepr.yml", event="push"
+    )
     open_pr_wait_and_merge(
         repo,
         dest,
@@ -1145,7 +1186,9 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
         "docs: integration test no-op commit",
         "INTEGRATION_TEST_DOCS.md",
     )
-    run_id = wait_for_new_run(repo, "release-auto-preparereleasepr.yml", prepare_before)
+    run_id = wait_for_new_run(
+        repo, "release-auto-preparereleasepr.yml", prepare_before, event="push"
+    )
     conclusion = wait_for_run(repo, run_id)
     check(
         failures,
@@ -1161,7 +1204,9 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
         f"before={docs_noop_before!r}, after={docs_noop_after!r}",
     )
 
-    prepare_before = latest_run_id(repo, "release-auto-preparereleasepr.yml")
+    prepare_before = latest_run_id(
+        repo, "release-auto-preparereleasepr.yml", event="push"
+    )
     open_pr_wait_and_merge(
         repo,
         dest,
@@ -1169,7 +1214,9 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
         "feat: integration test feature",
         "INTEGRATION_TEST_FEAT.md",
     )
-    run_id = wait_for_new_run(repo, "release-auto-preparereleasepr.yml", prepare_before)
+    run_id = wait_for_new_run(
+        repo, "release-auto-preparereleasepr.yml", prepare_before, event="push"
+    )
     conclusion = wait_for_run(repo, run_id)
     check(
         failures,
@@ -1204,14 +1251,16 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     )
 
     before_tags = list_tags(repo)
-    publish_before = latest_run_id(repo, "release-auto-publishrelease.yml")
-    zensical_before = latest_run_id(repo, "docs-auto-zensical.yml")
+    publish_before = latest_run_id(
+        repo, "release-auto-publishrelease.yml", event="pull_request"
+    )
+    zensical_before = latest_run_id(repo, "docs-auto-zensical.yml", event="release")
     approve_pending_run(repo, "knope/release")
     wait_for_pr_checks(repo, str(pr_number))
     merge_pr(repo, str(pr_number))
     run("git", "pull", cwd=dest)
     publish_run_id = wait_for_new_run(
-        repo, "release-auto-publishrelease.yml", publish_before
+        repo, "release-auto-publishrelease.yml", publish_before, event="pull_request"
     )
     conclusion = wait_for_run(repo, publish_run_id)
     check(
@@ -1249,7 +1298,7 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
         # alias); wait for it here so check_repo_health_check(), which runs later,
         # isn't racing a Pages deployment that hasn't happened yet.
         zensical_run_id = wait_for_new_run(
-            repo, "docs-auto-zensical.yml", zensical_before
+            repo, "docs-auto-zensical.yml", zensical_before, event="release"
         )
         conclusion = wait_for_run(repo, zensical_run_id)
         check(
@@ -1261,8 +1310,8 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
 
 
 def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
-    """Exercise Release (Manual): Create Prerelease; a label, a dup, a new label."""
-    step("Checking Release (Manual): Create Prerelease")
+    """Exercise Prepare Release PR's prerelease runs; a label, a dup, a new label."""
+    step("Checking Release (Auto): Prepare Release PR's prerelease runs")
 
     # PrepareRelease refuses to run with nothing to bump; without a real commit
     # since the last release, every dispatch below would fail with knope's own
@@ -1277,7 +1326,7 @@ def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
 
     before = list_tags(repo)
     run_id = dispatch_workflow(
-        repo, "release-manual-createprerelease.yml", inputs={"label": "alpha"}
+        repo, "release-auto-preparereleasepr.yml", inputs={"label": "alpha"}
     )
     conclusion = wait_for_run(repo, run_id)
     check(
@@ -1296,7 +1345,7 @@ def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
     )
 
     run_id = dispatch_workflow(
-        repo, "release-manual-createprerelease.yml", inputs={"label": "alpha"}
+        repo, "release-auto-preparereleasepr.yml", inputs={"label": "alpha"}
     )
     conclusion = wait_for_run(repo, run_id)
     check(
@@ -1307,7 +1356,7 @@ def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
     )
 
     run_id = dispatch_workflow(
-        repo, "release-manual-createprerelease.yml", inputs={"label": "beta"}
+        repo, "release-auto-preparereleasepr.yml", inputs={"label": "beta"}
     )
     conclusion = wait_for_run(repo, run_id)
     check(
@@ -1628,11 +1677,14 @@ def main() -> None:
         )
     # Repo B is at the newest release, so main has no update; a branch recording
     # the commit before that release does.
-    check_copier_update_check(repo_b, failures_b, expect_update_available=False)
+    legacy_b = not Path(dest_b, ".github", "workflows", MONTHLY_MAINTENANCE).exists()
+    check_copier_update_check(
+        repo_b, failures_b, expect_update_available=False, legacy=legacy_b
+    )
     step("Pushing a branch that records an older template version")
     older = push_older_recorded_version(dest_b, args.source, old_ref)
     check_copier_update_check(
-        repo_b, failures_b, expect_update_available=True, ref=older
+        repo_b, failures_b, expect_update_available=True, ref=older, legacy=legacy_b
     )
     # The runbook as of main, which this run tests; latest is the last release's.
     runbook = docs_page_url(
