@@ -48,9 +48,9 @@ run = [
 {%- endif %}
 {%- elif using_azdo %}
   "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Maint (Auto) - Monthly Maintenance\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
-  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name APPRISE_URL --pipeline-name \"[{{ repo_name }}] Docs (Auto) - Zensical Build & Commit\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
   "az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name \"[{{ repo_name }}] Maint (Auto) - Monthly Maintenance\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
-  "az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name \"[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
+  "az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name \"[{{ repo_name }}] Docs (Auto) - Zensical Build & Commit\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
   "az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name \"[{{ repo_name }}] Release (Auto) - Prepare & Publish Release\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
   "az pipelines variable create --name GITHUB_COM_TOKEN --pipeline-name \"[{{ repo_name }}] Test (Auto) - PR Validation\" --secret true --allow-override true --org https://dev.azure.com/{{ azdo_org }}/ --project \"{{ azdo_project }}\"",
 {%- endif %}

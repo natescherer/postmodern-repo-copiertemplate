@@ -67,17 +67,18 @@ PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 # `az pipelines create --name "[<repo_name>] <name>"` _tasks entries.
 PIPELINE_DISPLAY_NAMES = (
     "Maint (Auto) - Monthly Maintenance",
-    "Docs (Auto) - Zensical Build & Publish",
+    "Docs (Auto) - Zensical Build & Commit",
     "Test (Auto) - PR Validation",
     "Release (Auto) - Prepare & Publish Release",
 )
 MONTHLY_MAINTENANCE = "Maint (Auto) - Monthly Maintenance"
 RELEASE = "Release (Auto) - Prepare & Publish Release"
 
-# The pipelines of a release before Monthly Maintenance merged the three Maint pipelines
-# and Release took over Create Prerelease. Repo B starts at the last release, so it has
-# these until you update it and run `mise run migrate-azdo-pipeline-names`. Remove once
-# the last release has Monthly Maintenance.
+# The pipelines of a release before Monthly Maintenance merged the three Maint
+# pipelines, Release took over Create Prerelease, and Docs was renamed to match
+# GitHub's. Repo B starts at the last release, so it has these until you update it and
+# run `mise run migrate-azdo-pipeline-names`. Remove once the last release has Monthly
+# Maintenance.
 LEGACY_PIPELINE_DISPLAY_NAMES = (
     "Maint (Auto) - Copier Update Check",
     "Maint (Auto) - Repo Health Check",
@@ -91,6 +92,7 @@ LEGACY_PIPELINE_DISPLAY_NAMES = (
 # Every pipeline, current or legacy, whose notifications need APPRISE_URL.
 APPRISE_PIPELINES = {
     MONTHLY_MAINTENANCE,
+    "Docs (Auto) - Zensical Build & Commit",
     "Docs (Auto) - Zensical Build & Publish",
     "Maint (Auto) - Copier Update Check",
     "Maint (Auto) - Renovate",

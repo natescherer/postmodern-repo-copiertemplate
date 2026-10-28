@@ -1016,11 +1016,11 @@ _tasks:
   # Creates Azure Pipeline for docs-auto-zensical
   - command: >-
       az pipelines create
-      --name "[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish"
+      --name "[{{ repo_name }}] Docs (Auto) - Zensical Build & Commit"
       --repository {{ repo_name }}
       --repository-type tfsgit
       --branch main
-      --yml-path .azurepipelines/docs-auto-zensical.yml
+      --yml-path .azurepipelines/docs-auto-zensicalcommit.yml
       --skip-first-run true
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
@@ -1029,7 +1029,7 @@ _tasks:
   # Runs the docs pipeline once, so docs-site/ exists before the first docs PR merges.
   - command: >-
       az pipelines run
-      --name "[{{ repo_name }}] Docs (Auto) - Zensical Build & Publish"
+      --name "[{{ repo_name }}] Docs (Auto) - Zensical Build & Commit"
       --org https://dev.azure.com/{{ azdo_org }}/
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
@@ -1170,7 +1170,7 @@ _tasks:
       {%- endif %}
 
   # Lets any branch or tag deploy to the github-pages environment, which the Pages
-  # setup above creates. Docs (Auto): Zensical Build & Publish deploys on release
+  # setup above creates. Docs (Auto): Zensical Publish to GitHub Pages deploys on release
   # events, whose ref is a tag, so a branch-only policy would block them. PUT creates
   # the environment if it doesn't exist yet. gh -F sends `null` as JSON null.
   - command: >-
