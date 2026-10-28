@@ -46,9 +46,9 @@ PIPELINES = (
         ),
     ),
     (
-        "Docs (Auto) - Zensical Build & Publish",
-        ".azurepipelines/docs-auto-zensical.yml",
-        ("docs",),
+        "Docs (Auto) - Zensical Build & Commit",
+        ".azurepipelines/docs-auto-zensicalcommit.yml",
+        ("Docs (Auto) - Zensical Build & Publish", "docs"),
     ),
     (
         "Test (Auto) - PR Validation",

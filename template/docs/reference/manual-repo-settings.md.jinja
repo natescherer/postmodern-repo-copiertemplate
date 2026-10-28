@@ -93,7 +93,7 @@
     | Name | YAML file |
     | --- | --- |
     | `[<repo>] Maint (Auto) - Monthly Maintenance` | `.azurepipelines/maint-auto-monthlymaintenance.yml` |
-    | `[<repo>] Docs (Auto) - Zensical Build & Publish` | `.azurepipelines/docs-auto-zensical.yml` |
+    | `[<repo>] Docs (Auto) - Zensical Build & Commit` | `.azurepipelines/docs-auto-zensicalcommit.yml` |
     | `[<repo>] Test (Auto) - PR Validation` | `.azurepipelines/test-auto-prvalidation.yml` |
     | `[<repo>] Release (Auto) - Prepare & Publish Release` | `.azurepipelines/release-auto-release.yml` |
 
@@ -109,7 +109,7 @@
       --org https://dev.azure.com/<org>/ --project "<project>"
     ```
 
-    Then run **Docs (Auto) - Zensical Build & Publish** and **Release (Auto) - Prepare & Publish
+    Then run **Docs (Auto) - Zensical Build & Commit** and **Release (Auto) - Prepare & Publish
     Release** once each, to build the docs and open the first release PR, and set the pipeline
     variables listed in [Secrets and Tokens](token-permissions.md).
 

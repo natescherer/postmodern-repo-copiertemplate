@@ -81,7 +81,7 @@ a PR bumping typos.*
   that branch (**Run pipeline**, then **Branch/tag**: `integration-test/broken-link` and **Job to
   run**: `repo_health_check`). The run fails, and its log names `https://httpbin.org/status/404`.
 
-### Docs (Auto) - Zensical Build & Publish
+### Docs (Auto) - Zensical Build & Commit
 
 - [ ] Merge a docs change through a PR:
 
@@ -96,7 +96,7 @@ a PR bumping typos.*
     az repos pr create --source-branch integration-test/docs-change --target-branch main --title "docs: integration test docs change" --auto-complete true --squash true --delete-source-branch true
     ```
 
-- [ ] Once that PR completes, `[<repo-a>] Docs (Auto) - Zensical Build & Publish` runs, opens
+- [ ] Once that PR completes, `[<repo-a>] Docs (Auto) - Zensical Build & Commit` runs, opens
   a PR from `zensical-build`, and completes it. `docs-site/index.html` on `main` then contains
   "Integration test docs change."
 

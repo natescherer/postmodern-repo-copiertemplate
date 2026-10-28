@@ -95,7 +95,8 @@ On Azure DevOps:
 
 - **Repoint renamed and merged pipelines.** v0.8.0 renamed the files under `.azurepipelines/`,
   and 1.0.0 merges the Copier Update Check, Renovate, and Repo Health Check pipelines into
-  `Maint (Auto) - Monthly Maintenance`, and Create Prerelease into the release pipeline. Once
+  `Maint (Auto) - Monthly Maintenance`, merges Create Prerelease into the release pipeline, and
+  renames the docs pipeline to `Docs (Auto) - Zensical Build & Commit`, as on GitHub. Once
   the update has merged to `main`, run `mise run migrate-azdo-pipeline-names`. It repoints
   the Renovate registration (or another of the three) at Monthly Maintenance, keeping its
   variables, deletes the other merged registrations, and repoints any v0.8.0-renamed one.
