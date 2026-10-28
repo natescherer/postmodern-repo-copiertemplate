@@ -127,7 +127,9 @@ this repo's CI, so there's nothing to dispatch.
 which Codecov accepts.*
 
 - [ ] Repo A's page on Codecov, `https://app.codecov.io/gh/` followed by Repo A's **Name** from
-  the summary, shows a report for `README.md`: Codecov processed the upload it accepted.
+  the summary, shows a report for `README.md` on the `integration-test/setup` branch: Codecov
+  processed the upload it accepted. PR Validation uploads only from PRs, so `main`, the page's
+  default branch, has no report.
 
 ### Release (Auto): Prepare/Publish Release
 
