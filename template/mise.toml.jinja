@@ -102,7 +102,7 @@ run = "uv run scripts/template_docs_server.py"
 # for inspection; delete them with `mise run integration-test-cleanup-gh`. See
 # {{ docs_url }}maintaining/integration-testing/index.html and
 # {{ docs_url }}maintaining/integration-testing/runbook-github{{ docs_page_suffix }}.
-run = "python scripts/integration_test_github.py --source https://github.com/{{ github_repo_owner }}/{{ repo_name }} --repo-prefix {{ repo_name }}{% if not is_extensible %} --leaf{% endif %}"
+run = "python scripts/integration_test_github.py --source {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} --repo-prefix {{ repo_name }}{% if not is_extensible %} --leaf{% endif %}"
 
 [tasks.integration-test-verify-update-gh]
 # Run after updating Repo B by hand (see the "Repo B" section of
