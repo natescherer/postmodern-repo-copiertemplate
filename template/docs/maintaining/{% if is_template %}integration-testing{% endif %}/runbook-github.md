@@ -58,17 +58,13 @@ its homepage, `https://<owner>.github.io/<repo>/`.
 - [ ] README.md shows `docs/assets/images/readme-logo.png` and
   `docs/assets/images/readme-screenshot.png`.
 
-### Maint (Auto): Copier Update Check
+### Maint (Auto): Monthly Maintenance
 
-*Automated: it runs, completes, and reports no update available.*
+*Automated: the run starts each of the workflow's two jobs alone, through its **Job to run**
+input. The Copier Update Check job completes and reports no update available, and the Repo
+Health Check job completes clean.*
 
-Nothing left to check for Repo A.
-
-### Maint (Auto): Repo Health Check
-
-*Automated: it runs and completes clean.*
-
-- [ ] Run it on a branch with a broken link:
+- [ ] Run the Repo Health Check job on a branch with a broken link:
 
     ```sh
     cd <repo-a-path>
@@ -78,7 +74,7 @@ Nothing left to check for Repo A.
     echo "[Broken link](https://httpbin.org/status/404)" >> README.md
     git commit -am "docs: add a broken link"
     git push -u origin integration-test/broken-link
-    gh workflow run maint-auto-repohealthcheck.yml --ref integration-test/broken-link
+    gh workflow run maint-auto-monthlymaintenance.yml --ref integration-test/broken-link -f job=repo_health_check
     ```
 
     The run fails, and its **Check for Broken Links** step names `https://httpbin.org/status/404`.
@@ -138,10 +134,10 @@ bumped version in its title, and merging that PR creates a tag and a GitHub Rele
 
 Nothing left to check for Repo A.
 
-### Release (Manual): Create Prerelease
+### Release (Auto): Prepare Release PR: Prereleases
 
-*Automated: each label produces a matching tag, the same label at the same commit is blocked,
-and a different label at the same commit is allowed.*
+*Automated: a manual run with each prerelease label produces a matching tag, the same label at
+the same commit is blocked, and a different label at the same commit is allowed.*
 
 Nothing left to check for Repo A.
 
@@ -152,8 +148,8 @@ A copy at the last stable release tag, with `zensical_target: docs-site Director
 
 ### Before Updating
 
-*Automated, before you update anything: Maint (Auto): Copier Update Check reports no update
-available on `main`, since Repo B is at the newest release. On the
+*Automated, before you update anything: Maint (Auto): Monthly Maintenance's Copier Update
+Check job reports no update available on `main`, since Repo B is at the newest release. On the
 `integration-test/older-recorded-version` branch, whose answers record the commit just before
 that release, it detects the release.*
 
