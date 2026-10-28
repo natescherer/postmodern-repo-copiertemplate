@@ -162,14 +162,12 @@ commit just before the newest release.*
 ### Running the Update
 
 - [ ] Update on a branch to this template's `HEAD`, the release candidate, pressing Enter at
-  each prompt to accept the default. This runs what the `copier-update` task runs as of this
-  release; Repo B's own task is the last release's, whose pinned Copier can be older than
-  `HEAD` needs.
+  each prompt to accept the default:
 
     ```sh
     cd <repo-b-path>
     git switch -C integration-test/copier-update
-    mise x -- uvx --refresh --from copier@latest --with jinja2-shell-extension copier update --answers-file .config/copier-answers.yml --skip-answered --trust --vcs-ref=HEAD
+    mise run copier-update --vcs-ref=HEAD
     ```
 
 - [ ] The update finishes without an error. Then commit it and open its PR:
