@@ -67,11 +67,9 @@ REQUIRED_CHECK = "tests"
 # Must match _tasks' project_description -d flag in create() below.
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
-# Must match .github/settings.yml.jinja's `labels:` list, sorted.
-EXPECTED_LABELS = (
-    "accessibility,awaiting pr,blocked,bug,documentation,duplicate,"
-    "enhancement,good first issue,help wanted,invalid,question,wontfix"
-)
+# Must match .github/settings.yml.jinja's `labels:` list. The repo also keeps
+# GitHub's default labels, which settings.yml leaves alone.
+EXPECTED_LABELS = frozenset({"awaiting pr", "blocked"})
 
 SCRATCH_FILE_CONTENT = "# Integration Test Scratch File\n\nSafe to ignore or delete.\n"
 
@@ -544,12 +542,12 @@ def step_conclusion(repo: str, run_id: int, step_name: str) -> str | None:
 def report_settings_checks(
     repo: str, homepage: str, failures: list[str], *, zensical_ghpages: bool
 ) -> None:
-    """Report each part of .github/settings.yml the Settings App should have applied.
+    """Report each part of .github/settings.yml the copy should have applied.
 
-    Covers the `repository`, `labels`, `rulesets`, and `environments` blocks; every
-    top-level key that file sets, not just a sample of them. The
-    `github-pages` environment only exists when `zensical_ghpages` is true:
-    settings.yml.jinja only declares it in that case.
+    Covers the `repository`, `actions`, `labels`, `rulesets`, and `environments`
+    blocks; every top-level key that file sets, not just a sample of them. verify()
+    checks `pages`. The `github-pages` environment only exists when `zensical_ghpages`
+    is true: settings.yml.jinja only declares it in that case.
     """
     repo_data = json.loads(
         run("gh", "api", f"repos/{repo}", check=False, capture=True).stdout or "{}"
@@ -576,12 +574,14 @@ def report_settings_checks(
         "api",
         f"repos/{repo}/labels",
         "--jq",
-        '[.[].name] | sort | join(",")',
+        ".[].name",
         check=False,
         capture=True,
     )
     check(
-        failures, "labels match settings.yml", labels.stdout.strip() == EXPECTED_LABELS
+        failures,
+        "settings.yml's labels exist",
+        EXPECTED_LABELS <= set(labels.stdout.splitlines()),
     )
 
     rulesets = run(
@@ -597,6 +597,23 @@ def report_settings_checks(
         failures,
         "default-branch-protection ruleset exists",
         "default-branch-protection" in rulesets.stdout.split(),
+    )
+
+    workflow_permissions = json.loads(
+        run(
+            "gh",
+            "api",
+            f"repos/{repo}/actions/permissions/workflow",
+            check=False,
+            capture=True,
+        ).stdout
+        or "{}"
+    )
+    check(
+        failures,
+        "workflows can open pull requests",
+        workflow_permissions.get("can_approve_pull_request_reviews") is True,
+        f"got {workflow_permissions!r}",
     )
 
     if not zensical_ghpages:
@@ -618,7 +635,7 @@ def report_settings_checks(
 
 
 def settings_synced(repo: str, homepage: str, *, zensical_ghpages: bool) -> bool:
-    """Check whether the Settings App has applied every part of .github/settings.yml.
+    """Check whether every part of .github/settings.yml has been applied.
 
     Used only to decide when the polling loop in verify() can stop; the actual
     per-field results get reported once, afterward, by report_settings_checks().
@@ -644,11 +661,11 @@ def settings_synced(repo: str, homepage: str, *, zensical_ghpages: bool) -> bool
         "api",
         f"repos/{repo}/labels",
         "--jq",
-        '[.[].name] | sort | join(",")',
+        ".[].name",
         check=False,
         capture=True,
     )
-    if labels.returncode != 0 or labels.stdout.strip() != EXPECTED_LABELS:
+    if labels.returncode != 0 or not EXPECTED_LABELS <= set(labels.stdout.splitlines()):
         return False
 
     rulesets = run(
@@ -735,19 +752,21 @@ def verify(
 
     run("gh", "api", f"repos/{repo}/contents/.github/workflows", capture=True)
 
-    # The Settings GitHub App (https://github.com/apps/settings) applies the labels and
-    # branch ruleset from .github/settings.yml some time after the push above, so this
-    # polls. The app must have access to all repositories on the account: one limited
-    # to selected repositories can't see a new repo. See the Prerequisites docs page.
+    # The copy's gh-settings task applies .github/settings.yml before create()
+    # returns, so this passes on its first try. A copy at a release before gh-settings
+    # relied on the Settings GitHub App (https://github.com/apps/settings), which
+    # applies it some time after the push, so this polls; remove the poll once the last
+    # release has gh-settings.
     for attempt in range(12):
         if settings_synced(repo, homepage, zensical_ghpages=zensical_ghpages):
-            print(f"Settings App sync: OK (after {attempt * 10}s)")
+            print(f"settings.yml applied: OK (after {attempt * 10}s)")
             break
         time.sleep(10)
     else:
         say(
-            "Settings App sync: not observed within 120s; is it installed on this "
-            "account with access to all repositories?"
+            "settings.yml not applied within 120s. A copy at a release before "
+            "gh-settings needs the Settings GitHub App, with access to all "
+            "repositories on the account."
         )
     report_settings_checks(repo, homepage, failures, zensical_ghpages=zensical_ghpages)
 

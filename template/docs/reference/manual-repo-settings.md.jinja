@@ -3,9 +3,11 @@
 
 === "GitHub"
 
-    The [Settings GitHub App](https://github.com/apps/settings) applies the settings, labels, and
-    branch protection ruleset below from the committed `.github/settings.yml`. Without the app
-    (for example, if your organization hasn't approved it), apply them by hand in the GitHub UI as
+    [gh-settings](https://github.com/noirbizarre/gh-settings) applies the settings below, from
+    the description through GitHub Pages, from the committed `.github/settings.yml`: repo setup
+    runs it when the project is copied, and `mise run sync-repo-settings` reapplies the file after
+    a change. It uses your `gh auth login` credential, which needs admin access to the repo.
+    Without that access, have an admin run it, or apply the settings by hand in the GitHub UI as
     described here. `.github/settings.yml` holds the exact values; where this page and the file
     differ, the file is right.
 
@@ -17,7 +19,8 @@
 
     ### Labels
 
-    Under the repo's **Issues** tab, open **Labels**, and create:
+    Under the repo's **Issues** tab, open **Labels**, and create these alongside GitHub's
+    defaults:
 
     | Name | Color | Description |
     | --- | --- | --- |
@@ -33,6 +36,12 @@
       Commits checks and release automation read
     - Enable **Allow auto-merge**
     - Enable **Automatically delete head branches**
+
+    ### Actions
+
+    Under **Settings > Actions > General**, enable **Allow GitHub Actions to create and approve
+    pull requests**, and leave **Workflow permissions** at **Read repository contents and packages
+    permissions**.
 
     ### Branch Protection
 
@@ -62,18 +71,20 @@
 
     Under **Settings > Code security**, enable **Secret scanning** and **Push protection**.
 
+    ### GitHub Pages
+
+    (Only if `zensical_target` is `GitHub Pages`.)
+
+    Set **Settings > Pages > Source** to **GitHub Actions**. Then, under **Settings >
+    Environments**, open (or create) `github-pages` and set **Deployment branches and tags** to
+    **No restriction**, since release docs deploy from a tag.
+
     ### Settings Repo Setup Applies
 
-    `.github/settings.yml` doesn't cover these, and with `repo_setup_actions: None` the copy
-    doesn't apply them, so set them by hand:
-
-    - Under **Settings > Actions > General**, enable **Allow GitHub Actions to create and approve
-      pull requests**
-    - If `zensical_target` is `GitHub Pages`, set **Settings > Pages > Source** to **GitHub Actions**,
-      then, under **Settings > Environments**, open (or create) `github-pages` and set **Deployment
-      branches and tags** to **No restriction**, since release docs deploy from a tag
-    - If the repo is public, enable CodeQL's default setup and private vulnerability reporting under
-      **Settings > Advanced Security**
+    gh-settings can't manage these, so `.github/settings.yml` doesn't cover them, and with
+    `repo_setup_actions: None` the copy doesn't apply them. If the repo is public, enable
+    CodeQL's default setup and private vulnerability reporting under **Settings > Advanced
+    Security**.
 {%- endif %}
 {%- if is_template or using_azdo %}
 

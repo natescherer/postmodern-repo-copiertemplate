@@ -3,7 +3,7 @@
 The Azure DevOps counterpart to integration_test_github.py, with the same shape: create,
 then verify, leaving both repos for you to delete. It differs where the platforms do:
 
-- No Settings App equivalent, so there's nothing to poll for.
+- No settings.yml equivalent, so there's nothing for gh-settings to apply.
 - `az` can't list a token's scopes the way `gh auth status` can, so this checks only
   that it can see the target project.
 - Deleting an Azure DevOps repo doesn't remove its pipelines, so `--cleanup` deletes

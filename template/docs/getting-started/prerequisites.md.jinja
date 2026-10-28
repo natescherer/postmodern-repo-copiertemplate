@@ -14,10 +14,6 @@
 
     1. [Renovate GitHub App](https://github.com/apps/renovate)
         - Opens dependency update PRs.
-    1. **[Optional]** [Settings GitHub App](https://github.com/apps/settings)
-        - Applies repo settings (labels, merge options, branch protection, and more) from
-          `.github/settings.yml`, so most GitHub settings live in code.
-        - Without it, apply the settings by hand; setup links you to the steps.
     1. **[Optional]** [Codecov GitHub App](https://github.com/apps/codecov)
         - Connects the repo to codecov.io for coverage uploads, PR comments, and checks.
         - Skip it if you'll answer no to `code_coverage`.
@@ -71,7 +67,9 @@
 === "GitHub"
 
     1. Install the [GitHub CLI](https://cli.github.com). Setup uses it to create the repo and
-       apply the settings the Settings app can't.
+       apply its settings from `.github/settings.yml`, through
+       [gh-settings](https://github.com/noirbizarre/gh-settings), which mise installs. Your
+       login needs admin access to the repo.
     1. Log in to the GitHub CLI:
         ```
         gh auth login

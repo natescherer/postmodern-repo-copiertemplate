@@ -91,6 +91,35 @@ def _check_tombi(root: Path) -> list[str]:
     return errors
 
 
+def _check_gh_settings(root: Path) -> list[str]:
+    settings = root / ".github" / "settings.yml"
+    if not settings.is_file():
+        return []
+    # The version the rendered project pins, run through `mise x`: this repo's own
+    # mise.toml may not pin gh-settings yet.
+    tools = tomllib.loads((root / "mise.toml").read_text(encoding="utf-8"))["tools"]
+    version = tools.get("github:noirbizarre/gh-settings")
+    if not version:
+        return ["mise.toml doesn't pin gh-settings, which applies .github/settings.yml"]
+    result = _run(
+        [
+            "mise",
+            "x",
+            f"github:noirbizarre/gh-settings@{version}",
+            "--",
+            "gh-settings",
+            "validate",
+            "--strict",
+            "-c",
+            str(settings),
+        ],
+        cwd=root,
+    )
+    if result.returncode != 0:
+        return [result.stdout.strip() or result.stderr.strip()]
+    return []
+
+
 def _check_rumdl(root: Path) -> list[str]:
     result = _run(["rumdl", "check", "--no-cache", "."], cwd=root)
     if result.returncode != 0:
@@ -139,6 +168,7 @@ def _check_all(root: Path, *, zensical: bool = True) -> list[str]:
     errors += [f"[actionlint] {e}" for e in _check_actionlint(root)]
     errors += [f"[tombi] {e}" for e in _check_tombi(root)]
     errors += [f"[rumdl] {e}" for e in _check_rumdl(root)]
+    errors += [f"[gh-settings] {e}" for e in _check_gh_settings(root)]
     if zensical:
         errors += [f"[zensical] {e}" for e in _check_zensical_build(root)]
     errors += [f"[lychee] {e}" for e in _check_lychee(root)]

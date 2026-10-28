@@ -1146,37 +1146,24 @@ _tasks:
       --project "{{ azdo_project }}"
     when: *when_copy_set_repo_settings_azdo
 
-  # Lets the default GITHUB_TOKEN open and update pull requests, which a new repo
-  # doesn't allow; Release (Auto): Prepare Release PR and Docs (Auto): Zensical Build &
-  # Commit need it to run without a Personal Access Token. Despite the API field's name,
-  # it doesn't let the token approve reviews. default_workflow_permissions stays at
-  # GitHub's "read" default, since every job here declares its own `permissions:`.
-  - command: >-
-      gh api repos/{{ github_repo_owner }}/{{ repo_name }}/actions/permissions/workflow
-      -X PUT -F can_approve_pull_request_reviews=true
-    when: &when_copy_github |-
+  # Applies .github/settings.yml with gh-settings, which mise.toml pins: the repo
+  # settings, labels, branch protection ruleset, Actions settings, and, with GitHub
+  # Pages, the Pages site and its environment. `mise run sync-repo-settings` reapplies
+  # it after a change. Only the new project's mise.toml provides gh-settings, so this
+  # runs it through `mise x`, which installs it and trusts that mise.toml.
+  - command:
+      - mise
+      - x
+      - --
+      - gh-settings
+      - sync
+      - --yes
+      - --repo
+      - "{{ github_repo_owner }}/{{ repo_name }}"
+    when: |-
       {%- if _copier_operation == 'copy' and using_github and repo_setup_actions != 'None' -%}
         true
       {%- endif %}
-
-  # Sets up GitHub Pages. An existing repo (Set Repo Rules) may already have a site,
-  # which POST rejects with 409; then PUT switches its build type instead.
-  - command: >-
-      gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X POST -f build_type=workflow
-      || gh api repos/{{ github_repo_owner }}/{{ repo_name }}/pages -X PUT -f build_type=workflow
-    when: &when_copy_ghpages |-
-      {%- if _copier_operation == 'copy' and zensical_ghpages and repo_setup_actions != 'None' -%}
-        true
-      {%- endif %}
-
-  # Lets any branch or tag deploy to the github-pages environment, which the Pages
-  # setup above creates. Docs (Auto): Zensical Publish to GitHub Pages deploys on release
-  # events, whose ref is a tag, so a branch-only policy would block them. PUT creates
-  # the environment if it doesn't exist yet. gh -F sends `null` as JSON null.
-  - command: >-
-      gh api repos/{{ github_repo_owner }}/{{ repo_name }}/environments/github-pages
-      -X PUT -F deployment_branch_policy=null
-    when: *when_copy_ghpages
 
   # Enables CodeQL default setup, for public repos only: private repos need a paid
   # GitHub Advanced Security license.
@@ -1219,8 +1206,8 @@ _message_after_copy: |-
   {{ setup_checklist }}
 
   {% endif -%}
-  {%- if using_github -%}
-    If the Settings GitHub App (https://github.com/apps/settings) isn't installed, nothing applies .github/settings.yml (labels, merge options, branch protection). Install the app, or apply the settings by hand: {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }}
+  {%- if using_github and repo_setup_actions == 'None' -%}
+    Once the repo exists, run `mise run sync-repo-settings` to apply .github/settings.yml (labels, merge options, branch protection, and more), or apply the settings by hand: {{ parent_template_docs_url }}reference/manual-repo-settings{{ parent_template_docs_suffix }}
 
   {% endif -%}
   {%- if using_azdo and not should_set_repo_settings -%}
