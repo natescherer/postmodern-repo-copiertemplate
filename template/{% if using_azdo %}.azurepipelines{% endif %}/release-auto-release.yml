@@ -43,8 +43,16 @@ stages:
                 mise | "$(Agent.OS)"
               path: $(HOME)/.local/share/mise
             displayName: Cache Mise Tools
-          - bash: mise install
+          - bash: |
+              # The optional GITHUB_COM_TOKEN pipeline variable keeps mise's downloads
+              # from hitting github.com's unauthenticated rate limit, which hosted agents
+              # share by IP; when it isn't defined, Azure Pipelines passes the literal
+              # macro text, so that's treated as unset.
+              case "$GITHUB_TOKEN" in ''|'$('*) unset GITHUB_TOKEN ;; esac
+              mise install
             displayName: Run 'mise install'
+            env:
+              GITHUB_TOKEN: $(GITHUB_COM_TOKEN)
           - bash: az extension add --name azure-devops
             # Unpinned: there's no version source Renovate can track. Its GitHub
             # releases are date-tagged, the PyPI package of the same name is an unrelated

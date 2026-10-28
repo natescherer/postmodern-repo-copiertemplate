@@ -98,7 +98,8 @@ On Azure DevOps:
   existing registrations at the new names. Azure DevOps reads pipeline YAML from `main`, so
   running it before the merge breaks every pipeline run until the renamed files get there.
 - **Add `GITHUB_COM_TOKEN`.** The Renovate pipeline now requires it, since Renovate skips every
-  dependency hosted on github.com without one; `mise run provision-secrets` sets it. See
+  dependency hosted on github.com without one, and the other pipelines use it to keep mise's
+  downloads under github.com's rate limit; `mise run provision-secrets` sets it on all of them. See
   [Secrets and Tokens](../reference/token-permissions.md#github_com_token).
 - **Register new pipelines.** Pipelines added since your version (such as Renovate and the repo
   health check) aren't registered by an update. Register each `.yml` under `.azurepipelines/`
