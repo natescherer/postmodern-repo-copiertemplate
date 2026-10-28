@@ -10,8 +10,11 @@ exclude = [
   "^file://.*/template/docs/",
 {%- endif %}
 ]
+# Files of patterns, which lychee would otherwise read as links: prek.toml's
+# lychee hook passes regex-escaped URLs such as `https://github\.com/...`
 exclude_path = [
   ".config/lychee.toml",
+  ".config/prek.toml",
   ".config/typos.toml",
 {%- if is_template %}
   "template/.config/lychee.toml.jinja",
