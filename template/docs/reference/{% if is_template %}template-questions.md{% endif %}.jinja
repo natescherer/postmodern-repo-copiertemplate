@@ -28,7 +28,7 @@ platform CLI (`gh` or `az`) is installed and logged in before Copier continues; 
 - **Create Repo** creates the remote repo. On GitHub, it also sets Actions workflow permissions,
   sets up GitHub Pages when used, and, for public repos, enables CodeQL default setup and
   private vulnerability reporting. On Azure DevOps, it also registers a pipeline for each `.yml`
-  file under `.azurepipelines/`.
+  file directly in `.azurepipelines/`.
 - **Set Repo Rules** (GitHub only) applies the same settings to an existing repo without
   creating one. Azure DevOps registers pipelines from YAML on the remote repo, which an existing
   project hasn't pushed at copy time, so choose `None` there and follow

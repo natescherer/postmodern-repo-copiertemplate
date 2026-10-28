@@ -60,7 +60,7 @@ Run any of these with `mise run <task>`.
 | `provision-secrets` | Sets the secrets CI needs, via masked prompts; see [Secrets and Tokens](../reference/token-permissions.md) |
 | `renovate-lookup` | Runs Renovate locally in dry-run mode to show what it detects, without pushing anything; see [Adding a Dependency or Tool](#adding-a-dependency-or-tool) |
 {%- if is_template or using_azdo %}
-| `migrate-azdo-pipeline-names` | {% if is_template %}(Azure DevOps only) {% endif %}Renames existing pipeline registrations after a template update renames their files |
+| `migrate-azdo-pipeline-names` | {% if is_template %}(Azure DevOps only) {% endif %}Brings existing pipeline registrations in line after a template update renames or merges their files |
 {%- endif %}
 {%- if is_template %}
 | `test` | Runs the render-validation test suite |

@@ -1,0 +1,27 @@
+# A steps template, not a pipeline: the pipelines in .azurepipelines/ include it with
+# `- template: templates/setup-mise.yml`, so it's never registered on its own.
+# Installs mise, restores its tool cache, and installs every tool mise.toml pins.
+steps:
+  - bash: |
+      # renovate: datasource=github-releases depName=jdx/mise
+      curl https://mise.run | MISE_VERSION=v2026.10.10 MISE_INSTALL_SKIP_IF_EXISTS=1 sh
+      echo "##vso[task.prependpath]$(HOME)/.local/share/mise/bin"
+      echo "##vso[task.prependpath]$(HOME)/.local/share/mise/shims"
+    displayName: Install Mise
+  - task: Cache@2
+    inputs:
+      key: 'mise | "$(Agent.OS)" | mise.toml | mise.ci.toml'
+      restoreKeys: |
+        mise | "$(Agent.OS)"
+      path: $(HOME)/.local/share/mise
+    displayName: Cache Mise Tools
+  - bash: |
+      # The optional GITHUB_COM_TOKEN pipeline variable keeps mise's downloads
+      # from hitting github.com's unauthenticated rate limit, which hosted agents
+      # share by IP; when it isn't defined, Azure Pipelines passes the literal
+      # macro text, so that's treated as unset.
+      case "$GITHUB_TOKEN" in ''|'$('*) unset GITHUB_TOKEN ;; esac
+      mise install
+    displayName: Run 'mise install'
+    env:
+      GITHUB_TOKEN: $(GITHUB_COM_TOKEN)
