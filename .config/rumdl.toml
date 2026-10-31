@@ -1,12 +1,19 @@
 [global]
 disable = [
   "MD013", # Disable line length checking
-  "MD046", # Disable code block style (Zensical)
+  "MD046", # Disable code block style (incompatible with Zensical)
   "MD057", # Disable link checking in favor of Lychee
 ]
 
 [MD007]
 indent = 4 # Set list indentation to 4 spaces
 
+[MD051]
+anchor-style = "python-markdown" # Match Zensical's heading anchors
+
 [MD077]
-indent = 4 # Set the indent for unordered list items to 4 spaces (Zensical)
+indent = 4 # Set the indent for unordered list items to 4 spaces
+
+[per-file-ignores]
+".github/pull_request_template.md" = ["MD041"] # PR bodies sit under the PR title, not an H1
+"README.md" = ["MD033", "MD041"] # Centered logo and badge row need inline HTML

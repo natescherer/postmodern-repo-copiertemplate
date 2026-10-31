@@ -1,44 +1,39 @@
 # Introduction
 
-Thanks for considering contributing to this project!
-
-Any contribution is encouraged and welcome.
+Thanks for considering a contribution to this project.
 
 ## Ground Rules
 
 There is one ground rule for contributions:
 
-> Your contribution will need to use the same license as this project in order to be accepted.
+> Your contribution must use the same license as this project to be accepted.
 
 ## How to Contribute
 
-All contributions should be submitted via a Pull Request. Never done a pull request before? [See this tutorial!](http://makeapullrequest.com/).
+Submit every contribution as a pull request. New to pull requests? [See this tutorial](https://makeapullrequest.com/).
 
-If your contribution is accepted, you will be added to the Authors section in the README.
+See [Development](https://natescherer.github.io/postmodern-repo-copiertemplate/latest/maintaining/development/) for setting up your workstation and for the commit and PR title conventions.
+
+Accepted contributors are added to the Contributors section of the README.
 
 ## How to report a bug
 
 ### Vulnerabilities
 
-If you find a security vulnerability, please do NOT open an Issue. Instead, use the vulnerability reporting feature on the Security tab.
+Don't open a public issue for a security vulnerability. Choose **Security Vulnerability** when opening a new issue, or use the vulnerability reporting on the Security tab, to report it privately.
 
 ### Non-Security Bugs
 
-For non-security bugs, please open a GitHub issue with the "bug" label containing the following information:
-
-> 1. What platform are you running on (and what are relevant tool versions, if applicable)?
-> 1. What did you do?
-> 1. What did you expect to see?
-> 1. What did you see instead?
+Open a new issue and choose the **Bug Report** form.
 
 ## How to suggest a feature or enhancement
 
-If you wish to suggest a feature or enhancement, please enter a GitHub issue with the "enhancement" label detailing the suggestion.
+Open a new issue and choose the **Feature Request** form.
 
 ## Code review process
 
-The owners of this project will conduct code reviews on a best-effort basis.
+The project's owners review contributions on a best-effort basis.
 
 ## Questions
 
-If you have additional questions about contributing, please open a GitHub issue with the "question" tag.
+For other questions about contributing, open a new issue and choose the **Question** form.

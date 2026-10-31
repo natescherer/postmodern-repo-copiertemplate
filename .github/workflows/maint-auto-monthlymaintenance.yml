@@ -1,0 +1,92 @@
+name: "Maint (Auto): Monthly Maintenance"
+
+on:
+  schedule:
+    - cron: 0 18 1 * * # 1st of each month at 6pm UTC
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Job to run"
+        type: choice
+        default: all
+        options:
+          - all
+          - copier_update_check
+          - repo_health_check
+
+env:
+  MISE_ENV: ci
+
+# Independent jobs, so one failing doesn't skip the others. A scheduled run has no
+# inputs, so it runs every job.
+jobs:
+  copier-update-check:
+    if: github.event_name == 'schedule' || contains(fromJSON('["all", "copier_update_check"]'), inputs.job)
+    name: Copier Update Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0 # Ensures tags are checked out
+      - name: Validate Secrets Exist
+        uses: ./.github/actions/require-secrets
+        with:
+          secrets: |
+            APPRISE_URL=${{ secrets.APPRISE_URL }}
+      - name: Check for Copier Template Updates
+        id: copier
+        uses: natescherer/copier-action@b1ee418e5ee2e4334fc26094b9e84be3b93112ac # v0
+        with:
+          subcommand: check-update
+          answers-file: .config/copier-answers.yml
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5
+        with:
+          version: 2026.10.10 # jdx/mise
+      - name: Notify if Update is Available
+        if: steps.copier.outputs.check-update_update_available == 'true'
+        shell: bash
+        env:
+          APPRISE_URL: ${{ secrets.APPRISE_URL }}
+          CURRENT_VERSION: ${{ steps.copier.outputs.check-update_current_version }}
+          LATEST_VERSION: ${{ steps.copier.outputs.check-update_latest_version }}
+        run: |
+          mise x -- apprise -i html \
+            -t "$GITHUB_REPOSITORY Template Update Available" \
+            -b "Repository $GITHUB_REPOSITORY has a new template update available.<br><br>Current version is $CURRENT_VERSION, latest version is $LATEST_VERSION." \
+            "$APPRISE_URL"
+  repo-health-check:
+    if: github.event_name == 'schedule' || contains(fromJSON('["all", "repo_health_check"]'), inputs.job)
+    name: Repo Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5
+        with:
+          version: 2026.10.10 # jdx/mise
+      - name: Check for Broken Links
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mise x -- lychee --no-progress -c .config/lychee.toml .
+  workflow-keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: .github/actions
+      - name: Re-enable Workflow
+        uses: ./.github/actions/reenable-workflow

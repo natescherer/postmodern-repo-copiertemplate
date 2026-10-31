@@ -7,33 +7,28 @@
 # ]
 # ///
 
-"""Preview template/'s docs through a real zensical render.
+"""Preview template/'s docs through a real Zensical build.
 
-A template project's docs can be gated by `{% if %}` conditionals both in their
-path (e.g. `template/{% if is_template %}docs{% endif %}/`) and in their content
-(a `.md.jinja` file with an `{% if is_public %}...{% endif %}` paragraph). Thus,
-there's no single "correct" answer set to render the whole docs/ tree with.
+A template's docs can depend on its answers in their paths
+(`template/docs/reference/{% if is_template %}azure-devops.md{% endif %}`) and in their
+content (an `{% if is_public %}` paragraph in a `.md.jinja` file), so no single answer
+set renders the whole docs/ tree.
 
-So instead of picking one answer set, this renders the whole tree once per entry
-in tests/answer_matrix.py's ANSWER_MATRIX (the same curated, valid combinations
-the render-validation suite itself tests against), run in parallel: each entry's
-a real `copier copy` subprocess call, releasing the GIL while it waits. Rather
-than assume a fixed axis like this project's own project_type (a downstream
-template can rename it, add values, or drop it), renders are grouped by what
-they actually produced: any two whose docs/ end up with the exact same set of
-files are the same "shape" and share one labeled top-level nav section, built
-from that shape's own real nav (theme, CSS, JS unmodified); a page whose content
-still differs *within* a shape gets its own nav entry expanded into labeled
-sibling pages. This project's own Template and Standard project_types are one
-example of two shapes, not an assumption baked into how shapes get found.
+Instead, this renders the tree once per ANSWER_MATRIX entry in tests/answer_matrix.py,
+the combinations the render-validation suite tests, in parallel `copier copy`
+subprocesses. It groups the renders by what they produced instead of assuming an axis
+such as project_type, which a downstream template can rename, extend, or drop. Renders
+whose docs/ contain the same set of files form one "shape", which gets a labeled
+top-level nav section built from that shape's own nav, with the theme, CSS, and JS
+unchanged. A page whose content still differs within a shape becomes labeled sibling
+pages. This project's Template and Standard project types are one example of two
+shapes.
 
-This script watches all *docs* source directories the whole time it runs and
-re-renders on every save, so `zensical serve`'s own live-reload refreshes the
-browser.
+It watches every docs source directory and re-renders on each save, so
+`zensical serve`'s live reload refreshes the browser.
 
-Run via `uv run` (its PEP 723 header above pulls in rich, tomlkit, and watchdog)
-rather than plain `python`, since none of the three are otherwise a project
-dependency.
+Run it with `uv run`, not plain `python`: its PEP 723 header supplies rich, tomlkit,
+and watchdog, which the project doesn't otherwise depend on.
 """
 
 import argparse
@@ -69,20 +64,16 @@ console = Console()
 
 IGNORE_PATTERNS = shutil.ignore_patterns("__pycache__", ".cache")
 
-# How long the watched directories must go quiet before a save triggers a
-# re-render, and how often the watch loop checks for that. Some editors fire more
-# than one filesystem event per save (a write, then a rename for an atomic save):
-# debouncing coalesces those into one re-render instead of several overlapping
-# ones. Also long enough to collapse a burst of autosave-on-pause events while
-# actively typing into one render, without making a single deliberate edit wait
-# an unreasonably long time to see its result.
+# How long the watched directories must stay quiet before a re-render, and how often
+# the watch loop checks. Some editors fire several filesystem events per save (a
+# write, then a rename), and autosave fires bursts while typing; the delay turns each
+# burst into one re-render without making a single edit wait long.
 DEBOUNCE_SECONDS = 5.0
 POLL_SECONDS = 0.1
 
-# Matches a whole Jinja tag ("{% if is_template %}", "{% endif %}", "{# ... #}"),
-# never a partial one: this template's own convention gates a whole path segment
-# at a time, never part of a name, so stripping every tag leaves exactly the literal
-# name a "true" render would produce.
+# Matches a whole Jinja tag ("{% if is_template %}", "{% endif %}", "{# ... #}").
+# This template gates whole path segments, never part of a name, so stripping every
+# tag leaves the name a "true" render produces.
 JINJA_TAG = re.compile(r"\{[%#].*?[%#]\}")
 
 
@@ -135,13 +126,10 @@ def load_answer_matrix() -> list[dict]:
 def find_docs_source_dirs() -> list[Path]:
     """Locate every docs source directory directly under template/.
 
-    There can be more than one: this project's own template/ has a directory
-    gated on is_template and a separate, much smaller one gated on is_standard for
-    the other project_type. Matched purely by each directory's own name stripping
-    down to "docs" once its Jinja conditional is removed (doesn't need to know
-    what condition or axis is actually gating it, or what values it takes), so
-    this generalizes to whatever a downstream template ends up using for the same
-    purpose, not just this project's own project_type/is_template/is_standard.
+    This project's template/ has one docs/ with per-page conditionals, but a downstream
+    template may split its docs across several directories, each gated on its own
+    condition. A directory matches when its name reduces to "docs" once its Jinja tags
+    are removed, whatever the condition, so either layout works.
 
     Returns:
         Every "docs"-shaped directory found.
@@ -216,10 +204,9 @@ def render_all_variants() -> tuple[list[tuple[dict, Path]], list[str]]:
             return f"{entry['id']}:\n{exc.output}"
         return (entry, dest)
 
-    # map() yields results in matrix order regardless of completion order, which
-    # keeps "the first applicable entry" (used to pick each section's primary
-    # render) deterministic across runs rather than a race between the render
-    # subprocesses.
+    # map() yields results in matrix order, whatever order they finish in, so the
+    # "first applicable entry" that picks each section's primary render is the same on
+    # every run.
     with ThreadPoolExecutor(max_workers=len(matrix)) as pool:
         results = list(pool.map(_one, matrix))
 
@@ -243,7 +230,7 @@ def variants_for_path(
     """Check `docs_rel` across every already-rendered tree, relative to render root.
 
     Returns:
-        A Variant for each render that actually has this file.
+        A Variant for each render that has this file.
 
     """
     variants = []
@@ -362,16 +349,13 @@ def build_section(
 ) -> object:
     """Build one project_type's nav section, writing its pages under `path_prefix`.
 
-    `type_renders` must already be filtered to a single project_type, in
-    ANSWER_MATRIX order. `path_prefix` relocates every page under it (relative to
-    docs_dir) so this section's pages don't collide with another section sharing
-    the same `dest`; pass None only for the one section whose relative links
-    were authored assuming they sit at docs_dir's own root: this template's own
-    Template-type docs cross-reference each other extensively with plain relative
-    links like "releasing.md" or "../index.md#..." (prefixing them without also
-    rewriting every link target breaks every one of those, confirmed: zensical's
-    own build reported "page does not exist" for exactly these links the first
-    time every section got prefixed uniformly).
+    `type_renders` must already be filtered to a single project_type, in ANSWER_MATRIX
+    order. `path_prefix` moves every page under it (relative to docs_dir), so this
+    section's pages don't collide with another section's in the same `dest`. Pass None
+    only for the section whose links assume it sits at docs_dir's root: this template's
+    own docs link to each other with plain relative links such as "releasing.md" and
+    "../index.md#...", and prefixing their pages without rewriting those links breaks
+    every one ("page does not exist" in Zensical's build).
 
     Returns:
         This section's nav: the first applicable render's own real nav, prefixed
@@ -454,15 +438,11 @@ def group_by_docs_shape(
 ) -> list[list[tuple[dict, Path]]]:
     """Group renders whose docs/ trees have the exact same set of files.
 
-    Different answer combinations can produce structurally different docs/ trees
-    (this project's own template/ has an is_template docs source and a completely
-    separate, smaller is_standard one); rather than hardcode which answer (e.g.
-    project_type) drives that, or what its values are called, this groups purely
-    by what each render actually produced. Whatever axis a downstream template
-    ends up using for the same purpose (however many values, whatever they're
-    named) falls out of this for free. Two renders sharing a shape but differing
-    in per-page *content* still land in the same group here; that's exactly what
-    build_section()'s own per-page variant expansion is for.
+    Different answers can produce docs/ trees with different files. Instead of
+    hardcoding which answer drives that (such as project_type) or its values, this
+    groups by what each render produced, so it works for whatever axis a downstream
+    template uses, however many values it has. Renders with the same files but different
+    page content share a group; build_section() expands those pages into variants.
 
     Returns:
         Groups of (entry, dest) pairs sharing an identical docs/ file set, in the
@@ -485,7 +465,7 @@ def section_label(type_renders: list[tuple[dict, Path]], index: int) -> str:
 
     Returns:
         `"<project_type> Project"` if every render in this group agrees on a
-        project_type answer (whatever it's actually called downstream), else a
+        project_type answer (whatever it's called downstream), else a
         generic positional fallback for a template that doesn't have one.
 
     """
@@ -500,17 +480,15 @@ def section_label(type_renders: list[tuple[dict, Path]], index: int) -> str:
 def assemble_whole_tree(dest: Path, renders: list[tuple[dict, Path]]) -> None:
     """Build one nav section per distinct docs "shape" found in `renders`.
 
-    The theme/CSS/JS/etc. from whichever render happens to be first becomes
-    `dest`'s shared assets; those don't vary by shape. Each distinct shape gets
-    its own labeled top-level nav group, built from that group's own real nav
-    with any page whose content varies within the group expanded into labeled
-    sibling pages (see group_by_docs_shape()'s docstring for why shape, not a
-    hardcoded answer key, is what defines a section).
+    The first render supplies `dest`'s shared theme, CSS, and JS, which don't vary by
+    shape. Each shape gets a labeled top-level nav group, built from that group's own
+    nav, with each page whose content varies within the group expanded into labeled
+    sibling pages. group_by_docs_shape() explains why a shape, not an answer key,
+    defines a section.
 
-    The first shape found (ANSWER_MATRIX order) is left unprefixed, since this
-    project's own docs cross-reference each other with plain relative links (see
-    build_section()'s docstring) and prefixing breaks those; every other shape is
-    prefixed to avoid colliding with it.
+    The first shape found (ANSWER_MATRIX order) stays unprefixed, since this project's
+    docs link to each other with plain relative links that prefixing breaks (see
+    build_section()); every other shape is prefixed so it doesn't collide.
     """
     shutil.copytree(renders[0][1], dest, dirs_exist_ok=True)
 
@@ -625,12 +603,10 @@ def main() -> None:
             change, which just keeps serving the last good version).
 
     """
-    # sys.stdout is typed as TextIO, which doesn't declare reconfigure(): it's a
-    # real TextIOWrapper at runtime, though. Without this, Windows' default console
-    # codepage (cp1252) can't encode the status glyphs below (rich hits the same
-    # UnicodeEncodeError regardless of which internal render path it takes, since
-    # both end up calling sys.stdout.write() directly). Assumes whoever runs this has
-    # a Unicode-capable terminal.
+    # Windows' default console codepage (cp1252) can't encode the status glyphs below,
+    # and rich raises UnicodeEncodeError on any render path. sys.stdout is typed as
+    # TextIO, which lacks reconfigure(), but it's a TextIOWrapper at runtime. Assumes a
+    # Unicode-capable terminal.
     sys.stdout.reconfigure(encoding="utf-8")  # ty: ignore[unresolved-attribute]
 
     parser = argparse.ArgumentParser(

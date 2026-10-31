@@ -1,0 +1,48 @@
+# Releasing
+
+[Knope](https://knope.tech/) computes versions, updates the changelog, and publishes
+GitHub Releases from
+[Conventional Commits](https://www.conventionalcommits.org/).
+
+## Normal Releases
+
+Every push to `main` opens or updates a release PR (branch `knope/release`) for the next
+version, computed from the commit messages since the last release:
+
+- `fix:` bumps the patch version, `feat:` bumps minor, and a `!` or `BREAKING CHANGE:` commit
+  bumps major.
+- Before `1.0.0`, each shifts down one place: a breaking change bumps minor (`0.1.2` to
+  `0.2.0`), and `feat:` and `fix:` both bump patch (`0.2.0` to `0.2.1`).
+- Renovate's `chore(deps):` PRs add a `Dependency-Update:` footer for each bump, so they bump
+  patch too, under a **Dependencies** heading.
+- Changesets from [template updates](updating-from-template.md) are included.
+
+Merging the release PR tags and publishes the release.
+
+A push with nothing release-worthy, such as a `docs:` commit or a `chore:` commit other than
+Renovate's, logs "Nothing to release yet." and leaves the release PR as it is.
+
+Each push to `main` also adds a commit to the release PR, authored as `github-actions[bot]`.
+GitHub holds the PR's required check on each of those commits until someone clicks **Approve
+and run workflow** in the Actions tab, and branch protection blocks the merge until then. That's
+the cost of not needing a repo-wide Personal Access Token, which enterprise accounts often can't
+use.
+
+## Prereleases
+
+To cut a prerelease (`alpha`, `beta`, or `rc`), run the "Release (Auto): Prepare Release PR" workflow from the Actions tab on GitHub, or the
+"Release (Auto) - Prepare & Publish Release" pipeline from Azure Pipelines on Azure DevOps, and choose a label (on Azure DevOps, a label other than `none`). Each run increments that label's number (`1.1.0-alpha.0`, then
+`.1`). The same label can't run twice at the same commit, so push a new commit first; a
+different label (`alpha` to `beta`) can run at any commit.
+
+## Graduating to 1.0.0
+
+While the lifecycle is Pre-Alpha, Alpha, or Beta, commits only bump the minor or patch version
+(see [Normal Releases](#normal-releases)), so Knope never reaches `1.0.0` on its own. When you're
+ready, run `mise run set-lifecycle` and choose `Stable`. That sets
+`.config/knope-release-override.json` to `1.0.0`. Once that change is on `main`, the release PR
+proposes `1.0.0`, and prereleases count up toward it (`1.0.0-rc.0`, `1.0.0-rc.1`). Merging the
+release PR publishes it.
+
+The same file pins any other version: change the version in it and merge. Knope ignores it once
+the released version reaches it, so it never needs removing.

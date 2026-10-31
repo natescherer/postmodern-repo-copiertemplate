@@ -1,0 +1,11 @@
+# Security Policy
+
+## Supported Versions
+
+Only the latest release receives security fixes.
+
+## Reporting a Vulnerability
+
+Don't open a public issue for a security vulnerability. [Report it privately](https://github.com/natescherer/postmodern-repo-copiertemplate/security/advisories/new) through GitHub's private vulnerability reporting.
+
+The project's owners respond on a best-effort basis.

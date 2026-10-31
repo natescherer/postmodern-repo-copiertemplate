@@ -6,7 +6,7 @@
     "helpers:pinGitHubActionDigests"
   ],
   "schedule": [
-    "* 0 1 * *"
+    "* 18 1 * *"
   ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
@@ -19,7 +19,7 @@
     ]
   },
   "copier": {
-    "description": "Copier template updates are handled via dedicated GitHub Actions Workflow/Azure DevOps pipeline",
+    "description": "Copier template updates are handled by the Monthly Maintenance workflow or pipeline's Copier Update Check job",
     "enabled": false
   },
   "github-actions": {
@@ -90,6 +90,14 @@
         "aqua:j178/prek"
       ],
       "groupName": "prek"
+    },
+    {
+      "description": "Group renovate",
+      "matchPackageNames": [
+        "renovate",
+        "npm:renovate"
+      ],
+      "groupName": "renovate"
     },
     {
       "description": "Group ruff",
@@ -180,7 +188,7 @@
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
     },
     {
-      "description": "Manager for the knope mise tool pin: knope-dev/knope is a monorepo that tags each crate's releases separately (e.g. knope/vX.Y.Z), so the generic \"simple mise tools\" manager above can't be used: extractVersionTemplate is what filters the mixed-prefix tags down to just knope's own",
+      "description": "Manager for the knope mise tool pin: knope-dev/knope tags each crate separately (knope/vX.Y.Z), which the generic \"simple mise tools\" manager can't filter; extractVersionTemplate keeps only knope's tags",
       "customType": "regex",
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "knope-dev/knope",
@@ -217,7 +225,7 @@
       "versioningTemplate": "pep440"
     },
     {
-      "description": "Manager for git-sourced pipx tools, both as a mise tool and in another tool's uvx_args; loose versioning, since a fork tag like 2.2.0+zensical-0.1.0 carries its real version in build metadata that semver ignores",
+      "description": "Manager for git-sourced pipx tools, as a mise tool or in another tool's uvx_args; loose versioning, since a fork tag like 2.2.0+zensical-0.1.0 keeps its real version in build metadata, which semver ignores",
       "customType": "regex",
       "managerFilePatterns": [
         "/(^|/)(?:{%.*%})?mise(\\.\\w+)*\\.toml(?:{%.*%})?(\\.jinja)?$/"
@@ -258,7 +266,7 @@
       "versioningTemplate": "pep440"
     },
     {
-      "description": "Manager for npm-backed mise tools with options: mirrors \"Manager for pipx tools with options\" above, but for the npm: backend prefix (datasource npm instead of pypi). A separate manager because that one's datasource is hardcoded to pypi.",
+      "description": "Manager for npm-backed mise tools with options: the npm counterpart of \"Manager for pipx tools with options\", whose datasource is fixed to pypi",
       "customType": "regex",
       "datasourceTemplate": "npm",
       "managerFilePatterns": [

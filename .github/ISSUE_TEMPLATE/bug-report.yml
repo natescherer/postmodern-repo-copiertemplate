@@ -1,0 +1,29 @@
+name: Bug Report
+description: Report something that isn't working.
+labels:
+  - bug
+body:
+  - type: textarea
+    attributes:
+      label: Platform
+      description: What platform are you running on, and what are the relevant tool versions?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps
+      description: What did you do?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Result
+      description: What did you expect to see?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Actual Result
+      description: What did you see instead?
+    validations:
+      required: true

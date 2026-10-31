@@ -1,23 +1,28 @@
 name: "Maint (Auto): All Contributors"
 
+# A merge credits its contributors right away, scanning only since the last successful
+# run. That window can miss older contributions, so a monthly run scans all history.
 on:
+  push:
+    branches: [main]
   schedule:
-    - cron: 0 17 * * 1 # Every Monday at 5pm UTC
+    - cron: 0 18 1 * * # 1st of each month at 6pm UTC
   workflow_dispatch:
 
 concurrency:
   group: all-contributors
   cancel-in-progress: false
 
-permissions:
-  issues: write
-  pull-requests: write
-
 jobs:
   allcontributors-create-pr:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: ${{ github.actor != 'allcontributors[bot]' }}
+    permissions:
+      actions: read # Lets `since: auto` find the last successful run
+      contents: read
+      issues: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -25,5 +30,21 @@ jobs:
           fetch-depth: 0
       - name: Run All Contributors Auto Action
         uses: JoshuaKGoldberg/all-contributors-auto-action@c578423db9b2c14d3cee9c72f6c2aed31c128030 # v0.7.0
+        with:
+          since: ${{ github.event_name == 'push' && 'auto' || 'all' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  workflow-keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: .github/actions
+      - name: Re-enable Workflow
+        uses: ./.github/actions/reenable-workflow

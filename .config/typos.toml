@@ -1,6 +1,7 @@
 [default]
 extend-ignore-re = [
   '\(\[.*\]\(https:\/\/github\.com\/.*\)\)', # CHANGELOG.md links
+  '-g[0-9a-f]{7,}\b', # git describe hashes, like copier-answers.yml's _commit
 ]
 
 [default.extend-words]

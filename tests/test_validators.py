@@ -1,4 +1,4 @@
-"""Confirms copier.yml.jinja's `validator:` constraints actually reject bad answers.
+"""Confirms copier.yml.jinja's `validator:` constraints reject bad answers.
 
 Generic mechanism, repo-specific data: this module only knows how to attempt a copy and
 assert it fails with a given message; which combinations should be rejected, and why,
