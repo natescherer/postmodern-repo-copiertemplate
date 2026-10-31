@@ -3,8 +3,8 @@
 Every step of an Azure DevOps integration test run, from setup to cleanup, as the last step
 before a release. See [Integration Testing](index.md) for what the run does and why.
 
-The steps use these values from each repo's entry in the run's summary: its **Name** for
-`<repo-a>` and `<repo-b>`, and its **Local clone** for `<repo-a-path>` and `<repo-b-path>`. Each
+The steps use these values from each repo's entry in the run's summary: Repo A's **Name** for
+`<repo-a>`, and each repo's **Local clone** for `<repo-a-path>` and `<repo-b-path>`. Each
 entry's **Web** link opens that repo in Azure DevOps. `<template-repo-path>` is this template's
 own clone, and `<org>` and `<project>` are the Azure DevOps organization and project the test
 repos go in.
@@ -22,6 +22,17 @@ repos go in.
   environment variable to a GitHub token with no scopes. The run sets it on every pipeline, for
   mise's tool downloads and Renovate's lookups on github.com, and stops before creating anything
   without one.
+- [ ] `<org>` and `<project>` are set for the integration-test tasks, once per machine, in
+  `<template-repo-path>/mise.local.toml`, which git ignores:
+
+    ```toml
+    [env]
+    INTEGRATION_TEST_AZDO_ORG = "<org>"
+    INTEGRATION_TEST_AZDO_PROJECT = "<project>"
+    ```
+
+    A template hosted on Azure DevOps defaults to its own org and project, so it needs this only
+    to test somewhere else. Passing `--org` and `--project` to a task overrides either.
 
 ## Running the Test
 
@@ -29,7 +40,7 @@ repos go in.
 
     ```sh
     cd <template-repo-path>
-    mise run integration-test-azdo --org <org> --project <project>
+    mise run integration-test-azdo
     ```
 
 - [ ] When it finishes, its summary says "all checks passed" for both repos. If a check failed,
@@ -188,10 +199,11 @@ branch, whose answers record the commit just before the newest release.*
 
     ```sh
     cd <template-repo-path>
-    mise run integration-test-verify-update-azdo --org <org> --project <project> --repo <repo-b> --local-path <repo-b-path>
+    mise run integration-test-verify-update-azdo
     ```
 
-    It checks that the update brought in current content, left no conflict markers, registered
+    It finds the newest run's Repo B, with its org and project, from its local clone. It checks
+    that the update brought in current content, left no conflict markers, registered
     each pipeline only under its current name, removed the merged pipelines' old registrations,
     and that `Test (Auto) - PR Validation` triggers and passes on a new PR. Every check prints
     `[PASS]`.
@@ -202,7 +214,7 @@ branch, whose answers record the commit just before the newest release.*
 
     ```sh
     cd <template-repo-path>
-    mise run integration-test-cleanup-azdo --org <org> --project <project>
+    mise run integration-test-cleanup-azdo
     ```
 
     It deletes every integration-test repo and pipeline in the project, and their local clones,

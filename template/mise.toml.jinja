@@ -119,12 +119,13 @@ run = "python scripts/integration_test_github.py --source {% if using_github %}h
 # Run after updating Repo B by hand (see the "Repo B" section of
 # {{ docs_url }}maintaining/integration-testing/runbook-github{{ docs_page_suffix }}).
 # Checks that the update brought in current content, left no conflict markers, and that
-# PR Validation still works.
+# PR Validation still works. It verifies the newest run's Repo B, found from its local
+# clone, unless --repo and --local-path name another.
 usage = '''
 flag "--repo <repo>" help="owner/repo of the already-updated Repo B"
 flag "--local-path <path>" help="Local clone path printed when Repo B was created"
 '''
-run = "python scripts/integration_test_github.py"
+run = "python scripts/integration_test_github.py --verify-update --repo-prefix {{ repo_name }}"
 
 [tasks.integration-test-cleanup-gh]
 # Deletes every repo integration-test-gh created, including those of a run that
@@ -144,14 +145,16 @@ run = "python scripts/integration_test_github.py --cleanup --repo-prefix {{ repo
 # {{ docs_url }}maintaining/integration-testing/index.html and
 # {{ docs_url }}maintaining/integration-testing/runbook-azdo{{ docs_page_suffix }}.
 #
-# --org and --project default to this project's own org and project on Azure DevOps;
-# otherwise pass them, as in `mise run integration-test-azdo --org myorg --project
-# myproject`. The `usage` field, not the deprecated option() function, passes them to
-# the script as environment variables (usage_org, usage_project), which works the same
-# in any shell and fails clearly when a required value is missing.
+# --org and --project default to INTEGRATION_TEST_AZDO_ORG and
+# INTEGRATION_TEST_AZDO_PROJECT, which you can set once in mise.local.toml's
+# [env]{% if using_azdo %}, and otherwise to this project's own org and project{% endif %}.
+# Or pass them, as in `mise run integration-test-azdo --org myorg --project myproject`.
+# The `usage` field, not the deprecated option() function, passes them to the script
+# as environment variables (usage_org, usage_project), which works the same in any
+# shell and fails clearly when a required value is missing.
 usage = '''
-flag "--org <org>" help="Azure DevOps organization"{% if org_default %} default="{{ org_default }}"{% endif %}
-flag "--project <project>" help="Azure DevOps project"{% if project_default %} default="{{ project_default }}"{% endif %}
+flag "--org <org>" help="Azure DevOps organization" env="INTEGRATION_TEST_AZDO_ORG"{% if org_default %} default="{{ org_default }}"{% endif %}
+flag "--project <project>" help="Azure DevOps project" env="INTEGRATION_TEST_AZDO_PROJECT"{% if project_default %} default="{{ project_default }}"{% endif %}
 '''
 run = "python scripts/integration_test_azdo.py --source {% if using_github %}https://github.com/{{ github_repo_owner }}/{{ repo_name }}{% elif using_azdo %}git+https://dev.azure.com/{{ azdo_org }}/{{ azdo_project_encoded }}/_git/{{ repo_name }}{% endif %} --repo-prefix {{ repo_name }}{% if not is_extensible %} --leaf{% endif %}"
 
@@ -159,22 +162,24 @@ run = "python scripts/integration_test_azdo.py --source {% if using_github %}htt
 # Run after updating Repo B by hand (see the "Repo B" section of
 # {{ docs_url }}maintaining/integration-testing/runbook-azdo{{ docs_page_suffix }}).
 # Checks that the update brought in current content, left no conflict markers, renamed
-# pipelines in place, and that PR Validation still works.
+# pipelines in place, and that PR Validation still works. It verifies the newest run's
+# Repo B, found from its local clone, which also names its org and project, unless
+# --repo and --local-path name another.
 usage = '''
-flag "--org <org>" help="Azure DevOps organization"{% if org_default %} default="{{ org_default }}"{% endif %}
-flag "--project <project>" help="Azure DevOps project"{% if project_default %} default="{{ project_default }}"{% endif %}
+flag "--org <org>" help="Azure DevOps organization" env="INTEGRATION_TEST_AZDO_ORG"{% if org_default %} default="{{ org_default }}"{% endif %}
+flag "--project <project>" help="Azure DevOps project" env="INTEGRATION_TEST_AZDO_PROJECT"{% if project_default %} default="{{ project_default }}"{% endif %}
 flag "--repo <repo>" help="Name of the already-updated Repo B"
 flag "--local-path <path>" help="Local clone path printed when Repo B was created"
 '''
-run = "python scripts/integration_test_azdo.py"
+run = "python scripts/integration_test_azdo.py --verify-update --repo-prefix {{ repo_name }}"
 
 [tasks.integration-test-cleanup-azdo]
 # Deletes every repo integration-test-azdo created, and their pipelines, including
 # those of a run that stopped partway, after listing them and asking. --org and
 # --project work as in integration-test-azdo.
 usage = '''
-flag "--org <org>" help="Azure DevOps organization"{% if org_default %} default="{{ org_default }}"{% endif %}
-flag "--project <project>" help="Azure DevOps project"{% if project_default %} default="{{ project_default }}"{% endif %}
+flag "--org <org>" help="Azure DevOps organization" env="INTEGRATION_TEST_AZDO_ORG"{% if org_default %} default="{{ org_default }}"{% endif %}
+flag "--project <project>" help="Azure DevOps project" env="INTEGRATION_TEST_AZDO_PROJECT"{% if project_default %} default="{{ project_default }}"{% endif %}
 '''
 run = "python scripts/integration_test_azdo.py --cleanup --repo-prefix {{ repo_name }}"
 {%- endif %}
