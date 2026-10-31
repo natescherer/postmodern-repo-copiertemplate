@@ -53,11 +53,10 @@ Keep `answer_matrix.py` in step with `{{ questions_file }}` in the same change:
 
 {%- if is_extensible %}
 
-Run the suite with the command above, against `template/`, never with a plain
-{% raw %}`pytest tests/`{% endraw %}. A project that renders a copy of itself at its root (as
-this template's upstream does) has a root `tests/` that lags behind `template/` like any other
-dogfooded file, so a new or edited test function runs only from `template/` until the next
-sync.
+The suite has a second copy in root `tests/`, which PR Validation runs; descendant templates
+inherit the `template/` copy. Add each new or changed test to both, unless descendants
+shouldn't inherit it; then add it to root `tests/` only. Run each copy before committing: the
+`template/` copy with the command above, and root's with {% raw %}`mise x -- pytest tests/`{% endraw %}.
 {%- endif %}
 
 A hook's tool entry in `mise.toml.jinja` and its gate in `prek.toml.jinja` must use the same

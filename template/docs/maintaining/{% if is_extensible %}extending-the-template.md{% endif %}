@@ -84,7 +84,8 @@ them.
 
 1. Add the question to `copier.yml`, with a `when:` or `validator:` if it's conditional or
    constrained.
-1. Use each of its values in some `ANSWER_MATRIX` entry in `answer_matrix.py`, and add a
+1. Use each of its values in some `ANSWER_MATRIX` entry in `answer_matrix.py` (in each copy of
+   the suite; see [Template-level tests](#template-level-tests)), and add a
    combination each new `validator:` should reject to `INVALID_ANSWER_MATRIX`. `AGENTS.md`
    lists the rules, including `_old_tag_overrides` for a value the last release doesn't
    accept; `test_answer_matrix_coverage.py` catches a missed `choices:` value.
@@ -165,6 +166,13 @@ your domain content, in three layers:
 
 A CI/CD change tested only by the first layer is untested where it's most likely to break.
 Verify it on a real platform.
+
+An extensible template has two copies of the suite. PR Validation runs root `tests/`, and the
+templates built on yours inherit `template/{% if is_template %}tests{% endif %}/`. Add each new
+or changed test to both, so your CI runs it and your descendants get it. A test they shouldn't
+inherit goes in root `tests/` only. `copier update` keeps the test files you add to root
+`tests/` and merges your edits into this template's, such as `answer_matrix.py`. A leaf
+template's `template/` has no tests, so its tests go in root `tests/`.
 
 #### Tests for what the template produces
 
