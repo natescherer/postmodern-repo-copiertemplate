@@ -20,6 +20,15 @@
         "infra",
         "test"
       ]
+    },
+    {
+      "login": "limits",
+      "name": "limits",
+      "avatar_url": "https://avatars.githubusercontent.com/u/511367?v=4",
+      "profile": "https://github.com/limits",
+      "contributions": [
+        "tool"
+      ]
     }
   ]
 }
