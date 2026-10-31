@@ -1281,7 +1281,9 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     publish_before = latest_run_id(
         repo, "release-auto-publishrelease.yml", event="pull_request"
     )
-    zensical_before = latest_run_id(repo, "docs-auto-zensical.yml", event="release")
+    zensical_before = latest_run_id(
+        repo, "docs-auto-zensical.yml", event="workflow_dispatch"
+    )
     approve_pending_run(repo, "knope/release")
     wait_for_pr_checks(repo, str(pr_number))
     merge_pr(repo, str(pr_number))
@@ -1320,12 +1322,12 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
             release_view.returncode == 0,
         )
 
-        # Publishing a release fires a `release: published` event that
-        # docs-auto-zensical.yml listens for (it publishes the "latest" Pages docs
-        # alias); wait for it here so check_repo_health_check(), which runs later,
-        # isn't racing a Pages deployment that hasn't happened yet.
+        # Publish Release dispatches docs-auto-zensical.yml with the new tag (it
+        # publishes the "latest" Pages docs alias): a release made with GITHUB_TOKEN
+        # fires no `release` event. Wait for that run here so check_repo_health_check(),
+        # which runs later, isn't racing a Pages deployment that hasn't happened yet.
         zensical_run_id = wait_for_new_run(
-            repo, "docs-auto-zensical.yml", zensical_before, event="release"
+            repo, "docs-auto-zensical.yml", zensical_before, event="workflow_dispatch"
         )
         conclusion = wait_for_run(repo, zensical_run_id)
         check(
