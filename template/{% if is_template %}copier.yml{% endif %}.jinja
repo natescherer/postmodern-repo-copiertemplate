@@ -1166,10 +1166,29 @@ _tasks:
       {%- endif %}
 
   # Enables CodeQL default setup, for public repos only: private repos need a paid
-  # GitHub Advanced Security license.
-  - command: >-
-      gh api repos/{{ github_repo_owner }}/{{ repo_name }}/code-scanning/default-setup
-      -X PATCH -f state=configured
+  # GitHub Advanced Security license. Right after the first push, GitHub can answer
+  # 422 "Failed to toggle code scanning default setup" for a minute or so, then enables
+  # it, so this retries a 422 for up to three minutes; any other error fails at once.
+  - command:
+      - "{{ _copier_python }}"
+      - -c
+      - |
+        import shutil, subprocess, sys, time
+
+        GH = shutil.which("gh") or "gh"
+        ENDPOINT = "repos/{{ github_repo_owner }}/{{ repo_name }}/code-scanning/default-setup"
+        for attempt in range(19):
+            result = subprocess.run(
+                [GH, "api", ENDPOINT, "-X", "PATCH", "-f", "state=configured"],
+                capture_output=True, text=True,
+            )
+            if result.returncode == 0:
+                sys.exit(0)
+            if "HTTP 422" not in result.stderr or attempt == 18:
+                sys.exit(f"Couldn't enable CodeQL default setup: {result.stderr.strip()}")
+            if attempt == 0:
+                print("GitHub isn't ready to enable CodeQL yet; retrying for up to 3 minutes.")
+            time.sleep(10)
     when: &when_copy_public_github |-
       {%- if _copier_operation == 'copy' and is_public and using_github and repo_setup_actions != 'None' -%}
         true
