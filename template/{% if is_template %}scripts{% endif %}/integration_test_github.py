@@ -407,7 +407,12 @@ def open_pr_wait_and_merge(
 
 
 def wait_for_pr_checks(repo: str, pr_number: str) -> list[dict]:
-    """Poll a PR's status checks until they all complete, and confirm they passed.
+    """Poll a PR's workflow checks until they all complete, and confirm they passed.
+
+    Only GitHub Actions checks (those with a workflowName) count. Another app's checks,
+    such as Codecov's, aren't required to merge and can stay in progress indefinitely,
+    as Codecov's did on a new repo's setup PR. check_coverage_upload() covers the
+    upload itself.
 
     Two force-pushes in quick succession can leave a `CANCELLED` entry beside the newer
     run for the same check name, since `test-auto-prvalidation.yml`'s concurrency group
@@ -440,6 +445,8 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> list[dict]:
         )["statusCheckRollup"]  # fmt: skip
         latest_by_name: dict[str, dict] = {}
         for status_check in rollup:
+            if not status_check.get("workflowName"):
+                continue
             name = status_check.get("name")
             existing = latest_by_name.get(name)
             if existing is None or (status_check.get("completedAt") or "") >= (
