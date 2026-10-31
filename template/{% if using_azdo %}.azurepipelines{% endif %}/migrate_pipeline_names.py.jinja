@@ -26,6 +26,8 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 REPO_NAME = "{{ repo_name }}"
+AZDO_ORG_URL = "https://dev.azure.com/{{ azdo_org }}/"
+AZDO_PROJECT = "{{ azdo_project }}"
 
 # (current display name, yml-path relative to the repo root, old display names). The
 # first old name registered gets repointed; any other is deleted. Renovate comes first
@@ -141,65 +143,90 @@ def check_azure_devops_extension() -> None:
         )
 
 
-def migrate(org: str, project: str, *, dry_run: bool) -> None:
-    """Repoint, then delete, registrations so each current pipeline has exactly one.
+def full(name: str) -> str:
+    """Return the registered name of the pipeline whose display name is `name`.
 
-    Whether a given entry even applies to this project is decided by whether its
+    Returns:
+        `name`, prefixed with this repo's name in brackets.
+
+    """
+    return f"[{REPO_NAME}] {name}"
+
+
+def delete(
+    pipeline_id: int,
+    name: str,
+    replacement: str,
+    scope: tuple[str, ...],
+    *,
+    dry_run: bool,
+) -> None:
+    """Delete the registration `name`, which `replacement` replaces."""
+    print(f"Deleting {name!r}: {replacement!r} replaces it")
+    if not dry_run:
+        run("az", "pipelines", "delete", "--id", str(pipeline_id), *scope, "--yes")
+
+
+def migrate_pipeline(
+    pipeline: tuple[str, str, tuple[str, ...]],
+    by_name: dict[str, int],
+    scope: tuple[str, ...],
+    *,
+    dry_run: bool,
+) -> None:
+    """Repoint one old registration of a PIPELINES entry, then delete any others.
+
+    Whether the entry even applies to this project is decided by whether its
     `.azurepipelines/*.yml` file exists on disk; the ground truth for "this project
     needs this pipeline," since that file only exists if the project's own answers
     caused copier to render it.
     """
+    current, yml_path, olds = pipeline
+    if not (REPO_ROOT / yml_path).exists():
+        return  # this pipeline category doesn't apply to this project
+
+    current_full = full(current)
+    old_fulls = [full(old) for old in olds if full(old) in by_name]
+    if current_full in by_name:
+        print(f"Already up to date: {current_full!r}")
+    elif old_fulls:
+        keep = old_fulls.pop(0)
+        print(f"Migrating {keep!r} -> {current_full!r} ({yml_path})")
+        if not dry_run:
+            run(
+                "az", "pipelines", "update", "--id", str(by_name[keep]),
+                "--new-name", current_full, "--yml-path", yml_path, *scope,
+            )  # fmt: skip
+    else:
+        print(
+            f"WARNING: {yml_path} exists locally but no pipeline is registered "
+            f"under {current_full!r} or an old name for it; create it manually, "
+            "e.g. via 'az pipelines create'."
+        )
+    for name in old_fulls:
+        delete(by_name[name], name, current_full, scope, dry_run=dry_run)
+
+
+def migrate(org: str, project: str, *, dry_run: bool) -> None:
+    """Repoint, then delete, registrations so each current pipeline has exactly one."""
     scope = ("--org", org, "--project", project)
-    pipelines = json.loads(
-        az_value(
-            "pipelines", "list", "--repository", REPO_NAME, *scope,
-            "--query", "[].{id: id, name: name}",
-        )  # fmt: skip
-        or "[]"
-    )
-    by_name = {p["name"]: p["id"] for p in pipelines}
+    listing = az_value(
+        "pipelines", "list", "--repository", REPO_NAME, *scope,
+        "--query", "[].{id: id, name: name}",
+    )  # fmt: skip
+    by_name = {p["name"]: p["id"] for p in json.loads(listing or "[]")}
     recognized_names = set()
 
-    def full(name: str) -> str:
-        return f"[{REPO_NAME}] {name}"
-
-    def delete(name: str, replacement: str) -> None:
-        print(f"Deleting {name!r}: {replacement!r} replaces it")
-        if not dry_run:
-            run("az", "pipelines", "delete", "--id", str(by_name[name]), *scope, "--yes")
-
-    for current, yml_path, olds in PIPELINES:
-        current_full = full(current)
-        old_fulls = [full(old) for old in olds if full(old) in by_name]
-        recognized_names.update((current_full, *map(full, olds)))
-
-        if not (REPO_ROOT / yml_path).exists():
-            continue  # this pipeline category doesn't apply to this project
-
-        if current_full in by_name:
-            print(f"Already up to date: {current_full!r}")
-        elif old_fulls:
-            keep = old_fulls.pop(0)
-            print(f"Migrating {keep!r} -> {current_full!r} ({yml_path})")
-            if not dry_run:
-                run(
-                    "az", "pipelines", "update", "--id", str(by_name[keep]),
-                    "--new-name", current_full, "--yml-path", yml_path, *scope,
-                )  # fmt: skip
-        else:
-            print(
-                f"WARNING: {yml_path} exists locally but no pipeline is registered "
-                f"under {current_full!r} or an old name for it; create it manually, "
-                "e.g. via 'az pipelines create'."
-            )
-        for name in old_fulls:
-            delete(name, current_full)
+    for pipeline in PIPELINES:
+        current, _, olds = pipeline
+        recognized_names.update(map(full, (current, *olds)))
+        migrate_pipeline(pipeline, by_name, scope, dry_run=dry_run)
 
     for current, olds in RETIRED:
         for name in map(full, olds):
             recognized_names.add(name)
             if name in by_name:
-                delete(name, full(current))
+                delete(by_name[name], name, full(current), scope, dry_run=dry_run)
 
     cruft = sorted(name for name in by_name if name not in recognized_names)
     if cruft:
@@ -212,21 +239,12 @@ def migrate(org: str, project: str, *, dry_run: bool) -> None:
 
 
 def main() -> None:
-    """Parse args, then migrate this repo's Azure Pipeline registrations.
-
-    Raises:
-        SystemExit: if `az` or its azure-devops extension aren't installed.
-
-    """
+    """Parse args, check for `az`, then migrate this repo's pipeline registrations."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--org",
-        default="https://dev.azure.com/{{ azdo_org }}/",
-        help="Azure DevOps organization URL",
+        "--org", default=AZDO_ORG_URL, help="Azure DevOps organization URL"
     )
-    parser.add_argument(
-        "--project", default="{{ azdo_project }}", help="Azure DevOps project"
-    )
+    parser.add_argument("--project", default=AZDO_PROJECT, help="Azure DevOps project")
     parser.add_argument(
         "--dry-run",
         action="store_true",

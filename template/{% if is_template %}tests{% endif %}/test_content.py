@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 import yaml
-from conftest import RENDERABLE_ANSWERS, _render
+from conftest import RENDERABLE_ANSWERS, _render, _run
 
 
 def _extract_nav_paths(nav: list) -> list[str]:
@@ -177,6 +177,43 @@ def test_hook_tools_available(template_source, tmp_path, answers):
     errors = _check_hook_tools_available(
         dest / ".config" / "prek.toml", dest / "mise.toml"
     )
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert not errors, "\n\n".join(errors)  # noqa: S101
+
+
+def _check_python_lint_clean(dest: Path) -> list[str]:
+    """Run the render's own ruff hooks over its rendered Python files.
+
+    A `.py.jinja` file escapes this repo's own ruff hooks, which skip `.jinja`, so
+    only a project that renders it and runs ruff (a Template one) finds out that its
+    rendered form fails them.
+
+    Returns:
+        One error string per failing ruff command, with its output.
+
+    """
+    ruff_toml = dest / ".config" / "ruff.toml"
+    if not ruff_toml.is_file():
+        return []
+    commands = (
+        ["ruff", "check", "--config", str(ruff_toml), "--output-format", "concise"],
+        ["ruff", "format", "--config", str(ruff_toml), "--check"],
+    )
+    errors = []
+    for command in commands:
+        result = _run([*command, "."], cwd=dest)
+        if result.returncode:
+            output = result.stdout + result.stderr
+            errors.append(f"{' '.join(command[:2])} failed:\n{output}")
+    return errors
+
+
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
+def test_python_lint_clean(template_source, tmp_path, answers):
+    """Verify the render's Python files pass its own ruff check and ruff format."""
+    dest = tmp_path / "out"
+    _render(template_source, dest, answers)
+    errors = _check_python_lint_clean(dest)
     # S101: `assert` is the normal, expected way to fail a pytest test.
     assert not errors, "\n\n".join(errors)  # noqa: S101
 
