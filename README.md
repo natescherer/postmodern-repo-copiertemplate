@@ -5,13 +5,13 @@
   <a href="https://semver.org/"><img alt="SemVer 2.0.0" src="https://img.shields.io/badge/SemVer-2.0.0-1b1b1b?logo=semver&logoColor=white"></a>
   <a href="https://renovatebot.com/"><img alt="Renovate" src="https://img.shields.io/badge/Renovate-enabled-1A1F6C?logo=renovatebot&logoColor=white"></a>
   <a href="https://mise.jdx.dev/"><img alt="mise" src="https://img.shields.io/badge/mise-managed-b04a68?&labelColor=161111"></a>
-  <a href="#contributors"><img alt="All Contributors" src="https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449"></a>
+  <a href="#contributors"><img alt="All Contributors" src="https://img.shields.io/github/all-contributors/postmodern-templates/repo-template?color=ee8449"></a>
 </p>
 
 <div align="center">
   <img src="docs/assets/images/readme-logo.png" alt="Logo" width="160" height="160">
 
-  <h3 align="center">Postmodern Repo Copier Template</h3>
+  <h3 align="center">Postmodern Repo Template</h3>
 
   <p align="center">
     A Copier template to create a repo with the hard/boring stuff automated, so you can get back to coding.
@@ -48,7 +48,7 @@ See documentation below for more details on each item.
 
 ## Documentation
 
-For detailed documentation, see [https://natescherer.github.io/postmodern-repo-copiertemplate/](https://natescherer.github.io/postmodern-repo-copiertemplate/).
+For detailed documentation, see [https://postmodern-templates.github.io/repo-template/](https://postmodern-templates.github.io/repo-template/).
 
 ## Questions/Comments
 

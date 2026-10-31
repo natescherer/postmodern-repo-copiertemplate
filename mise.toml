@@ -33,7 +33,7 @@ run = "zensical serve"
 
 [tasks.provision-secrets]
 # Opt-in, and separate from _tasks on purpose; see
-# https://natescherer.github.io/postmodern-repo-copiertemplate/latest/reference/token-permissions/. `raw` hands
+# https://postmodern-templates.github.io/repo-template/latest/reference/token-permissions/. `raw` hands
 # the terminal to gh and az, so each CLI's own masked prompt reads the value directly;
 # it never appears in a command-line argument, mise's logs, or a script.
 raw = true
@@ -83,13 +83,13 @@ run = "uv run scripts/template_docs_server.py"
 # Repo B section says, then check it with
 # `mise run integration-test-verify-update-gh`. Both repos stay
 # for inspection; delete them with `mise run integration-test-cleanup-gh`. See
-# https://natescherer.github.io/postmodern-repo-copiertemplate/latest/maintaining/integration-testing/index.html and
-# https://natescherer.github.io/postmodern-repo-copiertemplate/latest/maintaining/integration-testing/runbook-github/.
-run = "python scripts/integration_test_github.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --repo-prefix postmodern-repo-copiertemplate"
+# https://postmodern-templates.github.io/repo-template/latest/maintaining/integration-testing/index.html and
+# https://postmodern-templates.github.io/repo-template/latest/maintaining/integration-testing/runbook-github/.
+run = "python scripts/integration_test_github.py --source https://github.com/postmodern-templates/repo-template --repo-prefix repo-template"
 
 [tasks.integration-test-verify-update-gh]
 # Run after updating Repo B by hand (see the "Repo B" section of
-# https://natescherer.github.io/postmodern-repo-copiertemplate/latest/maintaining/integration-testing/runbook-github/).
+# https://postmodern-templates.github.io/repo-template/latest/maintaining/integration-testing/runbook-github/).
 # Checks that the update brought in current content, left no conflict markers, and that
 # PR Validation still works. It verifies the newest run's Repo B, found from its local
 # clone, unless --repo and --local-path name another.
@@ -97,12 +97,12 @@ usage = '''
 flag "--repo <repo>" help="owner/repo of the already-updated Repo B"
 flag "--local-path <path>" help="Local clone path printed when Repo B was created"
 '''
-run = "python scripts/integration_test_github.py --verify-update --repo-prefix postmodern-repo-copiertemplate"
+run = "python scripts/integration_test_github.py --verify-update --repo-prefix repo-template"
 
 [tasks.integration-test-cleanup-gh]
 # Deletes every repo integration-test-gh created, including those of a run that
 # stopped partway, after listing them and asking.
-run = "python scripts/integration_test_github.py --cleanup --repo-prefix postmodern-repo-copiertemplate"
+run = "python scripts/integration_test_github.py --cleanup --repo-prefix repo-template"
 
 [tasks.integration-test-azdo]
 # Verifies a release candidate on main before a release. Creates two test repos from
@@ -111,8 +111,8 @@ run = "python scripts/integration_test_github.py --cleanup --repo-prefix postmod
 # Repo B section says, then check it with
 # `mise run integration-test-verify-update-azdo`. Both repos stay for inspection;
 # delete them with `mise run integration-test-cleanup-azdo`. See
-# https://natescherer.github.io/postmodern-repo-copiertemplate/latest/maintaining/integration-testing/index.html and
-# https://natescherer.github.io/postmodern-repo-copiertemplate/latest/maintaining/integration-testing/runbook-azdo/.
+# https://postmodern-templates.github.io/repo-template/latest/maintaining/integration-testing/index.html and
+# https://postmodern-templates.github.io/repo-template/latest/maintaining/integration-testing/runbook-azdo/.
 #
 # --org and --project default to INTEGRATION_TEST_AZDO_ORG and
 # INTEGRATION_TEST_AZDO_PROJECT, which you can set once in mise.local.toml's
@@ -125,11 +125,11 @@ usage = '''
 flag "--org <org>" help="Azure DevOps organization" env="INTEGRATION_TEST_AZDO_ORG"
 flag "--project <project>" help="Azure DevOps project" env="INTEGRATION_TEST_AZDO_PROJECT"
 '''
-run = "python scripts/integration_test_azdo.py --source https://github.com/natescherer/postmodern-repo-copiertemplate --repo-prefix postmodern-repo-copiertemplate"
+run = "python scripts/integration_test_azdo.py --source https://github.com/postmodern-templates/repo-template --repo-prefix repo-template"
 
 [tasks.integration-test-verify-update-azdo]
 # Run after updating Repo B by hand (see the "Repo B" section of
-# https://natescherer.github.io/postmodern-repo-copiertemplate/latest/maintaining/integration-testing/runbook-azdo/).
+# https://postmodern-templates.github.io/repo-template/latest/maintaining/integration-testing/runbook-azdo/).
 # Checks that the update brought in current content, left no conflict markers, renamed
 # pipelines in place, and that PR Validation still works. It verifies the newest run's
 # Repo B, found from its local clone, which also names its org and project, unless
@@ -140,7 +140,7 @@ flag "--project <project>" help="Azure DevOps project" env="INTEGRATION_TEST_AZD
 flag "--repo <repo>" help="Name of the already-updated Repo B"
 flag "--local-path <path>" help="Local clone path printed when Repo B was created"
 '''
-run = "python scripts/integration_test_azdo.py --verify-update --repo-prefix postmodern-repo-copiertemplate"
+run = "python scripts/integration_test_azdo.py --verify-update --repo-prefix repo-template"
 
 [tasks.integration-test-cleanup-azdo]
 # Deletes every repo integration-test-azdo created, and their pipelines, including
@@ -150,7 +150,7 @@ usage = '''
 flag "--org <org>" help="Azure DevOps organization" env="INTEGRATION_TEST_AZDO_ORG"
 flag "--project <project>" help="Azure DevOps project" env="INTEGRATION_TEST_AZDO_PROJECT"
 '''
-run = "python scripts/integration_test_azdo.py --cleanup --repo-prefix postmodern-repo-copiertemplate"
+run = "python scripts/integration_test_azdo.py --cleanup --repo-prefix repo-template"
 
 [tools]
 # Backends

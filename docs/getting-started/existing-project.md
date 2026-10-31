@@ -20,7 +20,7 @@
    existing project's root:
 
     ```bash
-    mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/path-to-existing-project
+    mise x "--" copier copy --trust https://github.com/postmodern-templates/repo-template ~/path-to-existing-project
     ```
 
     See [Template Questions](../reference/template-questions.md) for what each prompt controls.

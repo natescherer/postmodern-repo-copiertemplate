@@ -12,7 +12,7 @@
 1. Create the project, replacing the path at the end with where it should go:
 
     ```bash
-    mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/local-repo-path-here
+    mise x "--" copier copy --trust https://github.com/postmodern-templates/repo-template ~/local-repo-path-here
     ```
 
 See [Template Questions](../reference/template-questions.md) for what each prompt controls.

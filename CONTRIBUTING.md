@@ -12,7 +12,7 @@ There is one ground rule for contributions:
 
 Submit every contribution as a pull request. New to pull requests? [See this tutorial](https://makeapullrequest.com/).
 
-See [Development](https://natescherer.github.io/postmodern-repo-copiertemplate/latest/maintaining/development/) for setting up your workstation and for the commit and PR title conventions.
+See [Development](https://postmodern-templates.github.io/repo-template/latest/maintaining/development/) for setting up your workstation and for the commit and PR title conventions.
 
 Accepted contributors are added to the Contributors section of the README.
 

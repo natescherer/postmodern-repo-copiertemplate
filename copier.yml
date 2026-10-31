@@ -7,7 +7,7 @@ _jinja_extensions:
 # renovate: datasource=pypi depName=copier
 _min_copier_version: "9.19.1"
 
-_message_before_copy: Thanks for using this template. See https://natescherer.github.io/postmodern-repo-copiertemplate/latest/reference/template-questions/ for what each question controls.
+_message_before_copy: Thanks for using this template. See https://postmodern-templates.github.io/repo-template/latest/reference/template-questions/ for what each question controls.
 
 _subdirectory: template
 # endregion Copier Settings
@@ -15,13 +15,13 @@ _subdirectory: template
 # region Parent Template Values - DO NOT EDIT
 parent_template_name:
   type: str
-  default: Postmodern Repo Copier Template
+  default: Postmodern Repo Template
   when: false
 
 parent_template_url:
   type: str
   default: >-
-    https://github.com/natescherer/postmodern-repo-copiertemplate
+    https://github.com/postmodern-templates/repo-template
   when: false
 
 # Where this template's own docs pages live, as parent_template_docs_url + page path
@@ -29,7 +29,7 @@ parent_template_url:
 # messages, which print before a new project's own docs are published.
 parent_template_docs_url:
   type: str
-  default: "https://natescherer.github.io/postmodern-repo-copiertemplate/latest/"
+  default: "https://postmodern-templates.github.io/repo-template/latest/"
   when: false
 
 parent_template_docs_suffix:
@@ -1119,7 +1119,7 @@ _tasks:
   # Reapplies the github-pages environment. gh-settings applies environments before
   # Pages, and enabling Pages restricts that environment to the default branch, which
   # would block docs publishing from a release tag. Remove this once gh-settings orders
-  # environments after Pages: https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1332
+  # environments after Pages: https://github.com/postmodern-templates/repo-template/issues/1332
   - command:
       - mise
       - x
