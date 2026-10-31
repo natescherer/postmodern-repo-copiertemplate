@@ -1165,6 +1165,26 @@ _tasks:
         true
       {%- endif %}
 
+  # Reapplies the github-pages environment. gh-settings applies environments before
+  # Pages, and enabling Pages restricts that environment to the default branch, which
+  # would block docs publishing from a release tag. Remove this once gh-settings orders
+  # environments after Pages: https://github.com/natescherer/postmodern-repo-copiertemplate/issues/1332
+  - command:
+      - mise
+      - x
+      - --
+      - gh-settings
+      - sync
+      - --yes
+      - --only
+      - environments
+      - --repo
+      - "{{ github_repo_owner }}/{{ repo_name }}"
+    when: |-
+      {%- if _copier_operation == 'copy' and using_github and zensical_ghpages and repo_setup_actions != 'None' -%}
+        true
+      {%- endif %}
+
   # Enables CodeQL default setup, for public repos only: private repos need a paid
   # GitHub Advanced Security license. Right after the first push, GitHub can answer
   # 422 "Failed to toggle code scanning default setup" for a minute or so, then enables
