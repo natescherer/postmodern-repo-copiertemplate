@@ -4,8 +4,7 @@ Every step of a GitHub integration test run, from setup to cleanup, as the last 
 release. See [Integration Testing](index.md) for what the run does and why.
 
 The commands use these values from each repo's entry in the run's summary: its **Local clone**
-for `<repo-a-path>` and `<repo-b-path>`, and Repo B's **Name** for `<owner>/<repo-b>`. Each entry's
-**Web** link opens that repo on GitHub. `<template-repo-path>` is this template's own clone.
+for `<repo-a-path>` and `<repo-b-path>`. Each entry's **Web** link opens that repo on GitHub. `<template-repo-path>` is this template's own clone.
 
 !!! bug "Checkbox state isn't saved"
     You can tick the boxes as you go, but reloading or leaving the page clears them. Finish the
@@ -182,10 +181,11 @@ that release, it detects the release.*
 
     ```sh
     cd <template-repo-path>
-    mise run integration-test-verify-update-gh --repo <owner>/<repo-b> --local-path <repo-b-path>
+    mise run integration-test-verify-update-gh
     ```
 
-    It checks that the update brought in current content, left no conflict markers, and that
+    It finds the newest run's Repo B from its local clone. It checks that the update brought in
+    current content, left no conflict markers, and that
     `Test (Auto): PR Validation` triggers and passes on a new PR. Every check prints `[PASS]`.
 
 ## Cleaning Up

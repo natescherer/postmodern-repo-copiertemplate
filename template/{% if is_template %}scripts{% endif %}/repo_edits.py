@@ -59,6 +59,53 @@ def local_clones(repo_name: re.Pattern[str], host: str) -> list[Path]:
     return sorted(clones)
 
 
+def repo_b_clone(
+    repo_prefix: str, host: str, local_path: str | None
+) -> tuple[str, str]:
+    """Find the Repo B clone to verify, and its origin URL.
+
+    `--verify-update` uses it when you don't name Repo B, so verifying the newest run
+    needs no arguments: its clone's origin names the repo. A run's repos carry its
+    timestamp, so the newest clone is the highest one.
+
+    Returns:
+        The clone's path (`local_path`, or the newest Repo B clone on `host`), and its
+        origin URL.
+
+    Raises:
+        SystemExit: if `local_path` has no origin on `host`, or there's no Repo B clone.
+
+    """
+    if local_path:
+        clones = [Path(local_path)]
+    else:
+        pattern = re.compile(rf"{re.escape(repo_prefix)}-integration-test-(\d+)-b")
+        clones = sorted(
+            (c for c in local_clones(pattern, host) if pattern.fullmatch(c.name)),
+            key=lambda c: int(pattern.fullmatch(c.name).group(1)),
+            reverse=True,
+        )
+    for clone in clones:
+        origin = run(
+            "git",
+            "remote",
+            "get-url",
+            "origin",
+            cwd=str(clone),
+            check=False,
+            capture=True,
+            echo=False,
+        ).stdout.strip()
+        if host in origin:
+            return str(clone), origin
+    if local_path:
+        raise SystemExit(f"{local_path} has no origin on {host}.")
+    raise SystemExit(
+        f"No Repo B clone in {tempfile.gettempdir()}. Start a run first, or pass "
+        "Repo B's --repo and --local-path."
+    )
+
+
 def remove_tree(path: Path) -> None:
     """Delete a directory tree, including a git clone's read-only files on Windows."""
 

@@ -59,6 +59,7 @@ from repo_edits import (
     prepare_repo_b,
     push_older_recorded_version,
     remove_clones,
+    repo_b_clone,
 )
 
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
@@ -1744,6 +1745,37 @@ def check_post_update(
     )
 
 
+def verify_update_target(args: argparse.Namespace) -> tuple[str, str]:
+    """Resolve the Repo B that `--verify-update` checks: the one named, or the newest.
+
+    Found from its clone, Repo B also sets `args.org` and `args.project`, since its
+    origin names the ones it's in, over any --org/--project default.
+
+    Returns:
+        Repo B's repository name, and its local clone's path.
+
+    Raises:
+        SystemExit: if REPO comes without --local-path, there's nothing to find Repo B
+            by, or its clone's origin isn't an Azure DevOps repo.
+
+    """
+    repo, local_path = args.verify_update, args.local_path
+    if repo:
+        if not local_path:
+            raise SystemExit("--verify-update REPO requires --local-path too.")
+        return repo, local_path
+    if not local_path and not args.repo_prefix:
+        raise SystemExit("--verify-update without REPO requires --repo-prefix.")
+    local_path, origin = repo_b_clone(args.repo_prefix, "dev.azure.com", local_path)
+    match = re.search(r"dev\.azure\.com/([^/]+)/([^/]+)/_git/([^/?#]+)", origin)
+    if not match:
+        raise SystemExit(f"Can't read an Azure DevOps repo from {origin}.")
+    args.org, project, repo = match.groups()
+    args.project = urllib.parse.unquote(project)
+    say(f"Verifying Repo B: {repo} in {args.org}/{args.project}, at {local_path}")
+    return repo, local_path
+
+
 def main() -> None:
     """Create and verify two throwaway repos, each covering a different scenario.
 
@@ -1755,9 +1787,9 @@ def main() -> None:
     running the commands a real user runs, prompts included, is how a new question's
     prompt gets seen as they'll see it. Both repos stay for inspection.
 
-    After updating Repo B, rerun this script with `--verify-update <repo> --local-path
-    <path>` (or `mise run integration-test-verify-update-azdo`) to check the update; see
-    the "Repo B" section of the Azure DevOps runbook.
+    After updating Repo B, rerun this script with `--verify-update` (or `mise run
+    integration-test-verify-update-azdo`) to check the update; see the "Repo B" section
+    of the Azure DevOps runbook.
 
     Raises:
         SystemExit: if `az` or its azure-devops extension aren't installed, if
@@ -1776,22 +1808,32 @@ def main() -> None:
     # `mise run integration-test-azdo` sets usage_org and usage_project from the flags
     # its `usage` field defines. mise passes them as environment variables instead of
     # templating them into the command line, which works in any shell (cmd.exe can't
-    # parse POSIX `${var}` expansion).
+    # parse POSIX `${var}` expansion). Run directly, the script reads the variables
+    # those flags fall back to itself.
     parser.add_argument(
-        "--org", default=os.environ.get("usage_org"), help="Azure DevOps organization"
+        "--org",
+        default=os.environ.get("usage_org")
+        or os.environ.get("INTEGRATION_TEST_AZDO_ORG"),
+        help="Azure DevOps organization",
     )
     parser.add_argument(
         "--project",
-        default=os.environ.get("usage_project"),
+        default=os.environ.get("usage_project")
+        or os.environ.get("INTEGRATION_TEST_AZDO_PROJECT"),
         help="Azure DevOps project",
     )
+    # `mise run integration-test-verify-update-azdo` passes a bare --verify-update, and
+    # its --repo flag, if given, as usage_repo.
     parser.add_argument(
         "--verify-update",
         metavar="REPO",
-        default=os.environ.get("usage_repo"),
+        nargs="?",
+        const=os.environ.get("usage_repo", ""),
         help=(
             "Skip creating repos; instead verify REPO (repository name) after you've "
-            "updated it to HEAD yourself. Requires --local-path."
+            "updated it to HEAD yourself. Without REPO, it's read, with the org and "
+            "project, from --local-path's origin, and without that, from the newest "
+            "Repo B clone, which needs --repo-prefix."
         ),
     )
     parser.add_argument(
@@ -1817,11 +1859,14 @@ def main() -> None:
     check_az_installed()
     check_azure_devops_extension()
 
+    if args.verify_update is not None:
+        repo, local_path = verify_update_target(args)
+
     if not args.org or not args.project:
         raise SystemExit(
-            "--org/--project are required. Pass them directly, or (when running "
-            "via `mise run integration-test-azdo`) via "
-            "`mise run integration-test-azdo --org X --project Y`."
+            "--org/--project are required. Pass them, or set "
+            "INTEGRATION_TEST_AZDO_ORG and INTEGRATION_TEST_AZDO_PROJECT, such as in "
+            "mise.local.toml's [env]."
         )
 
     org_url = f"https://dev.azure.com/{args.org}/"
@@ -1833,21 +1878,17 @@ def main() -> None:
         cleanup(org_url, args.project, args.repo_prefix, yes=args.yes)
         return
 
-    if args.verify_update:
-        if not args.local_path:
-            raise SystemExit("--verify-update requires --local-path too.")
+    if args.verify_update is not None:
         update_failures: list[str] = []
-        check_post_update(
-            org_url, args.project, args.verify_update, args.local_path, update_failures
-        )
+        check_post_update(org_url, args.project, repo, local_path, update_failures)
         summary(
             [
                 RepoResult(
                     "Repo B",
-                    args.verify_update,
-                    args.local_path,
+                    repo,
+                    local_path,
                     update_failures,
-                    url=repo_url(org_url, args.project, args.verify_update),
+                    url=repo_url(org_url, args.project, repo),
                 )
             ]
         )
