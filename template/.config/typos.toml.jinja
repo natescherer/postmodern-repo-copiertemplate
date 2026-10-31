@@ -5,6 +5,7 @@ extend-ignore-re = [
   {%- elif using_azdo %}
   '\(\[.*\]\(https:\/\/dev\.azure\.com\/.*\)\)', # CHANGELOG.md links
   {%- endif %}
+  '-g[0-9a-f]{7,}\b', # git describe hashes, like copier-answers.yml's _commit
 ]
 
 [default.extend-words]
