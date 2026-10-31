@@ -162,8 +162,12 @@ that release, it detects the release.*
     ```sh
     cd <repo-b-path>
     git switch -C integration-test/copier-update
-    mise run copier-update --vcs-ref=HEAD
+    mise x -- uvx --refresh --from copier@latest --with jinja2-shell-extension copier update --answers-file .config/copier-answers.yml --skip-answered --trust --vcs-ref=HEAD
     ```
+
+    This is the [upgrade guide](../upgrading-from-0x.md)'s command, not Repo B's
+    `copier-update` task: Repo B starts at a 0.x release, whose task runs a Copier older than
+    this template's `_min_copier_version`.
 
 - [ ] The update finishes without an error. Then commit it and open its PR:
 

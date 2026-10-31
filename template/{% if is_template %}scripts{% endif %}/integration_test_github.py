@@ -9,8 +9,8 @@ It always runs against HEAD, to verify a release candidate on main before a rele
 Each run creates two repos with different answers, to cover more combinations. Repo A
 is a `copier copy` with `zensical_target: GitHub Pages` and `code_coverage` on. Repo B
 is a copy at the last stable tag with `zensical_target: docs-site Directory in Repo`
-and `code_coverage` off, left for you to update to HEAD with
-`mise run copier-update --vcs-ref=HEAD`; main()'s docstring says why that's manual.
+and `code_coverage` off, left for you to update to HEAD as the runbook's Repo B
+section says; main()'s docstring says why that's manual.
 
 Each check prints a PASS or FAIL line as it runs, and each repo gets a summary at the
 end. A failure doesn't stop the run. It checks only what needs a real GitHub API call
@@ -1528,7 +1528,7 @@ def main() -> None:
     release. Repo A is a `copier copy` with `zensical_target: GitHub Pages` and
     `code_coverage` on, and every automated check runs against it. Repo B is a copy at
     the last stable tag with `zensical_target: docs-site Directory in Repo` and
-    `code_coverage` off, for you to update with `mise run copier-update --vcs-ref=HEAD`.
+    `code_coverage` off, for you to update to HEAD as the runbook's Repo B section says.
     That's manual on purpose: running the command a real user runs, prompts included,
     is how a new question's prompt gets seen as they'll see it. Both repos stay for
     inspection.
