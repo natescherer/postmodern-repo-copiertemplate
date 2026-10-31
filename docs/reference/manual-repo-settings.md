@@ -1,0 +1,139 @@
+# Manual Repo Settings
+
+=== "GitHub"
+
+    [gh-settings](https://github.com/noirbizarre/gh-settings) applies the settings below, from
+    the description through GitHub Pages, from the committed `.github/settings.yml`: repo setup
+    runs it when the project is copied, and `mise run sync-repo-settings` reapplies the file after
+    a change. A PR that changes the file gets it validated, and a PR Validation warning reminds
+    you to run the task after merging. It uses your `gh auth login` credential, which needs admin
+    access to the repo. Without that access, have an admin run it, or apply the settings by hand
+    in the GitHub UI as described here. `.github/settings.yml` holds the exact values; where this
+    page and the file differ, the file is right.
+
+    ### Description and Homepage
+
+    On the repo's main page, edit **About** (the gear icon) and set the description to your
+    `project_description` answer. For a public repo publishing docs to GitHub Pages, also set the
+    website to the docs site (`https://<owner>.github.io/<repo>/`).
+
+    ### Labels
+
+    Under the repo's **Issues** tab, open **Labels**, and create these alongside GitHub's
+    defaults:
+
+    | Name | Color | Description |
+    | --- | --- | --- |
+    | `awaiting pr` | `#668F04` | Awaiting completion of a PR from a contributor |
+    | `blocked` | `#F28C28` | Blocked by an external dependency |
+
+    ### Merge Options
+
+    Under **Settings > General > Pull Requests**:
+
+    - Disable **Allow merge commits** and **Allow rebase merging**, leaving only **Allow squash
+      merging**: a squashed PR's title becomes its commit on `main`, which the Conventional
+      Commits checks and release automation read
+    - Enable **Allow auto-merge**
+    - Enable **Automatically delete head branches**
+
+    ### Actions
+
+    Under **Settings > Actions > General**, enable **Allow GitHub Actions to create and approve
+    pull requests**, and leave **Workflow permissions** at **Read repository contents and packages
+    permissions**.
+
+    ### Branch Protection
+
+    Under **Settings > Rules > Rulesets**, create a new ruleset:
+
+    - Name: `default-branch-protection`
+    - Enforcement status: **Active**
+    - Target branches: **Default branch**
+    - Rules:
+        - **Restrict deletions**
+        - **Block force pushes**
+        - **Require a pull request before merging**, with:
+            - Required approvals: `0`
+            - Dismiss stale pull request approvals when new commits are pushed: off
+            - Require review from Code Owners: off
+            - Require approval of the most recent reviewable push: off
+            - Require conversation resolution before merging: off
+        - **Require status checks to pass**, with:
+            - Require branches to be up to date before merging: on
+            - Status check: `tests` (the job in `Test (Auto): PR Validation`)
+    - Bypass list: add **Repository admin**, with bypass mode **Pull requests only**, so repo
+      admins can use the "Merge without waiting for requirements to be met" button.
+
+    ### Security and Analysis
+
+    (Public repos only; private repos need a paid GitHub Advanced Security license.)
+
+    Under **Settings > Code security**, enable **Secret scanning** and **Push protection**.
+
+    ### GitHub Pages
+
+    (Only if `zensical_target` is `GitHub Pages`.)
+
+    Set **Settings > Pages > Source** to **GitHub Actions**. Then, under **Settings >
+    Environments**, open (or create) `github-pages` and set **Deployment branches and tags** to
+    **No restriction**, since release docs deploy from a tag.
+
+    ### Settings Repo Setup Applies
+
+    gh-settings can't manage these, so `.github/settings.yml` doesn't cover them, and with
+    `repo_setup_actions: None` the copy doesn't apply them. If the repo is public, enable
+    CodeQL's default setup and private vulnerability reporting under **Settings > Advanced
+    Security**.
+
+=== "Azure DevOps"
+
+    With `repo_setup_actions: None`, or to reapply settings later, set up in the Azure DevOps UI
+    what `Create Repo` would otherwise configure.
+
+    ### Pipelines
+
+    Push the generated files to `main` first, since Azure DevOps reads each pipeline's YAML from
+    the repo. Then, under **Pipelines > New pipeline** (**Azure Repos Git**, this repo, **Existing
+    Azure Pipelines YAML file**), create each pipeline below with exactly this name, replacing
+    `<repo>` with your repo's name. Other automation, such as `mise run provision-secrets`, finds
+    pipelines by name:
+
+    | Name | YAML file |
+    | --- | --- |
+    | `[<repo>] Maint (Auto) - Monthly Maintenance` | `.azurepipelines/maint-auto-monthlymaintenance.yml` |
+    | `[<repo>] Docs (Auto) - Zensical Build & Commit` | `.azurepipelines/docs-auto-zensicalcommit.yml` |
+    | `[<repo>] Test (Auto) - PR Validation` | `.azurepipelines/test-auto-prvalidation.yml` |
+    | `[<repo>] Release (Auto) - Prepare & Publish Release` | `.azurepipelines/release-auto-release.yml` |
+
+    `.azurepipelines/templates/` holds steps the pipelines share, not pipelines; don't
+    register its files.
+
+    Or, with the Azure CLI and its `azure-devops` extension installed and logged in, run this for
+    each row:
+
+    ```bash
+    az pipelines create --name "<name>" --repository <repo> --repository-type tfsgit \
+      --branch main --yml-path <yaml file> --skip-first-run true \
+      --org https://dev.azure.com/<org>/ --project "<project>"
+    ```
+
+    Then run **Docs (Auto) - Zensical Build & Commit** and **Release (Auto) - Prepare & Publish
+    Release** once each, to build the docs and open the first release PR, and set the pipeline
+    variables listed in [Secrets and Tokens](token-permissions.md).
+
+    ### PR-Validation Branch Policy
+
+    Under **Project Settings > Repositories > (this repo) > Policies > Branch Policies > main**, add
+    a **Build Validation** policy:
+
+    - Build pipeline: the `Test (Auto) - PR Validation` pipeline created above
+    - Trigger: **Automatic**
+    - Policy requirement: **Required**
+    - Build expiration: **Immediately**
+
+    ### Bypass Permission
+
+    Under **Project Settings > Repositories > (this repo) > Security**, select **Project
+    Administrators** and set **Bypass policies when completing pull requests** to **Allow**, so
+    project admins can use the bypass option on the **Complete** button.

@@ -1,0 +1,142 @@
+# Upgrading from 0.x
+
+1.0.0 is this template's first stable release; from here on, it follows the
+[Stability Policy](../reference/stability-policy.md). How a 0.x project gets there depends on
+the version it was last updated to, recorded as `_commit` in its Copier answers file.
+
+## From v0.7.14 or later
+
+Update as [Updating from the Parent Template](updating-from-template.md) describes, but in
+place of `mise run copier-update`, run this once from your project's root:
+
+```sh
+mise x -- uvx --refresh --from copier@latest --with jinja2-shell-extension copier update --answers-file .config/copier-answers.yml --skip-answered --trust
+```
+
+A 0.x project's `copier-update` task runs the Copier its `mise.toml` pins, which is older than
+this release's `_min_copier_version`. The command above is what the task runs from this release
+on: the newest Copier and `jinja2-shell-extension`. Copier's migrations seed
+`.config/knope-current-version.json` from your latest release tag and reformat your changelog
+for Knope. An update that spans many releases writes many changesets to `.changeset/`; delete
+the ones that don't matter to your project's users, or replace them with one summary changeset.
+Then work through [After either path](#after-either-path).
+
+## From before v0.7.14
+
+Copier renders your project's old version alongside the new one to work out what changed.
+Releases before v0.7.14 need Jinja extensions current tooling doesn't install, and some of their
+questions have since been renamed, so update once with a command that supplies both:
+
+1. Start from a clean working tree on a new branch.
+
+1. If the answers file is `.copier-answers.yml` at the repo root (before v0.4.0), move it to
+   `.config/copier-answers.yml` and commit that on its own.
+
+1. Template projects only: Copier doesn't manage `template/`, so remove the files the parent
+   deleted from it since your version yourself. From your project's root (in Git Bash on
+   Windows), with your answers file's `_commit` as `<old-version>` and the release you're
+   updating to as `<new-version>`:
+
+    ```bash
+    git clone --branch <new-version> https://github.com/natescherer/postmodern-repo-copiertemplate ~/template-clone
+    git -C ~/template-clone diff --name-only --no-renames --diff-filter=D <old-version> <new-version> -- template | xargs -I{} git rm -q --ignore-unmatch "{}"
+    git commit -m "chore: remove files the parent template deleted"
+    ```
+
+1. From your project's root, run the update. If your answers file has
+   `project_short_description`, add `-d project_description="<same text>"`; if it has
+   `license: Provide Own`, add `-d license=None`.
+
+    ```bash
+    mise x uv -- uvx --refresh --from copier@latest --with copier-templates-extensions --with copier-template-extensions --with jinja2-time --with jinja2-shell-extension --with githubkit --with requests --with python-slugify --with packaging copier update --trust --skip-tasks --skip-answered --answers-file .config/copier-answers.yml --vcs-ref <new-version> -d repo_setup_actions=None
+    ```
+
+    `--skip-tasks` keeps your old version's setup tasks from rerunning; they'd try to create
+    the repo again from your recorded answers. Copier's migrations still run, so the version
+    file and changelog headings are handled the same way as on the other path.
+
+1. Template projects only: copy the parent's current `template/` into yours (in Git Bash on
+   Windows), which the skipped tasks would otherwise have done:
+
+    ```bash
+    cp -r ~/template-clone/template/. template/
+    ```
+
+1. Resolve conflicts and review `.changeset/` as for any update, then work through
+   [After either path](#after-either-path).
+
+## After either path
+
+On GitHub:
+
+- **Close the old release PR.** A project from before v0.8.0 released with release-please;
+  close any open release-please PR and delete its branch. Knope opens its own.
+- **Delete `REPO_MAINTENANCE_PAT`.** Workflows now run under the default `GITHUB_TOKEN`. The
+  update prints a reminder if the secret is still set; delete it under **Settings > Secrets and
+  variables > Actions**, and revoke the token if nothing else uses it.
+- **Approve bot-authored workflow runs.** Without the token, someone has to click **Approve and
+  run workflow** before checks run on each push a bot makes to a PR, such as the release PR;
+  see [Releasing](releasing.md).
+- **Switch from the Settings GitHub App to gh-settings.**
+  [gh-settings](https://github.com/noirbizarre/gh-settings) now applies `.github/settings.yml`,
+  in its own format, which the update writes. Once the update has merged to `main`, remove this
+  repo from the Settings app's repository access (or uninstall the app), so it stops reading
+  the file, then run `mise run sync-repo-settings`. It shows what it will change and asks first;
+  this also applies the Actions and GitHub Pages settings `settings.yml` now covers.
+- **Check the repo settings.** Code scanning and private vulnerability reporting, which a fresh
+  copy enables when it creates a public repo, aren't applied by an update; see
+  [Manual Repo Settings](../reference/manual-repo-settings.md).
+
+On Azure DevOps:
+
+- **Repoint renamed and merged pipelines.** v0.8.0 renamed the files under `.azurepipelines/`,
+  and 1.0.0 merges the Copier Update Check, Renovate, and Repo Health Check pipelines into
+  `Maint (Auto) - Monthly Maintenance`, merges Create Prerelease into the release pipeline, and
+  renames the docs pipeline to `Docs (Auto) - Zensical Build & Commit`, as on GitHub. Once
+  the update has merged to `main`, run `mise run migrate-azdo-pipeline-names`. It repoints
+  the Renovate registration (or another of the three) at Monthly Maintenance, keeping its
+  variables, deletes the other merged registrations, and repoints any v0.8.0-renamed one.
+  Azure DevOps reads pipeline YAML from `main`, so running it before the merge breaks every
+  pipeline run until the new files get there. Monthly Maintenance needs `APPRISE_URL` and
+  `GITHUB_COM_TOKEN`; add whichever its registration lacks (see
+  [Secrets and Tokens](../reference/token-permissions.md)).
+- **Add `GITHUB_COM_TOKEN`.** The Renovate pipeline now requires it, since Renovate skips every
+  dependency hosted on github.com without one, and the other pipelines use it to keep mise's
+  downloads under github.com's rate limit; `mise run provision-secrets` sets it on all of them. See
+  [Secrets and Tokens](../reference/token-permissions.md#github_com_token).
+- **Register new pipelines.** A pipeline added since your version that no old one was merged
+  into isn't registered by an update or by `migrate-azdo-pipeline-names`, which warns about
+  it. Register each `.yml` directly in `.azurepipelines/` that isn't yet, and delete any
+  registration whose file no longer exists; see
+  [Manual Repo Settings](../reference/manual-repo-settings.md).
+
+Everywhere:
+
+- **Set new secrets.** Run `mise run provision-secrets`; see
+  [Secrets and Tokens](../reference/token-permissions.md).
+- **Review `.changeset/`** before you merge, as above.
+- **Move edits from moved docs pages.** The generated `docs/` now uses `getting-started/`,
+  `maintaining/`, and `reference/` folders. If you'd edited a page that moved (such as a
+  Standard project's `docs/releasing.md`, now `docs/maintaining/releasing.md`), carry your
+  changes over, and update any links to the old paths.
+- **Move `CLAUDE.md` content into `AGENTS.md`.** `CLAUDE.md` is no longer generated, since
+  Claude Code reads `AGENTS.md` directly. If you'd added your own content to it, move that into
+  `AGENTS.md`.
+
+## Moved docs pages
+
+These docs moved in 1.0.0. Update any links or bookmarks that point at their 0.8.x paths:
+
+| 0.8.x page | 1.0.0 page |
+| ---------- | ---------- |
+| `prerequisites` | [`getting-started/prerequisites`](../getting-started/prerequisites.md) |
+| `applying-to-existing-projects` | [`getting-started/existing-project`](../getting-started/existing-project.md) |
+| `releasing` | [`maintaining/releasing`](releasing.md) |
+| `extending-the-template` | [`maintaining/extending-the-template`](extending-the-template.md) |
+| `integration-testing` | [`maintaining/integration-testing/`](integration-testing/index.md) |
+| `manual-verification-github` | [`maintaining/integration-testing/runbook-github`](integration-testing/runbook-github.md) |
+| `manual-verification-azdo` | [`maintaining/integration-testing/runbook-azdo`](integration-testing/runbook-azdo.md) |
+| `template-questions`, `lifecycle-management`, `public-vs-private-repos` | [`reference/template-questions`](../reference/template-questions.md) |
+| `token-permissions` | [`reference/token-permissions`](../reference/token-permissions.md) |
+| `manual-repo-settings` | [`reference/manual-repo-settings`](../reference/manual-repo-settings.md) |
+| `platform-notes/azure-devops` | [`reference/azure-devops`](../reference/azure-devops.md) |

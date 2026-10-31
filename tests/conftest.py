@@ -1,7 +1,7 @@
 """Shared fixtures and helpers for rendering this template against real Copier.
 
 Generic by design: nothing here hardcodes this repo's specific doc set or question
-values -- see answer_matrix.py for the repo-specific piece, which a child template
+values; see answer_matrix.py for the repo-specific piece, which a child template
 should edit alongside its own copier.yml changes.
 """
 
@@ -11,21 +11,22 @@ import shutil
 
 # S404: drives real CLI tools below; no untrusted input, no shell=True.
 import subprocess  # noqa: S404
+import sys
 import tarfile
 from pathlib import Path
 
 import jinja2
 import pytest
+from answer_matrix import ANSWER_MATRIX
 from jinja2_ansible_filters import AnsibleCoreFiltersExtension
 
 
 def _find_repo_root() -> Path:
     """Walk upward from this file to find the directory containing a template/ folder.
 
-    Deliberately not a fixed parents[N]: this file lives two levels below the repo root
-    as template source (template/{% if is_template %}tests{% endif %}/...) but only one
-    level below it once rendered into a consumer project (tests/...), so a fixed depth
-    would be wrong in one of the two contexts.
+    A fixed parents[N] would be wrong in one context: as template source, this file is
+    two levels below the repo root (template/{% if is_template %}tests{% endif %}/...),
+    and rendered into a project, it's one level below (tests/...).
 
     Returns:
         The repo root directory.
@@ -43,6 +44,30 @@ def _find_repo_root() -> Path:
 
 
 REPO_ROOT = _find_repo_root()
+
+# copy-template-files leaves copier.yml.jinja out of a leaf template's template/,
+# and the leaf's copier.yml makes every project Standard.
+IS_LEAF = not (
+    REPO_ROOT / "template" / "{% if is_template %}copier.yml{% endif %}.jinja"
+).is_file()
+
+# copy-template-files leaves paths carrying these gates out of a leaf template's
+# template/, and folds the project-type gates out of the files it keeps.
+TEMPLATE_ONLY_GATES = ("{% if is_template %}", "{% if is_extensible %}")
+FOLD_SCRIPT = (
+    REPO_ROOT
+    / "template"
+    / "{% if is_template %}scripts{% endif %}"
+    / "{% if is_extensible %}fold_leaf_gates.py{% endif %}"
+)
+
+# The ANSWER_MATRIX entries this source can render: a leaf template renders only its
+# Standard ones.
+RENDERABLE_ANSWERS = [
+    entry
+    for entry in ANSWER_MATRIX
+    if not (IS_LEAF and entry["project_type"] == "Template")
+]
 
 
 # Git can run maintenance in a detached background process after commands such as
@@ -75,7 +100,7 @@ def _run(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProces
     """Run subprocess.run with output always captured as UTF-8 text.
 
     Windows' default console encoding (cp1252) can't decode tool output containing
-    e.g. emoji or box-drawing characters (lychee's summary, for one) -- that mismatch
+    e.g. emoji or box-drawing characters (lychee's summary, for one); that mismatch
     crashes the background reader thread and leaves stdout/stderr as None instead of
     raising cleanly.
 
@@ -109,7 +134,7 @@ def _git_init_repo(path: Path) -> None:
     """Init a throwaway git repo at `path` with a fixed local identity.
 
     Needed because `copier update` requires both the source and the destination to be
-    git repositories -- it records `_commit` from the source at copy time and uses git
+    git repositories; it records `_commit` from the source at copy time and uses git
     to detect local destination changes when applying an update.
     """
     path.mkdir(parents=True, exist_ok=True)
@@ -139,15 +164,13 @@ def _ignore_for_copy(directory, names):
 def _assemble_source(repo_root: Path, dest: Path) -> None:
     """Build a copier source rooted at `dest` from the current `template/` contents.
 
-    Deliberately does not copy this repo's own root copier.yml: that file is dogfooded
-    output, refreshed only by an occasional `copier update`, so it lags behind
-    uncommitted or just-committed edits under template/ -- exactly the edits this suite
-    exists to catch. When template/ contains a self-hosting conditional copier.yml (a
-    template that, like this one, supports generating child templates), that file's
-    non-raw header is rendered with stub values -- nothing in these tests inspects
-    parent_template_name/url -- while its `{% raw %}...{% endraw %}` body (the real
-    question set) passes through unprocessed, exactly as Copier itself would render it
-    into a child's copier.yml.
+    It doesn't copy this repo's root copier.yml: that's dogfooded output, refreshed only
+    by a `copier update`, so it lags behind the uncommitted and just-committed edits
+    under template/ that this suite exists to check. When template/ has a self-hosting
+    conditional copier.yml (as a template that generates child templates does), its
+    non-raw header renders with stub values, which no test inspects, and its `{% raw
+    %}...{% endraw %}` body, the real question set, passes through unchanged, as Copier
+    renders it into a child's copier.yml.
     """
     shutil.copytree(
         repo_root / "template",
@@ -172,6 +195,8 @@ def _assemble_source(repo_root: Path, dest: Path) -> None:
             azdo_org="",
             azdo_project_encoded="",
             repo_name="test-parent-template",
+            # The test source is an extensible template, so it asks project_type.
+            is_extensible=True,
         )
         (dest / "copier.yml").write_text(rendered, encoding="utf-8")
     else:
@@ -191,19 +216,24 @@ def _latest_tag(repo_root: Path) -> str | None:
     return tags[0] if tags else None
 
 
+UPDATE_SOURCE_ROOT_FILES = (
+    "knope.toml",
+    "mise.toml",
+    ".config/knope-current-version.json",
+)
+
+
 def _assemble_update_scratch_repo(repo_root: Path, old_tag: str, dest: Path) -> None:
     """Build a 2-commit copier source for testing the update path: old_tag -> current.
 
-    Commit 1 is `repo_root`'s real, historical state at `old_tag` (its actual root
-    copier.yml as released, not synthesized) -- exactly what a real user updating from
-    that release would have used as their template source. Commit 2 (HEAD) is the
-    current on-disk template/ contents, assembled the same way _assemble_source builds
-    it for the copy-only tests, so uncommitted edits are covered here too.
+    Commit 1 is `repo_root` as it was at `old_tag`, its released root copier.yml
+    included: the source a real user updating from that release had. Commit 2 (HEAD) is
+    the current template/, assembled the way _assemble_source() does it, so uncommitted
+    edits are covered too.
 
-    Both states have to live at the same path across two commits, not two separate
-    directories: `copier update` always re-reads `_src_path` from the destination's
-    answers file and re-resolves *that same path* at update time, it can't be pointed
-    at a different "new" source.
+    Both states have to live at one path, in two commits: `copier update` reads
+    `_src_path` from the destination's answers file and resolves that same path, so it
+    can't be pointed at a different source for the new version.
     """
     _git_init_repo(dest)
 
@@ -226,7 +256,13 @@ def _assemble_update_scratch_repo(repo_root: Path, old_tag: str, dest: Path) -> 
             continue
         shutil.rmtree(child) if child.is_dir() else child.unlink()
     _assemble_source(repo_root, dest)
-    _git_commit_all(dest, "current")
+    # The changeset migration clones the source and runs `knope compute-upstream-bump`
+    # at its root, the way a real one (this repo) has these files. The `feat:` subject
+    # gives Knope something release-worthy, so the migration writes a changeset.
+    for rel in UPDATE_SOURCE_ROOT_FILES:
+        (dest / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(repo_root / rel, dest / rel)
+    _git_commit_all(dest, "feat: current template")
 
 
 @pytest.fixture(scope="session")
@@ -254,10 +290,24 @@ def update_source(tmp_path_factory):
     """
     old_tag = _latest_tag(REPO_ROOT)
     if old_tag is None:
-        pytest.skip("No git tags found -- nothing to update from yet.")
+        pytest.skip("No git tags found; nothing to update from yet.")
     src = tmp_path_factory.mktemp("update-source")
     _assemble_update_scratch_repo(REPO_ROOT, old_tag, src)
     return src, old_tag
+
+
+def _leaf_template(template_dir: Path, dest: Path) -> None:
+    """Copy `template_dir` to `dest` the way copy-template-files does for a leaf."""
+    shutil.copytree(
+        template_dir,
+        dest,
+        ignore=lambda _directory, names: [
+            name for name in names if any(gate in name for gate in TEMPLATE_ONLY_GATES)
+        ],
+    )
+    result = _run([sys.executable, str(FOLD_SCRIPT), str(dest)])
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert result.returncode == 0, result.stderr  # noqa: S101
 
 
 def _render(source: Path, dest: Path, answers: dict, vcs_ref: str | None = None):

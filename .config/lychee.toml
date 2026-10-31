@@ -9,8 +9,11 @@ exclude = [
   # carry Jinja-conditional or .jinja names); test_render.py link-checks every rendered combo
   "^file://.*/template/docs/",
 ]
+# Files of patterns, which lychee would otherwise read as links: prek.toml's
+# lychee hook passes regex-escaped URLs such as `https://github\.com/...`
 exclude_path = [
   ".config/lychee.toml",
+  ".config/prek.toml",
   ".config/typos.toml",
   "template/.config/lychee.toml.jinja",
 ]

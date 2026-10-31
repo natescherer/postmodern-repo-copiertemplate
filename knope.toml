@@ -40,13 +40,12 @@ name = "release-on-knope-pr-merge"
 type = "Release"
 
 [[workflows]]
-# Used only by copier.yml's _migrations, inside a scratch clone of the template repo
-# with every tag but the project's old template version hidden -- PrepareRelease
-# always bumps from "the most recent reachable tag", so hiding the rest is what makes
-# it compute the real delta across a multi-version jump instead of just the last hop.
-# Run for real (not --dry-run): the scratch clone is thrown away either way, and
-# reading the version file and CHANGELOG.md it actually writes is far more robust than
-# scraping human-readable dry-run log output.
+# Used only by copier.yml's changeset migration, in a temporary clone of the template
+# with every tag but the project's old template version removed. PrepareRelease bumps
+# from the most recent reachable tag, so that makes it cover the whole jump across
+# several versions, not just the last one. It runs for real, not --dry-run: the clone
+# is discarded anyway, and reading the files it writes is more reliable than parsing
+# dry-run log output.
 name = "compute-upstream-bump"
 
 [[workflows.steps]]

@@ -1,19 +1,18 @@
 """Checks content/config consistency in the rendered template, not the rendering itself.
 
-Generic by design: every check here operates on whatever actually got rendered, rather
-than hardcoding this repo's specific doc set -- see answer_matrix.py for the
+Generic by design: every check here operates on whatever got rendered, rather
+than hardcoding this repo's specific doc set; see answer_matrix.py for the
 repo-specific piece, which a child template should edit alongside its own copier.yml
 changes.
 """
 
 import re
+import tomllib
 from pathlib import Path
 
 import pytest
-import tomllib
 import yaml
-from answer_matrix import ANSWER_MATRIX
-from conftest import _render
+from conftest import RENDERABLE_ANSWERS, _render, _run
 
 
 def _extract_nav_paths(nav: list) -> list[str]:
@@ -56,7 +55,7 @@ def _load_nav(root: Path) -> tuple[Path, list] | None:
 
 
 def _check_nav_completeness(root: Path) -> list[str]:
-    """Verify every path zensical.toml's nav references actually exists under docs_dir.
+    """Verify every path zensical.toml's nav references exists under docs_dir.
 
     Neither `zensical build` nor `lychee` catch this: a build with a nav entry pointing
     at a missing file produces no warning, and lychee only checks links *within*
@@ -99,7 +98,7 @@ def _check_docs_in_nav(root: Path) -> list[str]:
     ]
 
 
-@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
 def test_nav_completeness(template_source, tmp_path, answers):
     """Verify zensical.toml's nav and the rendered docs/ tree agree both ways."""
     dest = tmp_path / "out"
@@ -126,12 +125,12 @@ def _entry_tool(entry: str) -> str | None:
 def _check_hook_tools_available(prek_toml: Path, mise_toml: Path) -> list[str]:
     """Verify every local prek hook's tool is installed in mise.toml.
 
-    prek.toml.jinja gates each hook behind the same conditions as its tool's entry in
-    mise.toml.jinja (e.g. ruff-check/ruff-format and `is_template`, actionlint and
-    `is_template or using_github`) specifically so this holds unconditionally for every
-    hook that's actually present in a given render -- no need to guess whether a hook
-    would find a matching file first. This is exactly the shape of bug that once let
-    `actionlint` go missing from mise.toml for an Azure DevOps-hosted Template project.
+    prek.toml.jinja gates each hook on the same condition as its tool's entry in
+    mise.toml.jinja (ruff-check and ruff-format on `is_template`, actionlint on
+    `is_template or using_github`), so every hook present in a render must have its
+    tool, without guessing whether the hook would match a file. This catches a tool
+    missing from mise.toml for one answer combination, such as actionlint for an Azure
+    DevOps Template project.
 
     Returns:
         One error string per hook whose tool isn't installed.
@@ -143,26 +142,34 @@ def _check_hook_tools_available(prek_toml: Path, mise_toml: Path) -> list[str]:
     mise_config = tomllib.load(mise_toml.open("rb"))
 
     # "aqua:owner/repo" / "pipx:name" / a plain tool name -> the leaf tool identifier,
-    # matching what `mise x -- <tool>` actually invokes.
+    # matching what `mise x -- <tool>` invokes.
     installed_tools = {
         re.split(r"[:/]", name)[-1] for name in mise_config.get("tools", {})
     }
 
     errors = []
+    checked = 0
     for repo in prek_config.get("repos", []):
         if repo.get("repo") != "local":
             continue
         for hook in repo.get("hooks", []):
             tool = _entry_tool(hook.get("entry", ""))
-            if tool is not None and tool not in installed_tools:
+            if tool is None:
+                continue
+            checked += 1
+            if tool not in installed_tools:
                 errors.append(
                     f"hook {hook['id']!r} needs {tool!r}, which isn't in "
                     "mise.toml's [tools]"
                 )
+    # A render with no matching entries means _entry_tool's pattern drifted from the
+    # hook entry format, which would otherwise make this check silently pass.
+    if not checked:
+        errors.append("no local prek hook entry matched the `mise x -- <tool>` pattern")
     return errors
 
 
-@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
 def test_hook_tools_available(template_source, tmp_path, answers):
     """Verify every prek hook in the render has its tool installed."""
     dest = tmp_path / "out"
@@ -174,11 +181,48 @@ def test_hook_tools_available(template_source, tmp_path, answers):
     assert not errors, "\n\n".join(errors)  # noqa: S101
 
 
+def _check_python_lint_clean(dest: Path) -> list[str]:
+    """Run the render's own ruff hooks over its rendered Python files.
+
+    A `.py.jinja` file escapes this repo's own ruff hooks, which skip `.jinja`, so
+    only a project that renders it and runs ruff (a Template one) finds out that its
+    rendered form fails them.
+
+    Returns:
+        One error string per failing ruff command, with its output.
+
+    """
+    ruff_toml = dest / ".config" / "ruff.toml"
+    if not ruff_toml.is_file():
+        return []
+    commands = (
+        ["ruff", "check", "--config", str(ruff_toml), "--output-format", "concise"],
+        ["ruff", "format", "--config", str(ruff_toml), "--check"],
+    )
+    errors = []
+    for command in commands:
+        result = _run([*command, "."], cwd=dest)
+        if result.returncode:
+            output = result.stdout + result.stderr
+            errors.append(f"{' '.join(command[:2])} failed:\n{output}")
+    return errors
+
+
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
+def test_python_lint_clean(template_source, tmp_path, answers):
+    """Verify the render's Python files pass its own ruff check and ruff format."""
+    dest = tmp_path / "out"
+    _render(template_source, dest, answers)
+    errors = _check_python_lint_clean(dest)
+    # S101: `assert` is the normal, expected way to fail a pytest test.
+    assert not errors, "\n\n".join(errors)  # noqa: S101
+
+
 def _task_command_text(task: dict | str) -> str:
     """Flatten one _tasks entry's command into a single searchable string.
 
     A `command:` value is either a plain string or a list of argv parts (Copier runs
-    the latter with shell=False) -- either way, joining into one string is enough for
+    the latter with shell=False); either way, joining into one string is enough for
     substring checks, without needing to know which form a given task uses.
 
     Returns:
@@ -193,7 +237,7 @@ def _check_azdo_pipelines_registered(dest: Path) -> list[str]:
     """Verify every .azurepipelines/*.yml file has a matching az pipelines create task.
 
     copier.yml.jinja hardcodes one explicit `az pipelines create --yml-path
-    .azurepipelines/<file>` _tasks entry per pipeline file -- a dynamic loop isn't
+    .azurepipelines/<file>` _tasks entry per pipeline file; a dynamic loop isn't
     possible in Copier's static _tasks list, so nothing else stops a newly-added
     pipeline file from silently never getting registered.
 
@@ -220,7 +264,7 @@ def _check_azdo_pipelines_registered(dest: Path) -> list[str]:
     ]
 
 
-@pytest.mark.parametrize("answers", ANSWER_MATRIX, ids=lambda a: a["id"])
+@pytest.mark.parametrize("answers", RENDERABLE_ANSWERS, ids=lambda a: a["id"])
 def test_azdo_pipelines_registered(template_source, tmp_path, answers):
     """Verify every Azure Pipelines file in the render has a matching _tasks entry."""
     dest = tmp_path / "out"

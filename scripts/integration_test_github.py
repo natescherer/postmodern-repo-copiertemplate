@@ -1,24 +1,21 @@
 """Create two throwaway repos from this template and verify them.
 
-Run via `mise run integration-test-gh` -- a human's own gh/GCM session, both repos
-left in place afterward for inspection (delete them yourself when you're done). Not
-templated itself; the caller passes this repo's own source URL and name as arguments,
-so there's nothing here for Jinja to render.
+Run it with `mise run integration-test-gh`. It works through your own gh and Git
+Credential Manager sessions, and leaves both repos for you to inspect and delete. The
+script itself isn't templated: the task passes this repo's source URL and name as
+arguments.
 
-Always runs against HEAD -- this is meant to verify a release candidate on main is
-good before cutting a release, not to smoke-test an arbitrary branch. Creates two
-repos every run, each covering a different scenario so a single run exercises more of
-the answer space, not the same fixed answers twice: Repo A is a plain `copier copy`
-with `zensical_target: GitHub Pages` and `code_coverage` on; Repo B is copied at the
-last stable tag with `zensical_target: docs-site Directory in Repo` and
-`code_coverage` off, left there for you to run `mise run copier-update` against
-yourself -- deliberately not automated, see main()'s own docstring for why.
+It always runs against HEAD, to verify a release candidate on main before a release.
+Each run creates two repos with different answers, to cover more combinations. Repo A
+is a `copier copy` with `zensical_target: GitHub Pages` and `code_coverage` on. Repo B
+is a copy at the last stable tag with `zensical_target: docs-site Directory in Repo`
+and `code_coverage` off, left for you to update to HEAD as the runbook's Repo B
+section says; main()'s docstring says why that's manual.
 
-Every check this script runs prints its own PASS/FAIL line as it happens, plus a
-summary per repo at the end -- it never stops at the first failure, so one run gives
-the full picture. It only checks things that need a real GitHub API call or a real
-pipeline run; anything `tests/` already covers by rendering locally (structure,
-Jinja/YAML validity, links, nav) isn't repeated here.
+Each check prints a PASS or FAIL line as it runs, and each repo gets a summary at the
+end. A failure doesn't stop the run. It checks only what needs a real GitHub API call
+or workflow run; `tests/` covers what a local render can (structure, Jinja and YAML
+validity, links, nav).
 """
 
 import argparse
@@ -26,66 +23,97 @@ import json
 import os
 import re
 import shutil
-
-# S404: drives real CLI tools below; no untrusted input, no shell=True.
-import subprocess  # noqa: S404
 import sys
-import tempfile
 import time
+from collections.abc import Callable
 from pathlib import Path
 
-# Default `gh auth login` scopes cover both -- see docs/token-permissions.md.
+from console import (
+    RepoResult,
+    ask,
+    check,
+    heading,
+    run,
+    save_log,
+    say,
+    start_log,
+    step,
+    summary,
+)
+from docs_links import docs_page_url
+from repo_edits import (
+    local_clone_dir,
+    local_clones,
+    prepare_repo_a,
+    prepare_repo_b,
+    push_older_recorded_version,
+    remove_clones,
+    repo_b_clone,
+)
+
+# Default `gh auth login` scopes cover both; see the Secrets and Tokens docs page.
 REQUIRED_SCOPES = ("repo", "workflow")
+
+MONTHLY_MAINTENANCE = "maint-auto-monthlymaintenance.yml"
+
+# The workflow Monthly Maintenance's Copier Update Check job replaced. Repo B starts at
+# the last release, so it has this until you update it. Remove once the last release
+# has Monthly Maintenance.
+LEGACY_COPIER_UPDATE_CHECK = "maint-auto-copierupdatecheck.yml"
+
+# The status check settings.yml.jinja's ruleset requires before a PR can merge: PR
+# Validation's `tests` job.
+REQUIRED_CHECK = "tests"
 
 # Must match _tasks' project_description -d flag in create() below.
 PROJECT_DESCRIPTION = "Integration Test - NOT FOR PUBLIC USE, safe to delete"
 
-# Must match .github/settings.yml.jinja's `labels:` list, sorted.
-EXPECTED_LABELS = (
-    "accessibility,awaiting pr,blocked,bug,documentation,duplicate,"
-    "enhancement,good first issue,help wanted,invalid,question,wontfix"
-)
+# Must match .github/settings.yml.jinja's `labels:` list. The repo also keeps
+# GitHub's default labels, which settings.yml leaves alone.
+EXPECTED_LABELS = frozenset({"awaiting pr", "blocked"})
 
 SCRATCH_FILE_CONTENT = "# Integration Test Scratch File\n\nSafe to ignore or delete.\n"
 
 
-def run(
-    *args: str, check: bool = True, capture: bool = False, cwd: str | None = None
-) -> subprocess.CompletedProcess:
-    """Run a CLI command, echoing it first.
-
-    Resolves argv[0] via shutil.which() first: some CLIs (e.g. Azure CLI's `az`) are
-    `.cmd` batch wrappers on Windows rather than real .exe files, and subprocess with
-    shell=False (unlike cmd.exe's own PATH resolution) won't find those from the bare
-    name alone, failing with `FileNotFoundError: [WinError 2]`. which() finds the
-    actual resolvable path on any platform, sidestepping that gap without needing
-    shell=True. gh/copier don't hit this today, but there's no downside to guarding
-    every invocation here the same way.
-
-    Returns:
-        The completed process, with captured stdout/stderr if `capture` is True.
-
-    """
-    print(f"$ {' '.join(args)}" + (f"  (in {cwd})" if cwd else ""))
-    resolved = (shutil.which(args[0]) or args[0], *args[1:])
-    # S603: args are always a fixed list built by this module; no shell=True.
-    return subprocess.run(  # noqa: S603
-        resolved, check=check, text=True, capture_output=capture, cwd=cwd
-    )
-
-
-def gh_value(*args: str) -> str:
+def gh_value(*args: str, echo: bool = True) -> str:
     """Run `gh <args>` and return its trimmed stdout.
 
     Returns:
         The command's stdout, stripped of surrounding whitespace.
 
     """
-    return run("gh", *args, capture=True).stdout.strip()
+    return run("gh", *args, capture=True, echo=echo).stdout.strip()
+
+
+def confirm(prompt: str, *, yes: bool) -> bool:
+    """Ask a yes/no question, unless `yes` already answered it.
+
+    With no terminal to answer from, the answer is no.
+
+    Returns:
+        True to go ahead.
+
+    """
+    if yes:
+        return True
+    try:
+        return ask(f"{prompt} [y/N] ").strip().lower() == "y"
+    except EOFError:
+        return False
+
+
+def test_repo_pattern(repo_prefix: str) -> re.Pattern[str]:
+    """Match the names main() gives its test repos, and nothing else.
+
+    Returns:
+        A pattern for `<repo_prefix>-integration-test-<timestamp>-a` (or `-b`).
+
+    """
+    return re.compile(rf"{re.escape(repo_prefix)}-integration-test-\d+-[ab]")
 
 
 def check_gh_installed() -> None:
-    """Verify the `gh` CLI is actually resolvable on PATH.
+    """Verify the `gh` CLI is resolvable on PATH.
 
     Without this, a missing `gh` surfaces as a raw FileNotFoundError traceback from
     deep inside the first real `gh` call instead of a clear message up front.
@@ -104,8 +132,8 @@ def check_scopes() -> None:
     """Verify the active gh token has every scope this script needs.
 
     `gh auth status` reports a classic token's granted scopes (sourced from GitHub's
-    own X-OAuth-Scopes API response) as a human-readable "Token scopes: 'a', 'b'" line
-    -- there's no dedicated --json field for this, so this greps that line instead of
+    own X-OAuth-Scopes API response) as a human-readable "Token scopes: 'a', 'b'" line;
+    there's no dedicated --json field for this, so this greps that line instead of
     querying the API directly a second time.
 
     Raises:
@@ -118,32 +146,25 @@ def check_scopes() -> None:
     if missing:
         raise SystemExit(
             f"Token is missing required scope(s): {', '.join(missing)}. See "
-            "docs/token-permissions.md for what this token needs."
+            f"{docs_page_url('reference/token-permissions.md')} for what this token "
+            "needs."
         )
 
 
-def check(failures: list[str], name: str, ok: bool, detail: str = "") -> None:
-    """Record and print one named check's result immediately, without halting.
+def template_answers(*, leaf: bool) -> list[str]:
+    """Return the -d flags that make a test repo a Template project.
 
-    Every automated check in this script goes through here so failures accumulate
-    instead of stopping the run at the first one -- a full run reports the complete
-    picture, not just whatever happened to fail first.
+    A leaf template's projects can't be templates, so a leaf template source gets none.
+    Otherwise the repo is an extensible template, which exercises everything a template
+    can be.
+
+    Returns:
+        Copier -d arguments.
+
     """
-    if ok:
-        print(f"  [PASS] {name}")
-    else:
-        print(f"  [FAIL] {name}" + (f" -- {detail}" if detail else ""))
-        failures.append(name)
-
-
-def report(label: str, failures: list[str]) -> None:
-    """Print a final summary of one repo's accumulated check results."""
-    if failures:
-        print(f"\n{label}: {len(failures)} check(s) failed:")
-        for name in failures:
-            print(f"  - {name}")
-    else:
-        print(f"\n{label}: all checks passed.")
+    if leaf:
+        return []
+    return ["-d", "project_type=Template", "-d", "extensible_template=true"]
 
 
 def create(
@@ -155,24 +176,22 @@ def create(
     zensical_target: str,
     *,
     code_coverage: bool,
+    leaf: bool = False,
 ) -> None:
-    """Render+run the template to create the test repo.
+    """Run the template to create the test repo.
 
-    `github_username` is pinned to the already-resolved `owner` rather than left to
-    auto-detect from local git config: copier.yml.jinja's `.github/settings.yml`
-    content (e.g. `homepage`) is templated from `github_repo_owner`, which defaults to
-    `github_username` -- letting that auto-detect could silently diverge from the
-    account gh actually authenticated as, breaking verify() for reasons unrelated to
-    what it's actually trying to test.
+    `github_username` is set to the resolved `owner` instead of auto-detected from local
+    git config. copier.yml.jinja templates `.github/settings.yml` (such as `homepage`)
+    from `github_repo_owner`, which defaults to `github_username`, so an auto-detected
+    value that differs from the account gh is logged in as would break verify() for an
+    unrelated reason.
 
-    `zensical_target` and `code_coverage` are explicit, not left to `--defaults`, so
-    the two repos this script creates can each cover a different value instead of
-    silently both getting whatever the question's own default is.
+    `zensical_target` and `code_coverage` are explicit, so the two repos can cover
+    different values instead of both getting each question's default.
 
-    `--defaults` falls back to each question's own default for anything not covered
-    by an explicit -d below (currently github_org, author_name) -- without it, copier
-    drops into an interactive prompt for those. Explicit -d values below still take
-    priority over --defaults regardless of order.
+    `--defaults` covers the questions without an explicit -d below (github_org and
+    author_name); without it, copier prompts for them. Explicit -d values take priority
+    over --defaults.
     """
     run(
         "copier",
@@ -190,8 +209,7 @@ def create(
         f"github_username={owner}",
         "-d",
         f"project_description={PROJECT_DESCRIPTION}",
-        "-d",
-        "project_type=Template",
+        *template_answers(leaf=leaf),
         "-d",
         "project_name=Integration Test",
         "-d",
@@ -214,7 +232,7 @@ def latest_stable_tag(source: str) -> str:
 
     Uses `git ls-remote --tags` so it works directly against `source` without a local
     clone. Matches strict `vX.Y.Z` tags only (excluding prereleases like
-    `v1.1.0-alpha.0`) and sorts by parsed version, not lexically -- a plain string
+    `v1.1.0-alpha.0`) and sorts by parsed version, not lexically; a plain string
     sort would put `v0.7.9` after `v0.7.20`.
 
     Returns:
@@ -253,8 +271,12 @@ def list_tags(repo: str) -> set[str]:
     return tags
 
 
-def latest_run_id(repo: str, workflow_file: str) -> str:
-    """Return the most recent run's ID for a workflow, or "" if none exist yet.
+def latest_run_id(repo: str, workflow_file: str, *, event: str) -> str:
+    """Return the most recent run's ID for a workflow and event, or "" if none exist.
+
+    Filtering by event matters for a workflow with more than one trigger, such as
+    release-auto-preparereleasepr.yml: a push from a merge and a manual dispatch each
+    start a run, and either can be the newest.
 
     Returns:
         The run ID as a string, or "".
@@ -267,6 +289,8 @@ def latest_run_id(repo: str, workflow_file: str) -> str:
         repo,
         "--workflow",
         workflow_file,
+        "--event",
+        event,
         "--limit",
         "1",
         "--json",
@@ -277,7 +301,7 @@ def latest_run_id(repo: str, workflow_file: str) -> str:
 
 
 def wait_for_new_run(
-    repo: str, workflow_file: str, before_id: str, *, timeout: int = 60
+    repo: str, workflow_file: str, before_id: str, *, event: str, timeout: int = 60
 ) -> int:
     """Poll for a new run of `workflow_file` to appear after `before_id`.
 
@@ -293,7 +317,7 @@ def wait_for_new_run(
     """
     deadline = time.time() + timeout
     while time.time() < deadline:
-        current = latest_run_id(repo, workflow_file)
+        current = latest_run_id(repo, workflow_file, event=event)
         if current and current != before_id:
             return int(current)
         time.sleep(5)
@@ -301,7 +325,11 @@ def wait_for_new_run(
 
 
 def dispatch_workflow(
-    repo: str, workflow_file: str, *, inputs: dict[str, str] | None = None
+    repo: str,
+    workflow_file: str,
+    *,
+    inputs: dict[str, str] | None = None,
+    ref: str | None = None,
 ) -> int:
     """Dispatch a workflow_dispatch workflow and return the resulting run's ID.
 
@@ -309,31 +337,45 @@ def dispatch_workflow(
         The new run's ID.
 
     """
-    before = latest_run_id(repo, workflow_file)
+    before = latest_run_id(repo, workflow_file, event="workflow_dispatch")
     args = ["gh", "workflow", "run", workflow_file, "--repo", repo]
+    if ref:
+        args += ["--ref", ref]
     for key, value in (inputs or {}).items():
         args += ["-f", f"{key}={value}"]
     run(*args)
-    return wait_for_new_run(repo, workflow_file, before)
+    return wait_for_new_run(repo, workflow_file, before, event="workflow_dispatch")
 
 
 def open_pr_wait_and_merge(
-    repo: str, dest: str, branch: str, commit_message: str, filename: str
-) -> None:
-    """Open a normal, passing PR and merge it -- the only way real commits reach main.
+    repo: str,
+    dest: str,
+    branch: str,
+    commit_message: str,
+    filename: str = "",
+    *,
+    edit: Callable[[Path], None] | None = None,
+) -> str:
+    """Open a passing PR and merge it, the only way commits reach main.
 
-    Branch protection requires every change to go through a PR, even for the repo
-    owner -- a direct `git push` to main is rejected outright once the ruleset is
-    live (confirmed the hard way: an earlier version of this script tried exactly
-    that). This also mirrors how release-auto-preparereleasepr.yml actually gets
-    triggered in practice: by the push GitHub generates when a PR merges, not by
-    anyone pushing to main directly.
+    The PR adds a scratch file named `filename`, or makes `edit`'s changes instead.
+
+    Branch protection requires every change to go through a PR, even from the repo
+    owner, so a direct `git push` to main is rejected. Merging a PR also matches how
+    release-auto-preparereleasepr.yml starts in practice: from the push GitHub makes
+    when a PR merges.
+
+    Returns:
+        The ID of the workflow run behind the PR's REQUIRED_CHECK.
 
     """
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
     run("git", "switch", "-c", branch, cwd=dest)
-    Path(dest, filename).write_text(SCRATCH_FILE_CONTENT, newline="\n")
+    if edit is None:
+        Path(dest, filename).write_text(SCRATCH_FILE_CONTENT, newline="\n")
+    else:
+        edit(Path(dest))
     run("git", "add", "-A", cwd=dest)
     run("git", "commit", "-m", commit_message, cwd=dest)
     run("git", "push", "-u", "origin", branch, cwd=dest)
@@ -352,51 +394,67 @@ def open_pr_wait_and_merge(
         "Integration test.",
     )
     pr_number = pr_url.rstrip("/").rsplit("/", 1)[-1]
-    wait_for_pr_checks(repo, pr_number)
-    run("gh", "pr", "merge", pr_number, "--repo", repo, "--squash", "--delete-branch")
+    checks = wait_for_pr_checks(repo, pr_number)
+    merge_pr(repo, pr_number)
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
+    return next(
+        match[1]
+        for c in checks
+        if c.get("name") == REQUIRED_CHECK
+        and (match := re.search(r"/actions/runs/(\d+)/", c.get("detailsUrl") or ""))
+    )
 
 
-def wait_for_pr_checks(repo: str, pr_number: str) -> None:
-    """Poll a PR's status checks until they all complete, and confirm they passed.
+def wait_for_pr_checks(repo: str, pr_number: str) -> list[dict]:
+    """Poll a PR's workflow checks until they all complete, and confirm they passed.
 
-    A force-push in quick succession (e.g. a branch updated twice back-to-back) can
-    leave a stale `CANCELLED` entry alongside the newer run's result for the same
-    check name -- `test-auto-prvalidation.yml`'s own concurrency group cancels the
-    superseded run. Only the most recent entry per check name reflects the PR's
-    actual current state, so older duplicates are dropped before evaluating success.
+    Only GitHub Actions checks (those with a workflowName) count. Another app's checks,
+    such as Codecov's, aren't required to merge and can stay in progress indefinitely,
+    as Codecov's did on a new repo's setup PR. check_coverage_upload() covers the
+    upload itself.
 
-    A dedupe pass alone isn't enough: a check can be observed as COMPLETED
-    (cancelled) in the brief window before its superseding run has even been
-    created, let alone registered in the rollup -- a cancelled run and its
-    replacement's SUCCESS have been observed completing within the same second. So
-    this only accepts an "all complete" result once the exact same snapshot is
-    observed on two consecutive polls, giving a just-created superseding run a
-    chance to show up first.
+    Two force-pushes in quick succession can leave a `CANCELLED` entry beside the newer
+    run for the same check name, since `test-auto-prvalidation.yml`'s concurrency group
+    cancels the superseded run. Only each check name's latest entry reflects the PR, so
+    older duplicates are dropped.
+
+    That isn't enough on its own: a cancelled run can show as COMPLETED before its
+    replacement even appears, and the two have completed within the same second. So an
+    "all complete" result counts only once the same snapshot shows on two polls in a
+    row, which gives a new replacement run time to appear. It also needs REQUIRED_CHECK
+    among them: a run still queued for a runner hasn't reported yet, and the ruleset
+    won't let the PR merge without it.
+
+    Returns:
+        Each check's latest status, as `gh pr view --json statusCheckRollup` gives it.
 
     Raises:
         SystemExit: if the checks don't all complete in time, or don't all pass.
 
     """
+    print(f"Waiting for PR {pr_number}'s checks in {repo}...")
     latest: list[dict] = []
     stable = False
-    for _ in range(24):
+    for _ in range(90):
         rollup = json.loads(
             gh_value(
-                "pr", "view", pr_number, "--repo", repo, "--json", "statusCheckRollup"
+                "pr", "view", pr_number, "--repo", repo, "--json", "statusCheckRollup",
+                echo=False,
             )
-        )["statusCheckRollup"]
+        )["statusCheckRollup"]  # fmt: skip
         latest_by_name: dict[str, dict] = {}
-        for check in rollup:
-            name = check.get("name")
+        for status_check in rollup:
+            if not status_check.get("workflowName"):
+                continue
+            name = status_check.get("name")
             existing = latest_by_name.get(name)
-            if existing is None or (check.get("completedAt") or "") >= (
+            if existing is None or (status_check.get("completedAt") or "") >= (
                 existing.get("completedAt") or ""
             ):
-                latest_by_name[name] = check
+                latest_by_name[name] = status_check
         new_latest = list(latest_by_name.values())
-        all_complete = bool(new_latest) and all(
+        all_complete = any(c.get("name") == REQUIRED_CHECK for c in new_latest) and all(
             c.get("status") == "COMPLETED" for c in new_latest
         )
         if all_complete and stable and new_latest == latest:
@@ -405,33 +463,70 @@ def wait_for_pr_checks(repo: str, pr_number: str) -> None:
         stable = all_complete
         latest = new_latest
         time.sleep(10)
+    for run_id in {
+        match[1]
+        for c in latest
+        if (match := re.search(r"/actions/runs/(\d+)/", c.get("detailsUrl") or ""))
+    }:
+        save_run_log(repo, run_id)
     if not latest or not all(c.get("conclusion") == "SUCCESS" for c in latest):
         raise SystemExit(f"PR {pr_number} in {repo} didn't pass its checks: {latest!r}")
+    return latest
 
 
-def wait_for_run(repo: str, run_id: int) -> str:
-    """Wait for a run to finish and return its conclusion.
+def merge_pr(repo: str, pr_number: str) -> None:
+    """Squash-merge a PR whose checks passed.
 
-    `check=False`: a failing run makes `gh run watch --exit-status` exit non-zero,
-    which is an expected outcome for some callers (e.g. a deliberately-broken PR), not
-    a bug in this script -- the caller decides what conclusion was actually wanted.
-
-    Returns:
-        The run's conclusion, e.g. "success" or "failure".
+    Raises:
+        SystemExit: if GitHub refuses the merge, with its reason.
 
     """
-    run("gh", "run", "watch", str(run_id), "--repo", repo, "--exit-status", check=False)
-    return gh_value(
-        "run",
-        "view",
-        str(run_id),
-        "--repo",
-        repo,
-        "--json",
-        "conclusion",
-        "-q",
-        ".conclusion",
-    )
+    result = run(
+        "gh", "pr", "merge", pr_number, "--repo", repo, "--squash", "--delete-branch",
+        check=False, capture=True,
+    )  # fmt: skip
+    if result.returncode:
+        reason = (result.stderr or result.stdout).strip()
+        raise SystemExit(f"Couldn't merge PR {pr_number} in {repo}: {reason}")
+
+
+def save_run_log(repo: str, run_id: int | str) -> None:
+    """Save a finished workflow run's full log to the run's log directory."""
+    log = run(
+        "gh", "run", "view", str(run_id), "--repo", repo, "--log",
+        check=False, capture=True, echo=False,
+    )  # fmt: skip
+    save_log(f"{repo.rsplit('/', 1)[-1]}-run-{run_id}.log", log.stdout)
+
+
+def wait_for_run(repo: str, run_id: int, *, timeout: int = 1800) -> str:
+    """Wait for a run to finish, save its log, and return its conclusion.
+
+    Polls quietly instead of `gh run watch`, whose live display would flood the run's
+    log. The caller decides which conclusion it wanted: some runs, such as a
+    deliberately broken PR's, are meant to fail.
+
+    Returns:
+        The run's conclusion, e.g. "success" or "failure"; "timed out" if `timeout`
+        seconds pass without the run completing.
+
+    """
+    print(f"Waiting for run {run_id} in {repo}...")
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        info = json.loads(
+            gh_value(
+                "run", "view", str(run_id), "--repo", repo,
+                "--json", "status,conclusion",
+                echo=False,
+            )
+            or "{}"
+        )  # fmt: skip
+        if info.get("status") == "completed":
+            save_run_log(repo, run_id)
+            return info.get("conclusion", "unknown")
+        time.sleep(10)
+    return "timed out"
 
 
 def step_conclusion(repo: str, run_id: int, step_name: str) -> str | None:
@@ -446,21 +541,21 @@ def step_conclusion(repo: str, run_id: int, step_name: str) -> str | None:
         gh_value("run", "view", str(run_id), "--repo", repo, "--json", "jobs")
     )["jobs"]
     for job in jobs:
-        for step in job["steps"]:
-            if step["name"] == step_name:
-                return step["conclusion"]
+        for job_step in job["steps"]:
+            if job_step["name"] == step_name:
+                return job_step["conclusion"]
     return None
 
 
 def report_settings_checks(
     repo: str, homepage: str, failures: list[str], *, zensical_ghpages: bool
 ) -> None:
-    """Report each part of .github/settings.yml the Settings App should have applied.
+    """Report each part of .github/settings.yml the copy should have applied.
 
-    Covers the `repository`, `labels`, `rulesets`, and `environments` blocks -- every
-    top-level key that file actually sets, not just a sample of them. The
-    `github-pages` environment only exists when `zensical_ghpages` is true --
-    settings.yml.jinja only declares it in that case.
+    Covers the `repository`, `actions`, `labels`, `rulesets`, and `environments`
+    blocks; every top-level key that file sets, not just a sample of them. verify()
+    checks `pages`. The `github-pages` environment only exists when `zensical_ghpages`
+    is true: settings.yml.jinja only declares it in that case.
     """
     repo_data = json.loads(
         run("gh", "api", f"repos/{repo}", check=False, capture=True).stdout or "{}"
@@ -473,7 +568,8 @@ def report_settings_checks(
     check(
         failures,
         "repo homepage matches settings.yml",
-        repo_data.get("homepage") == homepage,
+        (repo_data.get("homepage") or "") == homepage,
+        f"got {repo_data.get('homepage')!r}, expected {homepage!r}",
     )
     check(
         failures,
@@ -486,12 +582,14 @@ def report_settings_checks(
         "api",
         f"repos/{repo}/labels",
         "--jq",
-        '[.[].name] | sort | join(",")',
+        ".[].name",
         check=False,
         capture=True,
     )
     check(
-        failures, "labels match settings.yml", labels.stdout.strip() == EXPECTED_LABELS
+        failures,
+        "settings.yml's labels exist",
+        EXPECTED_LABELS <= set(labels.stdout.splitlines()),
     )
 
     rulesets = run(
@@ -507,6 +605,23 @@ def report_settings_checks(
         failures,
         "default-branch-protection ruleset exists",
         "default-branch-protection" in rulesets.stdout.split(),
+    )
+
+    workflow_permissions = json.loads(
+        run(
+            "gh",
+            "api",
+            f"repos/{repo}/actions/permissions/workflow",
+            check=False,
+            capture=True,
+        ).stdout
+        or "{}"
+    )
+    check(
+        failures,
+        "workflows can open pull requests",
+        workflow_permissions.get("can_approve_pull_request_reviews") is True,
+        f"got {workflow_permissions!r}",
     )
 
     if not zensical_ghpages:
@@ -527,93 +642,30 @@ def report_settings_checks(
     )
 
 
-def settings_synced(repo: str, homepage: str, *, zensical_ghpages: bool) -> bool:
-    """Check whether the Settings App has applied every part of .github/settings.yml.
-
-    Used only to decide when the polling loop in verify() can stop -- the actual
-    per-field results get reported once, afterward, by report_settings_checks().
-
-    Returns:
-        True once every expected field/label/ruleset/(conditionally) environment is
-        present.
-
-    """
-    repo_data_result = run("gh", "api", f"repos/{repo}", check=False, capture=True)
-    if repo_data_result.returncode != 0:
-        return False
-    repo_data = json.loads(repo_data_result.stdout)
-    if repo_data.get("description") != PROJECT_DESCRIPTION:
-        return False
-    if repo_data.get("homepage") != homepage:
-        return False
-    if repo_data.get("delete_branch_on_merge") is not True:
-        return False
-
-    labels = run(
-        "gh",
-        "api",
-        f"repos/{repo}/labels",
-        "--jq",
-        '[.[].name] | sort | join(",")',
-        check=False,
-        capture=True,
-    )
-    if labels.returncode != 0 or labels.stdout.strip() != EXPECTED_LABELS:
-        return False
-
-    rulesets = run(
-        "gh",
-        "api",
-        f"repos/{repo}/rulesets",
-        "--jq",
-        ".[].name",
-        check=False,
-        capture=True,
-    )
-    if (
-        rulesets.returncode != 0
-        or "default-branch-protection" not in rulesets.stdout.split()
-    ):
-        return False
-
-    if not zensical_ghpages:
-        return True
-
-    environments = run(
-        "gh",
-        "api",
-        f"repos/{repo}/environments",
-        "--jq",
-        "[.environments[].name]",
-        check=False,
-        capture=True,
-    )
-    return environments.returncode == 0 and "github-pages" in json.loads(
-        environments.stdout or "[]"
-    )
-
-
 def verify(
-    repo: str, homepage: str, failures: list[str], *, zensical_ghpages: bool
+    repo: str, dest: str, failures: list[str], *, zensical_ghpages: bool
 ) -> None:
     """Assert the created repo's real remote state matches what repo setup should do.
 
     `zensical_ghpages` gates the Pages-specific check: GitHub Pages is only enabled
     (and `/pages` only returns anything) when the repo was created with
-    `zensical_target: GitHub Pages`.
+    `zensical_target: GitHub Pages`. A copy at a release before gh-settings skips the
+    settings checks: that release relied on the Settings GitHub App, which the upgrade
+    guide has users remove, so check_post_update() checks them once
+    `mise run sync-repo-settings` has applied the updated file.
 
     Raises:
-        SystemExit: only if the repo itself can't be found -- every other assertion
+        SystemExit: only if the repo itself can't be found; every other assertion
             is recorded via check() instead, since a real value here doesn't prevent
             the rest of this script's checks from being meaningful.
 
     """
-    print(f"Verifying {repo}...")
+    step(f"Verifying {repo}")
     repo_view = run(
         "gh", "repo", "view", repo, "--json", "visibility", check=False, capture=True
     )
     if repo_view.returncode != 0:
-        raise SystemExit(f"Repo {repo!r} not found -- did create() fail?")
+        raise SystemExit(f"Repo {repo!r} not found; did create() fail?")
     visibility = json.loads(repo_view.stdout)["visibility"]
     check(
         failures,
@@ -630,57 +682,145 @@ def verify(
             pages_build_type == "workflow",
             f"got {pages_build_type!r}",
         )
+        unrestricted = gh_value(
+            "api",
+            f"repos/{repo}/environments/github-pages",
+            "-q",
+            ".deployment_branch_policy == null",
+        )
+        check(
+            failures,
+            "github-pages environment has no deployment branch restriction",
+            unrestricted == "true",
+            f"got {unrestricted!r}",
+        )
 
     run("gh", "api", f"repos/{repo}/contents/.github/workflows", capture=True)
 
-    # Labels and the branch ruleset come from .github/settings.yml, applied
-    # asynchronously by the Settings GitHub App (https://github.com/apps/settings)
-    # reacting to the push above -- not something this script sets directly, so this
-    # polls rather than checking once. Requires that app be installed on the
-    # authenticated account with access to all repositories (a new repo isn't
-    # automatically visible to an app installed on "only select repositories") -- see
-    # docs/token-permissions.md.
-    for attempt in range(12):
-        if settings_synced(repo, homepage, zensical_ghpages=zensical_ghpages):
-            print(f"Settings App sync: OK (after {attempt * 10}s)")
-            break
-        time.sleep(10)
-    else:
-        print(
-            "Settings App sync: not observed within 120s -- is it installed on this "
-            "account with access to all repositories?"
+    # The copy's gh-settings task applies .github/settings.yml before create() returns.
+    if not uses_gh_settings(dest):
+        say(
+            "  [SKIP] settings.yml checks: this release applied it with the Settings "
+            "GitHub App; they run after the update, once sync-repo-settings applies it"
         )
-    report_settings_checks(repo, homepage, failures, zensical_ghpages=zensical_ghpages)
+        return
+    report_settings_checks(
+        repo, settings_homepage(dest), failures, zensical_ghpages=zensical_ghpages
+    )
 
 
-def homepage_for(owner: str, repo_name: str) -> str:
-    """Compute the GitHub Pages homepage verify() expects for a repo this script made.
+def uses_gh_settings(dest: str) -> bool:
+    """Check whether a repo's .github/settings.yml is in gh-settings' format.
+
+    Releases before gh-settings wrote one for the Settings GitHub App instead; only
+    gh-settings' format has a `version: 1` line.
 
     Returns:
-        The homepage URL. project_visibility is always Public below, matching
-        settings.yml.jinja's homepage logic (only set when is_public).
+        True if gh-settings applies the file.
 
     """
-    return f"https://{owner}.github.io/{repo_name}"
+    text = Path(dest, ".github", "settings.yml").read_text(encoding="utf-8")
+    return re.search(r"(?m)^version: 1$", text) is not None
+
+
+def publishes_to_ghpages(dest: str) -> bool:
+    """Check whether a repo was copied with `zensical_target: GitHub Pages`.
+
+    Returns:
+        True if its copier-answers.yml records that answer.
+
+    """
+    text = Path(dest, ".config", "copier-answers.yml").read_text(encoding="utf-8")
+    return re.search(r"(?m)^zensical_target: GitHub Pages$", text) is not None
+
+
+def settings_homepage(dest: str) -> str:
+    """Read the homepage a repo's own .github/settings.yml sets.
+
+    Reading it, not computing it, keeps verify() right for a repo copied at any
+    release, since the template has changed what it sets.
+
+    Returns:
+        The homepage, or "" if settings.yml sets none.
+
+    """
+    text = Path(dest, ".github", "settings.yml").read_text(encoding="utf-8")
+    match = re.search(r'(?m)^\s+homepage:\s*"?([^"\n]*?)"?\s*$', text)
+    return match[1] if match else ""
+
+
+def codecov_token() -> str:
+    """Read the Codecov upload token a full run needs, before it creates anything.
+
+    A new repo has no per-repo Codecov token yet, so this needs a Codecov global upload
+    token.
+
+    Returns:
+        The CODECOV_TOKEN environment variable's value.
+
+    Raises:
+        SystemExit: if CODECOV_TOKEN isn't set.
+
+    """
+    token = os.environ.get("CODECOV_TOKEN", "")
+    if not token:
+        runbook = docs_page_url(
+            "maintaining/integration-testing/runbook-github.md", version="dev"
+        )
+        raise SystemExit(
+            "Set CODECOV_TOKEN to your Codecov global upload token first; see Before "
+            f"You Start in {runbook}."
+        )
+    return token
+
+
+def provide_codecov_token(repo: str, token: str) -> None:
+    """Set the CODECOV_TOKEN secret on `repo`.
+
+    The value goes to `gh secret set` on stdin, never its command line, and isn't
+    logged.
+    """
+    run(
+        "gh", "secret", "set", "CODECOV_TOKEN", "--repo", repo,
+        capture=True, secret=True, stdin=token,
+    )  # fmt: skip
+
+
+def check_coverage_upload(repo: str, run_id: str, failures: list[str]) -> None:
+    """Confirm a PR Validation run uploaded coverage.xml, and Codecov accepted it.
+
+    The upload step runs only when coverage.xml exists, and Repo A's setup PR commits a
+    fixture. The step passes even when Codecov rejects the upload, since it doesn't fail
+    CI on an upload error, so acceptance is read from the uploader's own log line.
+    """
+    step("Checking PR Validation uploads coverage.xml")
+    conclusion = step_conclusion(repo, int(run_id), "Upload Coverage to Codecov")
+    check(
+        failures,
+        "PR Validation runs the Codecov upload",
+        conclusion == "success",
+        f"run {run_id}'s upload step conclusion was {conclusion!r}",
+    )
+    log = run(
+        "gh", "run", "view", run_id, "--repo", repo, "--log",
+        check=False, capture=True, echo=False,
+    ).stdout  # fmt: skip
+    check(
+        failures,
+        "Codecov accepts the upload",
+        "Upload queued for processing complete" in log,
+        f"run {run_id}'s log has no 'Upload queued for processing complete'",
+    )
 
 
 def provision_test_secrets(repo: str) -> None:
-    """Set placeholder secrets so pipelines gated on their presence can actually run.
+    """Set placeholder secrets so pipelines gated on their presence can run.
 
-    APPRISE_URL: Maint (Auto): Copier Update Check requires it to exist before its own
-    logic even runs (see .github/actions/require-secrets). Points at a real, harmless
-    HTTPS endpoint, not a fake host, so the "Notify if Update is Available" step, when
-    it does run, doesn't fail the whole workflow on an unrelated delivery error.
-
-    REPO_MAINTENANCE_PAT: Release (Auto): Prepare Release PR pushes to `knope/release`
-    and opens/updates a PR against it. A push authenticated as the default
-    `GITHUB_TOKEN` (i.e. actor `github-actions[bot]`) leaves that PR's required `tests`
-    status check permanently stuck in GitHub's `action_required` state -- pending a
-    human manually approving the run in the Actions tab -- which blocks branch
-    protection from ever letting it merge. Reuses this script's own `gh` auth token
-    (the same real-user identity already pushing the other test branches, which never
-    hit this gate) so the release flow can be exercised the same way a real repo's own
-    REPO_MAINTENANCE_PAT would behave.
+    APPRISE_URL: Monthly Maintenance's Copier Update Check requires it to exist before
+    its own logic even runs (see .github/actions/require-secrets). Points at a real,
+    harmless HTTPS endpoint, not a fake host, so the "Notify if Update is Available"
+    step, when it does run, doesn't fail the whole workflow on an unrelated delivery
+    error.
     """
     run(
         "gh",
@@ -692,33 +832,103 @@ def provision_test_secrets(repo: str) -> None:
         "--body",
         "json://httpbin.org/post",
     )
-    pat = gh_value("auth", "token")
-    run("gh", "secret", "set", "REPO_MAINTENANCE_PAT", "--repo", repo, "--body", pat)
+
+
+def approve_pending_run(repo: str, branch: str, *, timeout: int = 60) -> None:
+    """Approve a pull_request run on `branch` waiting in GitHub's action_required state.
+
+    A push as the default GITHUB_TOKEN (github-actions[bot]) to a PR it opened or
+    updated leaves that PR's pull_request runs waiting for approval in the Actions tab,
+    as when Release (Auto): Prepare Release PR adds a commit to the release PR.
+    Approving through the API does what a maintainer does by clicking "Approve and run
+    workflow". It polls briefly, since the run may not exist yet when the push
+    completes.
+
+    Raises:
+        SystemExit: if no action_required run appears on `branch` within `timeout`.
+
+    """
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        runs = json.loads(
+            gh_value(
+                "run",
+                "list",
+                "--repo",
+                repo,
+                "--branch",
+                branch,
+                "--json",
+                "databaseId,conclusion",
+            )
+            or "[]"
+        )
+        for r in runs:
+            if r.get("conclusion") == "action_required":
+                run(
+                    "gh",
+                    "api",
+                    "-X",
+                    "POST",
+                    f"repos/{repo}/actions/runs/{r['databaseId']}/approve",
+                )
+                return
+        time.sleep(3)
+    raise SystemExit(
+        f"Timed out waiting for an action_required run on {branch} in {repo}"
+    )
+
+
+def monthly_maintenance_run(
+    repo: str, job: str, *, legacy: str = "", ref: str | None = None
+) -> int:
+    """Dispatch one of Monthly Maintenance's jobs alone, or the workflow it replaced.
+
+    Returns:
+        The run's ID.
+
+    """
+    if legacy:
+        return dispatch_workflow(repo, legacy, ref=ref)
+    return dispatch_workflow(repo, MONTHLY_MAINTENANCE, inputs={"job": job}, ref=ref)
 
 
 def check_copier_update_check(
-    repo: str, failures: list[str], *, expect_update_available: bool
+    repo: str,
+    failures: list[str],
+    *,
+    expect_update_available: bool,
+    ref: str | None = None,
+    legacy: bool = False,
 ) -> None:
-    """Dispatch Maint (Auto): Copier Update Check and verify it ran correctly.
+    """Run Monthly Maintenance's Copier Update Check job and verify it ran correctly.
+
+    `legacy` runs the separate Copier Update Check workflow of a release before Monthly
+    Maintenance instead, as Repo B has until it's updated.
 
     Whether it detected a pending update is read from whether the "Notify if Update is
     Available" step ran (its own `if:` is gated on that) rather than by scraping log
     text for the third-party action's own output, which isn't a contract this script
     should depend on.
     """
-    print("Checking Maint (Auto): Copier Update Check...")
-    run_id = dispatch_workflow(repo, "maint-auto-copierupdatecheck.yml")
+    on = f" on {ref}" if ref else ""
+    step(f"Checking Maint (Auto): Monthly Maintenance's Copier Update Check{on}")
+    run_id = monthly_maintenance_run(
+        repo,
+        "copier_update_check",
+        legacy=LEGACY_COPIER_UPDATE_CHECK if legacy else "",
+        ref=ref,
+    )
     conclusion = wait_for_run(repo, run_id)
     check(
         failures,
-        "Copier Update Check workflow succeeds",
+        f"Copier Update Check job succeeds{on}",
         conclusion == "success",
         conclusion,
     )
     notify_step = step_conclusion(repo, run_id, "Notify if Update is Available")
-    # Whether the step *ran* (its `if:` is gated on update_available), not whether
-    # its own delivery succeeded -- a real notification failure (bad endpoint, etc.)
-    # would otherwise look identical to "no update was detected".
+    # Whether the step ran (its `if:` checks update_available), not whether delivery
+    # succeeded, so a failed notification doesn't look like "no update detected".
     detected_available = notify_step not in (None, "skipped")
     check(
         failures,
@@ -727,7 +937,8 @@ def check_copier_update_check(
             "an update is available"
             if expect_update_available
             else "no update available"
-        ),
+        )
+        + on,
         detected_available == expect_update_available,
         f"'Notify if Update is Available' step conclusion was {notify_step!r}",
     )
@@ -736,17 +947,15 @@ def check_copier_update_check(
 def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
     """Run `copier update` against an already-current repo and confirm it's a no-op.
 
-    `--defaults` is safe here specifically because nothing changed since this repo was
-    copied -- there's no template diff to introduce a new question, so there's no risk
-    of silently defaulting past a real prompt the way there would be for Repo B.
+    `--defaults` is safe here: nothing changed since this repo was copied, so no
+    template diff can add a question for it to answer silently, as it could for Repo B.
 
-    `vcs_ref` must match whatever `create()` used for this repo: without an explicit
-    `--vcs-ref`, `copier update` targets the latest release *tag*, not HEAD -- if
-    main has commits past the last release (the normal case), that's an earlier point
-    than what this repo was actually created at, and copier has no sane way to
-    "update" backwards to it.
+    `vcs_ref` must match what `create()` used. Without `--vcs-ref`, `copier update`
+    targets the latest release tag, not HEAD. When main has commits past the last
+    release, as it normally does, that's earlier than the version this repo was created
+    at, and copier can't update backward.
     """
-    print("Checking `copier update` is a no-op on an already-current repo...")
+    step("Checking `copier update` is a no-op on an already-current repo")
     run(
         "copier",
         "update",
@@ -768,19 +977,18 @@ def check_noop_update(dest: str, vcs_ref: str, failures: list[str]) -> None:
 
 
 def check_repo_health_check(repo: str, failures: list[str]) -> None:
-    """Dispatch Maint (Auto): Repo Health Check and confirm it completes clean.
+    """Run Monthly Maintenance's Repo Health Check job and confirm it completes clean.
 
-    Covers both jobs (link-check and the REPO_MAINTENANCE_PAT expiration check) via
-    the overall run conclusion -- a real near-expiry PAT to exercise the actual
-    warning/notification path isn't something this throwaway repo has, so that part
-    stays on the manual verification checklist.
+    workflow-keepalive is gated `if: github.event_name == 'schedule'`, so a manual
+    dispatch here only exercises the link check; that's covered by the overall
+    run conclusion.
     """
-    print("Checking Maint (Auto): Repo Health Check...")
-    run_id = dispatch_workflow(repo, "maint-auto-repohealthcheck.yml")
+    step("Checking Maint (Auto): Monthly Maintenance's Repo Health Check")
+    run_id = monthly_maintenance_run(repo, "repo_health_check")
     conclusion = wait_for_run(repo, run_id)
     check(
         failures,
-        "Repo Health Check workflow succeeds",
+        "Repo Health Check job succeeds",
         conclusion == "success",
         conclusion,
     )
@@ -832,7 +1040,7 @@ def assert_pr_blocked(repo: str, pr_url: str, reason: str, failures: list[str]) 
 
 def check_bad_title_blocks_merge(repo: str, dest: str, failures: list[str]) -> None:
     """Open a PR with a non-Conventional-Commit title and confirm it's blocked."""
-    print("Checking a bad-title PR fails Test (Auto): PR Validation...")
+    step("Checking a bad-title PR fails Test (Auto): PR Validation")
     run("git", "checkout", "main", cwd=dest)
     branch = "integration-test/bad-title"
     run("git", "switch", "-c", branch, cwd=dest)
@@ -863,7 +1071,7 @@ def check_bad_title_blocks_merge(repo: str, dest: str, failures: list[str]) -> N
 
 def check_failing_tests_block_merge(repo: str, dest: str, failures: list[str]) -> None:
     """Open a PR with a deliberately failing test and confirm it's blocked."""
-    print("Checking a PR with a failing test fails Test (Auto): PR Validation...")
+    step("Checking a PR with a failing test fails Test (Auto): PR Validation")
     run("git", "checkout", "main", cwd=dest)
     branch = "integration-test/failing-test"
     run("git", "switch", "-c", branch, cwd=dest)
@@ -898,9 +1106,9 @@ def knope_release_pr_title(repo: str) -> str | None:
     """Look up the open knope/release PR's title, if one is open.
 
     The title (e.g. "chore: prepare release 0.0.1") encodes the version knope
-    computed -- unlike the PR's head commit SHA, it doesn't change just because
+    computed; unlike the PR's head commit SHA, it doesn't change just because
     `autoupdate-knope-pr` recreates the branch from a fresh main HEAD every run, so
-    it's the right signal for "did this merge actually change what's proposed."
+    it's the right signal for "did this merge change what's proposed."
 
     Returns:
         The PR title, or None if no such PR is currently open.
@@ -926,15 +1134,14 @@ def knope_release_pr_title(repo: str) -> str | None:
 
 def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     """Exercise the real release flow: a no-op merge, then a real release and tag."""
-    print("Checking Release (Auto): Prepare/Publish Release...")
+    step("Checking Release (Auto): Prepare/Publish Release")
 
-    # The bootstrap-time PR is prepared with an explicit --override-version; the
-    # *first* automated run after that always recomputes the version from knope's own
-    # default rules, changing the PR's content regardless of what triggered that run.
-    # Absorb that one-time transition with a throwaway merge before testing that a
-    # docs-only merge is a true no-op -- otherwise the correction gets misattributed
-    # to whichever commit happens to trigger the first automated run.
-    prepare_before = latest_run_id(repo, "release-auto-preparereleasepr.yml")
+    # Absorb any copy-time churn on the release PR (the first runs after copy may each
+    # touch it) with a throwaway merge before testing that a docs-only merge is a true
+    # no-op; otherwise that churn gets misattributed to the commit under test.
+    prepare_before = latest_run_id(
+        repo, "release-auto-preparereleasepr.yml", event="push"
+    )
     open_pr_wait_and_merge(
         repo,
         dest,
@@ -943,15 +1150,17 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
         "INTEGRATION_TEST_WARMUP.md",
     )
     warmup_run_id = wait_for_new_run(
-        repo, "release-auto-preparereleasepr.yml", prepare_before
+        repo, "release-auto-preparereleasepr.yml", prepare_before, event="push"
     )
     wait_for_run(repo, warmup_run_id)
 
     # A release PR may already be open here (e.g. the bootstrap-time v0.1.0 one), so
-    # "no PR is open" isn't the right no-op signal -- what actually matters is that a
+    # "no PR is open" isn't the right no-op signal; what matters is that a
     # docs-only merge doesn't change what version it proposes.
     docs_noop_before = knope_release_pr_title(repo)
-    prepare_before = latest_run_id(repo, "release-auto-preparereleasepr.yml")
+    prepare_before = latest_run_id(
+        repo, "release-auto-preparereleasepr.yml", event="push"
+    )
     open_pr_wait_and_merge(
         repo,
         dest,
@@ -959,7 +1168,9 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
         "docs: integration test no-op commit",
         "INTEGRATION_TEST_DOCS.md",
     )
-    run_id = wait_for_new_run(repo, "release-auto-preparereleasepr.yml", prepare_before)
+    run_id = wait_for_new_run(
+        repo, "release-auto-preparereleasepr.yml", prepare_before, event="push"
+    )
     conclusion = wait_for_run(repo, run_id)
     check(
         failures,
@@ -975,7 +1186,9 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
         f"before={docs_noop_before!r}, after={docs_noop_after!r}",
     )
 
-    prepare_before = latest_run_id(repo, "release-auto-preparereleasepr.yml")
+    prepare_before = latest_run_id(
+        repo, "release-auto-preparereleasepr.yml", event="push"
+    )
     open_pr_wait_and_merge(
         repo,
         dest,
@@ -983,7 +1196,9 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
         "feat: integration test feature",
         "INTEGRATION_TEST_FEAT.md",
     )
-    run_id = wait_for_new_run(repo, "release-auto-preparereleasepr.yml", prepare_before)
+    run_id = wait_for_new_run(
+        repo, "release-auto-preparereleasepr.yml", prepare_before, event="push"
+    )
     conclusion = wait_for_run(repo, run_id)
     check(
         failures,
@@ -1018,22 +1233,18 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
     )
 
     before_tags = list_tags(repo)
-    publish_before = latest_run_id(repo, "release-auto-publishrelease.yml")
-    zensical_before = latest_run_id(repo, "docs-auto-zensical.yml")
-    wait_for_pr_checks(repo, str(pr_number))
-    run(
-        "gh",
-        "pr",
-        "merge",
-        str(pr_number),
-        "--repo",
-        repo,
-        "--squash",
-        "--delete-branch",
+    publish_before = latest_run_id(
+        repo, "release-auto-publishrelease.yml", event="pull_request"
     )
+    zensical_before = latest_run_id(
+        repo, "docs-auto-zensical.yml", event="workflow_dispatch"
+    )
+    approve_pending_run(repo, "knope/release")
+    wait_for_pr_checks(repo, str(pr_number))
+    merge_pr(repo, str(pr_number))
     run("git", "pull", cwd=dest)
     publish_run_id = wait_for_new_run(
-        repo, "release-auto-publishrelease.yml", publish_before
+        repo, "release-auto-publishrelease.yml", publish_before, event="pull_request"
     )
     conclusion = wait_for_run(repo, publish_run_id)
     check(
@@ -1066,12 +1277,12 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
             release_view.returncode == 0,
         )
 
-        # Publishing a release fires a `release: published` event that
-        # docs-auto-zensical.yml listens for (it publishes the "latest" Pages docs
-        # alias) -- wait for it here so check_repo_health_check(), which runs later,
-        # isn't racing a Pages deployment that hasn't happened yet.
+        # Publish Release dispatches docs-auto-zensical.yml with the new tag (it
+        # publishes the "latest" Pages docs alias): a release made with GITHUB_TOKEN
+        # fires no `release` event. Wait for that run here so check_repo_health_check(),
+        # which runs later, isn't racing a Pages deployment that hasn't happened yet.
         zensical_run_id = wait_for_new_run(
-            repo, "docs-auto-zensical.yml", zensical_before
+            repo, "docs-auto-zensical.yml", zensical_before, event="workflow_dispatch"
         )
         conclusion = wait_for_run(repo, zensical_run_id)
         check(
@@ -1083,10 +1294,10 @@ def check_release_flow(repo: str, dest: str, failures: list[str]) -> None:
 
 
 def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
-    """Exercise Release (Manual): Create Prerelease -- a label, a dup, a new label."""
-    print("Checking Release (Manual): Create Prerelease...")
+    """Exercise Prepare Release PR's prerelease runs; a label, a dup, a new label."""
+    step("Checking Release (Auto): Prepare Release PR's prerelease runs")
 
-    # PrepareRelease refuses to run with nothing to bump -- without a real commit
+    # PrepareRelease refuses to run with nothing to bump; without a real commit
     # since the last release, every dispatch below would fail with knope's own
     # "No packages are ready to release", not the behavior this is meant to check.
     open_pr_wait_and_merge(
@@ -1099,7 +1310,7 @@ def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
 
     before = list_tags(repo)
     run_id = dispatch_workflow(
-        repo, "release-manual-createprerelease.yml", inputs={"label": "alpha"}
+        repo, "release-auto-preparereleasepr.yml", inputs={"label": "alpha"}
     )
     conclusion = wait_for_run(repo, run_id)
     check(
@@ -1118,7 +1329,7 @@ def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
     )
 
     run_id = dispatch_workflow(
-        repo, "release-manual-createprerelease.yml", inputs={"label": "alpha"}
+        repo, "release-auto-preparereleasepr.yml", inputs={"label": "alpha"}
     )
     conclusion = wait_for_run(repo, run_id)
     check(
@@ -1129,7 +1340,7 @@ def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
     )
 
     run_id = dispatch_workflow(
-        repo, "release-manual-createprerelease.yml", inputs={"label": "beta"}
+        repo, "release-auto-preparereleasepr.yml", inputs={"label": "beta"}
     )
     conclusion = wait_for_run(repo, run_id)
     check(
@@ -1148,13 +1359,13 @@ def check_prerelease_flow(repo: str, dest: str, failures: list[str]) -> None:
 
 
 def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
-    """Verify Repo B's state after a human has run `mise run copier-update` on it.
+    """Verify Repo B's state after a human has updated it to HEAD.
 
     This is the second entry point (`--verify-update`): the update itself happens by
     hand, on your own schedule, so this script can't chain straight from creating the
-    repo into checking it -- see main()'s own docstring.
+    repo into checking it; see main()'s own docstring.
     """
-    print(f"Checking {repo}'s update applied cleanly...")
+    step(f"Checking {repo}'s update applied cleanly")
     run("git", "fetch", cwd=dest)
     log = run(
         "git", "log", "--oneline", "-10", "origin/main", capture=True, cwd=dest
@@ -1166,7 +1377,7 @@ def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
         log,
     )
     # Copier's own update conflicts come from `git merge-file`, so they use the same
-    # markers as any other git conflict -- one grep catches both.
+    # markers as any other git conflict; one grep catches both.
     grep = run(
         "git",
         "grep",
@@ -1187,6 +1398,14 @@ def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
 
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
+    # The runbook has you run `mise run sync-repo-settings` once the update merges, as
+    # the upgrade guide does: copy tasks don't run on update.
+    report_settings_checks(
+        repo,
+        settings_homepage(dest),
+        failures,
+        zensical_ghpages=publishes_to_ghpages(dest),
+    )
     branch = "integration-test/post-update-check"
     run("git", "switch", "-c", branch, cwd=dest)
     Path(dest, "INTEGRATION_TEST_POST_UPDATE.md").write_text(
@@ -1227,44 +1446,122 @@ def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
         bool(rollup) and all(c.get("conclusion") == "SUCCESS" for c in rollup),
         f"statusCheckRollup={rollup!r}",
     )
-    run("gh", "pr", "merge", pr_number, "--repo", repo, "--squash", "--delete-branch")
+    merge_pr(repo, pr_number)
+
+
+def cleanup(owner: str, repo_prefix: str, *, yes: bool) -> None:
+    """Delete every test repo main() created under `owner`, and its local clone.
+
+    It finds them by name, so it covers runs that stopped partway, such as when the
+    machine slept, as well as finished ones. Deleting a GitHub repo removes its
+    workflows too. It lists everything, then asks before deleting anything.
+
+    Raises:
+        SystemExit: if the gh token lacks the delete_repo scope, or a local
+            clone can't be deleted.
+
+    """
+    pattern = test_repo_pattern(repo_prefix)
+    repos = json.loads(
+        gh_value("repo", "list", owner, "--limit", "1000", "--json", "name")
+    )
+    names = sorted(r["name"] for r in repos if pattern.fullmatch(r["name"]))
+    clones = local_clones(pattern, "github.com")
+    if not names and not clones:
+        say(f"No integration-test repos under {owner}, and no local clones.")
+        return
+    say("Integration-test repos and local clones to delete:")
+    for name in names:
+        say(f"  {owner}/{name}")
+    for clone in clones:
+        say(f"  {clone}")
+    if names:
+        status = run("gh", "auth", "status", check=False, capture=True)
+        if "'delete_repo'" not in status.stdout + status.stderr:
+            raise SystemExit(
+                "Deleting repos needs the delete_repo scope. Add it with "
+                "`gh auth refresh -h github.com -s delete_repo`, then rerun."
+            )
+    if not confirm(
+        f"Delete these {len(names)} repo(s) and {len(clones)} local clone(s)?", yes=yes
+    ):
+        say("Nothing deleted.")
+        return
+    for name in names:
+        run("gh", "repo", "delete", f"{owner}/{name}", "--yes")
+    deleted = remove_clones(clones)
+    say(f"Deleted {len(names)} repo(s) and {deleted} local clone(s).")
+    if deleted < len(clones):
+        raise SystemExit(1)
+
+
+def verify_update_target(args: argparse.Namespace) -> tuple[str, str]:
+    """Resolve the Repo B that `--verify-update` checks: the one named, or the newest.
+
+    Returns:
+        Repo B's `owner/name`, and its local clone's path.
+
+    Raises:
+        SystemExit: if REPO comes without --local-path, there's nothing to find Repo B
+            by, or its clone's origin isn't a GitHub repo.
+
+    """
+    repo, local_path = args.verify_update, args.local_path
+    if repo:
+        if not local_path:
+            raise SystemExit("--verify-update REPO requires --local-path too.")
+        return repo, local_path
+    if not local_path and not args.repo_prefix:
+        raise SystemExit("--verify-update without REPO requires --repo-prefix.")
+    local_path, origin = repo_b_clone(args.repo_prefix, "github.com", local_path)
+    match = re.search(r"github\.com[/:]([^/]+/[^/]+?)(?:\.git)?/?$", origin)
+    if not match:
+        raise SystemExit(f"Can't read a GitHub repo from {origin}.")
+    say(f"Verifying Repo B: {match.group(1)}, cloned at {local_path}")
+    return match.group(1), local_path
 
 
 def main() -> None:
     """Create and verify two throwaway repos, each covering a different scenario.
 
-    Both run every time, always at HEAD (this tool exists to verify a release
-    candidate on main is good before cutting a release, not to smoke-test an
-    arbitrary branch). Repo A is a plain `copier copy` with `zensical_target: GitHub
-    Pages` and `code_coverage` on -- every automated check this script can run
-    happens against it. Repo B is copied at the last stable tag with
-    `zensical_target: docs-site Directory in Repo` and `code_coverage` off, for you to
-    run `mise run copier-update` against yourself -- deliberately not automated:
-    that's the exact command, with the exact prompts, a real user gets, and running it
-    by hand is the only way to see a new question's prompt land the way it actually
-    would for them, not however this script happened to answer it. Both repos are
-    left in place afterward for inspection.
+    Both run every time, at HEAD, to verify a release candidate on main before a
+    release. Repo A is a `copier copy` with `zensical_target: GitHub Pages` and
+    `code_coverage` on, and every automated check runs against it. Repo B is a copy at
+    the last stable tag with `zensical_target: docs-site Directory in Repo` and
+    `code_coverage` off, for you to update to HEAD as the runbook's Repo B section says.
+    That's manual on purpose: running the command a real user runs, prompts included,
+    is how a new question's prompt gets seen as they'll see it. Both repos stay for
+    inspection.
 
-    Once you've updated Repo B by hand, re-run this script with `--verify-update
-    <repo> --local-path <path>` (also available as `mise run
-    integration-test-verify-update-gh`) to check it applied cleanly -- see
-    docs/manual-verification-github.md's "Repo B" section.
+    After updating Repo B, rerun this script with `--verify-update` (or `mise run
+    integration-test-verify-update-gh`) to check the update; see the "Repo B" section
+    of the GitHub runbook.
 
     Raises:
         SystemExit: if required arguments are missing, or if any automated check
-            failed (after printing every check's result -- see check()).
+            failed (after printing every check's result; see check()).
 
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", help="Copier template source URL")
     parser.add_argument("--repo-prefix", help="This repo's own name")
     parser.add_argument(
+        "--leaf",
+        action="store_true",
+        help="The source is a leaf template, whose projects can't be templates.",
+    )
+    # `mise run integration-test-verify-update-gh` passes a bare --verify-update, and
+    # its --repo flag, if given, as usage_repo.
+    parser.add_argument(
         "--verify-update",
         metavar="REPO",
-        default=os.environ.get("usage_repo"),
+        nargs="?",
+        const=os.environ.get("usage_repo", ""),
         help=(
-            "Skip creating repos; instead verify REPO (owner/name) after you've run "
-            "`mise run copier-update` on it yourself. Requires --local-path."
+            "Skip creating repos; instead verify REPO (owner/name) after you've "
+            "updated it to HEAD yourself. Without REPO, it's read from --local-path's "
+            "origin, and without that, from the newest Repo B clone, which needs "
+            "--repo-prefix."
         ),
     )
     parser.add_argument(
@@ -1272,34 +1569,66 @@ def main() -> None:
         default=os.environ.get("usage_local_path"),
         help="Local clone path for --verify-update (printed when Repo B was created).",
     )
+    parser.add_argument(
+        "--cleanup",
+        action="store_true",
+        help=(
+            "Skip creating repos; instead delete every test repo a run made (finished "
+            "or not), after confirming. Requires --repo-prefix."
+        ),
+    )
+    parser.add_argument(
+        "--yes", action="store_true", help="Don't ask before --cleanup deletes."
+    )
     args = parser.parse_args()
+    log_dir = start_log("github")
+    say(f"Logging this run to {log_dir}")
 
     check_gh_installed()
     check_scopes()
 
-    if args.verify_update:
-        if not args.local_path:
-            raise SystemExit("--verify-update requires --local-path too.")
+    if args.cleanup:
+        if not args.repo_prefix:
+            raise SystemExit("--cleanup requires --repo-prefix.")
+        cleanup(
+            gh_value("api", "user", "--jq", ".login"), args.repo_prefix, yes=args.yes
+        )
+        return
+
+    if args.verify_update is not None:
+        repo, local_path = verify_update_target(args)
         update_failures: list[str] = []
-        check_post_update(args.verify_update, args.local_path, update_failures)
-        report(f"Repo B ({args.verify_update})", update_failures)
+        check_post_update(repo, local_path, update_failures)
+        summary(
+            [
+                RepoResult(
+                    "Repo B",
+                    repo,
+                    local_path,
+                    update_failures,
+                    url=f"https://github.com/{repo}",
+                )
+            ]
+        )
         if update_failures:
             raise SystemExit(1)
         return
 
     if not args.source or not args.repo_prefix:
         raise SystemExit("--source and --repo-prefix are required.")
+    token = codecov_token()
 
     owner = gh_value("api", "user", "--jq", ".login")
     timestamp = int(time.time())
 
-    print(
-        "=== Repo A: fresh copy at HEAD "
-        "(zensical_target: GitHub Pages, code_coverage: on) ==="
+    heading(
+        "Repo A: a fresh copy at HEAD "
+        "(zensical_target: GitHub Pages, code_coverage: on)"
     )
     repo_a_name = f"{args.repo_prefix}-integration-test-{timestamp}-a"
-    dest_a = tempfile.mkdtemp(prefix="integration-test-")
+    dest_a = local_clone_dir(repo_a_name)
     repo_a = f"{owner}/{repo_a_name}"
+    step(f"Creating {repo_a} at HEAD")
     create(
         args.source,
         "HEAD",
@@ -1308,31 +1637,43 @@ def main() -> None:
         owner,
         "GitHub Pages",
         code_coverage=True,
+        leaf=args.leaf,
     )
-    provision_test_secrets(repo_a)
     failures_a: list[str] = []
-    verify(repo_a, homepage_for(owner, repo_a_name), failures_a, zensical_ghpages=True)
+    step("Setting test secrets")
+    provision_test_secrets(repo_a)
+    provide_codecov_token(repo_a, token)
+    verify(repo_a, dest_a, failures_a, zensical_ghpages=True)
+    step("Merging Repo A's setup PR")
+    # Before the checks that depend on it: the Renovate edits, and a lychee exclusion
+    # for this template's docs, whose new pages publish only when it releases.
+    setup_run = open_pr_wait_and_merge(
+        repo_a,
+        dest_a,
+        "integration-test/setup",
+        "chore: set up Repo A for the integration test",
+        edit=prepare_repo_a(args.source),
+    )
+    check_coverage_upload(repo_a, setup_run, failures_a)
     check_copier_update_check(repo_a, failures_a, expect_update_available=False)
     check_noop_update(dest_a, "HEAD", failures_a)
     check_bad_title_blocks_merge(repo_a, dest_a, failures_a)
     check_failing_tests_block_merge(repo_a, dest_a, failures_a)
     check_release_flow(repo_a, dest_a, failures_a)
-    # Run last: a GitHub Pages repo's own homepage link (in README.md) 404s until the
-    # first Pages deployment finishes propagating -- by now enough real wall-clock
-    # time and several PR/merge cycles have passed for that to be reliably live,
-    # rather than racing it right after repo creation.
+    # Run last: a GitHub Pages repo's homepage link in README.md returns 404 until the
+    # first Pages deployment propagates, which it has by this point.
     check_repo_health_check(repo_a, failures_a)
     check_prerelease_flow(repo_a, dest_a, failures_a)
-    report(f"Repo A ({repo_a})", failures_a)
 
     old_ref = latest_stable_tag(args.source)
-    print(
-        f"=== Repo B: {old_ref}, for you to update by hand (zensical_target: "
-        "docs-site Directory in Repo, code_coverage: off) ==="
+    heading(
+        f"Repo B: a copy at {old_ref}, for you to update by hand (zensical_target: "
+        "docs-site Directory in Repo, code_coverage: off)"
     )
     repo_b_name = f"{args.repo_prefix}-integration-test-{timestamp}-b"
-    dest_b = tempfile.mkdtemp(prefix="integration-test-")
+    dest_b = local_clone_dir(repo_b_name)
     repo_b = f"{owner}/{repo_b_name}"
+    step(f"Creating {repo_b} at {old_ref}")
     create(
         args.source,
         old_ref,
@@ -1341,20 +1682,50 @@ def main() -> None:
         owner,
         "docs-site Directory in Repo",
         code_coverage=False,
+        leaf=args.leaf,
     )
+    step("Setting test secrets")
     provision_test_secrets(repo_b)
     failures_b: list[str] = []
-    verify(repo_b, homepage_for(owner, repo_b_name), failures_b, zensical_ghpages=False)
-    check_copier_update_check(repo_b, failures_b, expect_update_available=True)
-    report(f"Repo B ({repo_b}, before updating)", failures_b)
-
-    print(
-        f"\nLeaving {repo_a} ({dest_a}) and {repo_b} ({dest_b}) in place -- delete "
-        f"them yourself when you're done. {repo_b} is still at {old_ref}; cd into "
-        f"{dest_b} and run `mise run copier-update` yourself to test the update path, "
-        "then `mise run integration-test-verify-update-gh -- --repo "
-        f"{repo_b} --local-path {dest_b}` to verify it applied cleanly "
-        '(see "Repo B" in docs/manual-verification-github.md).'
+    verify(repo_b, dest_b, failures_b, zensical_ghpages=False)
+    if setup_b := prepare_repo_b(args.source):
+        step("Merging Repo B's setup PR")
+        open_pr_wait_and_merge(
+            repo_b,
+            dest_b,
+            "integration-test/setup",
+            "chore: set up Repo B for the integration test",
+            edit=setup_b,
+        )
+    # Repo B is at the newest release, so main has no update; a branch recording
+    # the commit before that release does.
+    legacy_b = not Path(dest_b, ".github", "workflows", MONTHLY_MAINTENANCE).exists()
+    check_copier_update_check(
+        repo_b, failures_b, expect_update_available=False, legacy=legacy_b
+    )
+    step("Pushing a branch that records an older template version")
+    older = push_older_recorded_version(dest_b, args.source, old_ref)
+    check_copier_update_check(
+        repo_b, failures_b, expect_update_available=True, ref=older, legacy=legacy_b
+    )
+    # The runbook as of main, which this run tests; latest is the last release's.
+    runbook = docs_page_url(
+        "maintaining/integration-testing/runbook-github.md", version="dev"
+    )
+    summary(
+        [
+            RepoResult(
+                "Repo A", repo_a, dest_a, failures_a, url=f"https://github.com/{repo_a}"
+            ),
+            RepoResult(
+                f"Repo B (at {old_ref}, before updating)",
+                repo_b,
+                dest_b,
+                failures_b,
+                url=f"https://github.com/{repo_b}",
+            ),
+        ],
+        runbook,
     )
 
     if failures_a or failures_b:
@@ -1362,4 +1733,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        sys.exit("\nStopped. Run cleanup to delete what this run created.")

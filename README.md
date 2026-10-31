@@ -5,11 +5,11 @@
   <a href="https://semver.org/"><img alt="SemVer 2.0.0" src="https://img.shields.io/badge/SemVer-2.0.0-1b1b1b?logo=semver&logoColor=white"></a>
   <a href="https://renovatebot.com/"><img alt="Renovate" src="https://img.shields.io/badge/Renovate-enabled-1A1F6C?logo=renovatebot&logoColor=white"></a>
   <a href="https://mise.jdx.dev/"><img alt="mise" src="https://img.shields.io/badge/mise-managed-b04a68?&labelColor=161111"></a>
-  <a href="#contributors"><img alt="All Contributors" src="https://img.shields.io/github/all-contributors/{{ github_repo_owner }}/{{ repo_name }}?color=ee8449"></a>
+  <a href="#contributors"><img alt="All Contributors" src="https://img.shields.io/github/all-contributors/natescherer/postmodern-repo-copiertemplate?color=ee8449"></a>
 </p>
 
 <div align="center">
-  <img src="docs/images/readme-logo.png" alt="Logo" width="80" height="80">
+  <img src="docs/assets/images/readme-logo.png" alt="Logo" width="160" height="160">
 
   <h3 align="center">Postmodern Repo Copier Template</h3>
 
@@ -19,12 +19,12 @@
 </div>
 
 <p align="center">
-  <img src="docs/images/readme-screenshot.png" alt="Screenshot">
+  <img src="docs/assets/images/readme-screenshot.png" alt="Screenshot">
 </p>
 
-<!-- Don't edit/remove this yourself! See docs/lifecycle-management.md -->
+<!-- Don't edit/remove this yourself! This is managed by the 'lifecycle' Copier answer. -->
 
-| :exclamation: Notice: This project is currently in a Pre-Alpha state and is not ready for public use. |
+| :exclamation: Notice: This project is in a Pre-Alpha state and is not ready for public use. |
 | ------------------------------------------------------------------------------------ |
 
 A Copier template to create a repo with the Hard/Boring stuff automated, so you can get back to coding.
@@ -48,15 +48,15 @@ See documentation below for more details on each item.
 
 ## Documentation
 
-For detailed documentation, see [https://natescherer.github.io/postmodern-repo-copiertemplate](https://natescherer.github.io/postmodern-repo-copiertemplate).
+For detailed documentation, see [https://natescherer.github.io/postmodern-repo-copiertemplate/](https://natescherer.github.io/postmodern-repo-copiertemplate/).
 
 ## Questions/Comments
 
-If you have questions, comments, etc, please enter a GitHub Issue with the "question" tag.
+Ask a question by opening an issue with the **Question** form.
 
 ## Contributing/Bug Reporting
 
-Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+Contributions and bug reports are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Contributors
 
@@ -79,11 +79,11 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
 <!-- spell-checker:enable -->
 
 This project follows the [all-contributors](https://allcontributors.org) specification.
-Contributions of any kind are welcome!
+Contributions of any kind are welcome.
 
 ## License
 
-This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License; see [LICENSE](LICENSE).
 
 ## Repository Template
 

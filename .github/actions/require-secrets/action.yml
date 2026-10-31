@@ -8,6 +8,10 @@ runs:
   using: composite
   steps:
     - shell: bash
+      # Through env rather than ${{ }} in the script itself, so a secret containing
+      # quotes, backticks, or $( is read as data instead of being run.
+      env:
+        SECRETS: ${{ inputs.secrets }}
       run: |-
         missing=0
         while IFS='=' read -r name value; do
@@ -16,7 +20,7 @@ runs:
             echo "::error title=Missing Secret::Required Actions secret '$name' is not set! Please add it in repo/org settings."
             missing=1
           fi
-        done <<< "${{ inputs.secrets }}"
+        done <<< "$SECRETS"
         if [ "$missing" -eq 1 ]; then
           echo "Erroring as one or more required secrets are missing!" >&2
           exit 1

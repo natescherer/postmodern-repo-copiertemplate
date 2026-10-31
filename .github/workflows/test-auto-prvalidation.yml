@@ -2,15 +2,16 @@ name: "Test (Auto): PR Validation"
 
 on:
   pull_request:
-    # Explicit -- the implicit default (opened, synchronize, reopened) omits `edited`,
+    # Explicit; the implicit default (opened, synchronize, reopened) omits `edited`,
     # so a title-only edit wouldn't otherwise re-run the PR-title check below.
     types: [opened, edited, synchronize, reopened]
 
 concurrency:
-  group: ${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   tests:
@@ -21,6 +22,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5
+        with:
+          version: 2026.10.10 # jdx/mise
       - name: Check PR Title is a Conventional Commit
         shell: bash
         env:
@@ -40,6 +43,16 @@ jobs:
             echo "$CHANGED_FILES"
             mapfile -t FILES <<< "$CHANGED_FILES"
             mise x -- prek run -c .config/prek.toml --files "${FILES[@]}"
+          fi
+      # Applying the file needs admin access, which GITHUB_TOKEN can't have, so this
+      # reminds whoever merges the PR to apply it.
+      - name: Remind to Apply Repo Settings
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if ! git diff --quiet "origin/$BASE_REF...HEAD" -- .github/settings.yml; then
+            echo "::warning file=.github/settings.yml::After merging, run 'mise run sync-repo-settings' to apply this file to GitHub."
           fi
       - name: Run Template Render Tests
         shell: bash

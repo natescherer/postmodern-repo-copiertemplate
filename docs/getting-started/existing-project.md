@@ -1,0 +1,39 @@
+# Applying to Existing Projects
+
+1. Complete the [Prerequisites](prerequisites.md), including
+   [Secrets and Tokens](../reference/token-permissions.md).
+
+1. Get the existing project ready: cloned locally, with all changes committed and its default
+   branch (usually `main` or `master`) checked out.
+
+1. In the existing project, create a branch from the default branch, such as
+   `copier-template-apply`.
+
+1. Clone this repository, open it in your terminal, and install the tools the template needs:
+
+    ```bash
+    mise trust
+    mise install
+    ```
+
+1. From this repository, run the command below, replacing the path at the end with your
+   existing project's root:
+
+    ```bash
+    mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/path-to-existing-project
+    ```
+
+    See [Template Questions](../reference/template-questions.md) for what each prompt controls.
+
+1. For the Repo Setup Actions question, choose `Set Repo Rules` on GitHub or `None` on Azure
+   DevOps. Azure DevOps reads pipeline YAML from the remote repo, so register its pipelines by
+   hand once the files are pushed; see [Manual Repo Settings](../reference/manual-repo-settings.md).
+
+1. Answer the other questions for your project.
+
+1. Review each changed file with `git diff`, and keep, discard, or adjust the change.
+
+1. Commit and push, then merge through a pull request.
+
+The project now works the same as one generated from this template. You can delete your clone
+of this repository: `mise run copier-update` fetches the template from its URL.

@@ -1,96 +1,34 @@
-# Getting Started
+# Postmodern Repo Copier Template
 
-Here's how to use this template:
+Postmodern Repo Copier Template is a [Copier](https://copier.readthedocs.io/) template. Run against a
+destination path, it generates a repository with the hard/boring stuff already wired up.
 
-1. Ensure you have [mise](https://mise.jdx.dev/getting-started.html) installed on your workstation (Linux/macOS/Windows are all supported).
-1. Clone this repository and open it in your terminal
-1. Run the following to install needed dependencies to use the template:
+Template Author: describe what your template does here.
 
-```bash
-mise trust
-mise install
-```
+## What It Automates
 
-1. Run the following to create the template, making sure set the path at the end as appropriate
+- Versioning and Releasing
+- Security and Dependency Updating
+- Linting, Styling, and Testing for every Commit and Pull Request
+- Publishing Documentation
+- License and Policies
+- Contribution Guide and Automatic Contributor Crediting
 
-```bash
-mise x "--" copier copy --trust https://github.com/natescherer/postmodern-repo-copiertemplate ~/local-repo-path-here
-```
+## The Big Decision
 
-See [Template Questions](template-questions.md) for what each prompt during that step controls.
+Make one decision before you use this template:
 
-## Features
+- **`project_type`** (Standard or Template): whether the generated project is a repo to build
+  in (**Standard**) or a child Copier template that others can build on (**Template**).
 
-### Core
+## Inheritance
 
-#### Support for Multiple CI/CD Platforms
+This template was built from [Postmodern Repo Copier Template](https://github.com/natescherer/postmodern-repo-copiertemplate), and the
+projects and child templates it generates inherit from it the same way. `copier update` carries that inheritance: run
+against a generated project, it brings in what changed upstream (features, fixes, security
+patches) and keeps local customizations.
 
-- GitHub **Recommended**
-    - Creating repos under both users and orgs is supported
-- Azure DevOps **Deprecated**
-    - See [Azure DevOps Limitations](platform-notes/azure-devops.md) for details about features missing for AzDO, and why this platform is being phased out
+## What To Read Next
 
-#### Support for Public (Open-Source) and Private (Closed-Source) Repositories
-
-This template fully supports both public/open-source and private/closed-source repositories. See [Public vs Private Repos](public-vs-private-repos.md) for the difference.
-
-#### Support for Existing Projects
-
-Postmodern templates are designed to allow either the creation of new templates from scratch or adoption for existing projects with existing code repos.
-
-#### Support for Template Updates
-
-Keeping projects in sync with their parent template is a core feature of [Copier](https://github.com/copier-org/copier), and this template will deploy a GitHub Actions Workflow/Azure DevOps Pipeline that will automate the update process.
-
-#### Support for Child/Recursive Templates
-
-It is highly encouraged for you to take this template and make your own child template that meets your needs. Your child template can (optionally) receive updates from this template.
-
-### Repository Management
-
-- Creation of new repos and branches
-- Setting of repo settings & branch protection rules
-- Creation of useful non-default issue labels: `awaiting pr` and `blocked`
-- Contributor management and crediting via [All Contributors](https://allcontributors.org/)
-- Dependency updates via [Renovate](https://www.mend.io/renovate/) -- the [GitHub Marketplace
-  App](https://github.com/marketplace/renovate/) on GitHub, a self-hosted scheduled pipeline on
-  Azure DevOps
-- Scheduled checks for updates from parent template
-
-### Documentation
-
-Rich Markdown documentation is pre-configured using [Zensical](https://zensical.org/), the successor to the extremely popular (but end of life) [mkdocs-material](https://squidfunk.github.io/mkdocs-material/).
-
-- Multiple choices of documentation target:
-    - GitHub Pages: documentation is automatically built and versioned for each release, with old versions maintained
-    - A `docs-site` folder in your repo containing rendered HTML suitable for offline use, always reflecting the latest `main`
-
-### Code Management and Formatting
-
-- Automatic, repository-local dev tool installation via [mise](https://github.com/jdx/mise)
-- Automatic code linting and formatting via [prek](https://prek.j178.dev/):
-    - Commit message linting via [committed](https://github.com/crate-ci/committed)
-    - GitHub Actions linting via [actionlint](https://github.com/rhysd/actionlint)
-    - Markdown linting via [rumdl](https://github.com/rvben/rumdl)
-    - Python linting and formatting via [Ruff](https://github.com/astral-sh/ruff)
-    - Spell checking via [typos](https://github.com/crate-ci/typos)
-    - TOML linting and formatting via [Tombi](https://github.com/tombi-toml/tombi)
-    - YAML linting via [ryl](https://github.com/owenlamont/ryl)
-
-### CI/CD
-
-- Version number calculation, changelog updating, releasing, and tagging via
-  [Knope](https://knope.tech/) -- see [Releasing](releasing.md)
-- Simple/example release pipeline via GitHub Actions or Azure Pipelines
-
-### Support Files
-
-- `.gitignore`, set to ignore macOS `.DS_Store` files and Windows `Thumbs.db` files
-- `CODE_OF_CONDUCT.md`, derived from [The Contributor Covenant](https://www.contributor-covenant.org/)
-- `CONTRIBUTING.md`, designed to help novices make their first contribution
-- `LICENSE`, a copy of the [MIT License](https://choosealicense.com/licenses/mit/)
-- `README.md`, designed for general products
-
-### Editor Configuration
-
-Optimal settings and plugin recommendations are included for [Visual Studio Code](http://code.visualstudio.com/).
+- **Ready to use this template?** Check the [Prerequisites](getting-started/prerequisites.md).
+- **Want to know what you get?** See [Features](reference/features.md).
