@@ -177,7 +177,20 @@ that release, it detects the release.*
 
 ### After Updating
 
-- [ ] Once the update's PR merges, verify it:
+- [ ] Once the update's PR merges, apply its `.github/settings.yml` with gh-settings, as the
+  [upgrade guide](../upgrading-from-0x.md) has a 0.x project do, and answer yes when it asks:
+
+    ```sh
+    cd <repo-b-path>
+    git switch main
+    git pull
+    mise run sync-repo-settings
+    ```
+
+    A Repo B copied at a release before gh-settings has none of its settings applied until now,
+    so the run shows its settings checks as `[SKIP]`.
+
+- [ ] Verify the update:
 
     ```sh
     cd <template-repo-path>
@@ -185,7 +198,7 @@ that release, it detects the release.*
     ```
 
     It finds the newest run's Repo B from its local clone. It checks that the update brought in
-    current content, left no conflict markers, and that
+    current content, left no conflict markers, and applied `.github/settings.yml`, and that
     `Test (Auto): PR Validation` triggers and passes on a new PR. Every check prints `[PASS]`.
 
 ## Cleaning Up
