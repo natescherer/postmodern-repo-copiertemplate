@@ -104,7 +104,7 @@ a PR bumping typos.*
     echo "Integration test docs change." >> docs/index.md
     git commit -am "docs: integration test docs change"
     git push -u origin integration-test/docs-change
-    az repos pr create --source-branch integration-test/docs-change --target-branch main --title "docs: integration test docs change" --auto-complete true --squash true --delete-source-branch true
+    az repos pr create --source-branch integration-test/docs-change --target-branch main --title "docs: integration test docs change" --merge-commit-message "docs: integration test docs change" --auto-complete true --squash true --delete-source-branch true
     ```
 
 - [ ] Once that PR completes, `[<repo-a>] Docs (Auto) - Zensical Build & Commit` runs, opens
@@ -184,8 +184,11 @@ branch, whose answers record the commit just before the newest release.*
     git add -A
     git commit -m "chore: copier update"
     git push -u origin integration-test/copier-update
-    az repos pr create --source-branch integration-test/copier-update --target-branch main --title "chore: copier update" --auto-complete true --squash true --delete-source-branch true
+    az repos pr create --source-branch integration-test/copier-update --target-branch main --title "chore: copier update" --merge-commit-message "chore: copier update" --auto-complete true --squash true --delete-source-branch true
     ```
+
+    Without `--merge-commit-message`, Azure DevOps squash-merges with a generic "Merge pull
+    request N" message instead of the PR title.
 
 ### After Updating
 
