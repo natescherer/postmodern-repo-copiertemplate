@@ -642,80 +642,17 @@ def report_settings_checks(
     )
 
 
-def settings_synced(repo: str, homepage: str, *, zensical_ghpages: bool) -> bool:
-    """Check whether every part of .github/settings.yml has been applied.
-
-    Used only to decide when the polling loop in verify() can stop; the actual
-    per-field results get reported once, afterward, by report_settings_checks().
-
-    Returns:
-        True once every expected field/label/ruleset/(conditionally) environment is
-        present.
-
-    """
-    repo_data_result = run("gh", "api", f"repos/{repo}", check=False, capture=True)
-    if repo_data_result.returncode != 0:
-        return False
-    repo_data = json.loads(repo_data_result.stdout)
-    if repo_data.get("description") != PROJECT_DESCRIPTION:
-        return False
-    if (repo_data.get("homepage") or "") != homepage:
-        return False
-    if repo_data.get("delete_branch_on_merge") is not True:
-        return False
-
-    labels = run(
-        "gh",
-        "api",
-        f"repos/{repo}/labels",
-        "--jq",
-        ".[].name",
-        check=False,
-        capture=True,
-    )
-    if labels.returncode != 0 or not EXPECTED_LABELS <= set(labels.stdout.splitlines()):
-        return False
-
-    rulesets = run(
-        "gh",
-        "api",
-        f"repos/{repo}/rulesets",
-        "--jq",
-        ".[].name",
-        check=False,
-        capture=True,
-    )
-    if (
-        rulesets.returncode != 0
-        or "default-branch-protection" not in rulesets.stdout.split()
-    ):
-        return False
-
-    if not zensical_ghpages:
-        return True
-
-    environments = run(
-        "gh",
-        "api",
-        f"repos/{repo}/environments",
-        "--jq",
-        "[.environments[].name]",
-        check=False,
-        capture=True,
-    )
-    return environments.returncode == 0 and "github-pages" in json.loads(
-        environments.stdout or "[]"
-    )
-
-
 def verify(
-    repo: str, homepage: str, failures: list[str], *, zensical_ghpages: bool
+    repo: str, dest: str, failures: list[str], *, zensical_ghpages: bool
 ) -> None:
     """Assert the created repo's real remote state matches what repo setup should do.
 
     `zensical_ghpages` gates the Pages-specific check: GitHub Pages is only enabled
     (and `/pages` only returns anything) when the repo was created with
-    `zensical_target: GitHub Pages`.
+    `zensical_target: GitHub Pages`. A copy at a release before gh-settings skips the
+    settings checks: that release relied on the Settings GitHub App, which the upgrade
+    guide has users remove, so check_post_update() checks them once
+    `mise run sync-repo-settings` has applied the updated file.
 
     Raises:
         SystemExit: only if the repo itself can't be found; every other assertion
@@ -760,23 +697,41 @@ def verify(
 
     run("gh", "api", f"repos/{repo}/contents/.github/workflows", capture=True)
 
-    # The copy's gh-settings task applies .github/settings.yml before create()
-    # returns, so this passes on its first try. A copy at a release before gh-settings
-    # relied on the Settings GitHub App (https://github.com/apps/settings), which
-    # applies it some time after the push, so this polls; remove the poll once the last
-    # release has gh-settings.
-    for attempt in range(12):
-        if settings_synced(repo, homepage, zensical_ghpages=zensical_ghpages):
-            print(f"settings.yml applied: OK (after {attempt * 10}s)")
-            break
-        time.sleep(10)
-    else:
+    # The copy's gh-settings task applies .github/settings.yml before create() returns.
+    if not uses_gh_settings(dest):
         say(
-            "settings.yml not applied within 120s. A copy at a release before "
-            "gh-settings needs the Settings GitHub App, with access to all "
-            "repositories on the account."
+            "  [SKIP] settings.yml checks: this release applied it with the Settings "
+            "GitHub App; they run after the update, once sync-repo-settings applies it"
         )
-    report_settings_checks(repo, homepage, failures, zensical_ghpages=zensical_ghpages)
+        return
+    report_settings_checks(
+        repo, settings_homepage(dest), failures, zensical_ghpages=zensical_ghpages
+    )
+
+
+def uses_gh_settings(dest: str) -> bool:
+    """Check whether a repo's .github/settings.yml is in gh-settings' format.
+
+    Releases before gh-settings wrote one for the Settings GitHub App instead; only
+    gh-settings' format has a `version: 1` line.
+
+    Returns:
+        True if gh-settings applies the file.
+
+    """
+    text = Path(dest, ".github", "settings.yml").read_text(encoding="utf-8")
+    return re.search(r"(?m)^version: 1$", text) is not None
+
+
+def publishes_to_ghpages(dest: str) -> bool:
+    """Check whether a repo was copied with `zensical_target: GitHub Pages`.
+
+    Returns:
+        True if its copier-answers.yml records that answer.
+
+    """
+    text = Path(dest, ".config", "copier-answers.yml").read_text(encoding="utf-8")
+    return re.search(r"(?m)^zensical_target: GitHub Pages$", text) is not None
 
 
 def settings_homepage(dest: str) -> str:
@@ -1443,6 +1398,14 @@ def check_post_update(repo: str, dest: str, failures: list[str]) -> None:
 
     run("git", "checkout", "main", cwd=dest)
     run("git", "pull", cwd=dest)
+    # The runbook has you run `mise run sync-repo-settings` once the update merges, as
+    # the upgrade guide does: copy tasks don't run on update.
+    report_settings_checks(
+        repo,
+        settings_homepage(dest),
+        failures,
+        zensical_ghpages=publishes_to_ghpages(dest),
+    )
     branch = "integration-test/post-update-check"
     run("git", "switch", "-c", branch, cwd=dest)
     Path(dest, "INTEGRATION_TEST_POST_UPDATE.md").write_text(
@@ -1680,7 +1643,7 @@ def main() -> None:
     step("Setting test secrets")
     provision_test_secrets(repo_a)
     provide_codecov_token(repo_a, token)
-    verify(repo_a, settings_homepage(dest_a), failures_a, zensical_ghpages=True)
+    verify(repo_a, dest_a, failures_a, zensical_ghpages=True)
     step("Merging Repo A's setup PR")
     # Before the checks that depend on it: the Renovate edits, and a lychee exclusion
     # for this template's docs, whose new pages publish only when it releases.
@@ -1724,7 +1687,7 @@ def main() -> None:
     step("Setting test secrets")
     provision_test_secrets(repo_b)
     failures_b: list[str] = []
-    verify(repo_b, settings_homepage(dest_b), failures_b, zensical_ghpages=False)
+    verify(repo_b, dest_b, failures_b, zensical_ghpages=False)
     if setup_b := prepare_repo_b(args.source):
         step("Merging Repo B's setup PR")
         open_pr_wait_and_merge(
