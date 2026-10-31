@@ -107,8 +107,8 @@ run = "uv run scripts/template_docs_server.py"
 [tasks.integration-test-gh]
 # Verifies a release candidate on main before a release. Creates two test repos from
 # this template and runs every automated check against Repo A, a copy at HEAD. Repo B
-# is a copy at the last stable tag: update it to HEAD yourself with
-# `mise run copier-update --vcs-ref=HEAD`, then check it with
+# is a copy at the last stable tag: update it to HEAD yourself, as the runbook's
+# Repo B section says, then check it with
 # `mise run integration-test-verify-update-gh`. Both repos stay
 # for inspection; delete them with `mise run integration-test-cleanup-gh`. See
 # {{ docs_url }}maintaining/integration-testing/index.html and
@@ -137,9 +137,8 @@ run = "python scripts/integration_test_github.py --cleanup --repo-prefix {{ repo
 {%- set project_default = azdo_project if using_azdo else '' %}
 # Verifies a release candidate on main before a release. Creates two test repos from
 # this template and runs every automated check against Repo A, a copy at HEAD. Repo B
-# is a copy at the last stable tag: update it to HEAD yourself with
-# `mise run copier-update --vcs-ref=HEAD` and `mise run migrate-azdo-pipeline-names`,
-# then check it with
+# is a copy at the last stable tag: update it to HEAD yourself, as the runbook's
+# Repo B section says, then check it with
 # `mise run integration-test-verify-update-azdo`. Both repos stay for inspection;
 # delete them with `mise run integration-test-cleanup-azdo`. See
 # {{ docs_url }}maintaining/integration-testing/index.html and

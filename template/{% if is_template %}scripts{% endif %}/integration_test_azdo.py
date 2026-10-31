@@ -16,8 +16,7 @@ It always runs against HEAD, to verify a release candidate on main before a rele
 Each run creates two repos with different answers, to cover more combinations. Repo A is
 a `copier copy` with `code_coverage` on, and every automated check runs against it. Repo
 B is a copy at the last stable tag with `code_coverage` off, left for you to update to
-HEAD with `mise run copier-update --vcs-ref=HEAD` and `mise run
-migrate-azdo-pipeline-names`; main()'s docstring says why that's manual.
+HEAD as the runbook's Repo B section says; main()'s docstring says why that's manual.
 
 Each check prints a PASS or FAIL line as it runs, and each repo gets a summary at the
 end. A failure doesn't stop the run. It checks only what needs a real Azure DevOps API
@@ -1782,10 +1781,10 @@ def main() -> None:
     Both run every time, at HEAD, to verify a release candidate on main before a
     release. Repo A is a `copier copy` with `code_coverage` on, and every automated
     check runs against it. Repo B is a copy at the last stable tag with `code_coverage`
-    off, for you to update with `mise run copier-update --vcs-ref=HEAD`, then `mise run
-    migrate-azdo-pipeline-names` once the update merges. That's manual on purpose:
-    running the commands a real user runs, prompts included, is how a new question's
-    prompt gets seen as they'll see it. Both repos stay for inspection.
+    off, for you to update to HEAD as the runbook's Repo B section says, then run
+    `mise run migrate-azdo-pipeline-names` once the update merges. That's manual on
+    purpose: running the commands a real user runs, prompts included, is how a new
+    question's prompt gets seen as they'll see it. Both repos stay for inspection.
 
     After updating Repo B, rerun this script with `--verify-update` (or `mise run
     integration-test-verify-update-azdo`) to check the update; see the "Repo B" section
