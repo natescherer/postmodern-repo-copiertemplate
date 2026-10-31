@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <url>
-        <loc>https://natescherer.github.io/latest/</loc>
+        <loc>https://postmodern-templates.github.io/latest/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/getting-started/existing-project/</loc>
+        <loc>https://postmodern-templates.github.io/latest/getting-started/existing-project/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/getting-started/new-project/</loc>
+        <loc>https://postmodern-templates.github.io/latest/getting-started/new-project/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/getting-started/prerequisites/</loc>
+        <loc>https://postmodern-templates.github.io/latest/getting-started/prerequisites/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/maintaining/development/</loc>
+        <loc>https://postmodern-templates.github.io/latest/maintaining/development/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/maintaining/extending-the-template/</loc>
+        <loc>https://postmodern-templates.github.io/latest/maintaining/extending-the-template/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/maintaining/integration-testing/</loc>
+        <loc>https://postmodern-templates.github.io/latest/maintaining/integration-testing/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/maintaining/integration-testing/runbook-azdo/</loc>
+        <loc>https://postmodern-templates.github.io/latest/maintaining/integration-testing/runbook-azdo/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/maintaining/integration-testing/runbook-github/</loc>
+        <loc>https://postmodern-templates.github.io/latest/maintaining/integration-testing/runbook-github/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/maintaining/releasing/</loc>
+        <loc>https://postmodern-templates.github.io/latest/maintaining/releasing/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/maintaining/troubleshooting/</loc>
+        <loc>https://postmodern-templates.github.io/latest/maintaining/troubleshooting/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/maintaining/updating-from-template/</loc>
+        <loc>https://postmodern-templates.github.io/latest/maintaining/updating-from-template/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/maintaining/upgrading-from-0x/</loc>
+        <loc>https://postmodern-templates.github.io/latest/maintaining/upgrading-from-0x/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/reference/azure-devops/</loc>
+        <loc>https://postmodern-templates.github.io/latest/reference/azure-devops/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/reference/compatibility/</loc>
+        <loc>https://postmodern-templates.github.io/latest/reference/compatibility/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/reference/features/</loc>
+        <loc>https://postmodern-templates.github.io/latest/reference/features/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/reference/manual-repo-settings/</loc>
+        <loc>https://postmodern-templates.github.io/latest/reference/manual-repo-settings/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/reference/stability-policy/</loc>
+        <loc>https://postmodern-templates.github.io/latest/reference/stability-policy/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/reference/template-questions/</loc>
+        <loc>https://postmodern-templates.github.io/latest/reference/template-questions/</loc>
       </url>
       <url>
-        <loc>https://natescherer.github.io/latest/reference/token-permissions/</loc>
+        <loc>https://postmodern-templates.github.io/latest/reference/token-permissions/</loc>
       </url>
 </urlset>
