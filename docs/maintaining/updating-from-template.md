@@ -1,6 +1,6 @@
 # Updating from the Parent Template
 
-This project was generated from the [Postmodern Repo Copier Template](https://github.com/natescherer/postmodern-repo-copiertemplate)
+This project was generated from the [Postmodern Repo Template](https://github.com/postmodern-templates/repo-template)
 [Copier](https://copier.readthedocs.io/) template. On the 1st of each month, the Monthly Maintenance
 workflow/pipeline's Copier Update Check job checks for a new template release and sends a notification to
 `APPRISE_URL` when one is available; see [Secrets and Tokens](../reference/token-permissions.md#apprise_url).
@@ -10,7 +10,7 @@ To pull in its latest changes:
 1. Start from a clean working tree on a new branch; Copier won't update over uncommitted
    changes.
 1. If the update crosses a major version, read that release's **Breaking Changes** in the
-   template's changelog first; see its [Stability Policy](https://natescherer.github.io/postmodern-repo-copiertemplate/latest/reference/stability-policy/).
+   template's changelog first; see its [Stability Policy](https://postmodern-templates.github.io/repo-template/latest/reference/stability-policy/).
 1. Run `mise run copier-update`. It reuses your recorded answers and asks only the questions
    added since your last update.
 1. Resolve any conflicts where your own edits overlap a template change; Copier marks
@@ -38,7 +38,7 @@ over the project:
 1. Run:
 
     ```bash
-    mise x -- copier copy --trust --overwrite --data-file <temporary-answers-file> https://github.com/natescherer/postmodern-repo-copiertemplate .
+    mise x -- copier copy --trust --overwrite --data-file <temporary-answers-file> https://github.com/postmodern-templates/repo-template .
     ```
 
 1. Unlike `copier update`, this overwrites your own edits. Review every changed file with

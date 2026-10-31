@@ -10,6 +10,8 @@ Nate = "Nate"
 Scherer = "Scherer"
 # GitHub Username
 natescherer = "natescherer"
+# GitHub Organization
+postmodern-templates = "postmodern-templates"
 # Repo Name
-postmodern-repo-copiertemplate = "postmodern-repo-copiertemplate"
+repo-template = "repo-template"
 # Custom Words Below

@@ -65,5 +65,5 @@ type = "Command"
 command = "git push --tags"
 
 [github]
-owner = "natescherer"
-repo = "postmodern-repo-copiertemplate"
+owner = "postmodern-templates"
+repo = "repo-template"

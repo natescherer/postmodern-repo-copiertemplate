@@ -1,22 +1,22 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
 _commit: v0.8.2
-_src_path: gh:natescherer/postmodern-repo-copiertemplate
+_src_path: gh:postmodern-templates/repo-template
 agent_instructions: true
 author_name: Nate Scherer
 code_coverage: false
 copyright_year: '2025'
 developer_platform: GitHub
 extensible_template: true
-github_org: ''
+github_org: postmodern-templates
 github_username: natescherer
 license: MIT
 lifecycle: Pre-Alpha
 project_description: A Copier template to create a repo with the hard/boring stuff
     automated, so you can get back to coding.
 project_initialized: true
-project_name: Postmodern Repo Copier Template
+project_name: Postmodern Repo Template
 project_type: Template
 project_visibility: Public
-repo_name: postmodern-repo-copiertemplate
+repo_name: repo-template
 repo_setup_actions: None
 zensical_target: GitHub Pages

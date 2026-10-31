@@ -38,7 +38,7 @@ questions have since been renamed, so update once with a command that supplies b
    updating to as `<new-version>`:
 
     ```bash
-    git clone --branch <new-version> https://github.com/natescherer/postmodern-repo-copiertemplate ~/template-clone
+    git clone --branch <new-version> https://github.com/postmodern-templates/repo-template ~/template-clone
     git -C ~/template-clone diff --name-only --no-renames --diff-filter=D <old-version> <new-version> -- template | xargs -I{} git rm -q --ignore-unmatch "{}"
     git commit -m "chore: remove files the parent template deleted"
     ```
