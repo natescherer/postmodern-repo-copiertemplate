@@ -82,6 +82,11 @@ Root-level files such as `mise.toml`, `README.md`, `docs/`, and `.github/workflo
 **rendered output**. They lag behind `template/` until a `copier update` re-renders them.
 **Never hand-edit a root-level dogfooded file; edit its `template/` source instead.**
 
+That includes root `tests/`, so the render-validation suite's rule of adding each test to both
+copies doesn't apply here: add it to `template/`'s copy only, and run that copy with the
+`template/` command. Root `tests/` holds the last-synced suite, so a new or edited test runs
+from root only after the next `copier update`.
+
 Two exceptions:
 
 - **Root `copier.yml`** must stay in sync **immediately**, in the same change as any edit to
